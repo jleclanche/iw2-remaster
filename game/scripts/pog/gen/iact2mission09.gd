@@ -84,22 +84,22 @@ func local_245() -> Variant:
 	var v4: Variant = 0
 	if await iutilities.skip_mission("Marauder Base?"):
 		global.set_bool("g_act2_marauder_base_mission_complete", 1)
-	else:
-		v3 = ifaction.find("M.C.A.")
-		v4 = ifaction.find("Marauders")
-		if _pog_is_null(v3):
-			if PogRuntime.TRACE:
-				debug.error("Invalid mca handle.")
-		if _pog_is_null(v4):
-			if PogRuntime.TRACE:
-				debug.error("Invalid marauder handle.")
-		if global.exists("g_a2_m9_running"):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission10.Main: Mission already running. Exiting\n")
-		else:
-			global.create_int("g_a2_m9_running", 1, 1)
-			v0 = _pog_spawn(mission_handler.bind())
-			_pog_detach(v0)
+		return
+	v3 = ifaction.find("M.C.A.")
+	v4 = ifaction.find("Marauders")
+	if _pog_is_null(v3):
+		if PogRuntime.TRACE:
+			debug.error("Invalid mca handle.")
+	if _pog_is_null(v4):
+		if PogRuntime.TRACE:
+			debug.error("Invalid marauder handle.")
+	if global.exists("g_a2_m9_running"):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2_Mission10.Main: Mission already running. Exiting\n")
+		return
+	global.create_int("g_a2_m9_running", 1, 1)
+	v0 = _pog_spawn(mission_handler.bind())
+	_pog_detach(v0)
 	return
 	return 0
 

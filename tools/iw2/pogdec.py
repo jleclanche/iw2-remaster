@@ -601,8 +601,18 @@ class Decompiler:
                     b = self._last_before(tgt)
                     if b is not None and b >= body_lo:
                         t2 = self._target(b)
+                        # A then-part trailing Goto to the shared exit is an
+                        # early RETURN, not a jump over an else: carving an
+                        # else there strands any short-circuit jump inside
+                        # the then (`if (a && b) return 1;` compiles to two
+                        # GoFalse to the SAME join, and the else-carve puts
+                        # that join out of the then-region's reach). The
+                        # plain-if shape folds the goto to `return` via the
+                        # epilogue either way, so suppressing the else can
+                        # only change nesting, never meaning.
                         if (t2 is not None and tgt < t2 <= hi
-                                and not self._splits_loop(tgt, t2)):
+                                and not self._splits_loop(tgt, t2)
+                                and not self._is_exit_tail(t2)):
                             els_end = t2
                     if els_end is not None:
                         then = self._block(body_lo, b, ctx)
@@ -727,6 +737,16 @@ class Decompiler:
 
     def _epilogue(self, tgt: int, stack: list[Expr] | None = None) -> Stmt | None:
         return self._speculate(lambda: self._epilogue_raw(tgt, stack))
+
+    def _is_exit_tail(self, tgt: int) -> bool:
+        """Would a jump to `tgt` fold to a plain return? Pure test: coverage
+        is fully discarded -- nothing is committed by asking."""
+        outer = self._covered
+        self._covered = set()
+        try:
+            return self._epilogue_raw(tgt, None) is not None
+        finally:
+            self._covered = outer
 
     def _epilogue_raw(self, tgt: int, stack: list[Expr] | None = None) -> Stmt | None:
         """If everything from `tgt` to the end of the function is just the

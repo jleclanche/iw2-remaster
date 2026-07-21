@@ -77,10 +77,10 @@ func test_piracy_rating(v0) -> Variant:
 			debug.print_string("iMissionGenerator: failed piracy rating test")
 			debug.print_string("\n")
 		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iMissionGenerator: passed piracy rating test")
-			debug.print_string("\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: passed piracy rating test")
+		debug.print_string("\n")
 	return 0
 	return 0
 
@@ -90,10 +90,10 @@ func test_email(v0) -> Variant:
 			debug.print_string("iMissionGenerator: failed email test")
 			debug.print_string("\n")
 		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iMissionGenerator: passed email test")
-			debug.print_string("\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: passed email test")
+		debug.print_string("\n")
 	return 0
 	return 0
 
@@ -107,20 +107,20 @@ func test_faction_rating(v0, v1) -> Variant:
 			debug.print_string("iMissionGenerator: failed faction rating test")
 			debug.print_string("\n")
 		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iMissionGenerator: passed faction rating test")
-			debug.print_string("\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: passed faction rating test")
+		debug.print_string("\n")
 	return 0
 	return 0
 
 func test_global_int(v0, v1) -> Variant:
 	if not (global.exists(v0)):
 		global.set_bool("g_accept_generated_mission", 0)
-	else:
-		if global.pog_int(v0) >= v1:
-			return 0
-		global.set_bool("g_accept_generated_mission", 0)
+		return 0
+	if global.pog_int(v0) >= v1:
+		return 0
+	global.set_bool("g_accept_generated_mission", 0)
 	return 0
 	return 0
 
@@ -129,16 +129,16 @@ func test_global_bool(v0, v1) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator: Global bool doesn't exist: Ignoring criteria.")
 			debug.print_string("\n")
-	else:
-		if not _pog_eq(global.pog_bool(v0), v1):
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator: failed global bool test")
-				debug.print_string("\n")
-			global.set_bool("g_accept_generated_mission", 0)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iMissionGenerator: passed global bool test")
-				debug.print_string("\n")
+		return 0
+	if not _pog_eq(global.pog_bool(v0), v1):
+		if PogRuntime.TRACE:
+			debug.print_string("iMissionGenerator: failed global bool test")
+			debug.print_string("\n")
+		global.set_bool("g_accept_generated_mission", 0)
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: passed global bool test")
+		debug.print_string("\n")
 	return 0
 	return 0
 
@@ -237,8 +237,8 @@ func local_2088(v0, v1, v2) -> Variant:
 		iobjectives.add(v4)
 	if v2 == 1:
 		iobjectives.set_state(v4, 0)
-	else:
-		iobjectives.set_state(v4, 1)
+		return 0
+	iobjectives.set_state(v4, 1)
 	return 0
 	return 0
 
@@ -261,8 +261,8 @@ func local_2373(v0) -> Variant:
 		return 0
 	if v1 == 1:
 		iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_deliver"), 0)
-	else:
-		iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_deliver"), 1)
+		return 0
+	iobjectives.set_state(string.join(object.string_property(v0, "objective_stub"), "_objectives_deliver"), 1)
 	return 0
 	return 0
 
@@ -435,8 +435,8 @@ func set_briefing(v0, v1, v2, v3) -> Variant:
 		object.set_string_property(v4, "comm_briefing_reference", v1)
 	if not (object.property_exists(v4, "comm_briefing_subject")):
 		object.add_string_property(v4, "comm_briefing_subject", v2)
-	else:
-		object.set_string_property(v4, "comm_briefing_subject", v2)
+		return 0
+	object.set_string_property(v4, "comm_briefing_subject", v2)
 	return 0
 	return 0
 
@@ -645,213 +645,85 @@ func local_9726(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var _pc: int = 9726
-	while true:
-		if _pc == 9726:
-			v2 = 0
-			v6 = ""
-			v7 = []
-			v7 = list.from_set(imapentity.system_habitats())
-			_pc = 9844
-			continue
-		elif _pc == 9800:
-			debug.print_string("iMissionGenerator: Generating character location")
-			debug.print_string("\n")
-			_pc = 9844
-			continue
-		elif _pc == 9844:
-			_pc = 9912
-			continue
-		elif _pc == 9849:
-			debug.print_string("iMissionGenerator:WaitForOrMake character recieved state ")
-			debug.print_handle(v0)
-			debug.print_string("\n")
-			_pc = 9912
-			continue
-		elif _pc == 9912:
-			v6 = object.string_property(v0, string.join(v1, "_location_system"))
-			if object.property_exists(v0, string.join(v1, "_location_handle")) == 1:
-				_pc = 10014
-				continue
-			else:
-				_pc = 10252
-				continue
-		elif _pc == 10014:
-			if not _pog_is_null(object.handle_property(v0, string.join(v1, "_location_handle"))):
-				_pc = 10065
-				continue
-			else:
-				_pc = 10252
-				continue
-		elif _pc == 10065:
-			_pc = 10114
-			continue
-		elif _pc == 10070:
-			debug.print_string("iMissionGenerator: character location already exists")
-			debug.print_string("\n")
-			_pc = 10114
-			continue
-		elif _pc == 10114:
+	v2 = 0
+	v6 = ""
+	v7 = []
+	v7 = list.from_set(imapentity.system_habitats())
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: Generating character location")
+		debug.print_string("\n")
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator:WaitForOrMake character recieved state ")
+		debug.print_handle(v0)
+		debug.print_string("\n")
+	v6 = object.string_property(v0, string.join(v1, "_location_system"))
+	if object.property_exists(v0, string.join(v1, "_location_handle")) == 1:
+		if not _pog_is_null(object.handle_property(v0, string.join(v1, "_location_handle"))):
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: character location already exists")
+				debug.print_string("\n")
 			v3 = sim.cast(object.handle_property(v0, string.join(v1, "_location_handle")))
 			isim.set_sensor_visibility(isim.cast(v3), 1)
 			await irangecheck.add_traffic_exception(ihabitat.cast(v3))
 			return v3
-		elif _pc == 10252:
-			v7 = list.from_set(imapentity.system_habitats())
-			_pc = 10395
-			continue
-		elif _pc == 10292:
-			debug.print_string("iMissionGenerator: character Location name is")
-			debug.print_string(object.string_property(v0, string.join(v1, "_location_name")))
-			debug.print_string("\n")
-			_pc = 10395
-			continue
-		elif _pc == 10395:
-			_pc = 10503
-			continue
-		elif _pc == 10400:
-			debug.print_string("iMissionGenerator: Finding named location: ")
-			debug.print_string(object.string_property(v0, string.join(v1, "_location_name")))
-			debug.print_string("\n")
-			_pc = 10503
-			continue
-		elif _pc == 10503:
-			v2 = isim.find_by_name_in_system(object.string_property(v0, string.join(v1, "_location_name")), v6)
-			if not _pog_is_null(v2):
-				_pc = 10585
-				continue
-			else:
-				_pc = 10710
-				continue
-		elif _pc == 10585:
-			object.add_handle_property(v0, string.join(v1, "_location_handle"), v2)
-			await irangecheck.add_traffic_exception(ihabitat.cast(v2))
-			isim.set_sensor_visibility(isim.cast(v2), 1)
-			return v2
-		elif _pc == 10710:
-			if _pog_is_null(v2):
-				_pc = 10723
-				continue
-			else:
-				_pc = 10969
-				continue
-		elif _pc == 10723:
-			_pc = 10772
-			continue
-		elif _pc == 10728:
+	v7 = list.from_set(imapentity.system_habitats())
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: character Location name is")
+		debug.print_string(object.string_property(v0, string.join(v1, "_location_name")))
+		debug.print_string("\n")
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: Finding named location: ")
+		debug.print_string(object.string_property(v0, string.join(v1, "_location_name")))
+		debug.print_string("\n")
+	v2 = isim.find_by_name_in_system(object.string_property(v0, string.join(v1, "_location_name")), v6)
+	if not _pog_is_null(v2):
+		object.add_handle_property(v0, string.join(v1, "_location_handle"), v2)
+		await irangecheck.add_traffic_exception(ihabitat.cast(v2))
+		isim.set_sensor_visibility(isim.cast(v2), 1)
+		return v2
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator: Finding location of type")
 			debug.print_string("\n")
-			_pc = 10772
-			continue
-		elif _pc == 10772:
-			v7 = list.from_set(ihabitat.filter_on_type(imapentity.system_habitats(), ihabitat.cast_int_to_habitat_type(object.int_property(v0, string.join(v1, "_location_type")))))
-			v5 = list.item_count(v7)
-			if v5 > 0:
-				_pc = 10913
-				continue
-			else:
-				_pc = 10969
-				continue
-		elif _pc == 10913:
+		v7 = list.from_set(ihabitat.filter_on_type(imapentity.system_habitats(), ihabitat.cast_int_to_habitat_type(object.int_property(v0, string.join(v1, "_location_type")))))
+		v5 = list.item_count(v7)
+		if v5 > 0:
 			v2 = isim.cast(list.get_nth(v7, math.random_int(1, v5)))
-			_pc = 10969
-			continue
-		elif _pc == 10969:
-			if not _pog_eq(v6, isim.active_world()):
-				_pc = 10996
-				continue
-			else:
-				_pc = 11173
-				continue
-		elif _pc == 10996:
-			_pc = 11114
-			continue
-		elif _pc == 11001:
-			debug.print_string("iMissionGenerator:GetcharacterLocation - in wrong system. in, wanted: ")
-			debug.print_string(isim.active_world())
-			debug.print_string(",")
-			debug.print_string(v6)
-			debug.print_string("\n")
-			_pc = 11114
-			continue
-		elif _pc == 11114:
+	if not _pog_eq(v6, isim.active_world()):
+		while true:
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator:GetcharacterLocation - in wrong system. in, wanted: ")
+				debug.print_string(isim.active_world())
+				debug.print_string(",")
+				debug.print_string(v6)
+				debug.print_string("\n")
 			await _pog_wait(7.5)
-			if _pog_eq(v6, isim.active_world()):
-				_pc = 11173
-				continue
-			else:
-				_pc = 10996
-				continue
-		elif _pc == 11173:
-			if _pog_is_null(v2):
-				_pc = 11186
-				continue
-			else:
-				_pc = 11503
-				continue
-		elif _pc == 11186:
-			_pc = 11212
-			continue
-		elif _pc == 11191:
+			if not (not _pog_eq(v6, isim.active_world())):
+				break
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator: character location still not found, picking randomly from within system.\n")
-			_pc = 11212
-			continue
-		elif _pc == 11212:
-			v7 = list.from_set(imapentity.system_habitats())
-			v5 = list.item_count(v7)
-			_pc = 11339
-			continue
-		elif _pc == 11276:
+		v7 = list.from_set(imapentity.system_habitats())
+		v5 = list.item_count(v7)
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator: number of locations in system ")
 			debug.print_int(v5)
 			debug.print_string("\n")
-			_pc = 11339
-			continue
-		elif _pc == 11339:
-			if v5 > 0:
-				_pc = 11351
-				continue
-			else:
-				_pc = 11503
-				continue
-		elif _pc == 11351:
+		if v5 > 0:
 			v2 = isim.cast(list.get_nth(v7, math.random_int(1, v5)))
-			_pc = 11503
-			continue
-		elif _pc == 11412:
-			debug.print_string("iMissionGenerator: character location chosen as ")
-			debug.print_string(imapentity.pog_name(imapentity.cast(v2)))
-			debug.print_string("\n")
-			_pc = 11503
-			continue
-		elif _pc == 11503:
-			v3 = v2
-			object.add_handle_property(v0, string.join(v1, "_location_handle"), v3)
-			if _pog_is_null(object.property_exists(v0, string.join(v1, "_location_name"))) or _pog_eq(object.string_property(v0, string.join(v1, "_location_name")), ""):
-				_pc = 11667
-				continue
-			else:
-				_pc = 11744
-				continue
-		elif _pc == 11667:
-			object.add_string_property(v0, string.join(v1, "_location_name"), imapentity.pog_name(imapentity.cast(v2)))
-			_pc = 11744
-			continue
-		elif _pc == 11744:
-			_pc = 11770
-			continue
-		elif _pc == 11749:
-			debug.print_string("iMissionGenerator: Adding location to traffic exception.\n")
-			_pc = 11770
-			continue
-		elif _pc == 11770:
-			await irangecheck.add_traffic_exception(ihabitat.cast(v2))
-			isim.set_sensor_visibility(isim.cast(v3), 1)
-			return v3
-		elif _pc == 11845:
-			return
-		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: character location chosen as ")
+				debug.print_string(imapentity.pog_name(imapentity.cast(v2)))
+				debug.print_string("\n")
+	v3 = v2
+	object.add_handle_property(v0, string.join(v1, "_location_handle"), v3)
+	if _pog_is_null(object.property_exists(v0, string.join(v1, "_location_name"))) or _pog_eq(object.string_property(v0, string.join(v1, "_location_name")), ""):
+		object.add_string_property(v0, string.join(v1, "_location_name"), imapentity.pog_name(imapentity.cast(v2)))
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: Adding location to traffic exception.\n")
+	await irangecheck.add_traffic_exception(ihabitat.cast(v2))
+	isim.set_sensor_visibility(isim.cast(v3), 1)
+	return v3
 	return 0
 
 func increase_string_number(v0, v1) -> Variant:
@@ -1143,79 +1015,78 @@ func local_18659(v0) -> Variant:
 		debug.print_string("iMissionGenerator.patronh: starting patron task\n")
 		debug.print_string("\n")
 	if object.int_property(v0, "patron_state") != 2:
-		pass
-	else:
-		if object.property_exists(v0, "patron_ship_type"):
-			v5 = iship.cast(group.nth_sim(v1, 0))
-			v14 = object.string_property(v5, "name")
-			v9 = 0
-			while v9 < object.int_property(v0, "number_of_cargo_types"):
-				if object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)) > 0:
-					v11 = 0
-					while v11 < object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)):
-						v15 = await iutilities.get_cargo_name_from_i_n_i(object.string_property(v0, await local_29122("required_cargo_type", v9)))
-						v8 = iship.create("ini:/sims/ships/utility/cargo_pod", string.join("Pod of ", v15))
-						object.add_string_property(v8, "mission_cargo", object.string_property(v0, await local_29122("required_cargo_type", v9)))
-						object.add_int_property(v8, "acquired", 1)
-						iship.dock(v8, v5)
-						v11 = v11 + 1
-				v9 = v9 + 1
-		if not (object.property_exists(v0, "patron_x_pos")):
-			object.add_float_property(v0, "patron_x_pos", math.random(800.0, 3000.0))
-			object.add_float_property(v0, "patron_y_pos", math.random(1000.0, 2000.0))
-			object.add_float_property(v0, "patron_z_pos", math.random(400.0, 1000.0))
-		sim.place_relative_to(v5, v6, object.float_property(v0, "patron_x_pos"), object.float_property(v0, "patron_y_pos"), object.float_property(v0, "patron_z_pos"))
-		await iformation.claw(v1, 30.0, 1)
-		while true:
-			await _pog_wait(10)
-			if not _pog_eq(sim.group(v5), v1) and object.int_property(v0, "patron_destroyed") != 1:
-				if PogRuntime.TRACE:
-					debug.print_string("iMissionGenerator: Noted Patron Destroyed.... Setting flag")
-				object.set_int_property(v0, "patron_destroyed", 1)
-				break
-			if sim.distance_between(v7, v5) <= 250.0:
-				v2 = await local_17063(v5, 1600.0)
-			else:
-				v2 = v3
-			if sim.distance_between(v7, v5) <= 250.0 and list.is_empty(v2):
-				pass
-			else:
-				v9 = 0
-				while v9 < list.item_count(v2):
-					v8 = iship.cast(list.get_nth(v2, v9))
-					v10 = await local_17425(v0, v8, v5)
-					if v10 != -1:
-						while true:
-							await _pog_wait(7.0)
-							if not (not (iai.is_order_complete(v8))):
-								break
-						object.set_int_property(v0, await local_29122("acquired_cargo_quantity", v10), object.int_property(v0, await local_29122("acquired_cargo_quantity", v10)) + 1)
-						if not (await local_18318(v0)):
-							if _pog_eq(object.string_property(v0, "success_payment_method"), "Unit"):
-								iinventory.add(object.int_property(v0, "success_payment_type"), object.int_property(v0, "success_payment_quantity"))
-							icomms.shout(0, v14, inifile.string(v16, "Success", "intrim_comm_reference", "default"))
-							await _pog_wait(10.0)
-					else:
-						icomms.shout(0, v14, "Thats not what I asked for!")
-					v9 = v9 + 1
-				if _pog_eq(object.string_property(v0, "success_payment_method"), "Unit"):
-					iinventory.add(object.int_property(v0, "success_payment_type"), object.int_property(v0, "success_payment_quantity"))
-				await _pog_wait(20.0)
-				await local_18659(v1)
-			if await iutilities.player_in_range(v6):
-				continue
-			break
-		if PogRuntime.TRACE:
-			debug.print_string("iMissionGenerator.PatronHandler: Player left the patron, ending task\n")
-			debug.print_string("\n")
-		v13 = group.sim_count(v1)
+		return
+	if object.property_exists(v0, "patron_ship_type"):
+		v5 = iship.cast(group.nth_sim(v1, 0))
+		v14 = object.string_property(v5, "name")
 		v9 = 0
-		while v9 < v13:
-			v4 = list.from_set(sim.children(group.nth_sim(v1, v9)))
-			if not _pog_is_null(list.item_count(v4)):
-				await iutilities.kill_list_of_sims(v4)
+		while v9 < object.int_property(v0, "number_of_cargo_types"):
+			if object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)) > 0:
+				v11 = 0
+				while v11 < object.int_property(v0, await local_29122("acquired_cargo_quantity", v9)):
+					v15 = await iutilities.get_cargo_name_from_i_n_i(object.string_property(v0, await local_29122("required_cargo_type", v9)))
+					v8 = iship.create("ini:/sims/ships/utility/cargo_pod", string.join("Pod of ", v15))
+					object.add_string_property(v8, "mission_cargo", object.string_property(v0, await local_29122("required_cargo_type", v9)))
+					object.add_int_property(v8, "acquired", 1)
+					iship.dock(v8, v5)
+					v11 = v11 + 1
 			v9 = v9 + 1
-		group.destroy(v1, 1)
+	if not (object.property_exists(v0, "patron_x_pos")):
+		object.add_float_property(v0, "patron_x_pos", math.random(800.0, 3000.0))
+		object.add_float_property(v0, "patron_y_pos", math.random(1000.0, 2000.0))
+		object.add_float_property(v0, "patron_z_pos", math.random(400.0, 1000.0))
+	sim.place_relative_to(v5, v6, object.float_property(v0, "patron_x_pos"), object.float_property(v0, "patron_y_pos"), object.float_property(v0, "patron_z_pos"))
+	await iformation.claw(v1, 30.0, 1)
+	while true:
+		await _pog_wait(10)
+		if not _pog_eq(sim.group(v5), v1) and object.int_property(v0, "patron_destroyed") != 1:
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: Noted Patron Destroyed.... Setting flag")
+			object.set_int_property(v0, "patron_destroyed", 1)
+			break
+		if sim.distance_between(v7, v5) <= 250.0:
+			v2 = await local_17063(v5, 1600.0)
+		else:
+			v2 = v3
+		if sim.distance_between(v7, v5) <= 250.0 and list.is_empty(v2):
+			pass
+		else:
+			v9 = 0
+			while v9 < list.item_count(v2):
+				v8 = iship.cast(list.get_nth(v2, v9))
+				v10 = await local_17425(v0, v8, v5)
+				if v10 != -1:
+					while true:
+						await _pog_wait(7.0)
+						if not (not (iai.is_order_complete(v8))):
+							break
+					object.set_int_property(v0, await local_29122("acquired_cargo_quantity", v10), object.int_property(v0, await local_29122("acquired_cargo_quantity", v10)) + 1)
+					if not (await local_18318(v0)):
+						if _pog_eq(object.string_property(v0, "success_payment_method"), "Unit"):
+							iinventory.add(object.int_property(v0, "success_payment_type"), object.int_property(v0, "success_payment_quantity"))
+						icomms.shout(0, v14, inifile.string(v16, "Success", "intrim_comm_reference", "default"))
+						await _pog_wait(10.0)
+				else:
+					icomms.shout(0, v14, "Thats not what I asked for!")
+				v9 = v9 + 1
+			if _pog_eq(object.string_property(v0, "success_payment_method"), "Unit"):
+				iinventory.add(object.int_property(v0, "success_payment_type"), object.int_property(v0, "success_payment_quantity"))
+			await _pog_wait(20.0)
+			await local_18659(v1)
+		if await iutilities.player_in_range(v6):
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator.PatronHandler: Player left the patron, ending task\n")
+		debug.print_string("\n")
+	v13 = group.sim_count(v1)
+	v9 = 0
+	while v9 < v13:
+		v4 = list.from_set(sim.children(group.nth_sim(v1, v9)))
+		if not _pog_is_null(list.item_count(v4)):
+			await iutilities.kill_list_of_sims(v4)
+		v9 = v9 + 1
+	group.destroy(v1, 1)
 	return
 	return 0
 

@@ -123,9 +123,9 @@ func local_288() -> Variant:
 		await _pog_wait(0.5)
 	if await iutilities.skip_mission(" ( Hoffers Rescue )"):
 		global.set_bool("g_act3_rescue_hoffer_complete", 1)
-	else:
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
+		return
+	v0 = _pog_spawn(mission_handler.bind())
+	_pog_detach(v0)
 	return
 	v7 = group.group_count(v1)
 	v8 = 0

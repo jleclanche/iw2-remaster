@@ -106,8 +106,8 @@ func local_302() -> Variant:
 	if not (await iutilities.skip_mission(await local_0())):
 		await imissiontracker.add_mission(_pog_current(), 3, 1)
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		global.set_bool(await local_14(), 1)
+		return
+	global.set_bool(await local_14(), 1)
 	return
 	return 0
 
@@ -131,9 +131,9 @@ func local_447() -> Variant:
 	v0 = _pog_spawn(mission_handler.bind())
 	if _pog_is_null(v1):
 		global.set_bool(await local_14(), 1)
-	else:
-		state.create(v0, v1 - 2)
-		_pog_detach(v0)
+		return
+	state.create(v0, v1 - 2)
+	_pog_detach(v0)
 	return
 	return 0
 
@@ -183,11 +183,11 @@ func local_1463(v0, v1) -> Variant:
 		while v3 < v2:
 			iship.lock_down_weapons(iship.cast(group.nth_sim(v0, v3)))
 			v3 = v3 + 1
-	else:
-		v3 = 0
-		while v3 < v2:
-			iship.weapon_targets_from_contact_list(iship.cast(group.nth_sim(v0, v3)))
-			v3 = v3 + 1
+		return 0
+	v3 = 0
+	while v3 < v2:
+		iship.weapon_targets_from_contact_list(iship.cast(group.nth_sim(v0, v3)))
+		v3 = v3 + 1
 	return 0
 	return 0
 

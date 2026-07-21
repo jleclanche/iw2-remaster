@@ -177,8 +177,8 @@ func on_multiplay_score_screen_start_button() -> Variant:
 		gui.pop_screen()
 		gui.push_screen("icPDAOverlayManager")
 		gui.overlay_screen("icNetworkScreen")
-	else:
-		gui.remove_overlays_after("icSpaceFlightScreenOverlay")
+		return 0
+	gui.remove_overlays_after("icSpaceFlightScreenOverlay")
 	return 0
 	return 0
 
@@ -187,8 +187,8 @@ func on_multiplay_score_screen_quit_button() -> Variant:
 		imultiplay.client_set_requested_to_cycle(0)
 		gui.pop_screen()
 		gui.pop_screen()
-	else:
-		gui.remove_overlays_after("icSpaceFlightScreenOverlay")
+		return 0
+	gui.remove_overlays_after("icSpaceFlightScreenOverlay")
 	return 0
 	return 0
 

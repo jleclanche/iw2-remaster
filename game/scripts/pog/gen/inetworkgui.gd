@@ -165,30 +165,29 @@ func add_server_entry_call_back() -> Variant:
 	v20 = global.string("type_font")
 	v21 = string.to_int(v3)
 	if not _pog_eq(v21, imultiplay.protocol_version()) and not (v5):
-		pass
-	else:
-		if v5:
-			v0 = string.join(v0, " V")
-			v0 = string.join(v0, string.from_int(v21))
-		v6 = gui.cast(global.handle("mp_network_session_list_box"))
-		v7 = gui.create_window(0, 0, gui.window_canvas_width(v6), v18, 0)
-		v19 = gui.window_canvas_width(v6) / 6
-		v9 = 0 + v11
-		v10 = v19 * 4 - v11
-		v12 = v19 * 4 + v14
-		v13 = v19 - v14
-		v15 = v19 * 4 + v19 + v17
-		v16 = v19 - v17
-		v8 = await igui.create_and_initialise_list_box_entry_component_window(v9, v10, v18, v7, v20, v0)
-		if v4:
-			gui.set_window_state_colours(v8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-		v8 = await igui.create_and_initialise_list_box_entry_component_window(v12, v13, v18, v7, v20, v1)
-		if v4:
-			gui.set_window_state_colours(v8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-		v8 = await igui.create_and_initialise_list_box_entry_component_window(v15, v16, v18, v7, v20, v2)
-		if v4:
-			gui.set_window_state_colours(v8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-		gui.add_list_box_entry(v6, v7)
+		return 0
+	if v5:
+		v0 = string.join(v0, " V")
+		v0 = string.join(v0, string.from_int(v21))
+	v6 = gui.cast(global.handle("mp_network_session_list_box"))
+	v7 = gui.create_window(0, 0, gui.window_canvas_width(v6), v18, 0)
+	v19 = gui.window_canvas_width(v6) / 6
+	v9 = 0 + v11
+	v10 = v19 * 4 - v11
+	v12 = v19 * 4 + v14
+	v13 = v19 - v14
+	v15 = v19 * 4 + v19 + v17
+	v16 = v19 - v17
+	v8 = await igui.create_and_initialise_list_box_entry_component_window(v9, v10, v18, v7, v20, v0)
+	if v4:
+		gui.set_window_state_colours(v8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+	v8 = await igui.create_and_initialise_list_box_entry_component_window(v12, v13, v18, v7, v20, v1)
+	if v4:
+		gui.set_window_state_colours(v8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+	v8 = await igui.create_and_initialise_list_box_entry_component_window(v15, v16, v18, v7, v20, v2)
+	if v4:
+		gui.set_window_state_colours(v8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+	gui.add_list_box_entry(v6, v7)
 	return 0
 	return 0
 
@@ -975,8 +974,8 @@ func local_16256(v0) -> Variant:
 	v1 = gui.checkbox_value(v0)
 	if _pog_is_null(v1):
 		gui.select_window(v0)
-	else:
-		gui.deselect_window(v0)
+		return 0
+	gui.deselect_window(v0)
 	return 0
 	return 0
 
@@ -1288,140 +1287,62 @@ func network_screen() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 20634
-	while true:
-		if _pc == 20634:
-			v6 = []
-			v9 = ""
-			v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
-			await igui.set_g_u_i_globals()
-			gui.set_default_font(global.string("GUI_title_font"))
-			if not (global.exists("Network_Internet_connect")):
-				_pc = 20762
-				continue
-			else:
-				_pc = 20786
-				continue
-		elif _pc == 20762:
-			global.create_bool("Network_Internet_connect", 2, 0)
-			_pc = 20786
-			continue
-		elif _pc == 20786:
-			if imultiplay.network_is_lobby_session() and imultiplay.client_rejected_count() < 1:
-				_pc = 20820
-				continue
-			else:
-				_pc = 20853
-				continue
-		elif _pc == 20820:
-			igame.join_network_game_from_lobby()
-			await local_583()
-			_pc = 21946
-			continue
-		elif _pc == 20853:
-			if not _pog_eq(igame.session_name(), "") and imultiplay.client_rejected_count() < 1:
-				_pc = 20897
-				continue
-			else:
-				_pc = 21094
-				continue
-		elif _pc == 20897:
-			imultiplay.client_set_last_address(igame.server_address())
-			imultiplay.client_set_last_session(igame.session_name())
-			await local_0()
-			v10 = imultiplay.server_session_index_from_name(igame.server_address(), igame.session_name())
-			if v10 != -1:
-				_pc = 21030
-				continue
-			else:
-				_pc = 21073
-				continue
-		elif _pc == 21030:
+	v6 = []
+	v9 = ""
+	v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
+	await igui.set_g_u_i_globals()
+	gui.set_default_font(global.string("GUI_title_font"))
+	if not (global.exists("Network_Internet_connect")):
+		global.create_bool("Network_Internet_connect", 2, 0)
+	if imultiplay.network_is_lobby_session() and imultiplay.client_rejected_count() < 1:
+		igame.join_network_game_from_lobby()
+		await local_583()
+		return 0
+	if not _pog_eq(igame.session_name(), "") and imultiplay.client_rejected_count() < 1:
+		imultiplay.client_set_last_address(igame.server_address())
+		imultiplay.client_set_last_session(igame.session_name())
+		await local_0()
+		v10 = imultiplay.server_session_index_from_name(igame.server_address(), igame.session_name())
+		if v10 != -1:
 			igame.join_network_game(v10)
 			await local_583()
-			_pc = 21946
-			continue
-		elif _pc == 21068:
-			_pc = 21094
-			continue
-		elif _pc == 21073:
-			igame.set_session_name("")
-			_pc = 21094
-			continue
-		elif _pc == 21094:
-			if imultiplay.client_requested_to_cycle():
-				_pc = 21112
-				continue
-			else:
-				_pc = 21239
-				continue
-		elif _pc == 21112:
-			imultiplay.network_reset()
-			await local_0()
-			v10 = imultiplay.server_session_index_from_name(imultiplay.client_last_address(), imultiplay.client_last_session())
-			if v10 != -1:
-				_pc = 21201
-				continue
-			else:
-				_pc = 21239
-				continue
-		elif _pc == 21201:
-			igame.join_network_game(v10)
-			await local_583()
-			_pc = 21946
-			continue
-		elif _pc == 21239:
-			v0 = await igui.create_shady_bar()
-			await igui.add_back_buttons(v0, "iNetworkGUI.MainOnBackButton", "iNetworkGUI.MainOnBackToMainMenuButton")
-			await igui.add_title(v0, text.field("pda_multiplayer", 0))
-			v9 = text.field("mp_lan_game", 0)
-			v9 = string.upper_case(v9)
-			v1 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGUI.OnNetworkLANScreen", v9, v6)
-			if v11:
-				_pc = 21432
-				continue
-			else:
-				_pc = 21522
-				continue
-		elif _pc == 21432:
-			v9 = text.field("mp_internet_game", 0)
-			v9 = string.upper_case(v9)
-			v2 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGUI.OnNetworkInternetScreen", v9, v6)
-			_pc = 21522
-			continue
-		elif _pc == 21522:
-			v9 = text.field("mp_options_title", 0)
-			v9 = string.upper_case(v9)
-			v3 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGui.OnPlayerOptions", v9, v6)
-			if imultiplay.is_server_app_spawned():
-				_pc = 21630
-				continue
-			else:
-				_pc = 21663
-				continue
-		elif _pc == 21630:
-			v9 = text.field("mp_options_hosting_session", 0)
-			_pc = 21691
-			continue
-		elif _pc == 21663:
-			v9 = text.field("mp_options_host_session", 0)
-			_pc = 21691
-			continue
-		elif _pc == 21691:
-			v9 = string.upper_case(v9)
-			v4 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGui.OnHostSession", v9, v6)
-			v7 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
-			v8 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
-			v5 = await igui.create_window_list_in_fancy_border(v0, v6, v7, v8)
-			gui.set_first_control_focus(v1)
-			await igui.set_cyclic_control_focus_path(v6)
-			gui.set_control_focus_cancel_function("iNetworkGUI.MainOnBackButton")
-			_pc = 21946
-			continue
-		elif _pc == 21946:
 			return 0
 		else:
+			igame.set_session_name("")
+	if imultiplay.client_requested_to_cycle():
+		imultiplay.network_reset()
+		await local_0()
+		v10 = imultiplay.server_session_index_from_name(imultiplay.client_last_address(), imultiplay.client_last_session())
+		if v10 != -1:
+			igame.join_network_game(v10)
+			await local_583()
 			return 0
+	v0 = await igui.create_shady_bar()
+	await igui.add_back_buttons(v0, "iNetworkGUI.MainOnBackButton", "iNetworkGUI.MainOnBackToMainMenuButton")
+	await igui.add_title(v0, text.field("pda_multiplayer", 0))
+	v9 = text.field("mp_lan_game", 0)
+	v9 = string.upper_case(v9)
+	v1 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGUI.OnNetworkLANScreen", v9, v6)
+	if v11:
+		v9 = text.field("mp_internet_game", 0)
+		v9 = string.upper_case(v9)
+		v2 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGUI.OnNetworkInternetScreen", v9, v6)
+	v9 = text.field("mp_options_title", 0)
+	v9 = string.upper_case(v9)
+	v3 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGui.OnPlayerOptions", v9, v6)
+	if imultiplay.is_server_app_spawned():
+		v9 = text.field("mp_options_hosting_session", 0)
+	else:
+		v9 = text.field("mp_options_host_session", 0)
+	v9 = string.upper_case(v9)
+	v4 = await igui.create_and_initialise_parentless_inverse_button("iNetworkGui.OnHostSession", v9, v6)
+	v7 = global.pog_int("GUI_alignment_offset") + global.pog_int("GUI_fancyborder_alignmentoffset")
+	v8 = global.pog_int("GUI_title_yoffset") + global.pog_int("GUI_fancybutton_height") + 20
+	v5 = await igui.create_window_list_in_fancy_border(v0, v6, v7, v8)
+	gui.set_first_control_focus(v1)
+	await igui.set_cyclic_control_focus_path(v6)
+	gui.set_control_focus_cancel_function("iNetworkGUI.MainOnBackButton")
+	return 0
 	return 0
 
 func on_c_d_key() -> Variant:
@@ -1513,11 +1434,11 @@ func c_d_key_screen__on_edit_box_finish() -> Variant:
 		gui.queue_sound(2)
 		await c_d_key_screen__on_back_button()
 		await on_network_internet_screen()
-	else:
-		v3 = text.field("mp_cd_key_invalid", 0)
-		v3 = string.upper_case(v3)
-		gui.set_window_title(v0, v3)
-		gui.queue_sound(3)
+		return 0
+	v3 = text.field("mp_cd_key_invalid", 0)
+	v3 = string.upper_case(v3)
+	gui.set_window_title(v0, v3)
+	gui.queue_sound(3)
 	return 0
 	return 0
 

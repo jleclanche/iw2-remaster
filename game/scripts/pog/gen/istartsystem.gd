@@ -1021,60 +1021,61 @@ func jumpgate_shield_on(v0, v1) -> Variant:
 	if _pog_is_null(v0) or sim.is_dead(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is dead / null.\n")
-	else:
-		if isim.type(v0) != 8192:
+		return 0
+	if isim.type(v0) != 8192:
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station.\n")
+		return 0
+	if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
+		return 0
+	if object.property_exists(v0, "deactivated"):
+		if v1:
 			if PogRuntime.TRACE:
-				debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station.\n")
+				debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Forcing active.\n")
+			object.remove_property(v0, "deactivated")
 		else:
-			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
-				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
-			else:
-				if object.property_exists(v0, "deactivated"):
-					if v1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Forcing active.\n")
-						object.remove_property(v0, "deactivated")
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Not activating.\n")
-				else:
-					if not (object.property_exists(v0, "node_group")):
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.JumpgateShieldOn - Node group property not found. Adding LDA nodes to jumpgate\n")
-						v2 = await local_15348(v0)
-						object.add_handle_property(v0, "node_group", v2)
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.JumpgateShieldOn - Node group property is null or nodes are null. Adding LDA nodes to jumpgate\n")
-						v2 = group.cast(object.handle_property(v0, "node_group"))
-						if _pog_is_null(v2) or _pog_is_null(group.sim_count(v2)):
-							group.destroy(v2, 1)
-							v2 = await local_15348(v0)
-							object.set_handle_property(v0, "node_group", v2)
-						else:
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.JumpgateShieldOn - Activating nodes\n")
-							v5 = 0
-							while v5 < group.sim_count(v2):
-								sim.avatar_add_channel(group.nth_sim(v2, v5), "lda_on", 1.0)
-								v5 = v5 + 1
-					if object.property_exists(v0, "shield_handle"):
-						v4 = isim.cast(object.handle_property(v0, "shield_handle"))
-						if _pog_is_null(v4):
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property found, but handle is null, creating.\n")
-							v4 = await local_15619(v0)
-							object.set_handle_property(v0, "shield_handle", v4)
-							return 0
-						else:
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.JumpgateShieldOn - Shield already exists\n")
-							return 0
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property not found. Creating shield.\n")
-						v4 = await local_15619(v0)
-						object.add_handle_property(v0, "shield_handle", v4)
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.JumpgateShieldOn - Jumpgate is deactivated by a script. Not activating.\n")
+			return 0
+	if not (object.property_exists(v0, "node_group")):
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.JumpgateShieldOn - Node group property not found. Adding LDA nodes to jumpgate\n")
+		v2 = await local_15348(v0)
+		object.add_handle_property(v0, "node_group", v2)
+	else:
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.JumpgateShieldOn - Node group property is null or nodes are null. Adding LDA nodes to jumpgate\n")
+		v2 = group.cast(object.handle_property(v0, "node_group"))
+		if _pog_is_null(v2) or _pog_is_null(group.sim_count(v2)):
+			group.destroy(v2, 1)
+			v2 = await local_15348(v0)
+			object.set_handle_property(v0, "node_group", v2)
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.JumpgateShieldOn - Activating nodes\n")
+			v5 = 0
+			while v5 < group.sim_count(v2):
+				sim.avatar_add_channel(group.nth_sim(v2, v5), "lda_on", 1.0)
+				v5 = v5 + 1
+	if object.property_exists(v0, "shield_handle"):
+		v4 = isim.cast(object.handle_property(v0, "shield_handle"))
+		if _pog_is_null(v4):
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property found, but handle is null, creating.\n")
+			v4 = await local_15619(v0)
+			object.set_handle_property(v0, "shield_handle", v4)
+			return 0
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.JumpgateShieldOn - Shield already exists\n")
+			return 0
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.JumpgateShieldOn - Shield handle property not found. Creating shield.\n")
+	v4 = await local_15619(v0)
+	object.add_handle_property(v0, "shield_handle", v4)
 	return 0
 	return 0
 
@@ -1085,40 +1086,40 @@ func jumpgate_shield_off(v0) -> Variant:
 	if _pog_is_null(v0) or sim.is_dead(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is dead / null.\n")
-	else:
-		if isim.type(v0) != 8192:
-			if PogRuntime.TRACE:
-				debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station/ null.\n")
-		else:
-			if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
-				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
-			else:
-				if not (object.property_exists(v0, "node_group")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.deactivate_jumpgate - node group handle property not found, can't deactivate.\n")
-				else:
-					if not (object.property_exists(v0, "shield_handle")):
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.deactivate_jumpgate - shield handle property not found, can't deactivate shield.\n")
-					else:
-						v1 = group.cast(object.handle_property(v0, "node_group"))
-						if _pog_is_null(v1) or _pog_is_null(group.sim_count(v1)):
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Node group is invalid or empty. Can't deactivate\n")
-						else:
-							v2 = isim.cast(object.handle_property(v0, "shield_handle"))
-							if _pog_is_null(v2) or sim.is_dead(v2):
-								if PogRuntime.TRACE:
-									debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Shield is invalid / dead. Can't deactivate\n")
-							else:
-								v3 = 0
-								while v3 < group.sim_count(v1):
-									await _pog_wait(0.25)
-									sim.avatar_remove_channel(group.nth_sim(v1, v3), "lda_on")
-									v3 = v3 + 1
-								sim.destroy(v2)
-								object.add_bool_property(v0, "deactivated", 1)
+		return 0
+	if isim.type(v0) != 8192:
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Jumpgate is not a station/ null.\n")
+		return 0
+	if not _pog_eq(sim.pog_name(v0), "Jump Accelerator") and not _pog_eq(sim.pog_name(v0), "Formhault Jump Accelerator"):
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.JumpgateShieldOn - ERROR: Station is not a jump accelerator.\n")
+		return 0
+	if not (object.property_exists(v0, "node_group")):
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.deactivate_jumpgate - node group handle property not found, can't deactivate.\n")
+		return 0
+	if not (object.property_exists(v0, "shield_handle")):
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.deactivate_jumpgate - shield handle property not found, can't deactivate shield.\n")
+		return 0
+	v1 = group.cast(object.handle_property(v0, "node_group"))
+	if _pog_is_null(v1) or _pog_is_null(group.sim_count(v1)):
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Node group is invalid or empty. Can't deactivate\n")
+		return 0
+	v2 = isim.cast(object.handle_property(v0, "shield_handle"))
+	if _pog_is_null(v2) or sim.is_dead(v2):
+		if PogRuntime.TRACE:
+			debug.print_string("iActTwo.deactivate_jumpgate - ERROR: Shield is invalid / dead. Can't deactivate\n")
+		return 0
+	v3 = 0
+	while v3 < group.sim_count(v1):
+		await _pog_wait(0.25)
+		sim.avatar_remove_channel(group.nth_sim(v1, v3), "lda_on")
+		v3 = v3 + 1
+	sim.destroy(v2)
+	object.add_bool_property(v0, "deactivated", 1)
 	return 0
 	return 0
 

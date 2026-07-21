@@ -145,8 +145,8 @@ func local_767() -> Variant:
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission("Hide and Seek?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -230,191 +230,191 @@ func mission_handler() -> Variant:
 		iemail.send_email("a2_m24_email_sender", "a2_m24_email_subject", "html:/text/act_2/act2_mission24_email_b", 1)
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2_Mission24.MissionHandler: Email Sent - EXITING\n")
-	else:
-		if not (iemail.read(v23)):
+		return
+	if not (iemail.read(v23)):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2_Mission24.MissionHandler: Email not read yet - EXITING\n")
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission24. Email read - starting mission \n")
+	await ibacktobase.inhibit()
+	v7 = isim.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
+	v3 = isim.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"))
+	v1 = isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera"))
+	v2 = isim.cast(imapentity.find_by_name_in_system("Marauder Interstellar L-Point Defense Station", "map:/geog/badlands/dante"))
+	v4 = isim.cast(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"))
+	v5 = isim.cast(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"))
+	v6 = isim.cast(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"))
+	v7 = isim.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
+	if PogRuntime.TRACE:
+		if not (v3):
+			debug.print_string("iAct2Mission24.mission_handler: Cannot find Dante L-point - EXITING\n")
+			return
+		if not (v7):
+			debug.print_string("iAct2Mission24.mission_handler: Cannot find secret L-point - EXITING\n")
+			return
+		if not (v1):
+			debug.print_string("iAct2Mission24.mission_handler: Cannot find Player base - EXITING\n")
+			return
+		if not (v2):
+			debug.print_string("iAct2Mission24.mission_handler: Can't find Dante Marauder Defense station - EXITING\n")
+			return
+		if not (v4):
+			debug.print_string("iAct2Mission24.mission_handler: Can't find Marauder HQ - EXITING\n")
+			return
+		if not (v5):
+			debug.print_string("iAct2Mission24.mission_handler: Marauder Shipyard is invalid - EXITING\n")
+			return
+		if not (v6):
+			debug.print_string("iAct2Mission24.mission_handler: Marauder Cargo yard is invalid- EXITING\n")
+			return
+	if isim.type(v0) != 131072:
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2Mission24. Player not in command section - EXITING.\n")
+		return
+	if PogRuntime.TRACE:
+		if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission24.MissionHandler: Email not read yet - EXITING\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24. Email read - starting mission \n")
-			await ibacktobase.inhibit()
-			v7 = isim.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
-			v3 = isim.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"))
-			v1 = isim.cast(imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera"))
-			v2 = isim.cast(imapentity.find_by_name_in_system("Marauder Interstellar L-Point Defense Station", "map:/geog/badlands/dante"))
-			v4 = isim.cast(imapentity.find_by_name_in_system("Marauder Central HQ", "map:/geog/badlands/dante"))
-			v5 = isim.cast(imapentity.find_by_name_in_system("Marauder Shipyard", "map:/geog/badlands/dante"))
-			v6 = isim.cast(imapentity.find_by_name_in_system("Marauder Supply Depot", "map:/geog/badlands/dante"))
-			v7 = isim.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
-			if PogRuntime.TRACE:
-				if not (v3):
-					debug.print_string("iAct2Mission24.mission_handler: Cannot find Dante L-point - EXITING\n")
-					return
-				if not (v7):
-					debug.print_string("iAct2Mission24.mission_handler: Cannot find secret L-point - EXITING\n")
-					return
-				if not (v1):
-					debug.print_string("iAct2Mission24.mission_handler: Cannot find Player base - EXITING\n")
-					return
-				if not (v2):
-					debug.print_string("iAct2Mission24.mission_handler: Can't find Dante Marauder Defense station - EXITING\n")
-					return
-				if not (v4):
-					debug.print_string("iAct2Mission24.mission_handler: Can't find Marauder HQ - EXITING\n")
-					return
-				if not (v5):
-					debug.print_string("iAct2Mission24.mission_handler: Marauder Shipyard is invalid - EXITING\n")
-					return
-				if not (v6):
-					debug.print_string("iAct2Mission24.mission_handler: Marauder Cargo yard is invalid- EXITING\n")
-					return
-			if isim.type(v0) != 131072:
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2Mission24. Player not in command section - EXITING.\n")
-			else:
-				if PogRuntime.TRACE:
-					if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
-						if PogRuntime.TRACE:
-							debug.print_string("iAct2Mission24. Player not near player base in Santa Romera, so jumping the ship there.\n")
-						sim.place_near(v0, v1, 10000.0)
-						while true:
-							await _pog_wait(0.10000000149011612)
-							if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera")):
-								break
-				await ijafsscript.disable_jafs()
-				iobjectives.add("a2_m24_objectives_enter_dante_system")
-				object.add_bool_property(v2, "reactive_exception", 1)
-				object.add_bool_property(v4, "reactive_exception", 1)
-				object.add_bool_property(v5, "reactive_exception", 1)
-				object.add_bool_property(v6, "reactive_exception", 1)
-				v13 = await local_16080()
-				ifaction.set_feeling(v15, v14, 2.0)
-				await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"))
-				await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
-				await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Marauder Interstellar L-Point Defense Station", "map:/geog/badlands/dante"))
-				await igangsterincidentgen.set_active(0)
-				await imusic.pause()
-				if await icutsceneutilities.handle_abort(_pog_spawn(local_22677.bind(v0, v1, v13, v3))):
-					igame.enable_blackout(1)
-					await imusic.play("sound:/audio/music/a4_ambient", 1, 1)
-				sim.set_collision(v0, 1)
-				iship.set_free_without_pilot(v0, 0)
-				if not _pog_eq(isim.active_world(), "map:/geog/badlands/dante"):
-					sim.place_relative_to(v0, v3, 1000.0, 1000.0, 1000.0)
-					while true:
-						await _pog_wait(0.10000000149011612)
-						if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/dante")):
-							break
-				await irangecheck.add_traffic_exception(imapentity.find_by_name("Faust-Alpha L-Point"))
-				await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Central HQ"))
-				await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Shipyard"))
-				await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Supply Depot"))
-				await irangecheck.add_traffic_exception(imapentity.find_by_name("Faust-Alpha L-Point"))
-				await irangecheck.add_traffic_exception(imapentity.find_by_name("Dante Interstellar L-Point"))
-				await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Interstellar L-Point Defense Station"))
-				await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Central HQ")))
-				await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Shipyard")))
-				await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Supply Depot")))
-				ilagrangepoint.set_usable(ilagrangepoint.find_by_name("Faust-Alpha L-Point"), 0)
-				ilagrangepoint.set_usable(ilagrangepoint.find_by_name("Dante Interstellar L-Point"), 0)
-				v8 = iship.cast(group.leader(v13))
-				sim.place_relative_to(v8, v3, 0.0, 0.0, 5000.0)
-				sim.set_velocity_local_to_sim(v8, 0.0, 0.0, 0.0)
-				sim.set_angular_velocity_euler(v8, 0.0, 0.0, 0.0)
-				iship.set_free_without_pilot(v8, 0)
-				await ipilotsetup.generic(v8)
-				await iutilities.group_set_cullable(v13, 1)
-				v11 = iship.cast(group.nth_sim(v13, 1))
-				sim.place_relative_to_inside(v11, v8, -500.0, 100.0, 3000.0)
-				sim.set_velocity_local_to_sim(v11, 0.0, 0.0, 0.0)
-				sim.set_angular_velocity_euler(v11, 0.0, 0.0, 0.0)
-				iai.purge_orders(v11)
-				v12 = iship.cast(group.nth_sim(v13, 2))
-				sim.place_relative_to_inside(v12, v8, 500.0, 100.0, 3000.0)
-				sim.set_velocity_local_to_sim(v12, 0.0, 0.0, 0.0)
-				sim.set_angular_velocity_euler(v12, 0.0, 0.0, 0.0)
-				iai.purge_orders(v12)
-				v10 = iship.cast(group.nth_sim(v13, 3))
-				sim.add_child_relative_to(v10, v0, 0.0, 0.0, 0.0)
-				await icutsceneutilities.disable_player_autopilot()
-				iship.set_free_without_pilot(v0, 0)
-				v21 = _pog_spawn(local_896.bind(_pog_current(), v22, v8, v9, v10, v11, v12, v13, v26))
-				_pog_detach(v21)
-				await local_447(v22)
-				idirector.fade_in(1.0, 0.0, 0.0, 0.0)
-				await _pog_wait(1.0)
-				idirector.end()
-				await _pog_wait(2.0)
-				iobjectives.set_state("a2_m24_objectives_enter_dante_system", 1)
-				iobjectives.add("a2_m24_objectives_scout_for_lpoint_near_faust")
-				iobjectives.add("a2_m24_objectives_locate_marauder_bases")
-				iobjectives.add("a2_m24_objectives_transmit_ftl_signal")
-				iobjectives.add("a2_m24_objectices_leave_dante_system")
-				group.remove_sim(v13, v8)
-				await icutsceneutilities.handle_abort(_pog_spawn(local_36067.bind(v0, v13, v11, v8, v4, v10)))
-				igame.enable_blackout(0)
-				stream.stop(0, 0)
-				stream.stop(1, 0)
-				await imusic.pog_resume()
-				await imusic.set_suite(2)
-				await imusic.set_mood(1)
-				sim.destroy(v11)
-				sim.destroy(v12)
-				if _pog_eq(sim.parent(v0), v10):
-					sim.detach_child(v10, v0)
-				sim.set_collision(v0, 1)
-				iship.set_free_without_pilot(v0, 0)
-				sim.place_relative_to(v0, v10, 0.0, 0.0, 1000.0)
-				sim.point_away(v0, v10)
-				sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
-				v17 = _pog_spawn(monitor_hq.bind(v4, v22, v26))
-				v19 = _pog_spawn(monitor_cargo.bind(v6, v22, v26))
-				v18 = _pog_spawn(local_11896.bind(v5, v22, v26))
-				v20 = _pog_spawn(local_14220.bind(v7, v22, v26))
-				_pog_spawn(local_40801.bind(v2, 120.0))
-				v16 = _pog_spawn(monitor_player.bind(v0, 5000.0, v17, v18, v19, v20, v22))
-				await local_447(v22)
-				if PogRuntime.TRACE:
-					pass
-				while true:
-					await _pog_wait(1)
-					if _pog_is_null(await local_22529(v22, "visited_all_bases")):
-						if await local_22529(v22, "visited_hq") == 1 and await local_22529(v22, "visited_cargo") == 1 and await local_22529(v22, "visited_shipyard") == 1:
-							await save(v22, "visited_all_bases", 1)
-							iobjectives.set_state("a2_m24_objectives_locate_marauder_bases", 1)
-					if await local_22529(v22, "sent_signal") != 1:
-						continue
+				debug.print_string("iAct2Mission24. Player not near player base in Santa Romera, so jumping the ship there.\n")
+			sim.place_near(v0, v1, 10000.0)
+			while true:
+				await _pog_wait(0.10000000149011612)
+				if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera")):
 					break
-				iobjectives.set_state("a2_m24_objectives_transmit_ftl_signal", 1)
-				await iconversation.begin()
-				await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_the_jump_point_sensor_is_ramping_up")
-				await iconversation.end()
-				ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante")), 1)
-				ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake")), 1)
-				_pog_halt(v17)
-				_pog_halt(v18)
-				_pog_halt(v19)
-				_pog_halt(v20)
-				_pog_halt(v16)
-				await imusic.pause()
-				await icutsceneutilities.handle_abort(_pog_spawn(starting.bind(v0, v7, v1)))
-				igame.enable_blackout(1)
-				iobjectives.set_state("a2_m24_objectices_leave_dante_system", 1)
-				ifaction.set_feeling(v15, v14, 0.0)
-				await imissiontracker.remove_mission(_pog_current())
-				await iutilities.remove_mission_restart()
-				text.remove("csv:/text/act_2/act2_mission24")
-				text.remove("csv:/text/act_2/act2_mission24_addendum")
-				text.remove("csv:/text/act_2/act2_mission24_addendum")
-				await igangsterincidentgen.set_active(1)
-				await ijafsscript.enable_jafs()
-				await ibacktobase.allow()
-				global.set_bool("g_act2_dante_system_scouted", 1)
-				state.destroy(_pog_current())
-				igame.enable_blackout(1)
-				gui.set_screen("icSPPlayerBaseScreen")
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2Mission24.mission_handler: MISSION COMPLETE\n")
+	await ijafsscript.disable_jafs()
+	iobjectives.add("a2_m24_objectives_enter_dante_system")
+	object.add_bool_property(v2, "reactive_exception", 1)
+	object.add_bool_property(v4, "reactive_exception", 1)
+	object.add_bool_property(v5, "reactive_exception", 1)
+	object.add_bool_property(v6, "reactive_exception", 1)
+	v13 = await local_16080()
+	ifaction.set_feeling(v15, v14, 2.0)
+	await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"))
+	await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
+	await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Marauder Interstellar L-Point Defense Station", "map:/geog/badlands/dante"))
+	await igangsterincidentgen.set_active(0)
+	await imusic.pause()
+	if await icutsceneutilities.handle_abort(_pog_spawn(local_22677.bind(v0, v1, v13, v3))):
+		igame.enable_blackout(1)
+		await imusic.play("sound:/audio/music/a4_ambient", 1, 1)
+	sim.set_collision(v0, 1)
+	iship.set_free_without_pilot(v0, 0)
+	if not _pog_eq(isim.active_world(), "map:/geog/badlands/dante"):
+		sim.place_relative_to(v0, v3, 1000.0, 1000.0, 1000.0)
+		while true:
+			await _pog_wait(0.10000000149011612)
+			if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/dante")):
+				break
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Faust-Alpha L-Point"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Central HQ"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Shipyard"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Supply Depot"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Faust-Alpha L-Point"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Dante Interstellar L-Point"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Interstellar L-Point Defense Station"))
+	await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Central HQ")))
+	await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Shipyard")))
+	await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Supply Depot")))
+	ilagrangepoint.set_usable(ilagrangepoint.find_by_name("Faust-Alpha L-Point"), 0)
+	ilagrangepoint.set_usable(ilagrangepoint.find_by_name("Dante Interstellar L-Point"), 0)
+	v8 = iship.cast(group.leader(v13))
+	sim.place_relative_to(v8, v3, 0.0, 0.0, 5000.0)
+	sim.set_velocity_local_to_sim(v8, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity_euler(v8, 0.0, 0.0, 0.0)
+	iship.set_free_without_pilot(v8, 0)
+	await ipilotsetup.generic(v8)
+	await iutilities.group_set_cullable(v13, 1)
+	v11 = iship.cast(group.nth_sim(v13, 1))
+	sim.place_relative_to_inside(v11, v8, -500.0, 100.0, 3000.0)
+	sim.set_velocity_local_to_sim(v11, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity_euler(v11, 0.0, 0.0, 0.0)
+	iai.purge_orders(v11)
+	v12 = iship.cast(group.nth_sim(v13, 2))
+	sim.place_relative_to_inside(v12, v8, 500.0, 100.0, 3000.0)
+	sim.set_velocity_local_to_sim(v12, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity_euler(v12, 0.0, 0.0, 0.0)
+	iai.purge_orders(v12)
+	v10 = iship.cast(group.nth_sim(v13, 3))
+	sim.add_child_relative_to(v10, v0, 0.0, 0.0, 0.0)
+	await icutsceneutilities.disable_player_autopilot()
+	iship.set_free_without_pilot(v0, 0)
+	v21 = _pog_spawn(local_896.bind(_pog_current(), v22, v8, v9, v10, v11, v12, v13, v26))
+	_pog_detach(v21)
+	await local_447(v22)
+	idirector.fade_in(1.0, 0.0, 0.0, 0.0)
+	await _pog_wait(1.0)
+	idirector.end()
+	await _pog_wait(2.0)
+	iobjectives.set_state("a2_m24_objectives_enter_dante_system", 1)
+	iobjectives.add("a2_m24_objectives_scout_for_lpoint_near_faust")
+	iobjectives.add("a2_m24_objectives_locate_marauder_bases")
+	iobjectives.add("a2_m24_objectives_transmit_ftl_signal")
+	iobjectives.add("a2_m24_objectices_leave_dante_system")
+	group.remove_sim(v13, v8)
+	await icutsceneutilities.handle_abort(_pog_spawn(local_36067.bind(v0, v13, v11, v8, v4, v10)))
+	igame.enable_blackout(0)
+	stream.stop(0, 0)
+	stream.stop(1, 0)
+	await imusic.pog_resume()
+	await imusic.set_suite(2)
+	await imusic.set_mood(1)
+	sim.destroy(v11)
+	sim.destroy(v12)
+	if _pog_eq(sim.parent(v0), v10):
+		sim.detach_child(v10, v0)
+	sim.set_collision(v0, 1)
+	iship.set_free_without_pilot(v0, 0)
+	sim.place_relative_to(v0, v10, 0.0, 0.0, 1000.0)
+	sim.point_away(v0, v10)
+	sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
+	v17 = _pog_spawn(monitor_hq.bind(v4, v22, v26))
+	v19 = _pog_spawn(monitor_cargo.bind(v6, v22, v26))
+	v18 = _pog_spawn(local_11896.bind(v5, v22, v26))
+	v20 = _pog_spawn(local_14220.bind(v7, v22, v26))
+	_pog_spawn(local_40801.bind(v2, 120.0))
+	v16 = _pog_spawn(monitor_player.bind(v0, 5000.0, v17, v18, v19, v20, v22))
+	await local_447(v22)
+	if PogRuntime.TRACE:
+		pass
+	while true:
+		await _pog_wait(1)
+		if _pog_is_null(await local_22529(v22, "visited_all_bases")):
+			if await local_22529(v22, "visited_hq") == 1 and await local_22529(v22, "visited_cargo") == 1 and await local_22529(v22, "visited_shipyard") == 1:
+				await save(v22, "visited_all_bases", 1)
+				iobjectives.set_state("a2_m24_objectives_locate_marauder_bases", 1)
+		if await local_22529(v22, "sent_signal") != 1:
+			continue
+		break
+	iobjectives.set_state("a2_m24_objectives_transmit_ftl_signal", 1)
+	await iconversation.begin()
+	await iconversation.say(0, "name_smith", "a2_m24_dialogue_smith_the_jump_point_sensor_is_ramping_up")
+	await iconversation.end()
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante")), 1)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake")), 1)
+	_pog_halt(v17)
+	_pog_halt(v18)
+	_pog_halt(v19)
+	_pog_halt(v20)
+	_pog_halt(v16)
+	await imusic.pause()
+	await icutsceneutilities.handle_abort(_pog_spawn(starting.bind(v0, v7, v1)))
+	igame.enable_blackout(1)
+	iobjectives.set_state("a2_m24_objectices_leave_dante_system", 1)
+	ifaction.set_feeling(v15, v14, 0.0)
+	await imissiontracker.remove_mission(_pog_current())
+	await iutilities.remove_mission_restart()
+	text.remove("csv:/text/act_2/act2_mission24")
+	text.remove("csv:/text/act_2/act2_mission24_addendum")
+	text.remove("csv:/text/act_2/act2_mission24_addendum")
+	await igangsterincidentgen.set_active(1)
+	await ijafsscript.enable_jafs()
+	await ibacktobase.allow()
+	global.set_bool("g_act2_dante_system_scouted", 1)
+	state.destroy(_pog_current())
+	igame.enable_blackout(1)
+	gui.set_screen("icSPPlayerBaseScreen")
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission24.mission_handler: MISSION COMPLETE\n")
 	return
 	return 0
 
@@ -1125,49 +1125,49 @@ func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.add_state_properties: State is invalid - not adding properties. \n")
-	else:
-		if not (object.property_exists(v0, "approached_lpoint")):
-			object.add_bool_property(v0, "approached_lpoint", 0)
-		if not (object.property_exists(v0, "visited_lpoint")):
-			object.add_bool_property(v0, "visited_lpoint", 0)
-		if not (object.property_exists(v0, "visited_hq")):
-			object.add_bool_property(v0, "visited_hq", 0)
-		if not (object.property_exists(v0, "visited_cargo")):
-			object.add_bool_property(v0, "visited_cargo", 0)
-		if not (object.property_exists(v0, "visited_shipyard")):
-			object.add_bool_property(v0, "visited_shipyard", 0)
-		if not (object.property_exists(v0, "visited_all_bases")):
-			object.add_bool_property(v0, "visited_all_bases", 0)
-		if not (object.property_exists(v0, "given_lpoint_antenna_clue")):
-			object.add_bool_property(v0, "given_lpoint_antenna_clue", 0)
-		if not (object.property_exists(v0, "given_lpoint_power_clue")):
-			object.add_bool_property(v0, "given_lpoint_power_clue", 0)
-		if not (object.property_exists(v0, "given_antenna_clue")):
-			object.add_bool_property(v0, "given_antenna_clue", 0)
-		if not (object.property_exists(v0, "given_flitter_clue")):
-			object.add_bool_property(v0, "given_flitter_clue", 0)
-		if not (object.property_exists(v0, "given_power_clue")):
-			object.add_bool_property(v0, "given_power_clue", 0)
-		if not (object.property_exists(v0, "given_rem_clue")):
-			object.add_bool_property(v0, "given_rem_clue", 0)
-		if not (object.property_exists(v0, "got_power_booster")):
-			object.add_bool_property(v0, "got_power_booster", 0)
-		if not (object.property_exists(v0, "got_antenna")):
-			object.add_bool_property(v0, "got_antenna", 0)
-		if not (object.property_exists(v0, "sent_signal")):
-			object.add_bool_property(v0, "sent_signal", 0)
-		if not (object.property_exists(v0, "given_ftl_signals_clue")):
-			object.add_bool_property(v0, "given_ftl_signals_clue", 0)
-		if not (object.property_exists(v0, "found_relay_1")):
-			object.add_bool_property(v0, "found_relay_1", 0)
-		if not (object.property_exists(v0, "found_relay_2")):
-			object.add_bool_property(v0, "found_relay_2", 0)
-		if not (object.property_exists(v0, "found_relay_3")):
-			object.add_bool_property(v0, "found_relay_3", 0)
-		if not (object.property_exists(v0, "spotted_cruiser")):
-			object.add_bool_property(v0, "spotted_cruiser", 0)
-		if PogRuntime.TRACE:
-			debug.print_string("iAct2Mission24.add_state_properties: Added State Properties\n")
+		return 0
+	if not (object.property_exists(v0, "approached_lpoint")):
+		object.add_bool_property(v0, "approached_lpoint", 0)
+	if not (object.property_exists(v0, "visited_lpoint")):
+		object.add_bool_property(v0, "visited_lpoint", 0)
+	if not (object.property_exists(v0, "visited_hq")):
+		object.add_bool_property(v0, "visited_hq", 0)
+	if not (object.property_exists(v0, "visited_cargo")):
+		object.add_bool_property(v0, "visited_cargo", 0)
+	if not (object.property_exists(v0, "visited_shipyard")):
+		object.add_bool_property(v0, "visited_shipyard", 0)
+	if not (object.property_exists(v0, "visited_all_bases")):
+		object.add_bool_property(v0, "visited_all_bases", 0)
+	if not (object.property_exists(v0, "given_lpoint_antenna_clue")):
+		object.add_bool_property(v0, "given_lpoint_antenna_clue", 0)
+	if not (object.property_exists(v0, "given_lpoint_power_clue")):
+		object.add_bool_property(v0, "given_lpoint_power_clue", 0)
+	if not (object.property_exists(v0, "given_antenna_clue")):
+		object.add_bool_property(v0, "given_antenna_clue", 0)
+	if not (object.property_exists(v0, "given_flitter_clue")):
+		object.add_bool_property(v0, "given_flitter_clue", 0)
+	if not (object.property_exists(v0, "given_power_clue")):
+		object.add_bool_property(v0, "given_power_clue", 0)
+	if not (object.property_exists(v0, "given_rem_clue")):
+		object.add_bool_property(v0, "given_rem_clue", 0)
+	if not (object.property_exists(v0, "got_power_booster")):
+		object.add_bool_property(v0, "got_power_booster", 0)
+	if not (object.property_exists(v0, "got_antenna")):
+		object.add_bool_property(v0, "got_antenna", 0)
+	if not (object.property_exists(v0, "sent_signal")):
+		object.add_bool_property(v0, "sent_signal", 0)
+	if not (object.property_exists(v0, "given_ftl_signals_clue")):
+		object.add_bool_property(v0, "given_ftl_signals_clue", 0)
+	if not (object.property_exists(v0, "found_relay_1")):
+		object.add_bool_property(v0, "found_relay_1", 0)
+	if not (object.property_exists(v0, "found_relay_2")):
+		object.add_bool_property(v0, "found_relay_2", 0)
+	if not (object.property_exists(v0, "found_relay_3")):
+		object.add_bool_property(v0, "found_relay_3", 0)
+	if not (object.property_exists(v0, "spotted_cruiser")):
+		object.add_bool_property(v0, "spotted_cruiser", 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission24.add_state_properties: Added State Properties\n")
 	return 0
 	return 0
 
@@ -1175,49 +1175,49 @@ func local_21000(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.add_state_properties: State is invalid - not adding properties. \n")
-	else:
-		if object.property_exists(v0, "approached_lpoint"):
-			object.set_bool_property(v0, "approached_lpoint", 0)
-		if object.property_exists(v0, "visited_lpoint"):
-			object.set_bool_property(v0, "visited_lpoint", 0)
-		if object.property_exists(v0, "visited_hq"):
-			object.set_bool_property(v0, "visited_hq", 0)
-		if object.property_exists(v0, "visited_cargo"):
-			object.set_bool_property(v0, "visited_cargo", 0)
-		if object.property_exists(v0, "visited_shipyard"):
-			object.set_bool_property(v0, "visited_shipyard", 0)
-		if object.property_exists(v0, "visited_all_bases"):
-			object.set_bool_property(v0, "visited_all_bases", 0)
-		if object.property_exists(v0, "given_lpoint_antenna_clue"):
-			object.set_bool_property(v0, "given_lpoint_antenna_clue", 0)
-		if object.property_exists(v0, "given_lpoint_power_clue"):
-			object.set_bool_property(v0, "given_lpoint_power_clue", 0)
-		if object.property_exists(v0, "given_antenna_clue"):
-			object.set_bool_property(v0, "given_antenna_clue", 0)
-		if object.property_exists(v0, "given_flitter_clue"):
-			object.set_bool_property(v0, "given_flitter_clue", 0)
-		if object.property_exists(v0, "given_power_clue"):
-			object.set_bool_property(v0, "given_power_clue", 0)
-		if object.property_exists(v0, "given_rem_clue"):
-			object.set_bool_property(v0, "given_rem_clue", 0)
-		if object.property_exists(v0, "got_power_booster"):
-			object.set_bool_property(v0, "got_power_booster", 0)
-		if object.property_exists(v0, "got_antenna"):
-			object.set_bool_property(v0, "got_antenna", 0)
-		if object.property_exists(v0, "sent_signal"):
-			object.set_bool_property(v0, "sent_signal", 0)
-		if not (object.property_exists(v0, "given_ftl_signals_clue")):
-			object.set_bool_property(v0, "given_ftl_signals_clue", 0)
-		if not (object.property_exists(v0, "found_relay_1")):
-			object.set_bool_property(v0, "found_relay_1", 0)
-		if not (object.property_exists(v0, "found_relay_2")):
-			object.set_bool_property(v0, "found_relay_2", 0)
-		if not (object.property_exists(v0, "found_relay_3")):
-			object.set_bool_property(v0, "found_relay_3", 0)
-		if not (object.property_exists(v0, "found_relay_3")):
-			object.set_bool_property(v0, "spotted_cruiser", 0)
-		if PogRuntime.TRACE:
-			debug.print_string("iAct2Mission24.add_state_properties: Added State Properties\n")
+		return 0
+	if object.property_exists(v0, "approached_lpoint"):
+		object.set_bool_property(v0, "approached_lpoint", 0)
+	if object.property_exists(v0, "visited_lpoint"):
+		object.set_bool_property(v0, "visited_lpoint", 0)
+	if object.property_exists(v0, "visited_hq"):
+		object.set_bool_property(v0, "visited_hq", 0)
+	if object.property_exists(v0, "visited_cargo"):
+		object.set_bool_property(v0, "visited_cargo", 0)
+	if object.property_exists(v0, "visited_shipyard"):
+		object.set_bool_property(v0, "visited_shipyard", 0)
+	if object.property_exists(v0, "visited_all_bases"):
+		object.set_bool_property(v0, "visited_all_bases", 0)
+	if object.property_exists(v0, "given_lpoint_antenna_clue"):
+		object.set_bool_property(v0, "given_lpoint_antenna_clue", 0)
+	if object.property_exists(v0, "given_lpoint_power_clue"):
+		object.set_bool_property(v0, "given_lpoint_power_clue", 0)
+	if object.property_exists(v0, "given_antenna_clue"):
+		object.set_bool_property(v0, "given_antenna_clue", 0)
+	if object.property_exists(v0, "given_flitter_clue"):
+		object.set_bool_property(v0, "given_flitter_clue", 0)
+	if object.property_exists(v0, "given_power_clue"):
+		object.set_bool_property(v0, "given_power_clue", 0)
+	if object.property_exists(v0, "given_rem_clue"):
+		object.set_bool_property(v0, "given_rem_clue", 0)
+	if object.property_exists(v0, "got_power_booster"):
+		object.set_bool_property(v0, "got_power_booster", 0)
+	if object.property_exists(v0, "got_antenna"):
+		object.set_bool_property(v0, "got_antenna", 0)
+	if object.property_exists(v0, "sent_signal"):
+		object.set_bool_property(v0, "sent_signal", 0)
+	if not (object.property_exists(v0, "given_ftl_signals_clue")):
+		object.set_bool_property(v0, "given_ftl_signals_clue", 0)
+	if not (object.property_exists(v0, "found_relay_1")):
+		object.set_bool_property(v0, "found_relay_1", 0)
+	if not (object.property_exists(v0, "found_relay_2")):
+		object.set_bool_property(v0, "found_relay_2", 0)
+	if not (object.property_exists(v0, "found_relay_3")):
+		object.set_bool_property(v0, "found_relay_3", 0)
+	if not (object.property_exists(v0, "found_relay_3")):
+		object.set_bool_property(v0, "spotted_cruiser", 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission24.add_state_properties: Added State Properties\n")
 	return 0
 	return 0
 
@@ -1229,20 +1229,20 @@ func save(v0, v1, v2) -> Variant:
 			debug.print_string(v1)
 		if PogRuntime.TRACE:
 			debug.print_string(" does not exist. Cannot save.\n")
-	else:
-		if not (v0):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.save: State is invalid!")
+		return 0
+	if not (v0):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2Mission24.save: State is invalid!")
+		return 0
+	object.set_bool_property(v0, v1, v2)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission24.save: State property ")
+		debug.print_string(v1)
+		debug.print_string(" set to ")
+		if v2 == 1:
+			debug.print_string("true.\n")
 		else:
-			object.set_bool_property(v0, v1, v2)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.save: State property ")
-				debug.print_string(v1)
-				debug.print_string(" set to ")
-				if v2 == 1:
-					debug.print_string("true.\n")
-				else:
-					debug.print_string("false.\n")
+			debug.print_string("false.\n")
 	return 0
 	return 0
 
@@ -1966,82 +1966,82 @@ func monitor_relays(v0, v1) -> Variant:
 	if await local_22529(v0, "visited_all_bases") == 1:
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.monitor_relays: All bases have been found. No need to create relays. Exiting.\n")
-	else:
-		if _pog_is_null(await local_22529(v0, "visited_hq")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder hq.\n")
-			v5 = isim.cast(await iutilities.create_waypoint_at(v11))
-			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
-			isim.set_sensor_visibility(v5, 1)
-			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "visited_cargo")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder cargo yard.\n")
-			v5 = isim.cast(await iutilities.create_waypoint_at(v13))
-			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
-			isim.set_sensor_visibility(v5, 1)
-			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "visited_shipyard")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder shipyard.\n")
-			v5 = isim.cast(await iutilities.create_waypoint_at(v12))
-			await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
-			isim.set_sensor_visibility(v5, 1)
-			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "found_relay_1")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 1.\n")
-			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
-			object.add_bool_property(v5, "relay", 1)
-			sim.place_between(v5, v6, v7, 0.009999999776482582)
-			isim.set_sensor_visibility(v5, 1)
-			group.add_sim(v3, v5)
-		if _pog_is_null(await local_22529(v0, "found_relay_2")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 2.\n")
-			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
-			object.add_bool_property(v5, "relay", 1)
-			sim.place_between(v5, v8, v7, 0.009999999776482582)
-			isim.set_sensor_visibility(v5, 1)
-			group.add_sim(v3, v5)
-		if _pog_is_null(object.bool_property(v0, "found_relay_3")):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 3.\n")
-			v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
-			object.add_bool_property(v5, "relay", 1)
-			sim.place_between(v5, v10, v9, 0.009999999776482582)
-			isim.set_sensor_visibility(v5, 1)
-			group.add_sim(v3, v5)
-		while true:
-			while true:
-				await _pog_wait(1)
-				if await local_22529(v0, "visited_all_bases") == 1:
-					if PogRuntime.TRACE:
-						debug.print_string("iAct2Mission24.monitor_relays: All bases found. Destroying remaining relay waypoints and quitting.\n")
-					group.destroy(v3, 1)
-					return
-				v5 = await iutilities.near_to_group(v2, v3, 80000.0, 0)
-				if _pog_is_null(v5):
-					continue
-				break
-			group.remove_sim(v3, v5)
-			if object.property_exists(v5, "relay"):
-				v4 = v4 + 1
-				match v4:
-					1:
-						await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_one")
-					2:
-						await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_two")
-					3:
-						await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_three")
-				sim.destroy(v5)
-			else:
-				group.remove_sim(v3, v5)
-				isim.set_sensor_visibility(v5, 0)
-			if not (group.sim_count(v3) > 0):
-				break
+		return
+	if _pog_is_null(await local_22529(v0, "visited_hq")):
 		if PogRuntime.TRACE:
-			debug.print_string("iAct2Mission24.monitor_relays: All relay waypoints found. Quitting.\n")
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder hq.\n")
+		v5 = isim.cast(await iutilities.create_waypoint_at(v11))
+		await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
+		isim.set_sensor_visibility(v5, 1)
+		group.add_sim(v3, v5)
+	if _pog_is_null(await local_22529(v0, "visited_cargo")):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder cargo yard.\n")
+		v5 = isim.cast(await iutilities.create_waypoint_at(v13))
+		await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
+		isim.set_sensor_visibility(v5, 1)
+		group.add_sim(v3, v5)
+	if _pog_is_null(await local_22529(v0, "visited_shipyard")):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for marauder shipyard.\n")
+		v5 = isim.cast(await iutilities.create_waypoint_at(v12))
+		await iutilities.rename_sim(v5, "Lonely Government FTL Comms Array")
+		isim.set_sensor_visibility(v5, 1)
+		group.add_sim(v3, v5)
+	if _pog_is_null(await local_22529(v0, "found_relay_1")):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 1.\n")
+		v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
+		object.add_bool_property(v5, "relay", 1)
+		sim.place_between(v5, v6, v7, 0.009999999776482582)
+		isim.set_sensor_visibility(v5, 1)
+		group.add_sim(v3, v5)
+	if _pog_is_null(await local_22529(v0, "found_relay_2")):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 2.\n")
+		v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
+		object.add_bool_property(v5, "relay", 1)
+		sim.place_between(v5, v8, v7, 0.009999999776482582)
+		isim.set_sensor_visibility(v5, 1)
+		group.add_sim(v3, v5)
+	if _pog_is_null(object.bool_property(v0, "found_relay_3")):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2Mission24.monitor_relays: Creating relay waypoint for relay 3.\n")
+		v5 = isim.cast(sim.create("ini:/sims/nav/waypoint", "Lonely Government FTL Comms Array"))
+		object.add_bool_property(v5, "relay", 1)
+		sim.place_between(v5, v10, v9, 0.009999999776482582)
+		isim.set_sensor_visibility(v5, 1)
+		group.add_sim(v3, v5)
+	while true:
+		while true:
+			await _pog_wait(1)
+			if await local_22529(v0, "visited_all_bases") == 1:
+				if PogRuntime.TRACE:
+					debug.print_string("iAct2Mission24.monitor_relays: All bases found. Destroying remaining relay waypoints and quitting.\n")
+				group.destroy(v3, 1)
+				return
+			v5 = await iutilities.near_to_group(v2, v3, 80000.0, 0)
+			if _pog_is_null(v5):
+				continue
+			break
+		group.remove_sim(v3, v5)
+		if object.property_exists(v5, "relay"):
+			v4 = v4 + 1
+			match v4:
+				1:
+					await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_one")
+				2:
+					await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_two")
+				3:
+					await local_39689(v2, v5, "a2_m24_dialogue_clay_relay_three")
+			sim.destroy(v5)
+		else:
+			group.remove_sim(v3, v5)
+			isim.set_sensor_visibility(v5, 0)
+		if not (group.sim_count(v3) > 0):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission24.monitor_relays: All relay waypoints found. Quitting.\n")
 	return
 	return 0
 

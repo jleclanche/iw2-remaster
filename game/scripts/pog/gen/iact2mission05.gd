@@ -133,8 +133,8 @@ func local_488() -> Variant:
 func local_575() -> Variant:
 	if not (await iutilities.skip_mission(await local_0())):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -1831,11 +1831,11 @@ func local_15968(v0, v1) -> Variant:
 			debug.print_string(" created in state, with new value ")
 			debug.print_int(v1)
 			debug.print_string(" \n")
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("Error: attempted to save integer ")
-			debug.print_string(v0)
-			debug.print_string(" to state when no state exists\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("Error: attempted to save integer ")
+		debug.print_string(v0)
+		debug.print_string(" to state when no state exists\n")
 	return 0
 	return 0
 
@@ -1864,11 +1864,11 @@ func local_16402(v0, v1) -> Variant:
 			debug.print_string(" in state updated new value ")
 			debug.print_int(v1)
 			debug.print_string(" \n")
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("Error: attempted to save integer ")
-			debug.print_string(v0)
-			debug.print_string(" to state when no state exists\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("Error: attempted to save integer ")
+		debug.print_string(v0)
+		debug.print_string(" to state when no state exists\n")
 	return 0
 	return 0
 

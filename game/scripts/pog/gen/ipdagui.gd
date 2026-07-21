@@ -63,97 +63,48 @@ func s_p_main_p_d_a_screen() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var _pc: int = 0
-	while true:
-		if _pc == 0:
-			v10 = []
-			v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
-			text.add("csv:/text/gui")
-			text.add("csv:/text/gui_addendum")
-			text.add("csv:/text/gui_addendum_2")
-			text.add("csv:/text/gui_addendum_3")
-			text.add("csv:/text/gui_addendum_4")
-			text.add("csv:/text/gui_addendum_5")
-			text.add("csv:/text/objectives")
-			await igui.set_g_u_i_globals()
-			gui.register_sound("sound:/audio/gui/minor", 1)
-			gui.register_sound("sound:/audio/gui/confirm", 2)
-			gui.register_sound("sound:/audio/gui/error", 3)
-			gui.register_sound("sound:/audio/gui/loadout", 4)
-			gui.register_sound("sound:/audio/gui/mechanical_confirm", 5)
-			gui.register_sound("sound:/audio/gui/add_program", 6)
-			gui.register_sound("sound:/audio/gui/remove_program", 7)
-			gui.register_sound("sound:/audio/gui/add_upgrade", 8)
-			gui.register_sound("sound:/audio/gui/remove_upgrade", 9)
-			gui.set_default_font(global.string("GUI_title_font"))
-			if not _pog_eq(igame.session_name(), "") or imultiplay.network_is_lobby_session():
-				_pc = 486
-				continue
-			else:
-				_pc = 525
-				continue
-		elif _pc == 486:
-			if imultiplay.client_rejected_count() < 1:
-				_pc = 506
-				continue
-			else:
-				_pc = 525
-				continue
-		elif _pc == 506:
+	v10 = []
+	v11 = global.exists("WrongDiskScreen_LocalisedTextEnabled")
+	text.add("csv:/text/gui")
+	text.add("csv:/text/gui_addendum")
+	text.add("csv:/text/gui_addendum_2")
+	text.add("csv:/text/gui_addendum_3")
+	text.add("csv:/text/gui_addendum_4")
+	text.add("csv:/text/gui_addendum_5")
+	text.add("csv:/text/objectives")
+	await igui.set_g_u_i_globals()
+	gui.register_sound("sound:/audio/gui/minor", 1)
+	gui.register_sound("sound:/audio/gui/confirm", 2)
+	gui.register_sound("sound:/audio/gui/error", 3)
+	gui.register_sound("sound:/audio/gui/loadout", 4)
+	gui.register_sound("sound:/audio/gui/mechanical_confirm", 5)
+	gui.register_sound("sound:/audio/gui/add_program", 6)
+	gui.register_sound("sound:/audio/gui/remove_program", 7)
+	gui.register_sound("sound:/audio/gui/add_upgrade", 8)
+	gui.register_sound("sound:/audio/gui/remove_upgrade", 9)
+	gui.set_default_font(global.string("GUI_title_font"))
+	if not _pog_eq(igame.session_name(), "") or imultiplay.network_is_lobby_session():
+		if imultiplay.client_rejected_count() < 1:
 			await s_p_main_p_d_a_screen__on_multiplayer()
-			_pc = 1182
-			continue
-		elif _pc == 525:
-			if not (igame.is_multiplayer_only()) and v11:
-				_pc = 550
-				continue
-			else:
-				_pc = 758
-				continue
-		elif _pc == 550:
-			v0 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnStart", text.field("pda_start_new_game", 0), v10)
-			v1 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnLoad", text.field("pda_load_game", 0), v10)
-			v2 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnInstant", text.field("pda_instant_action", 0), v10)
-			v3 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMod", text.field("pda_extras", 0), v10)
-			_pc = 758
-			continue
-		elif _pc == 758:
-			v4 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMultiplayer", text.field("pda_multiplayer", 0), v10)
-			v5 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnOptions", text.field("pda_options", 0), v10)
-			if v11:
-				_pc = 872
-				continue
-			else:
-				_pc = 924
-				continue
-		elif _pc == 872:
-			v6 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMovies", text.field("movie_movies", 0), v10)
-			_pc = 924
-			continue
-		elif _pc == 924:
-			v7 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnCredits", text.field("pda_credits", 0), v10)
-			v8 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnQuit", text.field("pda_quit_button", 0), v10)
-			v9 = await igui.create_menu(v10)
-			gui.set_first_control_focus(gui.cast(list.head(v10)))
-			await igui.set_cyclic_control_focus_path(v10)
-			if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/badlands")):
-				_pc = 1144
-				continue
-			else:
-				_pc = 1168
-				continue
-		elif _pc == 1144:
-			stream.play(0, "sound:/audio/music/badlands", 1, 1)
-			_pc = 1168
-			continue
-		elif _pc == 1168:
-			await setup_mods()
-			_pc = 1182
-			continue
-		elif _pc == 1182:
 			return 0
-		else:
-			return 0
+	if not (igame.is_multiplayer_only()) and v11:
+		v0 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnStart", text.field("pda_start_new_game", 0), v10)
+		v1 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnLoad", text.field("pda_load_game", 0), v10)
+		v2 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnInstant", text.field("pda_instant_action", 0), v10)
+		v3 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMod", text.field("pda_extras", 0), v10)
+	v4 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMultiplayer", text.field("pda_multiplayer", 0), v10)
+	v5 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnOptions", text.field("pda_options", 0), v10)
+	if v11:
+		v6 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnMovies", text.field("movie_movies", 0), v10)
+	v7 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnCredits", text.field("pda_credits", 0), v10)
+	v8 = await igui.create_menu_button("iPDAGUI.SPMainPDAScreen_OnQuit", text.field("pda_quit_button", 0), v10)
+	v9 = await igui.create_menu(v10)
+	gui.set_first_control_focus(gui.cast(list.head(v10)))
+	await igui.set_cyclic_control_focus_path(v10)
+	if _pog_is_null(stream.is_playing_u_r_l(0, "sound:/audio/music/badlands")):
+		stream.play(0, "sound:/audio/music/badlands", 1, 1)
+	await setup_mods()
+	return 0
 	return 0
 
 func s_p_main_p_d_a_screen__on_start() -> Variant:
@@ -1806,19 +1757,19 @@ func mod_screen__on_mission_play() -> Variant:
 		debug.print_string("iPDAGUI.OnMissionPlay: Checking to see mission is selected, if any...\n")
 	if v0 < 0 or v0 >= imod.count():
 		gui.play_sound(3)
-	else:
-		if not (imod.is_scenario(v0)):
-			gui.play_sound(3)
-		else:
-			v1 = imod.pog_name(v0)
-			imod.enable(v0, 1)
-			if not (await _run_now(string.join(v1, ".ScenarioMain"))):
-				gui.play_sound(3)
-				imod.enable(v0, 0)
-			else:
-				gui.play_sound(2)
-				await local_25001()
-				imod.enable(v0, 1)
+		return 0
+	if not (imod.is_scenario(v0)):
+		gui.play_sound(3)
+		return 0
+	v1 = imod.pog_name(v0)
+	imod.enable(v0, 1)
+	if not (await _run_now(string.join(v1, ".ScenarioMain"))):
+		gui.play_sound(3)
+		imod.enable(v0, 0)
+		return 0
+	gui.play_sound(2)
+	await local_25001()
+	imod.enable(v0, 1)
 	return 0
 	return 0
 

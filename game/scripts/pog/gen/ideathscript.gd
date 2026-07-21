@@ -69,25 +69,23 @@ func antimatter(v0) -> Variant:
 func apply_damage(v0, v1) -> Variant:
 	var v2: Variant = 0
 	if _pog_is_null(v0):
-		pass
-	else:
-		if not (object.property_exists(v0, "hit_points")):
-			if PogRuntime.TRACE:
-				debug.print_string("iDeathScript.ApplyDamage: Error hit point property not found in sim!")
-		else:
-			v2 = object.float_property(v0, "hit_points")
-			object.set_float_property(v0, "hit_points", v2 - v1)
-			if v2 <= 0.0:
-				if PogRuntime.TRACE:
-					debug.print_string(string.join("iDeathScript: Explosives have destroyed.. ", object.string_property(v0, "name")))
-					debug.print_string("\n")
-				isim.kill(isim.cast(v0))
-				return 0
-			else:
-				if PogRuntime.TRACE:
-					debug.print_string(string.join("iDeathScript: Explosives have damaged.. ", object.string_property(v0, "name")))
-					debug.print_string(string.join(" by this many points: ", string.from_float(v1)))
-					debug.print_string("\n")
+		return 0
+	if not (object.property_exists(v0, "hit_points")):
+		if PogRuntime.TRACE:
+			debug.print_string("iDeathScript.ApplyDamage: Error hit point property not found in sim!")
+		return 0
+	v2 = object.float_property(v0, "hit_points")
+	object.set_float_property(v0, "hit_points", v2 - v1)
+	if v2 <= 0.0:
+		if PogRuntime.TRACE:
+			debug.print_string(string.join("iDeathScript: Explosives have destroyed.. ", object.string_property(v0, "name")))
+			debug.print_string("\n")
+		isim.kill(isim.cast(v0))
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join("iDeathScript: Explosives have damaged.. ", object.string_property(v0, "name")))
+		debug.print_string(string.join(" by this many points: ", string.from_float(v1)))
+		debug.print_string("\n")
 	return 0
 	return 0
 
@@ -139,9 +137,8 @@ func local_1242(v0) -> Variant:
 
 func local_1277(v0) -> Variant:
 	if _pog_is_null(v0):
-		pass
-	else:
-		iloadout.rearm_from_third_party(iship.cast(v0), 1.0)
+		return 0
+	iloadout.rearm_from_third_party(iship.cast(v0), 1.0)
 	return 0
 	return 0
 
@@ -333,41 +330,41 @@ func player_death_script(v0) -> Variant:
 		sim.destroy(v3)
 		input.resume_bindings()
 		iscore.enable_logging()
+		return
+	idirector.begin()
+	if object.property_exists(v0, "death_caption") == 1:
+		v9 = object.string_property(v0, "death_caption")
+		v9 = text.field(v9, 0)
+		idirector.obituary(v9)
+		object.remove_property(v0, "death_caption")
 	else:
-		idirector.begin()
-		if object.property_exists(v0, "death_caption") == 1:
-			v9 = object.string_property(v0, "death_caption")
-			v9 = text.field(v9, 0)
-			idirector.obituary(v9)
-			object.remove_property(v0, "death_caption")
-		else:
-			v9 = text.field("E_VesselDestroyed", 0)
-			v9 = string.join(v9, ": ")
-			v10 = object.string_property(v0, "name")
-			v10 = text.field(v10, 0)
-			v9 = string.join(v9, v10)
-			idirector.obituary(v9)
-		await _pog_wait(1.0)
-		v11 = 0
-		if _pog_is_null(object.property_exists(v0, "destroy_sim")):
+		v9 = text.field("E_VesselDestroyed", 0)
+		v9 = string.join(v9, ": ")
+		v10 = object.string_property(v0, "name")
+		v10 = text.field(v10, 0)
+		v9 = string.join(v9, v10)
+		idirector.obituary(v9)
+	await _pog_wait(1.0)
+	v11 = 0
+	if _pog_is_null(object.property_exists(v0, "destroy_sim")):
+		v11 = 1
+	else:
+		if object.bool_property(v0, "destroy_sim") == 1:
 			v11 = 1
-		else:
-			if object.bool_property(v0, "destroy_sim") == 1:
-				v11 = 1
-		if v11:
-			await local_3270(v0)
-			await _pog_wait(4.0)
-			isim.stop_explosion(isim.cast(v0), 0, 0)
-			sim.set_hidden(v0, 1)
-		v7 = 0
-		while v7 < 10 and idirector.is_obituary_view():
-			await _pog_wait(1.0)
-			v7 = v7 + 1
-		if v7 == 10:
-			idirector.set_caption("cam_press_space", 0.0)
-		while v7 < 60 and idirector.is_obituary_view():
-			await _pog_wait(1.0)
-			v7 = v7 + 1
+	if v11:
+		await local_3270(v0)
+		await _pog_wait(4.0)
+		isim.stop_explosion(isim.cast(v0), 0, 0)
+		sim.set_hidden(v0, 1)
+	v7 = 0
+	while v7 < 10 and idirector.is_obituary_view():
+		await _pog_wait(1.0)
+		v7 = v7 + 1
+	if v7 == 10:
+		idirector.set_caption("cam_press_space", 0.0)
+	while v7 < 60 and idirector.is_obituary_view():
+		await _pog_wait(1.0)
+		v7 = v7 + 1
 	return
 	return 0
 
@@ -431,8 +428,8 @@ func mega_pod_death(v0) -> Variant:
 				v12 = v12 + 1
 		isim.stop_explosion(isim.cast(v0), 0, 1)
 		group.destroy(v4, 0)
-	else:
-		isim.kill(isim.cast(v0))
+		return
+	isim.kill(isim.cast(v0))
 	return
 	return 0
 
@@ -470,45 +467,45 @@ func setup_critical_group_death(v0, v1) -> Variant:
 	if not (group.cast(v0)):
 		if PogRuntime.TRACE:
 			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Invalid group handle. Cannot add deathscript.\n")
-	else:
-		if _pog_is_null(group.sim_count(v0)):
-			if PogRuntime.TRACE:
-				debug.print_string("iDeathScript.SetupCriticalGroupDeath: Group is empty. Cannot add deathscript.\n")
-		else:
-			if v1 < 0:
-				if PogRuntime.TRACE:
-					debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical number is < 0. Capping to 0.\n")
-				v1 = 0
-			if v1 > group.sim_count(v0):
-				if PogRuntime.TRACE:
-					debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical group sim count (")
-				if PogRuntime.TRACE:
-					debug.print_int(group.sim_count(v0))
-				if PogRuntime.TRACE:
-					debug.print_string(") > the critical number (")
-				if PogRuntime.TRACE:
-					debug.print_int(v1)
-				if PogRuntime.TRACE:
-					debug.print_string(") Capping to the sim count.\n")
-				v1 = group.sim_count(v0)
-			v2 = 0
-			while v2 < group.sim_count(v0):
-				v3 = isim.cast(group.nth_sim(v0, v2))
-				object.set_string_property(v3, "death_script", "iDeathScript.CriticalGroupDeath")
-				object.add_handle_property(v3, "critical_group", v0)
-				object.add_int_property(v3, "critical_number", v1)
-				isim.set_mission_critical(v3, 1)
-				v2 = v2 + 1
-			if PogRuntime.TRACE:
-				debug.print_string("iDeathScript.SetupCriticalGroupDeath: Added Critical group Deathcript to ")
-			if PogRuntime.TRACE:
-				debug.print_int(v2)
-			if PogRuntime.TRACE:
-				debug.print_string(" sims. Critical number = ")
-			if PogRuntime.TRACE:
-				debug.print_int(v1)
-			if PogRuntime.TRACE:
-				debug.print_string(" \n")
+		return 0
+	if _pog_is_null(group.sim_count(v0)):
+		if PogRuntime.TRACE:
+			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Group is empty. Cannot add deathscript.\n")
+		return 0
+	if v1 < 0:
+		if PogRuntime.TRACE:
+			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical number is < 0. Capping to 0.\n")
+		v1 = 0
+	if v1 > group.sim_count(v0):
+		if PogRuntime.TRACE:
+			debug.print_string("iDeathScript.SetupCriticalGroupDeath: Critical group sim count (")
+		if PogRuntime.TRACE:
+			debug.print_int(group.sim_count(v0))
+		if PogRuntime.TRACE:
+			debug.print_string(") > the critical number (")
+		if PogRuntime.TRACE:
+			debug.print_int(v1)
+		if PogRuntime.TRACE:
+			debug.print_string(") Capping to the sim count.\n")
+		v1 = group.sim_count(v0)
+	v2 = 0
+	while v2 < group.sim_count(v0):
+		v3 = isim.cast(group.nth_sim(v0, v2))
+		object.set_string_property(v3, "death_script", "iDeathScript.CriticalGroupDeath")
+		object.add_handle_property(v3, "critical_group", v0)
+		object.add_int_property(v3, "critical_number", v1)
+		isim.set_mission_critical(v3, 1)
+		v2 = v2 + 1
+	if PogRuntime.TRACE:
+		debug.print_string("iDeathScript.SetupCriticalGroupDeath: Added Critical group Deathcript to ")
+	if PogRuntime.TRACE:
+		debug.print_int(v2)
+	if PogRuntime.TRACE:
+		debug.print_string(" sims. Critical number = ")
+	if PogRuntime.TRACE:
+		debug.print_int(v1)
+	if PogRuntime.TRACE:
+		debug.print_string(" \n")
 	return 0
 	return 0
 
@@ -569,24 +566,24 @@ func critical_group_death(v0) -> Variant:
 		ihud.pog_print(string.join("log_critical_ship_destroyed+: +", v4))
 		object.set_string_property(v0, "death_script", "")
 		isim.kill(v0)
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iDeathScript.CriticalGroupDeath: Critical group sim count (")
-		if PogRuntime.TRACE:
-			debug.print_int(group.sim_count(v3))
-		if PogRuntime.TRACE:
-			debug.print_string(") is <= the critical number (")
-		if PogRuntime.TRACE:
-			debug.print_int(v6)
-		if PogRuntime.TRACE:
-			debug.print_string(") \n")
-		if PogRuntime.TRACE:
-			debug.print_string("iDeathScript.CriticalGroupDeath: Killing sim ")
-		if PogRuntime.TRACE:
-			debug.print_string(sim.pog_name(v0))
-		if PogRuntime.TRACE:
-			debug.print_string(" and ending the game.\n")
-		_pog_detach(_pog_spawn(critical_ship_death.bind(v0)))
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iDeathScript.CriticalGroupDeath: Critical group sim count (")
+	if PogRuntime.TRACE:
+		debug.print_int(group.sim_count(v3))
+	if PogRuntime.TRACE:
+		debug.print_string(") is <= the critical number (")
+	if PogRuntime.TRACE:
+		debug.print_int(v6)
+	if PogRuntime.TRACE:
+		debug.print_string(") \n")
+	if PogRuntime.TRACE:
+		debug.print_string("iDeathScript.CriticalGroupDeath: Killing sim ")
+	if PogRuntime.TRACE:
+		debug.print_string(sim.pog_name(v0))
+	if PogRuntime.TRACE:
+		debug.print_string(" and ending the game.\n")
+	_pog_detach(_pog_spawn(critical_ship_death.bind(v0)))
 	return
 	return 0
 

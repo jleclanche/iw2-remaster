@@ -110,8 +110,8 @@ func local_410() -> Variant:
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
 		await imissiontracker.add_mission(v0, 2, 2)
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -717,17 +717,17 @@ func local_12227(v0, v1) -> Variant:
 				if global.exists("g_asked_for_help"):
 					object.set_string_property(v0, "name", "a2_m02_name_correct")
 					isim.set_faction(isim.cast(v0), v2)
-	else:
-		if not (object.property_exists(v0, "flagged")):
-			object.add_int_property(v0, "flagged", 0)
-		else:
-			if object.int_property(v0, "flagged") != 1:
-				return 0
-			object.set_int_property(v0, "flagged", 0)
-			object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
-			if not (global.exists("g_asked_for_help")):
-				return 0
-			isim.set_faction(isim.cast(v0), v3)
+		return 0
+	if not (object.property_exists(v0, "flagged")):
+		object.add_int_property(v0, "flagged", 0)
+		return 0
+	if object.int_property(v0, "flagged") != 1:
+		return 0
+	object.set_int_property(v0, "flagged", 0)
+	object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
+	if not (global.exists("g_asked_for_help")):
+		return 0
+	isim.set_faction(isim.cast(v0), v3)
 	return 0
 	return 0
 
@@ -735,23 +735,23 @@ func local_12780(v0) -> Variant:
 	if object.int_property(v0, "cargo") == 34:
 		object.set_int_property(v0, "cargo", 42)
 		object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
-	else:
-		if object.int_property(v0, "cargo") == 42:
-			object.set_int_property(v0, "cargo", 45)
-			object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
-		else:
-			if object.int_property(v0, "cargo") == 45:
-				object.set_int_property(v0, "cargo", 35)
-				object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
-			else:
-				if object.int_property(v0, "cargo") == 35:
-					object.set_int_property(v0, "cargo", 27)
-					object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
-				else:
-					if object.int_property(v0, "cargo") != 27:
-						return 0
-					object.set_int_property(v0, "cargo", 34)
-					object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
+		return 0
+	if object.int_property(v0, "cargo") == 42:
+		object.set_int_property(v0, "cargo", 45)
+		object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
+		return 0
+	if object.int_property(v0, "cargo") == 45:
+		object.set_int_property(v0, "cargo", 35)
+		object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
+		return 0
+	if object.int_property(v0, "cargo") == 35:
+		object.set_int_property(v0, "cargo", 27)
+		object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
+		return 0
+	if object.int_property(v0, "cargo") != 27:
+		return 0
+	object.set_int_property(v0, "cargo", 34)
+	object.set_string_property(v0, "name", icargo.pog_name(icargo.find(object.int_property(v0, "cargo"))))
 	return 0
 	return 0
 

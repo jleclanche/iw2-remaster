@@ -449,8 +449,8 @@ func s_p_base_screen() -> Variant:
 		return 0
 	if math.random(0.0, 1.0) > 0.5:
 		stream.play(0, "sound:/audio/music/base_ambient_1", 1, 1)
-	else:
-		stream.play(0, "sound:/audio/music/base_ambient_2", 1, 1)
+		return 0
+	stream.play(0, "sound:/audio/music/base_ambient_2", 1, 1)
 	return 0
 	return 0
 
@@ -477,19 +477,19 @@ func local_5932() -> Variant:
 		return 0
 	if iinventory.got_heavy_corvette():
 		iloadout.set_ship(3)
-	else:
-		if iinventory.got_fast_attack_ship():
-			iloadout.set_ship(2)
-		else:
-			if iinventory.got_tug():
-				iloadout.set_ship(1)
-			else:
-				if iinventory.got_storm_petrel():
-					iloadout.set_ship(4)
-				else:
-					if not (iinventory.got_command_section()):
-						return 0
-					iloadout.set_ship(0)
+		return 0
+	if iinventory.got_fast_attack_ship():
+		iloadout.set_ship(2)
+		return 0
+	if iinventory.got_tug():
+		iloadout.set_ship(1)
+		return 0
+	if iinventory.got_storm_petrel():
+		iloadout.set_ship(4)
+		return 0
+	if not (iinventory.got_command_section()):
+		return 0
+	iloadout.set_ship(0)
 	return 0
 	return 0
 
@@ -718,8 +718,8 @@ func s_p_hangar_screen__on_launch_button() -> Variant:
 		igame.save_autosave()
 		iinventory.cancel_new_cargo_flags()
 		gui.set_screen("icSpaceFlightScreen")
-	else:
-		gui.queue_sound(3)
+		return 0
+	gui.queue_sound(3)
 	return 0
 	return 0
 
@@ -1353,8 +1353,8 @@ func s_p_inbox_screen__on_email_list_box_select() -> Variant:
 		v1 = iemail.nth_in_inbox(v0)
 		global.create_handle("MessageToDisplay", 2, v1)
 		gui.overlay_screen("icSPMessagesScreen")
-	else:
-		gui.queue_sound(3)
+		return 0
+	gui.queue_sound(3)
 	return 0
 	return 0
 
@@ -1408,8 +1408,8 @@ func s_p_archive_screen__on_email_list_box_select() -> Variant:
 		global.create_handle("MessageToDisplay", 2, v1)
 		iemail.reset_windows()
 		gui.overlay_screen("icSPMessagesScreen")
-	else:
-		gui.queue_sound(3)
+		return 0
+	gui.queue_sound(3)
 	return 0
 	return 0
 
@@ -1466,19 +1466,19 @@ func force_email_read(v0) -> Variant:
 	if _pog_is_null(v1):
 		if PogRuntime.TRACE:
 			debug.error("iBaseGUI.ForceEmailRead : Invalid email.")
-	else:
-		if iemail.read(v1):
-			if PogRuntime.TRACE:
-				debug.error("iBaseGUI.ForceEmailRead : Email has already been read.")
-		else:
-			if not _pog_eq(gui.current_screen_classname(), "icSPBaseScreen"):
-				if PogRuntime.TRACE:
-					debug.error("iBaseGUI.ForceEmailRead : Player is not at root player base screen.")
-			else:
-				await s_p_base_screen__on_comms_button()
-				gui.overlay_screen("icSPInboxScreen")
-				global.create_handle("MessageToDisplay", 2, v1)
-				gui.overlay_screen("icSPMessagesScreen")
+		return 0
+	if iemail.read(v1):
+		if PogRuntime.TRACE:
+			debug.error("iBaseGUI.ForceEmailRead : Email has already been read.")
+		return 0
+	if not _pog_eq(gui.current_screen_classname(), "icSPBaseScreen"):
+		if PogRuntime.TRACE:
+			debug.error("iBaseGUI.ForceEmailRead : Player is not at root player base screen.")
+		return 0
+	await s_p_base_screen__on_comms_button()
+	gui.overlay_screen("icSPInboxScreen")
+	global.create_handle("MessageToDisplay", 2, v1)
+	gui.overlay_screen("icSPMessagesScreen")
 	return 0
 	return 0
 
@@ -1783,17 +1783,17 @@ func s_p_trading_screen__on_trades_list_box_select() -> Variant:
 	v0 = gui.list_box_focused_entry(v2)
 	if v0 == -1:
 		gui.queue_sound(3)
-	else:
-		v1 = itrade.nth_trade(v0)
-		if _pog_is_null(v1):
-			gui.queue_sound(3)
-		else:
-			if itrade.can_satisfy_trade(v1):
-				gui.queue_sound(2)
-				gui.select_list_box_entry(v2, v0)
-				gui.set_focus(gui.cast(global.handle("TradingScreen_TradeButton")))
-			else:
-				gui.queue_sound(3)
+		return 0
+	v1 = itrade.nth_trade(v0)
+	if _pog_is_null(v1):
+		gui.queue_sound(3)
+		return 0
+	if itrade.can_satisfy_trade(v1):
+		gui.queue_sound(2)
+		gui.select_list_box_entry(v2, v0)
+		gui.set_focus(gui.cast(global.handle("TradingScreen_TradeButton")))
+		return 0
+	gui.queue_sound(3)
 	return 0
 	return 0
 
@@ -1977,13 +1977,13 @@ func s_p_inventory_screen__on_inventory_list_box_select() -> Variant:
 	v8 = icargo.cast(list.get_nth(v7, v0))
 	if _pog_is_null(v8):
 		gui.queue_sound(3)
-	else:
-		gui.queue_sound(2)
-		global.create_int("SPInventoryScreen_SelectedEntry", 2, v0)
-		v3 = icargo.encyclopedia_entry(v8)
-		iinventory.reset_windows()
-		global.create_string("encyclopaedia_default_entry", 2, v3)
-		gui.overlay_screen("icSPEncyclopaediaScreen")
+		return 0
+	gui.queue_sound(2)
+	global.create_int("SPInventoryScreen_SelectedEntry", 2, v0)
+	v3 = icargo.encyclopedia_entry(v8)
+	iinventory.reset_windows()
+	global.create_string("encyclopaedia_default_entry", 2, v3)
+	gui.overlay_screen("icSPEncyclopaediaScreen")
 	return 0
 	return 0
 
@@ -2106,22 +2106,22 @@ func s_p_cargo_screen__on_cargo_list_box_select() -> Variant:
 	v0 = gui.list_box_focused_entry(v1)
 	if v0 == -1:
 		gui.play_sound(3)
-	else:
-		v3 = icargo.cast(list.get_nth(v2, v0))
-		if _pog_is_null(v3):
-			gui.play_sound(3)
-		else:
-			v4 = object.int_property(v3, "type")
-			if _pog_eq(iloadout.cargo(), v4):
-				gui.play_sound(2)
-			else:
-				if iloadout.cargo() != -1:
-					iinventory.add_without_marking_new(iloadout.cargo(), 1)
-				iloadout.set_cargo(v4)
-				iinventory.remove(v4, 1)
-				gui.select_list_box_entry(v1, v0)
-				await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
-				gui.queue_sound(2)
+		return 0
+	v3 = icargo.cast(list.get_nth(v2, v0))
+	if _pog_is_null(v3):
+		gui.play_sound(3)
+		return 0
+	v4 = object.int_property(v3, "type")
+	if _pog_eq(iloadout.cargo(), v4):
+		gui.play_sound(2)
+		return 0
+	if iloadout.cargo() != -1:
+		iinventory.add_without_marking_new(iloadout.cargo(), 1)
+	iloadout.set_cargo(v4)
+	iinventory.remove(v4, 1)
+	gui.select_list_box_entry(v1, v0)
+	await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
+	gui.queue_sound(2)
 	return 0
 	return 0
 
@@ -2132,12 +2132,12 @@ func s_p_cargo_screen__on_remove_cargo() -> Variant:
 	v1 = iloadout.cargo()
 	if v1 == -1:
 		gui.queue_sound(3)
-	else:
-		iinventory.add_without_marking_new(iloadout.cargo(), 1)
-		iloadout.set_cargo(-1)
-		gui.select_list_box_entry(v0, -1)
-		await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
-		gui.queue_sound(2)
+		return 0
+	iinventory.add_without_marking_new(iloadout.cargo(), 1)
+	iloadout.set_cargo(-1)
+	gui.select_list_box_entry(v0, -1)
+	await local_31807(gui.cast(global.handle("CargoScreen_TextWindow")))
+	gui.queue_sound(2)
 	return 0
 	return 0
 
@@ -2261,8 +2261,8 @@ func s_p_recycling_screen__on_recycle_one_button() -> Variant:
 		if _pog_is_null(v5):
 			await local_34423(v0, v6)
 		await local_36173(gui.cast(global.handle("RecyclingScreen_RecycleUnitsWindow")))
-	else:
-		gui.queue_sound(3)
+		return 0
+	gui.queue_sound(3)
 	return 0
 	return 0
 
@@ -2287,8 +2287,8 @@ func s_p_recycling_screen__on_recycle_all_button() -> Variant:
 		iinventory.recycle(v3, v4)
 		await local_34423(v0, v6)
 		await local_36173(gui.cast(global.handle("RecyclingScreen_RecycleUnitsWindow")))
-	else:
-		gui.queue_sound(3)
+		return 0
+	gui.queue_sound(3)
 	return 0
 	return 0
 
@@ -2488,8 +2488,8 @@ func s_p_manufacturing_screen__on_manufacturing_button() -> Variant:
 			await local_36173(gui.cast(global.handle("ManufacturingScreen_RecycleUnitsWindow")))
 			if v4 > iinventory.manufacture_units():
 				await s_p_manufacturing_screen__on_cancel_button()
-	else:
-		gui.queue_sound(3)
+		return 0
+	gui.queue_sound(3)
 	return 0
 	return 0
 
@@ -2985,9 +2985,9 @@ func local_45312() -> Variant:
 	if iloadout.cargo_space_warning():
 		gui.set_window_state_colours(v0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 		gui.set_window_state_colours(v1, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-	else:
-		gui.set_window_state_colours(v0, v4, v5, v6, v4, v5, v6, v4, v5, v6)
-		gui.set_window_state_colours(v1, v4, v5, v6, v4, v5, v6, v4, v5, v6)
+		return 0
+	gui.set_window_state_colours(v0, v4, v5, v6, v4, v5, v6, v4, v5, v6)
+	gui.set_window_state_colours(v1, v4, v5, v6, v4, v5, v6, v4, v5, v6)
 	return 0
 	return 0
 

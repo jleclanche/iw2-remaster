@@ -36,25 +36,25 @@ func give_all_ships() -> Variant:
 	if iinventory.got_tug() and iinventory.got_fast_attack_ship() and iinventory.got_heavy_corvette():
 		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveHeavyCorvette: Already got it.\n")
-	else:
-		iinventory.add_tug()
-		iinventory.add_fast_attack_ship()
-		iinventory.add_heavy_corvette()
-		iinventory.add(216, 1)
-		iinventory.add(224, 1)
-		iinventory.add(306, 1)
-		iinventory.add(307, 1)
-		iinventory.add(608, 2)
-		iinventory.add(567, 1)
-		iinventory.add(570, 3)
-		iinventory.add(560, 1)
-		iinventory.add(561, 2)
-		iinventory.add(562, 100)
-		iinventory.add(507, 5)
-		iinventory.add(509, 5)
-		iinventory.add(511, 1)
-		iinventory.add(521, 5)
-		iinventory.add(474, 2)
+		return 0
+	iinventory.add_tug()
+	iinventory.add_fast_attack_ship()
+	iinventory.add_heavy_corvette()
+	iinventory.add(216, 1)
+	iinventory.add(224, 1)
+	iinventory.add(306, 1)
+	iinventory.add(307, 1)
+	iinventory.add(608, 2)
+	iinventory.add(567, 1)
+	iinventory.add(570, 3)
+	iinventory.add(560, 1)
+	iinventory.add(561, 2)
+	iinventory.add(562, 100)
+	iinventory.add(507, 5)
+	iinventory.add(509, 5)
+	iinventory.add(511, 1)
+	iinventory.add(521, 5)
+	iinventory.add(474, 2)
 	return 0
 	return 0
 
@@ -66,28 +66,28 @@ func give_all_cargo() -> Variant:
 	if iinventory.number_of_cargo_type(34) > 90:
 		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllCargo: Too many weasels. No more cargo added.")
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iPowerUp.GiveAllCargo: Adding All Cargo...")
-		v2 = 0
-		while v2 < v0:
-			v1 = icargo.find(v2)
-			if not _pog_is_null(v1):
-				iinventory.add(v2, 100)
-			v2 = v2 + 1
-		if PogRuntime.TRACE:
-			debug.print_string("iPowerUp.GiveAllCargo: Done adding cargo.\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iPowerUp.GiveAllCargo: Adding All Cargo...")
+	v2 = 0
+	while v2 < v0:
+		v1 = icargo.find(v2)
+		if not _pog_is_null(v1):
+			iinventory.add(v2, 100)
+		v2 = v2 + 1
+	if PogRuntime.TRACE:
+		debug.print_string("iPowerUp.GiveAllCargo: Done adding cargo.\n")
 	return 0
 	if global.exists("g_powerup_ships"):
 		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveAllShips: Destroying Ship powerup global.\n")
 		global.destroy("g_powerup_ships")
-	else:
-		if not (global.exists("g_powerup_cargo")):
-			return 0
-		if PogRuntime.TRACE:
-			debug.print_string("iPowerUp.GiveAllShips: Destroying Cargo powerup global.\n")
-		global.destroy("g_powerup_cargo")
+		return 0
+	if not (global.exists("g_powerup_cargo")):
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iPowerUp.GiveAllShips: Destroying Cargo powerup global.\n")
+	global.destroy("g_powerup_cargo")
 	return 0
 	return 0
 
@@ -95,20 +95,20 @@ func give_tug() -> Variant:
 	if iinventory.got_tug():
 		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveTug: Already got it.\n")
-	else:
-		iinventory.add_tug()
-		iinventory.add(208, 1)
-		iinventory.add(212, 1)
-		iinventory.add(209, 1)
-		iinventory.add(579, 1)
-		iinventory.add(297, 1)
-		iinventory.add(593, 1)
-		iinventory.add(558, 1)
-		iinventory.add(556, 1)
-		iinventory.add(492, 1)
-		iinventory.add(490, 1)
-		iinventory.add(483, 2)
-		iinventory.add(474, 2)
+		return 0
+	iinventory.add_tug()
+	iinventory.add(208, 1)
+	iinventory.add(212, 1)
+	iinventory.add(209, 1)
+	iinventory.add(579, 1)
+	iinventory.add(297, 1)
+	iinventory.add(593, 1)
+	iinventory.add(558, 1)
+	iinventory.add(556, 1)
+	iinventory.add(492, 1)
+	iinventory.add(490, 1)
+	iinventory.add(483, 2)
+	iinventory.add(474, 2)
 	return 0
 	return 0
 
@@ -116,23 +116,23 @@ func give_fast_attack_ship() -> Variant:
 	if iinventory.got_fast_attack_ship():
 		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveFastAttackShip: Already got it.\n")
-	else:
-		iinventory.add_fast_attack_ship()
-		iinventory.add(216, 1)
-		iinventory.add(213, 1)
-		iinventory.add(306, 1)
-		iinventory.add(307, 1)
-		iinventory.add(590, 2)
-		iinventory.add(558, 1)
-		iinventory.add(563, 1)
-		iinventory.add(560, 1)
-		iinventory.add(561, 2)
-		iinventory.add(562, 100)
-		iinventory.add(488, 2)
-		iinventory.add(496, 1)
-		iinventory.add(500, 2)
-		iinventory.add(521, 1)
-		iinventory.add(474, 2)
+		return 0
+	iinventory.add_fast_attack_ship()
+	iinventory.add(216, 1)
+	iinventory.add(213, 1)
+	iinventory.add(306, 1)
+	iinventory.add(307, 1)
+	iinventory.add(590, 2)
+	iinventory.add(558, 1)
+	iinventory.add(563, 1)
+	iinventory.add(560, 1)
+	iinventory.add(561, 2)
+	iinventory.add(562, 100)
+	iinventory.add(488, 2)
+	iinventory.add(496, 1)
+	iinventory.add(500, 2)
+	iinventory.add(521, 1)
+	iinventory.add(474, 2)
 	return 0
 	return 0
 
@@ -140,24 +140,24 @@ func give_heavy_corvette() -> Variant:
 	if iinventory.got_heavy_corvette():
 		if PogRuntime.TRACE:
 			debug.print_string("iPowerUp.GiveHeavyCorvette: Already got it.\n")
-	else:
-		iinventory.add_heavy_corvette()
-		iinventory.add(216, 1)
-		iinventory.add(224, 1)
-		iinventory.add(306, 1)
-		iinventory.add(307, 1)
-		iinventory.add(608, 2)
-		iinventory.add(558, 1)
-		iinventory.add(563, 1)
-		iinventory.add(560, 1)
-		iinventory.add(561, 2)
-		iinventory.add(562, 100)
-		iinventory.add(507, 5)
-		iinventory.add(507, 5)
-		iinventory.add(509, 5)
-		iinventory.add(511, 3)
-		iinventory.add(521, 1)
-		iinventory.add(474, 2)
+		return 0
+	iinventory.add_heavy_corvette()
+	iinventory.add(216, 1)
+	iinventory.add(224, 1)
+	iinventory.add(306, 1)
+	iinventory.add(307, 1)
+	iinventory.add(608, 2)
+	iinventory.add(558, 1)
+	iinventory.add(563, 1)
+	iinventory.add(560, 1)
+	iinventory.add(561, 2)
+	iinventory.add(562, 100)
+	iinventory.add(507, 5)
+	iinventory.add(507, 5)
+	iinventory.add(509, 5)
+	iinventory.add(511, 3)
+	iinventory.add(521, 1)
+	iinventory.add(474, 2)
 	return 0
 	return 0
 

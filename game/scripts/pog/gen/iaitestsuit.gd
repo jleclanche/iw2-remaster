@@ -175,19 +175,19 @@ func local_2648() -> Variant:
 		ifaction.set_feeling(v1, v2, -1.0)
 		ifaction.set_feeling(v1, v0, -1.0)
 		ifaction.set_feeling(v0, v1, -1.0)
-	else:
-		ifaction.set_feeling(v0, v2, 0.0)
-		ifaction.set_feeling(v1, v2, 0.0)
-		ifaction.set_feeling(v1, v0, 0.0)
-		ifaction.set_feeling(v0, v1, 0.0)
+		return 0
+	ifaction.set_feeling(v0, v2, 0.0)
+	ifaction.set_feeling(v1, v2, 0.0)
+	ifaction.set_feeling(v1, v0, 0.0)
+	ifaction.set_feeling(v0, v1, 0.0)
 	return 0
 	return 0
 
 func local_3083(v0) -> Variant:
 	if not _pog_is_null(group.cast(v0)):
 		group.destroy(group.cast(v0), 1)
-	else:
-		sim.destroy(sim.cast(v0))
+		return 0
+	sim.destroy(sim.cast(v0))
 	return 0
 	return 0
 
@@ -197,8 +197,8 @@ func local_3182(v0, v1, v2, v3, v4) -> Variant:
 		v5 = group.cast(v0)
 		sim.place_relative_to(group.leader(v5), v1, v2, v3, v4)
 		await iformation.goose(v5, 90.0, 1)
-	else:
-		sim.place_relative_to(sim.cast(v0), v1, v2, v3, v4)
+		return 0
+	sim.place_relative_to(sim.cast(v0), v1, v2, v3, v4)
 	return 0
 	return 0
 
@@ -213,8 +213,8 @@ func local_3374(v0) -> Variant:
 		while v3 < v2:
 			await ipilotsetup.generic_cargo_pod(iship.cast(group.nth_sim(v1, v3)))
 			v3 = v3 + 1
-	else:
-		await ipilotsetup.generic_cargo_pod(iship.cast(v0))
+		return 0
+	await ipilotsetup.generic_cargo_pod(iship.cast(v0))
 	return 0
 	return 0
 
@@ -255,8 +255,8 @@ func local_3961(v0, v1) -> Variant:
 		while v5 < v4:
 			isim.set_faction(isim.cast(group.nth_sim(v2, v5)), v3)
 			v5 = v5 + 1
-	else:
-		isim.set_faction(isim.cast(v0), v3)
+		return 0
+	isim.set_faction(isim.cast(v0), v3)
 	return 0
 	return 0
 
@@ -329,8 +329,8 @@ func local_5574(v0, v1) -> Variant:
 		v3 = ifaction.find("Baddies")
 	if v1:
 		ifaction.set_feeling(v3, v4, -1.0)
-	else:
-		ifaction.set_feeling(v3, v4, 1.0)
+		return 0
+	ifaction.set_feeling(v3, v4, 1.0)
 	return 0
 	return 0
 

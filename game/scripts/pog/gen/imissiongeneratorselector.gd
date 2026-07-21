@@ -58,106 +58,106 @@ func select() -> Variant:
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iMissionGeneratorSelector.Select: TERMINATED - ERROR: null mission list inifile.\n")
-	else:
-		if global.pog_int("g_generated_missions_running") >= global.pog_int("g_generated_max_number_of_missions"):
+		return 0
+	if global.pog_int("g_generated_missions_running") >= global.pog_int("g_generated_max_number_of_missions"):
+		if PogRuntime.TRACE:
 			if PogRuntime.TRACE:
+				debug.error("iMissionGeneratorSelector.Select: TERMINATED - Max number of missions already running.")
+		return 0
+	if not (global.exists("g_generated_mission_chance")):
+		if PogRuntime.TRACE:
+			debug.error("iMissionGeneratorSelector.Select: Mission chance global does not exist! ")
+		return 0
+	if math.random_int(1, 100) > global.pog_int("g_generated_mission_chance"):
+		if PogRuntime.TRACE:
+			debug.print_int(global.pog_int("g_generated_mission_chance"))
+			debug.print_string("iMissionGeneratorSelector.Select: TERMINATED - Out of luck! Sorry, no mission this time! Try again.\n")
+		return 0
+	v6 = math.random_int(0, v4 - 1)
+	v5 = v6
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGeneratorSelector.Select: Total number of missions available = ")
+		debug.print_int(v4)
+		debug.print_string("\n")
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGeneratorSelector.Select: Start Count = ")
+		debug.print_int(v6)
+		debug.print_string("\n")
+	while true:
+		v2 = string.join("g_generated_mission_", string.from_int(v6))
+		if PogRuntime.TRACE:
+			debug.print_string("iMissionGeneratorSelector.Select: Checking Mission ")
+			debug.print_string(v2)
+			debug.print_string("\n")
+		match global.pog_int(v2):
+			0:
 				if PogRuntime.TRACE:
-					debug.error("iMissionGeneratorSelector.Select: TERMINATED - Max number of missions already running.")
-		else:
-			if not (global.exists("g_generated_mission_chance")):
-				if PogRuntime.TRACE:
-					debug.error("iMissionGeneratorSelector.Select: Mission chance global does not exist! ")
-			else:
-				if math.random_int(1, 100) > global.pog_int("g_generated_mission_chance"):
+					debug.print_string("iMissionGeneratorSelector.Select: Mission is available.\n")
+				v6 = v5
+				v1 = await ini_for_mission(v0, v3, v6)
+				if _pog_is_null(v1):
 					if PogRuntime.TRACE:
-						debug.print_int(global.pog_int("g_generated_mission_chance"))
-						debug.print_string("iMissionGeneratorSelector.Select: TERMINATED - Out of luck! Sorry, no mission this time! Try again.\n")
+						debug.print_string("iMissionGeneratorSelector.Select: INVALID MISSION HANDLE - ABORTING\n")
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGeneratorSelector.Select: TERMINATED\n")
+					return 0
+				if 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGeneratorSelector.Select:  Mission not met. Checking for teaser... \n")
+					await send_teaser(v1)
+					global.set_int(v2, 1)
+					inifile.destroy(v1)
 				else:
-					v6 = math.random_int(0, v4 - 1)
-					v5 = v6
 					if PogRuntime.TRACE:
-						debug.print_string("iMissionGeneratorSelector.Select: Total number of missions available = ")
-						debug.print_int(v4)
+						debug.print_string("iMissionGeneratorSelector.Select:  Mission Prerequisites met. Starting.\n")
+					global.set_int("g_generated_missions_running", global.pog_int("g_generated_missions_running") + 1)
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGeneratorSelector.Select: Number of mission now running - ")
+						debug.print_int(global.pog_int("g_generated_missions_running"))
 						debug.print_string("\n")
+					global.set_int(v2, 2)
+			1:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGeneratorSelector.Select:  teased Mission available \n")
+				v6 = v5
+				v1 = await ini_for_mission(v0, v3, v6)
+				if _pog_is_null(v1):
 					if PogRuntime.TRACE:
-						debug.print_string("iMissionGeneratorSelector.Select: Start Count = ")
-						debug.print_int(v6)
+						debug.print_string("iMissionGeneratorSelector.Select: INVALID  MISSION HANDLE - ABORTING\n")
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGeneratorSelector.Select: TERMINATED\n")
+					return 0
+				if 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGeneratorSelector.Select:  Mission Prerequisites met. Starting.\n")
+					global.set_int("g_generated_missions_running", global.pog_int("g_generated_missions_running") + 1)
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGeneratorSelector.Select: Number of mission now running: ")
+						debug.print_int(global.pog_int("g_generated_missions_running"))
 						debug.print_string("\n")
-					while true:
-						v2 = string.join("g_generated_mission_", string.from_int(v6))
-						if PogRuntime.TRACE:
-							debug.print_string("iMissionGeneratorSelector.Select: Checking Mission ")
-							debug.print_string(v2)
-							debug.print_string("\n")
-						match global.pog_int(v2):
-							0:
-								if PogRuntime.TRACE:
-									debug.print_string("iMissionGeneratorSelector.Select: Mission is available.\n")
-								v6 = v5
-								v1 = await ini_for_mission(v0, v3, v6)
-								if _pog_is_null(v1):
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select: INVALID MISSION HANDLE - ABORTING\n")
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select: TERMINATED\n")
-									return 0
-								if 1:
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select:  Mission not met. Checking for teaser... \n")
-									await send_teaser(v1)
-									global.set_int(v2, 1)
-									inifile.destroy(v1)
-								else:
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select:  Mission Prerequisites met. Starting.\n")
-									global.set_int("g_generated_missions_running", global.pog_int("g_generated_missions_running") + 1)
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select: Number of mission now running - ")
-										debug.print_int(global.pog_int("g_generated_missions_running"))
-										debug.print_string("\n")
-									global.set_int(v2, 2)
-							1:
-								if PogRuntime.TRACE:
-									debug.print_string("iMissionGeneratorSelector.Select:  teased Mission available \n")
-								v6 = v5
-								v1 = await ini_for_mission(v0, v3, v6)
-								if _pog_is_null(v1):
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select: INVALID  MISSION HANDLE - ABORTING\n")
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select: TERMINATED\n")
-									return 0
-								if 1:
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select:  Mission Prerequisites met. Starting.\n")
-									global.set_int("g_generated_missions_running", global.pog_int("g_generated_missions_running") + 1)
-									if PogRuntime.TRACE:
-										debug.print_string("iMissionGeneratorSelector.Select: Number of mission now running: ")
-										debug.print_int(global.pog_int("g_generated_missions_running"))
-										debug.print_string("\n")
-									global.set_int(v2, 2)
-								else:
-									inifile.destroy(v1)
-							2:
-								if PogRuntime.TRACE:
-									debug.print_string("iMissionGeneratorSelector.Select:  Mission is in progress - Aborting\n")
-								v6 = v6 + 1
-							3:
-								if PogRuntime.TRACE:
-									debug.print_string("iMissionGeneratorSelector.Select:  Mission already completed - Aborting\n")
-								v6 = v6 + 1
-							4:
-								if PogRuntime.TRACE:
-									debug.print_string("iMissionGeneratorSelector.Select:  Mission is not available - Aborting\n")
-								v6 = v6 + 1
-						if v6 + 1 > v4:
-							v6 = 0
-						if not (not _pog_eq(v6, v5)):
-							break
-					if not _pog_is_null(v0):
-						inifile.destroy(v0)
-					if PogRuntime.TRACE:
-						debug.print_string("iMissionGeneratorSelector.Select: COMPLETED.\n")
+					global.set_int(v2, 2)
+				else:
+					inifile.destroy(v1)
+			2:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGeneratorSelector.Select:  Mission is in progress - Aborting\n")
+				v6 = v6 + 1
+			3:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGeneratorSelector.Select:  Mission already completed - Aborting\n")
+				v6 = v6 + 1
+			4:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGeneratorSelector.Select:  Mission is not available - Aborting\n")
+				v6 = v6 + 1
+		if v6 + 1 > v4:
+			v6 = 0
+		if not (not _pog_eq(v6, v5)):
+			break
+	if not _pog_is_null(v0):
+		inifile.destroy(v0)
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGeneratorSelector.Select: COMPLETED.\n")
 	return 0
 	return 0
 

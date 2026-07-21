@@ -112,8 +112,8 @@ func local_320() -> Variant:
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission("Battle Of Hoffers Gap?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -256,292 +256,292 @@ func mission_handler() -> Variant:
 		iemail.send_email("a1_m07_email_sender", "a1_m07_email_subject", "html:/text/act_1/act1_mission07_email", 1)
 		if PogRuntime.TRACE:
 			debug.print_string("iAct3_Mission03.MissionHandler: Email Sent - EXITING\n")
-	else:
-		if not (iemail.read(v51)):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1_Mission07.MissionHandler: Email not read yet - EXITING\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission07. Email read - starting mission \n")
-			await local_90(v50)
-			ifaction.set_feeling(v33, v35, 1.0)
-			ifaction.set_feeling(v33, v37, 1.0)
-			ifaction.set_feeling(v33, v36, 1.0)
-			ifaction.set_feeling(v33, v34, 1.0)
-			ifaction.set_feeling(v35, v33, 1.0)
-			ifaction.set_feeling(v35, v37, 1.0)
-			ifaction.set_feeling(v35, v36, 1.0)
-			ifaction.set_feeling(v35, v34, 1.0)
-			ifaction.set_feeling(v34, v33, 1.0)
-			ifaction.set_feeling(v34, v37, 1.0)
-			ifaction.set_feeling(v34, v36, 1.0)
-			ifaction.set_feeling(v34, v35, 1.0)
-			ifaction.set_feeling(v37, v33, 1.0)
-			ifaction.set_feeling(v37, v34, 1.0)
-			ifaction.set_feeling(v37, v36, 1.0)
-			ifaction.set_feeling(v37, v35, 1.0)
-			ifaction.set_feeling(v36, v33, 1.0)
-			ifaction.set_feeling(v36, v34, 1.0)
-			ifaction.set_feeling(v36, v37, 1.0)
-			ifaction.set_feeling(v36, v35, 1.0)
-			sim.pog_preload("ini:/sims/ships/corporate/interceptor")
-			sim.pog_preload("ini:/sims/ships/navy/gunstar")
-			sim.pog_preload("ini:/sims/ships/independent/truck_missile_carrier")
-			sim.pog_preload("ini:/sims/ships/navy/old_corvette")
-			sim.pog_preload("ini:/sims/ships/independent/puffin_armed")
-			sim.pog_preload("ini:/sims/ships/marauder/marauder_cutter")
-			sim.pog_preload("ini:/sims/ships/navy/old_destroyer")
-			sim.pog_preload("ini:/sims/ships/marauder/marauder_cutter")
-			sim.pog_preload("ini:/sims/ships/utility/cargo_pod")
-			sim.pog_preload("ini:/sims/ships/utility/asteroid_m")
-			sim.pog_preload("ini:/sims/stations/custom/hoffers_gap")
-			v14 = imapentity.find_by_name("Hoffer's Gap")
-			imapentity.set_destroyed(v14, 0)
-			isim.set_indestructable(v14, 1)
-			v10 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Hoffer's Gap")))
-			isim.set_sensor_visibility(imapentity.find_by_name("Hoffer's Gap"), 1)
-			await irangecheck.add_traffic_exception(imapentity.find_by_name("Hoffer's Gap"))
-			object.add_int_property(v10, "reactive_exception", 1)
-			if PogRuntime.TRACE:
-				if _pog_is_null(v10):
-					debug.print_string("iAct1Mission07.mission_handler: Can't find Hoffer's Gap\n")
-					return
-			_pog_detach(_pog_spawn(local_449.bind(_pog_current(), v50, v1, v2, v3, v4, v5, v6, v7, v8, v9, v11, v12, v13, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32)))
-			v15 = group.create()
-			iobjectives.add("a1_m07_objective_go_to_hoffers")
-			while true:
-				while true:
-					await _pog_wait(1)
-					if sim.distance_between(v0, v10) >= 1000000.0:
-						continue
-					break
+		return
+	if not (iemail.read(v51)):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct1_Mission07.MissionHandler: Email not read yet - EXITING\n")
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission07. Email read - starting mission \n")
+	await local_90(v50)
+	ifaction.set_feeling(v33, v35, 1.0)
+	ifaction.set_feeling(v33, v37, 1.0)
+	ifaction.set_feeling(v33, v36, 1.0)
+	ifaction.set_feeling(v33, v34, 1.0)
+	ifaction.set_feeling(v35, v33, 1.0)
+	ifaction.set_feeling(v35, v37, 1.0)
+	ifaction.set_feeling(v35, v36, 1.0)
+	ifaction.set_feeling(v35, v34, 1.0)
+	ifaction.set_feeling(v34, v33, 1.0)
+	ifaction.set_feeling(v34, v37, 1.0)
+	ifaction.set_feeling(v34, v36, 1.0)
+	ifaction.set_feeling(v34, v35, 1.0)
+	ifaction.set_feeling(v37, v33, 1.0)
+	ifaction.set_feeling(v37, v34, 1.0)
+	ifaction.set_feeling(v37, v36, 1.0)
+	ifaction.set_feeling(v37, v35, 1.0)
+	ifaction.set_feeling(v36, v33, 1.0)
+	ifaction.set_feeling(v36, v34, 1.0)
+	ifaction.set_feeling(v36, v37, 1.0)
+	ifaction.set_feeling(v36, v35, 1.0)
+	sim.pog_preload("ini:/sims/ships/corporate/interceptor")
+	sim.pog_preload("ini:/sims/ships/navy/gunstar")
+	sim.pog_preload("ini:/sims/ships/independent/truck_missile_carrier")
+	sim.pog_preload("ini:/sims/ships/navy/old_corvette")
+	sim.pog_preload("ini:/sims/ships/independent/puffin_armed")
+	sim.pog_preload("ini:/sims/ships/marauder/marauder_cutter")
+	sim.pog_preload("ini:/sims/ships/navy/old_destroyer")
+	sim.pog_preload("ini:/sims/ships/marauder/marauder_cutter")
+	sim.pog_preload("ini:/sims/ships/utility/cargo_pod")
+	sim.pog_preload("ini:/sims/ships/utility/asteroid_m")
+	sim.pog_preload("ini:/sims/stations/custom/hoffers_gap")
+	v14 = imapentity.find_by_name("Hoffer's Gap")
+	imapentity.set_destroyed(v14, 0)
+	isim.set_indestructable(v14, 1)
+	v10 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Hoffer's Gap")))
+	isim.set_sensor_visibility(imapentity.find_by_name("Hoffer's Gap"), 1)
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Hoffer's Gap"))
+	object.add_int_property(v10, "reactive_exception", 1)
+	if PogRuntime.TRACE:
+		if _pog_is_null(v10):
+			debug.print_string("iAct1Mission07.mission_handler: Can't find Hoffer's Gap\n")
+			return
+	_pog_detach(_pog_spawn(local_449.bind(_pog_current(), v50, v1, v2, v3, v4, v5, v6, v7, v8, v9, v11, v12, v13, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32)))
+	v15 = group.create()
+	iobjectives.add("a1_m07_objective_go_to_hoffers")
+	while true:
+		while true:
+			await _pog_wait(1)
+			if sim.distance_between(v0, v10) >= 1000000.0:
+				continue
+			break
+		if PogRuntime.TRACE:
+			debug.print_string("iAct1Mission07. Entered range of Hoffers Gap. Creating Scenery \n")
+		v17 = group.create()
+		group.add_group(v15, v17)
+		v32 = await local_12183(v10)
+		group.add_group(v17, v32)
+		v18 = await create_gunstars(v50, v10, 6000.0)
+		group.add_group(v17, v18)
+		v16 = group.create()
+		group.add_group(v17, v16)
+		v20 = await local_10709(isim.cast(group.leader(v32)))
+		group.add_group(v16, v20)
+		v21 = await local_11063(isim.cast(group.nth_sim(v32, 2)))
+		group.add_group(v16, v21)
+		v22 = await local_11417(isim.cast(group.nth_sim(v32, 4)))
+		group.add_group(v16, v22)
+		v19 = await local_10360(isim.cast(group.nth_sim(v32, 6)))
+		group.add_group(v16, v19)
+		while true:
+			await _pog_wait(1)
+			if state.progress(v50) == 2:
 				if PogRuntime.TRACE:
-					debug.print_string("iAct1Mission07. Entered range of Hoffers Gap. Creating Scenery \n")
-				v17 = group.create()
-				group.add_group(v15, v17)
-				v32 = await local_12183(v10)
-				group.add_group(v17, v32)
-				v18 = await create_gunstars(v50, v10, 6000.0)
-				group.add_group(v17, v18)
-				v16 = group.create()
-				group.add_group(v17, v16)
-				v20 = await local_10709(isim.cast(group.leader(v32)))
-				group.add_group(v16, v20)
-				v21 = await local_11063(isim.cast(group.nth_sim(v32, 2)))
-				group.add_group(v16, v21)
-				v22 = await local_11417(isim.cast(group.nth_sim(v32, 4)))
-				group.add_group(v16, v22)
-				v19 = await local_10360(isim.cast(group.nth_sim(v32, 6)))
-				group.add_group(v16, v19)
-				while true:
-					await _pog_wait(1)
-					if state.progress(v50) == 2:
-						if PogRuntime.TRACE:
-							debug.print_string("iAct3_Mission07.MissionHandler: Gunstars already armed. Skipping to next section.")
-						break
-					if sim.distance_between(v0, v10) < 30000.0:
-						if object.bool_property(v50, "give_welcome_message") == 1:
-							iobjectives.set_state("a1_m07_objective_go_to_hoffers", 1)
-							iobjectives.add("a1_m07_objective_arm_gunstars")
-							await save(v50, "give_welcome_message", 0)
-							v47 = 0
-							_pog_spawn(local_22122.bind(v10))
-							v53 = group.sim_count(v18) - 1
-							while v53 > 0:
-								sim.set_angular_velocity_euler(group.nth_sim(v18, v53), 0.0, 0.0, 0.0)
-								v53 = v53 + -1
-						else:
-							if v47:
-								_pog_spawn(local_22392.bind(v10))
-								v47 = 0
-								iobjectives.set_state("a1_m07_objective_go_to_hoffers", 1)
-								iobjectives.add("a1_m07_objective_arm_gunstars")
-								v53 = group.sim_count(v18) - 1
-								while v53 > 0:
-									sim.set_angular_velocity_euler(group.nth_sim(v18, v53), 0.0, 0.0, 0.0)
-									v53 = v53 + -1
-					if sim.distance_between(v0, v10) > 2000000.0:
-						if object.bool_property(v50, "give_running_away_message") == 1:
-							await save(v50, "give_running_away_message", 0)
-							if object.bool_property(v50, "give_first_running_away_message") == 1:
-								await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_havent_you_got_a_job_to_do")
-								await save(v50, "give_first_running_away_message", 0)
-							else:
-								await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_ill_say_it_again_go_back")
-					if sim.distance_between(v0, v10) > 5000000.0:
-						if PogRuntime.TRACE:
-							debug.print_string("iAct1Mission07. Left Hoffers Gap. Destroying Scenery. \n")
-						await save(v50, "give_running_away_message", 1)
-						group.destroy(v17, 1)
-						group.destroy(v16, 1)
-						v47 = 1
-						break
-					v1 = iship.cast(sim.parent(v0))
-					if not _pog_is_null(v1):
-						if _pog_eq(sim.group(v1), v18) and not _pog_eq(isim.faction(v1), v35):
-							await local_13984(v50, v0, v1, v18, v35)
-					v54 = object.int_property(v50, "armed_gunstar_count")
-					if v54 == 3:
-						if PogRuntime.TRACE:
-							debug.print_string("iAct1Mission07. Three gunstars armed.\n")
-						state.set_progress(v50, 2)
-						break
-					if group.sim_count(v18) >= 6:
-						continue
-					if PogRuntime.TRACE:
-						debug.print_string("iAct1Mission07. Gunstars < 6.\n")
-					state.set_progress(v50, 2)
-					break
-				if not (state.progress(v50) == 1):
-					break
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission07. Here come the marauders! \n")
-			await ibacktobase.inhibit()
-			v59 = iregion.create_l_d_s_i(v10, 200000.0)
-			await iutilities.group_set_cullable(v15, 1)
-			v23 = group.create()
-			group.add_group(v15, v23)
-			v24 = await local_14659(v10, 50000.0, 0.0, 0.0)
-			group.add_group(v23, v24)
-			v8 = iship.cast(group.leader(v24))
-			v25 = await local_15436(isim.cast(group.leader(v24)), v18, 2000.0)
-			group.add_group(v23, v25)
-			v26 = group.create()
-			group.add_group(v23, v26)
-			v12 = isim.cast(await iutilities.create_waypoint_relative_to(v10, -385.0, -10.0, 0.0))
-			v13 = isim.cast(await iutilities.create_waypoint_relative_to(v10, 0.0, 0.0, 0.0))
-			object.add_int_property(v13, "reactor_integrity", 100)
-			v57 = 0
-			v27 = group.create()
-			group.add_group(v15, v27)
-			v27 = group.create()
-			group.add_group(v15, v27)
-			v28 = await local_19306(v10)
-			group.add_group(v27, v28)
-			v29 = await local_20254(v10)
-			group.add_group(v27, v29)
-			iobjectives.set_state("a1_m07_objective_arm_gunstars", 1)
-			iobjectives.add("a1_m07_objective_destroy_marauders")
-			iobjectives.add("a1_m07_objective_defend_hoffers_gap")
-			_pog_spawn(local_22482.bind(v10))
-			await iwingmen.from_group(v22, 0)
-			await iwingmen.defend_player()
-			iai.give_attack_order(group.leader(v20), v25)
-			iai.give_attack_order(group.leader(v21), v25)
-			iai.give_attack_order(group.leader(v19), v25)
-			v58 = 0
-			while true:
-				await _pog_wait(1)
-				v56 = object.int_property(v13, "reactor_integrity")
-				if v56 <= 0 or sim.distance_between(v0, v10) > 150000.0:
-					if not (object.property_exists(v0, "player_dying")):
-						iobjectives.set_state("a1_m07_objective_defend_hoffers_gap", 2)
-						icomms.abort(0)
-						igame.enable_blackout(1)
-						v11 = isim.cast(await iutilities.create_waypoint_at(v10))
-						iregion.destroy(v59)
-						group.destroy(v15, 1)
-						text.add("csv:/text/act_2/act2_mission25")
-						text.add("csv:/text/act_3/act3_master_addendum")
-						await imusic.pause()
-						sim.place_near(v0, v10, 30000.0)
-						icomms.abort(0)
-						await icutsceneutilities.handle_abort(_pog_spawn(local_23018.bind(v13, v12, v10)))
-						sim.destroy(v10)
-						stream.stop(0, 0)
-						stream.stop(1, 0)
-						await imusic.pog_resume()
-						await irangecheck.remove_traffic_exception(imapentity.find_by_name("Hoffer's Gap"))
-						object.remove_property(v10, "reactive_exception")
-						text.remove("csv:/text/act_2/act2_mission25")
-						text.remove("csv:/text/act_3/act3_master_addendum")
-						sim.place_near(v0, v11, 2000000.0)
-						sim.destroy(v11)
-						igame.enable_blackout(0)
-						object.add_bool_property(v0, "destroy_sim", 0)
-						_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("a1_m07_text_caption_mission_failed"))))
-						return
-				if v56 < 100 and v56 > 60 and v43 == 1:
-					v43 = 0
-					_pog_spawn(local_22916.bind(v10))
-				if v56 < 60 and v44 == 1:
-					v44 = 0
-					_pog_spawn(local_22950.bind(v10))
-				if _pog_is_null(group.total_sim_count(v23)):
-					break
-				v1 = iship.cast(sim.parent(v0))
-				if not _pog_is_null(v1):
-					if _pog_eq(sim.group(v1), v18) and not _pog_eq(isim.faction(v1), v35):
-						await local_13984(v50, v0, v1, v18, v35)
-				if group.sim_count(v18) < 6:
-					if v46 == 1:
-						v46 = 0
-						_pog_spawn(local_22656.bind(v10))
-				if sim.is_alive(v8) and not (isim.is_dying(v8)):
-					if group.sim_count(v18) < 5 or v57 > 120:
-						group.remove_sim(v24, v8)
-						iai.give_generic_attack_order(v24)
-						group.add_sim(v24, v8)
-						if v58 < 8 and sim.is_alive(v8) and not (isim.is_dying(v8)):
-							if PogRuntime.TRACE:
-								debug.print_string("iAct1Mission07: Bomber count < 15 && Mother not attacking. \n")
-							if _pog_is_null(group.sim_count(v26)) and sim.is_alive(v8):
-								if PogRuntime.TRACE:
-									debug.print_string("iAct1Mission07. Attempting to start bombing run \n")
-								v9 = iship.create("ini:/sims/custom/act1_mission07/fighter", "a1_m07_ship_marauder_bomber")
-								object.set_bool_property(v9, "ignore_speed_limit", 1)
-								await ipilotsetup.generic_cargo_pod(v9)
-								isim.set_faction(v9, v38)
-								group.add_sim(v26, v9)
-								sim.place_near(v9, v8, 100.0)
-								sim.point_away(v9, v8)
-								_pog_spawn(bombing_run_task.bind(v8, v9, v27, v13, v12))
-								v58 = v58 + 1
-								if v45 == 1:
-									v45 = 0
-									_pog_spawn(local_22774.bind())
-						else:
-							if not (v48):
-								if PogRuntime.TRACE:
-									debug.print_string("iAct1Mission07: 15 bombers launched. Mother now attacking. Look out player!\n")
-								iai.give_attack_order(v8, v0)
-								v48 = 1
-				else:
-					if v49:
-						iai.give_generic_attack_order(v24)
-						v49 = 0
-				v57 = v57 + 1
-				if not (v56 > 0 and _pog_is_null(v43)):
-					continue
-				ihud.set_prompt(string.join("a1_m07_text_reactor_integrity+ +", string.from_int(v56)), "")
-			iregion.destroy(v59)
-			ihud.set_prompt("", "")
-			v22 = await iwingmen.purge_to_group()
-			iai.give_flee_order(v22, v0)
-			iobjectives.set_state("a1_m07_objective_destroy_marauders", 1)
-			iobjectives.set_state("a1_m07_objective_defend_hoffers_gap", 1)
-			await iconversation.one_liner(v10, "a1_m07_name_hoffers_gap", "a1_m07_dialogue_hoffers_gap_thanks")
-			await iconversation.one_liner(0, "name_cal", "a1_m07_dialogue_cal_youre_welcome")
-			await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_im_impressed")
-			await iconversation.one_liner(0, "name_smith", "a1_m07_dialogue_smith_we_got_the_marauders")
-			await iconversation.one_liner(0, "name_cal", "a1_m07_dialogue_cal_dont_get_overconfident")
-			while true:
-				await _pog_wait(1)
-				if sim.distance_between(v0, v10) <= 100000000.0:
-					continue
+					debug.print_string("iAct3_Mission07.MissionHandler: Gunstars already armed. Skipping to next section.")
 				break
-			group.destroy(v15, 1)
-			text.remove("csv:/text/act_1/act1_mission07")
-			state.destroy(_pog_current())
-			if global.exists("g_act1_saved_hoffers_wake"):
-				global.set_bool("g_act1_saved_hoffers_wake", 1)
-			await irangecheck.remove_traffic_exception(imapentity.find_by_name("Hoffer's Gap"))
-			await imissiontracker.remove_mission(_pog_current())
-			await iutilities.remove_mission_restart()
-			object.remove_property(v10, "reactive_exception")
-			await ibacktobase.allow()
+			if sim.distance_between(v0, v10) < 30000.0:
+				if object.bool_property(v50, "give_welcome_message") == 1:
+					iobjectives.set_state("a1_m07_objective_go_to_hoffers", 1)
+					iobjectives.add("a1_m07_objective_arm_gunstars")
+					await save(v50, "give_welcome_message", 0)
+					v47 = 0
+					_pog_spawn(local_22122.bind(v10))
+					v53 = group.sim_count(v18) - 1
+					while v53 > 0:
+						sim.set_angular_velocity_euler(group.nth_sim(v18, v53), 0.0, 0.0, 0.0)
+						v53 = v53 + -1
+				else:
+					if v47:
+						_pog_spawn(local_22392.bind(v10))
+						v47 = 0
+						iobjectives.set_state("a1_m07_objective_go_to_hoffers", 1)
+						iobjectives.add("a1_m07_objective_arm_gunstars")
+						v53 = group.sim_count(v18) - 1
+						while v53 > 0:
+							sim.set_angular_velocity_euler(group.nth_sim(v18, v53), 0.0, 0.0, 0.0)
+							v53 = v53 + -1
+			if sim.distance_between(v0, v10) > 2000000.0:
+				if object.bool_property(v50, "give_running_away_message") == 1:
+					await save(v50, "give_running_away_message", 0)
+					if object.bool_property(v50, "give_first_running_away_message") == 1:
+						await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_havent_you_got_a_job_to_do")
+						await save(v50, "give_first_running_away_message", 0)
+					else:
+						await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_ill_say_it_again_go_back")
+			if sim.distance_between(v0, v10) > 5000000.0:
+				if PogRuntime.TRACE:
+					debug.print_string("iAct1Mission07. Left Hoffers Gap. Destroying Scenery. \n")
+				await save(v50, "give_running_away_message", 1)
+				group.destroy(v17, 1)
+				group.destroy(v16, 1)
+				v47 = 1
+				break
+			v1 = iship.cast(sim.parent(v0))
+			if not _pog_is_null(v1):
+				if _pog_eq(sim.group(v1), v18) and not _pog_eq(isim.faction(v1), v35):
+					await local_13984(v50, v0, v1, v18, v35)
+			v54 = object.int_property(v50, "armed_gunstar_count")
+			if v54 == 3:
+				if PogRuntime.TRACE:
+					debug.print_string("iAct1Mission07. Three gunstars armed.\n")
+				state.set_progress(v50, 2)
+				break
+			if group.sim_count(v18) >= 6:
+				continue
 			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission07 - Mission Complete. EXITING\n")
+				debug.print_string("iAct1Mission07. Gunstars < 6.\n")
+			state.set_progress(v50, 2)
+			break
+		if not (state.progress(v50) == 1):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission07. Here come the marauders! \n")
+	await ibacktobase.inhibit()
+	v59 = iregion.create_l_d_s_i(v10, 200000.0)
+	await iutilities.group_set_cullable(v15, 1)
+	v23 = group.create()
+	group.add_group(v15, v23)
+	v24 = await local_14659(v10, 50000.0, 0.0, 0.0)
+	group.add_group(v23, v24)
+	v8 = iship.cast(group.leader(v24))
+	v25 = await local_15436(isim.cast(group.leader(v24)), v18, 2000.0)
+	group.add_group(v23, v25)
+	v26 = group.create()
+	group.add_group(v23, v26)
+	v12 = isim.cast(await iutilities.create_waypoint_relative_to(v10, -385.0, -10.0, 0.0))
+	v13 = isim.cast(await iutilities.create_waypoint_relative_to(v10, 0.0, 0.0, 0.0))
+	object.add_int_property(v13, "reactor_integrity", 100)
+	v57 = 0
+	v27 = group.create()
+	group.add_group(v15, v27)
+	v27 = group.create()
+	group.add_group(v15, v27)
+	v28 = await local_19306(v10)
+	group.add_group(v27, v28)
+	v29 = await local_20254(v10)
+	group.add_group(v27, v29)
+	iobjectives.set_state("a1_m07_objective_arm_gunstars", 1)
+	iobjectives.add("a1_m07_objective_destroy_marauders")
+	iobjectives.add("a1_m07_objective_defend_hoffers_gap")
+	_pog_spawn(local_22482.bind(v10))
+	await iwingmen.from_group(v22, 0)
+	await iwingmen.defend_player()
+	iai.give_attack_order(group.leader(v20), v25)
+	iai.give_attack_order(group.leader(v21), v25)
+	iai.give_attack_order(group.leader(v19), v25)
+	v58 = 0
+	while true:
+		await _pog_wait(1)
+		v56 = object.int_property(v13, "reactor_integrity")
+		if v56 <= 0 or sim.distance_between(v0, v10) > 150000.0:
+			if not (object.property_exists(v0, "player_dying")):
+				iobjectives.set_state("a1_m07_objective_defend_hoffers_gap", 2)
+				icomms.abort(0)
+				igame.enable_blackout(1)
+				v11 = isim.cast(await iutilities.create_waypoint_at(v10))
+				iregion.destroy(v59)
+				group.destroy(v15, 1)
+				text.add("csv:/text/act_2/act2_mission25")
+				text.add("csv:/text/act_3/act3_master_addendum")
+				await imusic.pause()
+				sim.place_near(v0, v10, 30000.0)
+				icomms.abort(0)
+				await icutsceneutilities.handle_abort(_pog_spawn(local_23018.bind(v13, v12, v10)))
+				sim.destroy(v10)
+				stream.stop(0, 0)
+				stream.stop(1, 0)
+				await imusic.pog_resume()
+				await irangecheck.remove_traffic_exception(imapentity.find_by_name("Hoffer's Gap"))
+				object.remove_property(v10, "reactive_exception")
+				text.remove("csv:/text/act_2/act2_mission25")
+				text.remove("csv:/text/act_3/act3_master_addendum")
+				sim.place_near(v0, v11, 2000000.0)
+				sim.destroy(v11)
+				igame.enable_blackout(0)
+				object.add_bool_property(v0, "destroy_sim", 0)
+				_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("a1_m07_text_caption_mission_failed"))))
+				return
+		if v56 < 100 and v56 > 60 and v43 == 1:
+			v43 = 0
+			_pog_spawn(local_22916.bind(v10))
+		if v56 < 60 and v44 == 1:
+			v44 = 0
+			_pog_spawn(local_22950.bind(v10))
+		if _pog_is_null(group.total_sim_count(v23)):
+			break
+		v1 = iship.cast(sim.parent(v0))
+		if not _pog_is_null(v1):
+			if _pog_eq(sim.group(v1), v18) and not _pog_eq(isim.faction(v1), v35):
+				await local_13984(v50, v0, v1, v18, v35)
+		if group.sim_count(v18) < 6:
+			if v46 == 1:
+				v46 = 0
+				_pog_spawn(local_22656.bind(v10))
+		if sim.is_alive(v8) and not (isim.is_dying(v8)):
+			if group.sim_count(v18) < 5 or v57 > 120:
+				group.remove_sim(v24, v8)
+				iai.give_generic_attack_order(v24)
+				group.add_sim(v24, v8)
+				if v58 < 8 and sim.is_alive(v8) and not (isim.is_dying(v8)):
+					if PogRuntime.TRACE:
+						debug.print_string("iAct1Mission07: Bomber count < 15 && Mother not attacking. \n")
+					if _pog_is_null(group.sim_count(v26)) and sim.is_alive(v8):
+						if PogRuntime.TRACE:
+							debug.print_string("iAct1Mission07. Attempting to start bombing run \n")
+						v9 = iship.create("ini:/sims/custom/act1_mission07/fighter", "a1_m07_ship_marauder_bomber")
+						object.set_bool_property(v9, "ignore_speed_limit", 1)
+						await ipilotsetup.generic_cargo_pod(v9)
+						isim.set_faction(v9, v38)
+						group.add_sim(v26, v9)
+						sim.place_near(v9, v8, 100.0)
+						sim.point_away(v9, v8)
+						_pog_spawn(bombing_run_task.bind(v8, v9, v27, v13, v12))
+						v58 = v58 + 1
+						if v45 == 1:
+							v45 = 0
+							_pog_spawn(local_22774.bind())
+				else:
+					if not (v48):
+						if PogRuntime.TRACE:
+							debug.print_string("iAct1Mission07: 15 bombers launched. Mother now attacking. Look out player!\n")
+						iai.give_attack_order(v8, v0)
+						v48 = 1
+		else:
+			if v49:
+				iai.give_generic_attack_order(v24)
+				v49 = 0
+		v57 = v57 + 1
+		if not (v56 > 0 and _pog_is_null(v43)):
+			continue
+		ihud.set_prompt(string.join("a1_m07_text_reactor_integrity+ +", string.from_int(v56)), "")
+	iregion.destroy(v59)
+	ihud.set_prompt("", "")
+	v22 = await iwingmen.purge_to_group()
+	iai.give_flee_order(v22, v0)
+	iobjectives.set_state("a1_m07_objective_destroy_marauders", 1)
+	iobjectives.set_state("a1_m07_objective_defend_hoffers_gap", 1)
+	await iconversation.one_liner(v10, "a1_m07_name_hoffers_gap", "a1_m07_dialogue_hoffers_gap_thanks")
+	await iconversation.one_liner(0, "name_cal", "a1_m07_dialogue_cal_youre_welcome")
+	await iconversation.one_liner(0, "name_clay", "a1_m07_dialogue_clay_im_impressed")
+	await iconversation.one_liner(0, "name_smith", "a1_m07_dialogue_smith_we_got_the_marauders")
+	await iconversation.one_liner(0, "name_cal", "a1_m07_dialogue_cal_dont_get_overconfident")
+	while true:
+		await _pog_wait(1)
+		if sim.distance_between(v0, v10) <= 100000000.0:
+			continue
+		break
+	group.destroy(v15, 1)
+	text.remove("csv:/text/act_1/act1_mission07")
+	state.destroy(_pog_current())
+	if global.exists("g_act1_saved_hoffers_wake"):
+		global.set_bool("g_act1_saved_hoffers_wake", 1)
+	await irangecheck.remove_traffic_exception(imapentity.find_by_name("Hoffer's Gap"))
+	await imissiontracker.remove_mission(_pog_current())
+	await iutilities.remove_mission_restart()
+	object.remove_property(v10, "reactive_exception")
+	await ibacktobase.allow()
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission07 - Mission Complete. EXITING\n")
 	return
 	return 0
 
@@ -763,29 +763,29 @@ func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct1Mission07.add_state_properties: State is invalid - not adding properties. \n")
-	else:
-		if not (object.property_exists(v0, "give_welcome_message")):
-			object.add_bool_property(v0, "give_welcome_message", 1)
-		if not (object.property_exists(v0, "give_running_away_message")):
-			object.add_bool_property(v0, "give_running_away_message", 1)
-		if not (object.property_exists(v0, "give_first_running_away_message")):
-			object.add_bool_property(v0, "give_first_running_away_message", 1)
-		if not (object.property_exists(v0, "a1_m06_ship_gunstar_1")):
-			object.add_bool_property(v0, "a1_m06_ship_gunstar_1", 0)
-		if not (object.property_exists(v0, "a1_m06_ship_gunstar_2")):
-			object.add_bool_property(v0, "a1_m06_ship_gunstar_2", 0)
-		if not (object.property_exists(v0, "a1_m06_ship_gunstar_3")):
-			object.add_bool_property(v0, "a1_m06_ship_gunstar_3", 0)
-		if not (object.property_exists(v0, "a1_m06_ship_gunstar_4")):
-			object.add_bool_property(v0, "a1_m06_ship_gunstar_4", 0)
-		if not (object.property_exists(v0, "a1_m06_ship_gunstar_5")):
-			object.add_bool_property(v0, "a1_m06_ship_gunstar_5", 0)
-		if not (object.property_exists(v0, "a1_m06_ship_gunstar_6")):
-			object.add_bool_property(v0, "a1_m06_ship_gunstar_6", 0)
-		if not (object.property_exists(v0, "armed_gunstar_count")):
-			object.add_int_property(v0, "armed_gunstar_count", 0)
-		if PogRuntime.TRACE:
-			debug.print_string("iAct1Mission07.add_state_properties: Added State Properties\n")
+		return 0
+	if not (object.property_exists(v0, "give_welcome_message")):
+		object.add_bool_property(v0, "give_welcome_message", 1)
+	if not (object.property_exists(v0, "give_running_away_message")):
+		object.add_bool_property(v0, "give_running_away_message", 1)
+	if not (object.property_exists(v0, "give_first_running_away_message")):
+		object.add_bool_property(v0, "give_first_running_away_message", 1)
+	if not (object.property_exists(v0, "a1_m06_ship_gunstar_1")):
+		object.add_bool_property(v0, "a1_m06_ship_gunstar_1", 0)
+	if not (object.property_exists(v0, "a1_m06_ship_gunstar_2")):
+		object.add_bool_property(v0, "a1_m06_ship_gunstar_2", 0)
+	if not (object.property_exists(v0, "a1_m06_ship_gunstar_3")):
+		object.add_bool_property(v0, "a1_m06_ship_gunstar_3", 0)
+	if not (object.property_exists(v0, "a1_m06_ship_gunstar_4")):
+		object.add_bool_property(v0, "a1_m06_ship_gunstar_4", 0)
+	if not (object.property_exists(v0, "a1_m06_ship_gunstar_5")):
+		object.add_bool_property(v0, "a1_m06_ship_gunstar_5", 0)
+	if not (object.property_exists(v0, "a1_m06_ship_gunstar_6")):
+		object.add_bool_property(v0, "a1_m06_ship_gunstar_6", 0)
+	if not (object.property_exists(v0, "armed_gunstar_count")):
+		object.add_int_property(v0, "armed_gunstar_count", 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission07.add_state_properties: Added State Properties\n")
 	return 0
 	return 0
 

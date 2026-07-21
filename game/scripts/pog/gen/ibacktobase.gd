@@ -140,30 +140,30 @@ func detector() -> Variant:
 	if object.property_exists(v0, "player_dying"):
 		if PogRuntime.TRACE:
 			debug.print_string("iBackToBase.Detector ( Just before cut-scene ) - Player is dying. Quitting.\n")
+		return
+	if v7:
+		await icutsceneutilities.handle_abort(_pog_spawn(local_3520.bind(v0, v1)))
 	else:
-		if v7:
-			await icutsceneutilities.handle_abort(_pog_spawn(local_3520.bind(v0, v1)))
-		else:
-			await icutsceneutilities.handle_abort(_pog_spawn(local_6393.bind(v0, v1)))
-		if object.property_exists(v0, "player_dying"):
-			return
-		igame.enable_blackout(1)
-		sim.set_collision(v0, 0)
-		sim.set_velocity(v0, 0.0, 0.0, 0.0)
-		sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-		sim.place_relative_to_inside(v0, v1, 0.0, 0.0, 1800.0)
-		sim.point_at(v0, v1)
-		sim.destroy(v3)
-		sim.destroy(v4)
-		sim.destroy(v5)
-		if await ijafsscript.jafs_active():
-			await ijafsscript.collect_pods(1)
-		v6 = "/movies/OldCalShutdown"
-		if global.exists("g_current_act"):
-			if _pog_is_null(global.pog_int("g_current_act")):
-				v6 = "/movies/YoungCalShutdown"
-		gui.set_screen("icSPPlayerBaseScreen")
-		await _pog_movie(v6)
+		await icutsceneutilities.handle_abort(_pog_spawn(local_6393.bind(v0, v1)))
+	if object.property_exists(v0, "player_dying"):
+		return
+	igame.enable_blackout(1)
+	sim.set_collision(v0, 0)
+	sim.set_velocity(v0, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+	sim.place_relative_to_inside(v0, v1, 0.0, 0.0, 1800.0)
+	sim.point_at(v0, v1)
+	sim.destroy(v3)
+	sim.destroy(v4)
+	sim.destroy(v5)
+	if await ijafsscript.jafs_active():
+		await ijafsscript.collect_pods(1)
+	v6 = "/movies/OldCalShutdown"
+	if global.exists("g_current_act"):
+		if _pog_is_null(global.pog_int("g_current_act")):
+			v6 = "/movies/YoungCalShutdown"
+	gui.set_screen("icSPPlayerBaseScreen")
+	await _pog_movie(v6)
 	return
 	return 0
 
@@ -200,23 +200,24 @@ func initialise() -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iBackToBase.Initialise: g_have_started_ibacktobase_detector exists, but handle is null. Will re-initialise.\n")
 			global.destroy("g_have_started_ibacktobase_detector")
-		if PogRuntime.TRACE:
-			debug.print_string("iBackToBase.Initialise: iBackToBase is already initialised.\n")
-	else:
-		v0 = _pog_spawn(detector.bind())
-		_pog_detach(v0)
-		if PogRuntime.TRACE:
-			debug.print_string("iBackToBase.Initialise: Initialising global handle g_have_started_ibacktobase_detector for detector task.\n")
-		global.create_handle("g_have_started_ibacktobase_detector", 10, v0)
-		if global.exists("g_ibacktobase_level"):
-			if PogRuntime.TRACE:
-				debug.print_string("iBackToBase.Initialise: Global g_ibacktobase_level already exists.\n")
 		else:
 			if PogRuntime.TRACE:
-				debug.print_string("iBackToBase.Initialise: Initialising Global g_ibacktobase_level.\n")
-			global.create_int("g_ibacktobase_level", 10, 0)
+				debug.print_string("iBackToBase.Initialise: iBackToBase is already initialised.\n")
+			return 0
+	v0 = _pog_spawn(detector.bind())
+	_pog_detach(v0)
+	if PogRuntime.TRACE:
+		debug.print_string("iBackToBase.Initialise: Initialising global handle g_have_started_ibacktobase_detector for detector task.\n")
+	global.create_handle("g_have_started_ibacktobase_detector", 10, v0)
+	if global.exists("g_ibacktobase_level"):
 		if PogRuntime.TRACE:
-			debug.print_string("iBackToBase.Initialise completed\n")
+			debug.print_string("iBackToBase.Initialise: Global g_ibacktobase_level already exists.\n")
+	else:
+		if PogRuntime.TRACE:
+			debug.print_string("iBackToBase.Initialise: Initialising Global g_ibacktobase_level.\n")
+		global.create_int("g_ibacktobase_level", 10, 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iBackToBase.Initialise completed\n")
 	return 0
 	return 0
 
@@ -420,9 +421,9 @@ func terminate() -> Variant:
 			debug.print_string("iBackToBase.Terminate: Destroying global g_have_started_ibacktobase_detector. \n")
 		_pog_halt(_pog_task_cast(global.handle("g_have_started_ibacktobase_detector")))
 		global.destroy("g_have_started_ibacktobase_detector")
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iBackToBase.Terminate: ERROR: global g_have_started_ibacktobase_detector does not exist. \n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iBackToBase.Terminate: ERROR: global g_have_started_ibacktobase_detector does not exist. \n")
 	return 0
 	return 0
 

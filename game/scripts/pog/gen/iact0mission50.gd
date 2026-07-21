@@ -106,8 +106,8 @@ func local_310() -> Variant:
 	if not (await iutilities.skip_mission("Steal reactor?")):
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 

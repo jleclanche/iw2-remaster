@@ -87,19 +87,18 @@ func health_power_up() -> Variant:
 func local_108(v0) -> Variant:
 	if object.property_exists(v0, "player"):
 		imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) + 1)
-	else:
-		if not (object.property_exists(v0, "frag_count")):
-			pass
-		else:
-			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 1)
+		return 0
+	if not (object.property_exists(v0, "frag_count")):
+		return 0
+	object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 1)
 	return 0
 	return 0
 
 func local_273(v0) -> Variant:
 	if object.property_exists(v0, "player"):
 		imultiplay.server_set_player_died_count(v0, imultiplay.server_player_died_count(v0) + 1)
-	else:
-		object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
+		return 0
+	object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
 	return 0
 	return 0
 
@@ -478,20 +477,20 @@ func local_5529(v0, v1) -> Variant:
 		group.add_sim(v2, v3)
 		global.set_handle("g_bots_handle", v2)
 		_pog_detach(_pog_spawn(local_5396.bind(v3)))
-	else:
-		v2 = group.cast(v0)
-		if not _pog_is_null(v2):
-			v4 = group.sim_count(v2)
-			v5 = 0
-			while v5 < v4:
-				v3 = iship.cast(group.nth_sim(v2, v5))
-				object.set_string_property(v3, "death_script", "iDeathMatch.BotDeath")
-				imultiplay.set_ship_limits(v3)
-				_pog_detach(_pog_spawn(local_5396.bind(v3)))
-				v5 = v5 + 1
-		else:
-			object.set_string_property(v0, "death_script", "iDeathMatch.BotDeath")
-			_pog_detach(_pog_spawn(local_5396.bind(iship.cast(v0))))
+		return 0
+	v2 = group.cast(v0)
+	if not _pog_is_null(v2):
+		v4 = group.sim_count(v2)
+		v5 = 0
+		while v5 < v4:
+			v3 = iship.cast(group.nth_sim(v2, v5))
+			object.set_string_property(v3, "death_script", "iDeathMatch.BotDeath")
+			imultiplay.set_ship_limits(v3)
+			_pog_detach(_pog_spawn(local_5396.bind(v3)))
+			v5 = v5 + 1
+		return 0
+	object.set_string_property(v0, "death_script", "iDeathMatch.BotDeath")
+	_pog_detach(_pog_spawn(local_5396.bind(iship.cast(v0))))
 	return 0
 	return 0
 

@@ -345,16 +345,15 @@ func local_5718(v0, v1) -> Variant:
 	v6 = group.sim_count(v4) - 1
 	v5 = v1 - v6
 	if v5 <= 0:
-		pass
-	else:
-		v7 = 0
-		while v7 < v5:
-			v2 = await local_2995(2)
-			await iwingmen.add_wingman(v2)
-			isim.set_faction(v2, v3)
-			isim.capsule_jump(isim.cast(v2), isim.cast(v0))
-			_pog_detach(_pog_spawn(local_5605.bind(v2, v4)))
-			v7 = v7 + 1
+		return 0
+	v7 = 0
+	while v7 < v5:
+		v2 = await local_2995(2)
+		await iwingmen.add_wingman(v2)
+		isim.set_faction(v2, v3)
+		isim.capsule_jump(isim.cast(v2), isim.cast(v0))
+		_pog_detach(_pog_spawn(local_5605.bind(v2, v4)))
+		v7 = v7 + 1
 	return 0
 	return 0
 

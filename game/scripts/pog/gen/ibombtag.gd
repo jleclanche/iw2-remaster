@@ -116,113 +116,36 @@ func health_power_up(v0, v1) -> Variant:
 
 func local_529(v0, v1) -> Variant:
 	var v2: Variant = 0
-	var _pc: int = 529
-	while true:
-		if _pc == 529:
-			v2 = 0
-			if object.property_exists(v0, "player"):
-				_pc = 571
-				continue
-			else:
-				_pc = 578
-				continue
-		elif _pc == 571:
-			v2 = 1
-			_pc = 578
-			continue
-		elif _pc == 578:
-			if not (object.property_exists(v0, "frag_count")):
-				_pc = 609
-				continue
-			else:
-				_pc = 614
-				continue
-		elif _pc == 609:
-			_pc = 1025
-			continue
-		elif _pc == 614:
-			if v1:
-				_pc = 624
-				continue
-			else:
-				_pc = 737
-				continue
-		elif _pc == 624:
-			if v2:
-				_pc = 634
-				continue
-			else:
-				_pc = 679
-				continue
-		elif _pc == 634:
+	v2 = 0
+	if object.property_exists(v0, "player"):
+		v2 = 1
+	if not (object.property_exists(v0, "frag_count")):
+		return 0
+	if v1:
+		if v2:
 			imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) + 2)
-			_pc = 732
-			continue
-		elif _pc == 679:
-			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 2)
-			_pc = 732
-			continue
-		elif _pc == 732:
-			_pc = 1025
-			continue
-		elif _pc == 737:
-			if global.exists("g_ship_with_bomb"):
-				_pc = 762
-				continue
-			else:
-				_pc = 919
-				continue
-		elif _pc == 762:
-			if _pog_eq(iship.cast(global.handle("g_ship_with_bomb")), v0):
-				_pc = 806
-				continue
-			else:
-				_pc = 919
-				continue
-		elif _pc == 806:
-			if v2:
-				_pc = 816
-				continue
-			else:
-				_pc = 861
-				continue
-		elif _pc == 816:
-			imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) + 5)
-			_pc = 914
-			continue
-		elif _pc == 861:
-			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 5)
-			_pc = 914
-			continue
-		elif _pc == 914:
-			_pc = 1025
-			continue
-		elif _pc == 919:
-			if v2:
-				_pc = 929
-				continue
-			else:
-				_pc = 973
-				continue
-		elif _pc == 929:
-			imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) - 1)
-			_pc = 1025
-			continue
-		elif _pc == 973:
-			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") - 1)
-			_pc = 1025
-			continue
-		elif _pc == 1025:
-			return 0
 		else:
+			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 2)
+		return 0
+	if global.exists("g_ship_with_bomb"):
+		if _pog_eq(iship.cast(global.handle("g_ship_with_bomb")), v0):
+			if v2:
+				imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) + 5)
+			else:
+				object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 5)
 			return 0
+	if v2:
+		imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) - 1)
+		return 0
+	object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") - 1)
+	return 0
 	return 0
 
 func local_1028(v0) -> Variant:
 	if object.property_exists(v0, "player"):
 		imultiplay.server_set_player_died_count(v0, imultiplay.server_player_died_count(v0) + 1)
-	else:
-		object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
+		return 0
+	object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
 	return 0
 	return 0
 
@@ -712,24 +635,24 @@ func local_8717(v0, v1) -> Variant:
 		group.add_sim(v2, v3)
 		global.set_handle("g_bots_handle", v2)
 		_pog_detach(_pog_spawn(local_8583.bind(v3)))
-	else:
-		v2 = group.cast(v0)
-		if not _pog_is_null(v2):
-			v4 = group.sim_count(v2)
-			v5 = 0
-			while v5 < v4:
-				v3 = iship.cast(group.nth_sim(v2, v5))
-				object.set_string_property(v3, "death_script", "iBombTag.BotDeath")
-				imultiplay.set_ship_limits(v3)
-				_pog_detach(_pog_spawn(local_8583.bind(v3)))
-				v5 = v5 + 1
-		else:
-			object.set_string_property(v0, "death_script", "iBombTag.BotDeath")
+		return 0
+	v2 = group.cast(v0)
+	if not _pog_is_null(v2):
+		v4 = group.sim_count(v2)
+		v5 = 0
+		while v5 < v4:
+			v3 = iship.cast(group.nth_sim(v2, v5))
+			object.set_string_property(v3, "death_script", "iBombTag.BotDeath")
 			imultiplay.set_ship_limits(v3)
-			v2 = group.cast(global.handle("g_bots_handle"))
-			group.add_sim(v2, v3)
-			global.set_handle("g_bots_handle", v2)
-			_pog_detach(_pog_spawn(local_8583.bind(iship.cast(v0))))
+			_pog_detach(_pog_spawn(local_8583.bind(v3)))
+			v5 = v5 + 1
+		return 0
+	object.set_string_property(v0, "death_script", "iBombTag.BotDeath")
+	imultiplay.set_ship_limits(v3)
+	v2 = group.cast(global.handle("g_bots_handle"))
+	group.add_sim(v2, v3)
+	global.set_handle("g_bots_handle", v2)
+	_pog_detach(_pog_spawn(local_8583.bind(iship.cast(v0))))
 	return 0
 	return 0
 

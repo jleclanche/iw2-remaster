@@ -2240,8 +2240,8 @@ func local_21004(v0) -> Variant:
 func local_21137(v0, v1) -> Variant:
 	if global.exists(v0):
 		global.set_int(v0, v1)
-	else:
-		global.create_int(v0, 2, v1)
+		return 0
+	global.create_int(v0, 2, v1)
 	return 0
 	return 0
 
@@ -2715,249 +2715,249 @@ func master_script() -> Variant:
 		await destroy_act_three_globals()
 		state.destroy(_pog_current())
 		await iutilities.release_error("THE END!")
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iChapterOne.PiracyRatingTracker - Commencing Act Two Chapter Script.\n")
-		while true:
-			var _sw1: Variant = state.progress(v3)
-			var _arm1: int = -1
-			if _pog_eq(_sw1, 0):
-				_arm1 = 0
-			elif _pog_eq(_sw1, 1):
-				_arm1 = 1
-			elif _pog_eq(_sw1, 2):
-				_arm1 = 2
-			elif _pog_eq(_sw1, 3):
-				_arm1 = 3
-			elif _pog_eq(_sw1, 4):
-				_arm1 = 4
-			elif _pog_eq(_sw1, 5):
-				_arm1 = 5
-			elif _pog_eq(_sw1, 6):
-				_arm1 = 6
-			elif _pog_eq(_sw1, 7):
-				_arm1 = 7
-			elif _pog_eq(_sw1, 8):
-				_arm1 = 8
-			elif _pog_eq(_sw1, 9):
-				_arm1 = 9
-			elif _pog_eq(_sw1, 10):
-				_arm1 = 10
-			elif _pog_eq(_sw1, 13):
-				_arm1 = 11
-			elif _pog_eq(_sw1, 14):
-				_arm1 = 12
-			elif _pog_eq(_sw1, 15):
-				_arm1 = 13
-			elif _pog_eq(_sw1, 16):
-				_arm1 = 14
-			elif _pog_eq(_sw1, 17):
-				_arm1 = 15
-			elif _pog_eq(_sw1, 18):
-				_arm1 = 16
-			elif _pog_eq(_sw1, 19):
-				_arm1 = 17
-			elif _pog_eq(_sw1, 20):
-				_arm1 = 18
-			elif _pog_eq(_sw1, 21):
-				_arm1 = 19
-			if _arm1 == -1:
-				break
-			if _arm1 <= 0:
-				await local_27540()
-				await iutilities.send_story_element("g_story_3.10", 3, 1)
-				await iutilities.send_story_element("g_story_3.20", 3, 1)
-				v1 = _pog_spawn(coyote_security.bind())
-				await iact3mission01.main()
-				state.set_progress(v3, 1)
-			if _arm1 <= 1:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript : waiting for player to complete act 3 mission 01, sleeping\n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_corporates_on_run_complete"))):
-						break
-				await iutilities.send_story_element("g_story_3.30", 3, 2)
-				state.set_progress(v3, 2)
-			if _arm1 <= 2:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iActThree.MasterScript : waiting for the player to receive story sequence S3.30, sleeping\n")
-						await _pog_wait(2.0)
-						if not (_pog_is_null(global.pog_bool("g_act3_player_aware_of_corporates"))):
-							break
-				iemail.send_email("a1_master_stepsons_mail_sender", "a2_master_story2.290_mail_subject", "html:/text/act_3/War_mail_2", 1)
-				await iact3mission02.main()
-				state.set_progress(v3, 3)
-			if _arm1 <= 3:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 02, sleeping \n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_clash_of_titans_complete"))):
-						break
-				await iutilities.send_story_element("g_story_3.50", 3, 3)
-				global.set_bool("g_act3_corporates_left_coyote", 1)
-				await local_28499()
-				state.set_progress(v3, 4)
-			if _arm1 <= 4:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iActThree.MasterScript : waiting to find out that the corporates have left Coyote, sleeping\n")
-						await _pog_wait(2.0)
-						if not (_pog_is_null(global.pog_bool("g_act3_corporates_left_coyote"))):
-							break
-				await iact3mission03.main()
-				state.set_progress(v3, 5)
-			if _arm1 <= 5:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript - waiting for player to finish act 03 mission 03 - scavenger, sleeping\n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_scavenger_mission_complete"))):
-						break
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 607, 1, 44, 3, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 250, 1, 59, 2, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 575, 1, 56, 1, 3))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 554, 1, 55, 1, 4))
-				await iact3mission04.main()
-				state.set_progress(v3, 6)
-			if _arm1 <= 6:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript : waiting for the player to complete act 03 mision 04 - capture the accelerator, sleeping\n ")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_capture_accelerator_complete"))):
-						break
-				await iutilities.send_story_element("g_story_3.70", 3, 0)
-				await iutilities.send_story_element("g_story_3.75", 3, 0)
-				state.set_progress(v3, 7)
-			if _arm1 <= 7:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.75 - player base moved, sleeping ")
-						await _pog_wait(1.0)
-						if not (not (iemail.read(iemail.find("html:/text/act_3/act3_master_hoffermail_3_75")))):
-							break
-				await local_1729()
-				state.set_progress(v3, 8)
-			if _arm1 <= 8:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.70, sleeping ")
-						await _pog_wait(2.0)
-						if not (_pog_is_null(global.pog_bool("g_act3_badlands_captiualted"))):
-							break
-				await iutilities.send_story_element("g_story_3.80", 3, 5)
-				await iact3mission05.main()
-				state.set_progress(v3, 9)
-			if _arm1 <= 9:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript : Waiting for the player to finish act 03 mission 05 - deep cover, sleeping\n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_deep_cover_completed"))):
-						break
-				await iutilities.send_story_element("g_story_3.90", 3, 6)
-				await iact3mission06.main()
-				state.set_progress(v3, 10)
-			if _arm1 <= 10:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 06 - smokescreen, sleeping \n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_smokescreen_mission_complete"))):
-						break
-				await iutilities.send_story_element("g_story_3.100", 3, 8)
-				await iutilities.send_story_element("g_story_3.110", 3, 8)
-				await iact3mission08.main()
-				state.set_progress(v3, 13)
-			if _arm1 <= 11:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript : waiting for plater to finish act 03 mission 08 - rescue hoffer, sleeping")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_rescue_hoffer_complete"))):
-						break
-				global.create_bool("g_disable_traffic_monitor", 1, 1)
-				await ifactionscript.set_neutral_factions()
-			if _arm1 <= 12:
-				_pog_spawn(iexodustraffic.exodus_traffic_generator.bind())
-				await iutilities.send_story_element("g_story_3.140", 3, 9)
-				state.set_progress(v3, 15)
-			if _arm1 <= 13:
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iChapterOne.PiracyRatingTracker - Commencing Act Two Chapter Script.\n")
+	while true:
+		var _sw1: Variant = state.progress(v3)
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 0):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 1):
+			_arm1 = 1
+		elif _pog_eq(_sw1, 2):
+			_arm1 = 2
+		elif _pog_eq(_sw1, 3):
+			_arm1 = 3
+		elif _pog_eq(_sw1, 4):
+			_arm1 = 4
+		elif _pog_eq(_sw1, 5):
+			_arm1 = 5
+		elif _pog_eq(_sw1, 6):
+			_arm1 = 6
+		elif _pog_eq(_sw1, 7):
+			_arm1 = 7
+		elif _pog_eq(_sw1, 8):
+			_arm1 = 8
+		elif _pog_eq(_sw1, 9):
+			_arm1 = 9
+		elif _pog_eq(_sw1, 10):
+			_arm1 = 10
+		elif _pog_eq(_sw1, 13):
+			_arm1 = 11
+		elif _pog_eq(_sw1, 14):
+			_arm1 = 12
+		elif _pog_eq(_sw1, 15):
+			_arm1 = 13
+		elif _pog_eq(_sw1, 16):
+			_arm1 = 14
+		elif _pog_eq(_sw1, 17):
+			_arm1 = 15
+		elif _pog_eq(_sw1, 18):
+			_arm1 = 16
+		elif _pog_eq(_sw1, 19):
+			_arm1 = 17
+		elif _pog_eq(_sw1, 20):
+			_arm1 = 18
+		elif _pog_eq(_sw1, 21):
+			_arm1 = 19
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
+			await local_27540()
+			await iutilities.send_story_element("g_story_3.10", 3, 1)
+			await iutilities.send_story_element("g_story_3.20", 3, 1)
+			v1 = _pog_spawn(coyote_security.bind())
+			await iact3mission01.main()
+			state.set_progress(v3, 1)
+		if _arm1 <= 1:
+			while true:
 				if PogRuntime.TRACE:
-					debug.print_string("iActThree.MasterScript - progress marker 14\n")
-				await iact3mission09.main()
-				state.set_progress(v3, 16)
-			if _arm1 <= 14:
-				if PogRuntime.TRACE:
-					debug.print_string("iActThree.MasterScript - progress marker 15\n")
+					debug.print_string("iActThree.MasterScript : waiting for player to complete act 3 mission 01, sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_corporates_on_run_complete"))):
+					break
+			await iutilities.send_story_element("g_story_3.30", 3, 2)
+			state.set_progress(v3, 2)
+		if _arm1 <= 2:
+			if global.pog_bool("g_skip_to_specific") != 1:
 				while true:
 					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript - waitinig for player to finish act 03 mission 09 - antimatter cordon, sleeping\n")
+						debug.print_string("iActThree.MasterScript : waiting for the player to receive story sequence S3.30, sleeping\n")
 					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_antimatter_cordon_complete"))):
+					if not (_pog_is_null(global.pog_bool("g_act3_player_aware_of_corporates"))):
 						break
-				await local_5572()
-				state.set_progress(v3, 17)
-			if _arm1 <= 15:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					_pog_spawn(event3_40__preparing_the_defences.bind())
-				state.set_progress(v3, 18)
-			if _arm1 <= 16:
+			iemail.send_email("a1_master_stepsons_mail_sender", "a2_master_story2.290_mail_subject", "html:/text/act_3/War_mail_2", 1)
+			await iact3mission02.main()
+			state.set_progress(v3, 3)
+		if _arm1 <= 3:
+			while true:
 				if PogRuntime.TRACE:
-					debug.print_string("iActThree.MasterScript - progress marker 15b\n")
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iAct3.MasterScript - Waiting for the player to get the antimatter weapons from smith - Story 3.145 - sleeping.\n")
-						await _pog_wait(1.0)
-						if not (global.pog_int("g_story_3.145") != 2):
-							break
-				else:
-					if not (sim.add_subsim(iship.find_player_ship(), subsim.create("ini:/subsims/systems/player/antimatter_pbc"))):
-						if PogRuntime.TRACE:
-							debug.error("Unable to add antimatter weapons\n")
-				iloadout.remove_turret_fighters()
-				global.create_int("g_num_hidden_turret_fighters", 2, iinventory.number_of_cargo_type(474))
-				iinventory.remove(474, iinventory.number_of_cargo_type(474))
-				v2 = iinventory.number_of_cargo_type(171)
-				iinventory.remove(171, v2)
-				state.set_progress(v3, 19)
-			if _arm1 <= 17:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					_pog_spawn(event3_50__here_come_the_aliens.bind())
-				state.set_progress(v3, 20)
-			if _arm1 <= 18:
-				if PogRuntime.TRACE:
-					debug.print_string("iActThree.MasterScript - progress marker 15c\n")
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iAct3.MasterScript - Waiting for the last of the refugees to escape - sleeping.\n")
-						await _pog_wait(1.0)
-						if not (not (global.pog_bool("g_act3_ready_for_mission_ten"))):
-							break
-				await iact3mission10.main()
-				state.set_progress(v3, 21)
-			if _arm1 <= 19:
-				if PogRuntime.TRACE:
-					debug.print_string("iActThree.MasterScript - progress marker 16\n")
+					debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 02, sleeping \n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_clash_of_titans_complete"))):
+					break
+			await iutilities.send_story_element("g_story_3.50", 3, 3)
+			global.set_bool("g_act3_corporates_left_coyote", 1)
+			await local_28499()
+			state.set_progress(v3, 4)
+		if _arm1 <= 4:
+			if global.pog_bool("g_skip_to_specific") != 1:
 				while true:
 					if PogRuntime.TRACE:
-						debug.print_string("iActThree.MasterScript ; waiting for player to finish the last mission, sleeping\n")
-					await _pog_wait(10.0)
-					if not (_pog_is_null(global.pog_bool("g_act3_the_end_complete"))):
+						debug.print_string("iActThree.MasterScript : waiting to find out that the corporates have left Coyote, sleeping\n")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_corporates_left_coyote"))):
 						break
-				state.destroy(_pog_current())
-				await final_choice()
-				return
-				break
+			await iact3mission03.main()
+			state.set_progress(v3, 5)
+		if _arm1 <= 5:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript - waiting for player to finish act 03 mission 03 - scavenger, sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_scavenger_mission_complete"))):
+					break
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 607, 1, 44, 3, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 250, 1, 59, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 575, 1, 56, 1, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 554, 1, 55, 1, 4))
+			await iact3mission04.main()
+			state.set_progress(v3, 6)
+		if _arm1 <= 6:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript : waiting for the player to complete act 03 mision 04 - capture the accelerator, sleeping\n ")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_capture_accelerator_complete"))):
+					break
+			await iutilities.send_story_element("g_story_3.70", 3, 0)
+			await iutilities.send_story_element("g_story_3.75", 3, 0)
+			state.set_progress(v3, 7)
+		if _arm1 <= 7:
+			if global.pog_bool("g_skip_to_specific") != 1:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.75 - player base moved, sleeping ")
+					await _pog_wait(1.0)
+					if not (not (iemail.read(iemail.find("html:/text/act_3/act3_master_hoffermail_3_75")))):
+						break
+			await local_1729()
+			state.set_progress(v3, 8)
+		if _arm1 <= 8:
+			if global.pog_bool("g_skip_to_specific") != 1:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iActThree.MasterScript : waitinig for player to receive story sequence 3.70, sleeping ")
+					await _pog_wait(2.0)
+					if not (_pog_is_null(global.pog_bool("g_act3_badlands_captiualted"))):
+						break
+			await iutilities.send_story_element("g_story_3.80", 3, 5)
+			await iact3mission05.main()
+			state.set_progress(v3, 9)
+		if _arm1 <= 9:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript : Waiting for the player to finish act 03 mission 05 - deep cover, sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_deep_cover_completed"))):
+					break
+			await iutilities.send_story_element("g_story_3.90", 3, 6)
+			await iact3mission06.main()
+			state.set_progress(v3, 10)
+		if _arm1 <= 10:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript : waiting for the player to finish act 03 mission 06 - smokescreen, sleeping \n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_smokescreen_mission_complete"))):
+					break
+			await iutilities.send_story_element("g_story_3.100", 3, 8)
+			await iutilities.send_story_element("g_story_3.110", 3, 8)
+			await iact3mission08.main()
+			state.set_progress(v3, 13)
+		if _arm1 <= 11:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript : waiting for plater to finish act 03 mission 08 - rescue hoffer, sleeping")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_rescue_hoffer_complete"))):
+					break
+			global.create_bool("g_disable_traffic_monitor", 1, 1)
+			await ifactionscript.set_neutral_factions()
+		if _arm1 <= 12:
+			_pog_spawn(iexodustraffic.exodus_traffic_generator.bind())
+			await iutilities.send_story_element("g_story_3.140", 3, 9)
+			state.set_progress(v3, 15)
+		if _arm1 <= 13:
+			if PogRuntime.TRACE:
+				debug.print_string("iActThree.MasterScript - progress marker 14\n")
+			await iact3mission09.main()
+			state.set_progress(v3, 16)
+		if _arm1 <= 14:
+			if PogRuntime.TRACE:
+				debug.print_string("iActThree.MasterScript - progress marker 15\n")
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript - waitinig for player to finish act 03 mission 09 - antimatter cordon, sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_antimatter_cordon_complete"))):
+					break
+			await local_5572()
+			state.set_progress(v3, 17)
+		if _arm1 <= 15:
+			if global.pog_bool("g_skip_to_specific") != 1:
+				_pog_spawn(event3_40__preparing_the_defences.bind())
+			state.set_progress(v3, 18)
+		if _arm1 <= 16:
+			if PogRuntime.TRACE:
+				debug.print_string("iActThree.MasterScript - progress marker 15b\n")
+			if global.pog_bool("g_skip_to_specific") != 1:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iAct3.MasterScript - Waiting for the player to get the antimatter weapons from smith - Story 3.145 - sleeping.\n")
+					await _pog_wait(1.0)
+					if not (global.pog_int("g_story_3.145") != 2):
+						break
+			else:
+				if not (sim.add_subsim(iship.find_player_ship(), subsim.create("ini:/subsims/systems/player/antimatter_pbc"))):
+					if PogRuntime.TRACE:
+						debug.error("Unable to add antimatter weapons\n")
+			iloadout.remove_turret_fighters()
+			global.create_int("g_num_hidden_turret_fighters", 2, iinventory.number_of_cargo_type(474))
+			iinventory.remove(474, iinventory.number_of_cargo_type(474))
+			v2 = iinventory.number_of_cargo_type(171)
+			iinventory.remove(171, v2)
+			state.set_progress(v3, 19)
+		if _arm1 <= 17:
+			if global.pog_bool("g_skip_to_specific") != 1:
+				_pog_spawn(event3_50__here_come_the_aliens.bind())
+			state.set_progress(v3, 20)
+		if _arm1 <= 18:
+			if PogRuntime.TRACE:
+				debug.print_string("iActThree.MasterScript - progress marker 15c\n")
+			if global.pog_bool("g_skip_to_specific") != 1:
+				while true:
+					if PogRuntime.TRACE:
+						debug.print_string("iAct3.MasterScript - Waiting for the last of the refugees to escape - sleeping.\n")
+					await _pog_wait(1.0)
+					if not (not (global.pog_bool("g_act3_ready_for_mission_ten"))):
+						break
+			await iact3mission10.main()
+			state.set_progress(v3, 21)
+		if _arm1 <= 19:
+			if PogRuntime.TRACE:
+				debug.print_string("iActThree.MasterScript - progress marker 16\n")
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActThree.MasterScript ; waiting for player to finish the last mission, sleeping\n")
+				await _pog_wait(10.0)
+				if not (_pog_is_null(global.pog_bool("g_act3_the_end_complete"))):
+					break
+			state.destroy(_pog_current())
+			await final_choice()
+			return
+			break
 	return
 	return 0
 
@@ -3049,17 +3049,17 @@ func forge_jumpgate_link() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iActThree.ForgeJumpgateLink: Initialising State and exiting.\n")
 		v0 = state.create(_pog_current(), 0)
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iActThree.ForgeJumpgateLink: Forging LPoint links between Santa Romera and formhault.\n")
-		v1 = ilagrangepoint.cast(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))
-		v2 = ilagrangepoint.cast(imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault"))
-		ilagrangepoint.add_destination(v1, v2)
-		ilagrangepoint.set_usable(v1, 1)
-		ilagrangepoint.add_destination(v2, v1)
-		ilagrangepoint.set_usable(v2, 1)
-		await irangecheck.remove_traffic_exception(v1)
-		await irangecheck.remove_traffic_exception(v2)
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iActThree.ForgeJumpgateLink: Forging LPoint links between Santa Romera and formhault.\n")
+	v1 = ilagrangepoint.cast(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))
+	v2 = ilagrangepoint.cast(imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault"))
+	ilagrangepoint.add_destination(v1, v2)
+	ilagrangepoint.set_usable(v1, 1)
+	ilagrangepoint.add_destination(v2, v1)
+	ilagrangepoint.set_usable(v2, 1)
+	await irangecheck.remove_traffic_exception(v1)
+	await irangecheck.remove_traffic_exception(v2)
 	return
 	return 0
 
@@ -3173,9 +3173,8 @@ func main() -> Variant:
 		_pog_spawn(master_script.bind())
 		v0 = 1
 	if v0:
-		pass
-	else:
-		await iutilities.create_player("", imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
+		return 0
+	await iutilities.create_player("", imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
 	return 0
 	return 0
 

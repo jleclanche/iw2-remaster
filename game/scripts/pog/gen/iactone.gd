@@ -236,27 +236,27 @@ func story_element1() -> Variant:
 		await iconversation.say(0, "name_smith", "a1_master_sigh_lambchop_it_is")
 		await iconversation.end()
 		global.set_string("g_player_ship_name", "a1_ship_name_1")
-	else:
-		if v0 == 2:
-			await iconversation.say(0, "name_smith", "a1_master_good_name")
-			await iconversation.end()
-			global.set_string("g_player_ship_name", "a1_ship_name_2")
-		else:
-			if v0 == 3:
-				await iconversation.say(0, "name_smith", "a1_master_crazy_horse_good_has_a_fugative_edge")
-				await iconversation.end()
-				global.set_string("g_player_ship_name", "a1_ship_name_3")
-			else:
-				if v0 == 4:
-					await iconversation.say(0, "name_smith", "a1_master_well_its_not_the_most_subtle")
-					await iconversation.end()
-					global.set_string("g_player_ship_name", "a1_ship_name_4")
-				else:
-					if v0 != 5:
-						return
-					await iconversation.say(0, "name_smith", "a1_master_black_pig_well_its_you_who_will_flying_it")
-					await iconversation.end()
-					global.set_string("g_player_ship_name", "a1_ship_name_5")
+		return
+	if v0 == 2:
+		await iconversation.say(0, "name_smith", "a1_master_good_name")
+		await iconversation.end()
+		global.set_string("g_player_ship_name", "a1_ship_name_2")
+		return
+	if v0 == 3:
+		await iconversation.say(0, "name_smith", "a1_master_crazy_horse_good_has_a_fugative_edge")
+		await iconversation.end()
+		global.set_string("g_player_ship_name", "a1_ship_name_3")
+		return
+	if v0 == 4:
+		await iconversation.say(0, "name_smith", "a1_master_well_its_not_the_most_subtle")
+		await iconversation.end()
+		global.set_string("g_player_ship_name", "a1_ship_name_4")
+		return
+	if v0 != 5:
+		return
+	await iconversation.say(0, "name_smith", "a1_master_black_pig_well_its_you_who_will_flying_it")
+	await iconversation.end()
+	global.set_string("g_player_ship_name", "a1_ship_name_5")
 	return
 	return 0
 
@@ -971,159 +971,159 @@ func haven_station_introduction() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
 		state.destroy(_pog_current())
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iActOne.HavenStationIntroduction : Starting haven station introduction task\n")
-		while true:
-			var _sw4: Variant = state.progress(v1)
-			var _arm4: int = -1
-			if _pog_eq(_sw4, 0):
-				_arm4 = 0
-			elif _pog_eq(_sw4, 1):
-				_arm4 = 1
-			if _arm4 == -1:
-				break
-			if _arm4 <= 0:
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iActOne.HavenStationIntroduction : Starting haven station introduction task\n")
+	while true:
+		var _sw4: Variant = state.progress(v1)
+		var _arm4: int = -1
+		if _pog_eq(_sw4, 0):
+			_arm4 = 0
+		elif _pog_eq(_sw4, 1):
+			_arm4 = 1
+		if _arm4 == -1:
+			break
+		if _arm4 <= 0:
+			if PogRuntime.TRACE:
+				debug.print_string("iActOne.HavenStationVisitor : Sending player invitation to the league\n")
+			iemail.send_email("a1_m08_email_sender", "a1_master_subject_haven", "html:/text/act_1/act1_master_leaguemail_2", 1)
+			state.set_progress(v1, 1)
+		if _arm4 <= 1:
+			if PogRuntime.TRACE:
+				debug.print_string("iActOne.HavenStationVisitor : setting up the tiger lilly - the league aligned piggy back ship\n")
+			v3 = iship.create("ini:/sims/ships/utility/snrv_recovery", "Tiger Lilly")
+			isim.set_faction(v3, ifaction.find("League"))
+			await ipilotsetup.generic(v3)
+			sim.set_cullable(v3, 0)
+			isim.set_indestructable(v3, 1)
+			object.set_float_property(v3, "docking_priority", 200.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iActOne.HavenStationVisitor - Placing the Tiger littly near Jebiadiah's Foundary...\n")
+			v7 = imapentity.find_by_name("Jebiadiah's Foundary")
+			if _pog_is_null(v7):
 				if PogRuntime.TRACE:
-					debug.print_string("iActOne.HavenStationVisitor : Sending player invitation to the league\n")
-				iemail.send_email("a1_m08_email_sender", "a1_master_subject_haven", "html:/text/act_1/act1_master_leaguemail_2", 1)
-				state.set_progress(v1, 1)
-			if _arm4 <= 1:
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.HavenStationVisitor : setting up the tiger lilly - the league aligned piggy back ship\n")
-				v3 = iship.create("ini:/sims/ships/utility/snrv_recovery", "Tiger Lilly")
-				isim.set_faction(v3, ifaction.find("League"))
-				await ipilotsetup.generic(v3)
-				sim.set_cullable(v3, 0)
-				isim.set_indestructable(v3, 1)
-				object.set_float_property(v3, "docking_priority", 200.0)
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.HavenStationVisitor - Placing the Tiger littly near Jebiadiah's Foundary...\n")
-				v7 = imapentity.find_by_name("Jebiadiah's Foundary")
+					debug.error("iActOne.HavenStationIntroduction : cannot find Jebadiah's foundary in current system\n")
+			sim.place_relative_to(v3, imapentity.waypoint_for_entity(v7), 500.0, 500.0, 500.0)
+			while v10 and global.pog_int("g_current_act") == 1:
+				while not (v4):
+					if global.pog_int("g_current_act") != 1:
+						if PogRuntime.TRACE:
+							debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
+						sim.destroy(v3)
+						state.destroy(_pog_current())
+						return
+					if sim.distance_between(v2, v3) > 20000.0:
+						if PogRuntime.TRACE:
+							debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
+						v5 = 0
+						await _pog_wait(10.0)
+					else:
+						if sim.distance_between(v2, v3) > 8000.0:
+							if PogRuntime.TRACE:
+								debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
+							await _pog_wait(1.0)
+						else:
+							if not (v5):
+								v5 = 1
+								await iconversation.begin()
+								await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
+								await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_player_tl_player_negative")
+								v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_haven_station")
+								if v9 == 1:
+									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
+									await iconversation.end()
+								else:
+									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
+									await iconversation.end()
+							else:
+								if isim.is_docked_to(v2, v3):
+									if PogRuntime.TRACE:
+										debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to haven station...\n")
+									v4 = 1
+								else:
+									if PogRuntime.TRACE:
+										debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
+									await _pog_wait(5.0)
+				v8 = imapentity.find_by_name_in_system("Haven Station", "map:/geog/badlands/hoffers_wake")
 				if _pog_is_null(v7):
 					if PogRuntime.TRACE:
-						debug.error("iActOne.HavenStationIntroduction : cannot find Jebadiah's foundary in current system\n")
-				sim.place_relative_to(v3, imapentity.waypoint_for_entity(v7), 500.0, 500.0, 500.0)
-				while v10 and global.pog_int("g_current_act") == 1:
-					while not (v4):
-						if global.pog_int("g_current_act") != 1:
-							if PogRuntime.TRACE:
-								debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
-							sim.destroy(v3)
-							state.destroy(_pog_current())
-							return
-						if sim.distance_between(v2, v3) > 20000.0:
-							if PogRuntime.TRACE:
-								debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
-							v5 = 0
-							await _pog_wait(10.0)
-						else:
-							if sim.distance_between(v2, v3) > 8000.0:
-								if PogRuntime.TRACE:
-									debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
-								await _pog_wait(1.0)
-							else:
-								if not (v5):
-									v5 = 1
-									await iconversation.begin()
-									await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
-									await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_player_tl_player_negative")
-									v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_haven_station")
-									if v9 == 1:
-										await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
-										await iconversation.end()
-									else:
-										await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
-										await iconversation.end()
-								else:
-									if isim.is_docked_to(v2, v3):
-										if PogRuntime.TRACE:
-											debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to haven station...\n")
-										v4 = 1
-									else:
-										if PogRuntime.TRACE:
-											debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
-										await _pog_wait(5.0)
-					v8 = imapentity.find_by_name_in_system("Haven Station", "map:/geog/badlands/hoffers_wake")
-					if _pog_is_null(v7):
-						if PogRuntime.TRACE:
-							debug.error("iActOne.HavenStationIntroduction : cannot find Haven Station in current system\n")
-					await irangecheck.add_traffic_exception(v8)
-					await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v7, v8)))
-					sim.place_relative_to(v3, v8, 500.0, 500.0, 2000.0)
-					sim.set_velocity(v3, 0.0, 0.0, 0.0)
-					sim.point_at(v3, v8)
-					iship.set_free_without_pilot(v3, 0)
+						debug.error("iActOne.HavenStationIntroduction : cannot find Haven Station in current system\n")
+				await irangecheck.add_traffic_exception(v8)
+				await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v7, v8)))
+				sim.place_relative_to(v3, v8, 500.0, 500.0, 2000.0)
+				sim.set_velocity(v3, 0.0, 0.0, 0.0)
+				sim.point_at(v3, v8)
+				iship.set_free_without_pilot(v3, 0)
+				await _pog_wait(1.0)
+				await iconversation.begin()
+				await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_haven_station")
+				await iconversation.end()
+				while isim.is_docked_to(v2, v3):
 					await _pog_wait(1.0)
-					await iconversation.begin()
-					await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_haven_station")
-					await iconversation.end()
-					while isim.is_docked_to(v2, v3):
-						await _pog_wait(1.0)
-					v4 = 0
-					if not (global.pog_bool("g_act1_haven_station_visited")):
-						text.add("csv:/text/act_2/act2_mission25_addendum2")
-						await _pog_wait(4.0)
-						await imusic.pause()
-						await imusic.play("sound:/audio/music/a4_theme", 0, 0)
-						await icutsceneutilities.handle_abort(_pog_spawn(local_34470.bind(v8)))
-						sim.place_relative_to(v2, v8, 1000.0, 500.0, 1000.0)
-						sim.set_velocity(v2, 0.0, 0.0, 0.0)
-						sim.set_angular_velocity_euler(v2, 0.0, 0.0, 0.0)
-						sim.point_at(v2, v8)
-						stream.stop(0, 0)
-						stream.stop(1, 0)
-						await imusic.pog_resume()
-						await imusic.set_suite(0)
-						await imusic.set_mood(0)
-						text.remove("csv:/text/act_2/act2_mission25_addendum2")
-						global.set_bool("g_act1_haven_station_visited", 1)
-					await irangecheck.remove_traffic_exception(v8)
-					while not (v4):
-						if sim.distance_between(v2, v3) > 10000.0:
+				v4 = 0
+				if not (global.pog_bool("g_act1_haven_station_visited")):
+					text.add("csv:/text/act_2/act2_mission25_addendum2")
+					await _pog_wait(4.0)
+					await imusic.pause()
+					await imusic.play("sound:/audio/music/a4_theme", 0, 0)
+					await icutsceneutilities.handle_abort(_pog_spawn(local_34470.bind(v8)))
+					sim.place_relative_to(v2, v8, 1000.0, 500.0, 1000.0)
+					sim.set_velocity(v2, 0.0, 0.0, 0.0)
+					sim.set_angular_velocity_euler(v2, 0.0, 0.0, 0.0)
+					sim.point_at(v2, v8)
+					stream.stop(0, 0)
+					stream.stop(1, 0)
+					await imusic.pog_resume()
+					await imusic.set_suite(0)
+					await imusic.set_mood(0)
+					text.remove("csv:/text/act_2/act2_mission25_addendum2")
+					global.set_bool("g_act1_haven_station_visited", 1)
+				await irangecheck.remove_traffic_exception(v8)
+				while not (v4):
+					if sim.distance_between(v2, v3) > 10000.0:
+						if PogRuntime.TRACE:
+							debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
+						v5 = 0
+						await _pog_wait(10.0)
+					else:
+						if sim.distance_between(v2, v3) > 1000.0:
 							if PogRuntime.TRACE:
-								debug.print_string("iActOne.HavenStationIntroduction : The player isnowhere near the tiger lilly, sleepig for ten seconds\n")
-							v5 = 0
-							await _pog_wait(10.0)
+								debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
+							await _pog_wait(1.0)
 						else:
-							if sim.distance_between(v2, v3) > 1000.0:
-								if PogRuntime.TRACE:
-									debug.print_string("iActOne.HavenStationIntroduction : The player is close to the tiger lilly, but not close enough, sleeping for a second\n")
-								await _pog_wait(1.0)
-							else:
-								if not (v5):
-									v5 = 1
-									await iconversation.begin()
-									await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
-									await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_tl_player_affirmative")
-									v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_hoffers_wake_alpha")
-									if v9 == 1:
-										await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
-										await iconversation.end()
-									else:
-										await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
-										await iconversation.end()
+							if not (v5):
+								v5 = 1
+								await iconversation.begin()
+								await iconversation.add_response("a1_master_tl_player_affirmative", "a1_master_tl_player_affirmative")
+								await iconversation.add_response("a1_master_player_tl_player_negative", "a1_master_tl_player_affirmative")
+								v9 = await iconversation.ask(v3, "a1_master_tiger_lilly", "a1_master_tl_want_to_go_to_hoffers_wake_alpha")
+								if v9 == 1:
+									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_tl_then_dock_to_me")
+									await iconversation.end()
 								else:
-									if isim.is_docked_to(v2, v3):
-										if PogRuntime.TRACE:
-											debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to Jeffersons Foundary...\n")
-										v4 = 1
-									else:
-										if PogRuntime.TRACE:
-											debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
-										await _pog_wait(5.0)
-					await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v8, v7)))
-					sim.place_relative_to(v3, v7, 500.0, 200.0, 1000.0)
-					sim.set_velocity(v3, 0.0, 0.0, 0.0)
-					sim.point_at(v3, v7)
-					iship.set_free_without_pilot(v3, 0)
-					await iconversation.begin()
-					await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_hoffers_alpha")
-					await iconversation.end()
-					while isim.is_docked_to(v2, v3):
-						await _pog_wait(1.0)
-					v4 = 0
-				break
+									await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_suit_yourself")
+									await iconversation.end()
+							else:
+								if isim.is_docked_to(v2, v3):
+									if PogRuntime.TRACE:
+										debug.print_string("iActOne.HavenStationIntroduction - player ship has docked to the tiger Lilly - lets go to Jeffersons Foundary...\n")
+									v4 = 1
+								else:
+									if PogRuntime.TRACE:
+										debug.print_string("iActOne.HavenStationIntroduction  : player is close to tiger lilly, but has already spoken to it, sleeping\n")
+									await _pog_wait(5.0)
+				await icutsceneutilities.handle_abort(_pog_spawn(local_16642.bind(v3, v8, v7)))
+				sim.place_relative_to(v3, v7, 500.0, 200.0, 1000.0)
+				sim.set_velocity(v3, 0.0, 0.0, 0.0)
+				sim.point_at(v3, v7)
+				iship.set_free_without_pilot(v3, 0)
+				await iconversation.begin()
+				await iconversation.say(v3, "a1_master_tiger_lilly", "a1_master_welcome_hoffers_alpha")
+				await iconversation.end()
+				while isim.is_docked_to(v2, v3):
+					await _pog_wait(1.0)
+				v4 = 0
+			break
 	return
 	return 0
 
@@ -1146,8 +1146,8 @@ func local_20461() -> Variant:
 		config.create_bool("system", "icGUIMovie", "lori", 1)
 	if config.exists("system", "icGUIMovie", "smith"):
 		config.set_bool("system", "icGUIMovie", "smith", 1)
-	else:
-		config.create_bool("system", "icGUIMovie", "smith", 1)
+		return 0
+	config.create_bool("system", "icGUIMovie", "smith", 1)
 	return 0
 	return 0
 
@@ -1289,297 +1289,297 @@ func master_script() -> Variant:
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 169, 1, 440, 1, 1))
 		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 169, 1, 52, 6, 1))
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 37, 1, 1))
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iActOne.MasterScript: Commencing Act One Chapter Script.\n")
-		if _pog_is_null(global.exists("g_finished_email_hinter")) and global.pog_bool("g_act1_character_intro") == 1:
-			_pog_spawn(piracy_email_hinter.bind())
-		while true:
-			var _sw5: Variant = state.progress(v2)
-			var _arm5: int = -1
-			if _pog_eq(_sw5, 0):
-				_arm5 = 0
-			elif _pog_eq(_sw5, 1):
-				_arm5 = 1
-			elif _pog_eq(_sw5, 2):
-				_arm5 = 2
-			elif _pog_eq(_sw5, 3):
-				_arm5 = 3
-			elif _pog_eq(_sw5, 4):
-				_arm5 = 4
-			elif _pog_eq(_sw5, 5):
-				_arm5 = 5
-			elif _pog_eq(_sw5, 6):
-				_arm5 = 6
-			elif _pog_eq(_sw5, 7):
-				_arm5 = 7
-			elif _pog_eq(_sw5, 9):
-				_arm5 = 8
-			elif _pog_eq(_sw5, 10):
-				_arm5 = 9
-			elif _pog_eq(_sw5, 11):
-				_arm5 = 10
-			elif _pog_eq(_sw5, 12):
-				_arm5 = 11
-			elif _pog_eq(_sw5, 13):
-				_arm5 = 12
-			elif _pog_eq(_sw5, 14):
-				_arm5 = 13
-			elif _pog_eq(_sw5, 15):
-				_arm5 = 14
-			elif _pog_eq(_sw5, 16):
-				_arm5 = 15
-			elif _pog_eq(_sw5, 17):
-				_arm5 = 16
-			if _arm5 == -1:
-				break
-			if _arm5 <= 0:
-				await ijafsscript.disable_jafs()
-				await iact1mission01.main()
-				state.set_progress(v2, 1)
-			if _arm5 <= 1:
-				while true:
-					await _pog_wait(1)
-					if global.pog_bool("g_act1_found_base") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has found Lucrecia's Base.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Still waiting for player to find Lucrecia's base.\n")
-				if PogRuntime.TRACE:
-					debug.print_string("iActOne.MasterScript -initilising story elements S1.10 & S1.30 in player base.\n")
-				state.set_progress(v2, 2)
-			if _arm5 <= 2:
-				while true:
-					await _pog_wait(1)
-					if global.pog_bool("g_act1_character_intro") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has received character intro's\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Still waiting for player receive character intro's\n")
-				await ijafsscript.enable_jafs()
-				_pog_spawn(piracy_rating_tracker.bind())
-				state.set_progress(v2, 3)
-			if _arm5 <= 3:
-				await iutilities.skip_wait_for_bool("utils_bool_g_act1_stepsons_intro", "g_act1_stepsons_intro", 1)
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_stepsons_intro") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has received and itroduction to work for the Stepsons\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Still waiting for player to attract the Stepsons job offer.\n")
-				await iact1mission02.main()
-				state.set_progress(v2, 4)
-			if _arm5 <= 4:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_stepson_member") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has completed act 01 Mission 02 - \n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Still waiting for player to acomplete act 01 Mission 02.\n")
-				_pog_detach(_pog_spawn(stepson_member.bind()))
-				state.set_progress(v2, 6)
-			if _arm5 <= 5:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_stepsons_pleased") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has pleased the Stepsons enough to be given an important mission. Arselicker.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Still waiting for player to work his way up through Stespon Heirachy.\n")
-				state.set_progress(v2, 6)
-			if _arm5 <= 6:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_stepsons_pleased") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has pleased stepsons.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Still waiting for player to please stepsons\n")
-				global.set_int("g_story_1.40", 1)
-				await iact1mission04.main()
-				state.set_progress(v2, 7)
-			if _arm5 <= 7:
-				while true:
-					await _pog_wait(1)
-					if global.pog_bool("g_act1_got_turret_fighters") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 04.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 04.\n")
-				global.set_int("g_story_1.50", 1)
-				global.set_int("g_story_1.70", 1)
-				global.set_int("g_story_1.60", 1)
-				_pog_detach(_pog_spawn(marauder_encounters.bind()))
-				state.set_progress(v2, 9)
-			if _arm5 <= 8:
-				await iutilities.skip_wait_for_bool("utils_g_act1_marauders_encountered", "g_act1_marauders_encountered", 1)
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_marauders_encountered") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has encountered the marauders - he's ready for the first marauder mission.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player encounter enough marauders to trigger Act 01 Mission 05.\n")
-				await iact1mission05.main()
-				state.set_progress(v2, 10)
-			if _arm5 <= 9:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_destroyed_marauder_cache") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has finished Act1 Mission 05, Bravo.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 05.\n")
-				global.set_int("g_story_1.80", 1)
-				state.set_progress(v2, 11)
-				await iact1mission03.main()
-			if _arm5 <= 10:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_hoffers_wake_warning") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has been warned about the marauder threat to Hoffers Wake \n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to be warned about the threat to Hoffers Wake.\n")
-				while true:
-					await _pog_wait(5.0)
-					if not (_pog_is_null(global.pog_bool("g_act1_joint_forces_complete"))):
-						break
-				await iact1mission06.main()
-				state.set_progress(v2, 12)
-			if _arm5 <= 11:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_retreived_gunstars") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 06 - preparing to launch battle of Hoffers Wake \n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 06.\n")
-				await iact1mission07.main()
-				state.set_progress(v2, 13)
-			if _arm5 <= 12:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_saved_hoffers_wake") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 07. \n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 07.\n")
-				global.set_int("g_story_1.100", 1)
-				state.set_progress(v2, 14)
-			if _arm5 <= 13:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_league_introduction") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has been introduced to the league.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to read the league introduction.\n")
-				await iact1mission08.main()
-				state.set_progress(v2, 15)
-			if _arm5 <= 14:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_league_initiation") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has completed league initiation test ( act 1 Mission 08 ). \n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to complete league intiation test ( act 1 Mission 08 ) .\n")
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 35, 2, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 596, 1, 466, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 596, 1, 31, 2, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 503, 1, 258, 1, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 503, 1, 52, 2, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 214, 1, 390, 3, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 214, 1, 49, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 218, 1, 462, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 218, 1, 50, 4, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 500, 1, 268, 1, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 500, 1, 14, 2, 3))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 193, 1, 479, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 193, 1, 58, 3, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 168, 1, 540, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 168, 1, 7, 5, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 216, 1, 29, 5, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 579, 1, 30, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 7, 3, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 521, 1, 83, 2, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 521, 1, 52, 2, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 528, 1, 377, 1, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 528, 1, 52, 2, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 453, 5, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 230, 1, 50, 8, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 13, 3, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 595, 1, 404, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 595, 1, 31, 3, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 409, 1, 5))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 570, 1, 39, 3, 3))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 229, 1, 427, 2, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 229, 1, 52, 2, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 169, 1, 440, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 169, 1, 52, 6, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 37, 1, 1))
-				_pog_spawn(haven_station_introduction.bind())
-				await iact1mission09.main()
-				state.set_progress(v2, 16)
-			if _arm5 <= 15:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_lor_stolen") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has compelted act1 misson 09. \n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission09.\n")
-				await iact1mission10.main()
-				state.set_progress(v2, 17)
-			if _arm5 <= 16:
-				while true:
-					await _pog_wait(5)
-					if global.pog_bool("g_act1_retrieved_artefact") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - player has compelted act1 misson 10 and has retreived the alien artefact. \n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission 10.\n")
-				if PogRuntime.TRACE:
-					debug.print_string(" iActOone.MasterScript - Finished Act One\n")
-				await destry_act_one_globals()
-				state.destroy(_pog_current())
-				igame.next_act("iActTwo")
-				break
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iActOne.MasterScript: Commencing Act One Chapter Script.\n")
+	if _pog_is_null(global.exists("g_finished_email_hinter")) and global.pog_bool("g_act1_character_intro") == 1:
+		_pog_spawn(piracy_email_hinter.bind())
+	while true:
+		var _sw5: Variant = state.progress(v2)
+		var _arm5: int = -1
+		if _pog_eq(_sw5, 0):
+			_arm5 = 0
+		elif _pog_eq(_sw5, 1):
+			_arm5 = 1
+		elif _pog_eq(_sw5, 2):
+			_arm5 = 2
+		elif _pog_eq(_sw5, 3):
+			_arm5 = 3
+		elif _pog_eq(_sw5, 4):
+			_arm5 = 4
+		elif _pog_eq(_sw5, 5):
+			_arm5 = 5
+		elif _pog_eq(_sw5, 6):
+			_arm5 = 6
+		elif _pog_eq(_sw5, 7):
+			_arm5 = 7
+		elif _pog_eq(_sw5, 9):
+			_arm5 = 8
+		elif _pog_eq(_sw5, 10):
+			_arm5 = 9
+		elif _pog_eq(_sw5, 11):
+			_arm5 = 10
+		elif _pog_eq(_sw5, 12):
+			_arm5 = 11
+		elif _pog_eq(_sw5, 13):
+			_arm5 = 12
+		elif _pog_eq(_sw5, 14):
+			_arm5 = 13
+		elif _pog_eq(_sw5, 15):
+			_arm5 = 14
+		elif _pog_eq(_sw5, 16):
+			_arm5 = 15
+		elif _pog_eq(_sw5, 17):
+			_arm5 = 16
+		if _arm5 == -1:
+			break
+		if _arm5 <= 0:
+			await ijafsscript.disable_jafs()
+			await iact1mission01.main()
+			state.set_progress(v2, 1)
+		if _arm5 <= 1:
+			while true:
+				await _pog_wait(1)
+				if global.pog_bool("g_act1_found_base") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has found Lucrecia's Base.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Still waiting for player to find Lucrecia's base.\n")
+			if PogRuntime.TRACE:
+				debug.print_string("iActOne.MasterScript -initilising story elements S1.10 & S1.30 in player base.\n")
+			state.set_progress(v2, 2)
+		if _arm5 <= 2:
+			while true:
+				await _pog_wait(1)
+				if global.pog_bool("g_act1_character_intro") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has received character intro's\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Still waiting for player receive character intro's\n")
+			await ijafsscript.enable_jafs()
+			_pog_spawn(piracy_rating_tracker.bind())
+			state.set_progress(v2, 3)
+		if _arm5 <= 3:
+			await iutilities.skip_wait_for_bool("utils_bool_g_act1_stepsons_intro", "g_act1_stepsons_intro", 1)
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_stepsons_intro") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has received and itroduction to work for the Stepsons\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Still waiting for player to attract the Stepsons job offer.\n")
+			await iact1mission02.main()
+			state.set_progress(v2, 4)
+		if _arm5 <= 4:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_stepson_member") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has completed act 01 Mission 02 - \n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Still waiting for player to acomplete act 01 Mission 02.\n")
+			_pog_detach(_pog_spawn(stepson_member.bind()))
+			state.set_progress(v2, 6)
+		if _arm5 <= 5:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_stepsons_pleased") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has pleased the Stepsons enough to be given an important mission. Arselicker.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Still waiting for player to work his way up through Stespon Heirachy.\n")
+			state.set_progress(v2, 6)
+		if _arm5 <= 6:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_stepsons_pleased") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has pleased stepsons.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Still waiting for player to please stepsons\n")
+			global.set_int("g_story_1.40", 1)
+			await iact1mission04.main()
+			state.set_progress(v2, 7)
+		if _arm5 <= 7:
+			while true:
+				await _pog_wait(1)
+				if global.pog_bool("g_act1_got_turret_fighters") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 04.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 04.\n")
+			global.set_int("g_story_1.50", 1)
+			global.set_int("g_story_1.70", 1)
+			global.set_int("g_story_1.60", 1)
+			_pog_detach(_pog_spawn(marauder_encounters.bind()))
+			state.set_progress(v2, 9)
+		if _arm5 <= 8:
+			await iutilities.skip_wait_for_bool("utils_g_act1_marauders_encountered", "g_act1_marauders_encountered", 1)
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_marauders_encountered") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has encountered the marauders - he's ready for the first marauder mission.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player encounter enough marauders to trigger Act 01 Mission 05.\n")
+			await iact1mission05.main()
+			state.set_progress(v2, 10)
+		if _arm5 <= 9:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_destroyed_marauder_cache") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has finished Act1 Mission 05, Bravo.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to complete Act 01 Mission 05.\n")
+			global.set_int("g_story_1.80", 1)
+			state.set_progress(v2, 11)
+			await iact1mission03.main()
+		if _arm5 <= 10:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_hoffers_wake_warning") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has been warned about the marauder threat to Hoffers Wake \n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to be warned about the threat to Hoffers Wake.\n")
+			while true:
+				await _pog_wait(5.0)
+				if not (_pog_is_null(global.pog_bool("g_act1_joint_forces_complete"))):
+					break
+			await iact1mission06.main()
+			state.set_progress(v2, 12)
+		if _arm5 <= 11:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_retreived_gunstars") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 06 - preparing to launch battle of Hoffers Wake \n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 06.\n")
+			await iact1mission07.main()
+			state.set_progress(v2, 13)
+		if _arm5 <= 12:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_saved_hoffers_wake") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Player has completed Act 01 Mission 07. \n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to finish Act 01 mission 07.\n")
+			global.set_int("g_story_1.100", 1)
+			state.set_progress(v2, 14)
+		if _arm5 <= 13:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_league_introduction") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has been introduced to the league.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to read the league introduction.\n")
+			await iact1mission08.main()
+			state.set_progress(v2, 15)
+		if _arm5 <= 14:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_league_initiation") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has completed league initiation test ( act 1 Mission 08 ). \n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to complete league intiation test ( act 1 Mission 08 ) .\n")
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 35, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 596, 1, 466, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 596, 1, 31, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 503, 1, 258, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 503, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 214, 1, 390, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 214, 1, 49, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 218, 1, 462, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 218, 1, 50, 4, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 500, 1, 268, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 500, 1, 14, 2, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 193, 1, 479, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 193, 1, 58, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 168, 1, 540, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 168, 1, 7, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 216, 1, 29, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 579, 1, 30, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 579, 1, 7, 3, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 521, 1, 83, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 521, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 528, 1, 377, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 528, 1, 52, 2, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 453, 5, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 230, 1, 50, 8, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 230, 1, 13, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 595, 1, 404, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 595, 1, 31, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 409, 1, 5))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 570, 1, 39, 3, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 229, 1, 427, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 229, 1, 52, 2, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 169, 1, 440, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Stepson"), 169, 1, 52, 6, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Stepson"), 570, 1, 37, 1, 1))
+			_pog_spawn(haven_station_introduction.bind())
+			await iact1mission09.main()
+			state.set_progress(v2, 16)
+		if _arm5 <= 15:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_lor_stolen") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has compelted act1 misson 09. \n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission09.\n")
+			await iact1mission10.main()
+			state.set_progress(v2, 17)
+		if _arm5 <= 16:
+			while true:
+				await _pog_wait(5)
+				if global.pog_bool("g_act1_retrieved_artefact") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - player has compelted act1 misson 10 and has retreived the alien artefact. \n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActOne.MasterScript - Waiting for the player to complete act 1 mission 10.\n")
+			if PogRuntime.TRACE:
+				debug.print_string(" iActOone.MasterScript - Finished Act One\n")
+			await destry_act_one_globals()
+			state.destroy(_pog_current())
+			igame.next_act("iActTwo")
+			break
 	return
 	return 0
 
@@ -1926,8 +1926,8 @@ func main() -> Variant:
 		if v3:
 			sim.destroy(v3)
 		idirector.end()
-	else:
-		await iutilities.create_player("", imapentity.find_by_name("Lucrecia's Base"))
+		return 0
+	await iutilities.create_player("", imapentity.find_by_name("Lucrecia's Base"))
 	return 0
 	return 0
 

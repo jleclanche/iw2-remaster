@@ -333,15 +333,25 @@ func cross(v0, v1, v2, v3) -> Variant:
 	v4 = group.sim_count(v0)
 	v5 = 1
 	if v4 == 1:
-		pass
-	else:
-		v11 = group.nth_sim(v0, 0)
-		v9 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
-		while true:
-			v6 = v6 + 1.0
+		return 0
+	v11 = group.nth_sim(v0, 0)
+	v9 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
+	while true:
+		v6 = v6 + 1.0
+		v10 = group.nth_sim(v0, v5)
+		v7 = v6 * v9
+		v8 = v6 * v9
+		if v3:
+			sim.place_relative_to(v10, v11, v7, v8, 0.0)
+			if iship.cast(v10):
+				iai.give_escort_order(iship.cast(v10), v11, v7, v8, 0.0, v2)
+		else:
+			iai.give_escort_order(iship.cast(v10), iship.cast(v11), v7, v8, 0.0, v2)
+		v5 = v5 + 1
+		if v5 < v4:
 			v10 = group.nth_sim(v0, v5)
 			v7 = v6 * v9
-			v8 = v6 * v9
+			v8 = -(v6 * v9)
 			if v3:
 				sim.place_relative_to(v10, v11, v7, v8, 0.0)
 				if iship.cast(v10):
@@ -351,8 +361,8 @@ func cross(v0, v1, v2, v3) -> Variant:
 			v5 = v5 + 1
 			if v5 < v4:
 				v10 = group.nth_sim(v0, v5)
-				v7 = v6 * v9
-				v8 = -(v6 * v9)
+				v7 = -(v6 * v9)
+				v8 = v6 * v9
 				if v3:
 					sim.place_relative_to(v10, v11, v7, v8, 0.0)
 					if iship.cast(v10):
@@ -363,7 +373,7 @@ func cross(v0, v1, v2, v3) -> Variant:
 				if v5 < v4:
 					v10 = group.nth_sim(v0, v5)
 					v7 = -(v6 * v9)
-					v8 = v6 * v9
+					v8 = -(v6 * v9)
 					if v3:
 						sim.place_relative_to(v10, v11, v7, v8, 0.0)
 						if iship.cast(v10):
@@ -371,19 +381,8 @@ func cross(v0, v1, v2, v3) -> Variant:
 					else:
 						iai.give_escort_order(iship.cast(v10), iship.cast(v11), v7, v8, 0.0, v2)
 					v5 = v5 + 1
-					if v5 < v4:
-						v10 = group.nth_sim(v0, v5)
-						v7 = -(v6 * v9)
-						v8 = -(v6 * v9)
-						if v3:
-							sim.place_relative_to(v10, v11, v7, v8, 0.0)
-							if iship.cast(v10):
-								iai.give_escort_order(iship.cast(v10), v11, v7, v8, 0.0, v2)
-						else:
-							iai.give_escort_order(iship.cast(v10), iship.cast(v11), v7, v8, 0.0, v2)
-						v5 = v5 + 1
-			if not (v5 < v4):
-				break
+		if not (v5 < v4):
+			break
 	return 0
 	return 0
 
@@ -404,18 +403,27 @@ func impi(v0, v1, v2, v3) -> Variant:
 	v5 = 1
 	v8 = 10.0
 	if v4 == 1:
-		pass
-	else:
-		v11 = group.nth_sim(v0, 0)
-		v9 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
-		while true:
-			v6 = v6 + 1.0
-			if v6 < 4.0:
-				v8 = v8 * v6
-			else:
-				v8 = v8 + v8
+		return 0
+	v11 = group.nth_sim(v0, 0)
+	v9 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
+	while true:
+		v6 = v6 + 1.0
+		if v6 < 4.0:
+			v8 = v8 * v6
+		else:
+			v8 = v8 + v8
+		v10 = group.nth_sim(v0, v5)
+		v7 = v6 * v9 + v1
+		if v3:
+			sim.place_relative_to(v10, v11, v7, 0.0, v8)
+			if iship.cast(v10):
+				iai.give_escort_order(iship.cast(v10), v11, v7, 0.0, v8, v2)
+		else:
+			iai.give_escort_order(iship.cast(v10), iship.cast(v11), v7, 0.0, v8, v2)
+		v5 = v5 + 1
+		if v5 < v4:
 			v10 = group.nth_sim(v0, v5)
-			v7 = v6 * v9 + v1
+			v7 = -(v6 * v9)
 			if v3:
 				sim.place_relative_to(v10, v11, v7, 0.0, v8)
 				if iship.cast(v10):
@@ -423,18 +431,8 @@ func impi(v0, v1, v2, v3) -> Variant:
 			else:
 				iai.give_escort_order(iship.cast(v10), iship.cast(v11), v7, 0.0, v8, v2)
 			v5 = v5 + 1
-			if v5 < v4:
-				v10 = group.nth_sim(v0, v5)
-				v7 = -(v6 * v9)
-				if v3:
-					sim.place_relative_to(v10, v11, v7, 0.0, v8)
-					if iship.cast(v10):
-						iai.give_escort_order(iship.cast(v10), v11, v7, 0.0, v8, v2)
-				else:
-					iai.give_escort_order(iship.cast(v10), iship.cast(v11), v7, 0.0, v8, v2)
-				v5 = v5 + 1
-			if not (v5 < v4):
-				break
+		if not (v5 < v4):
+			break
 	return 0
 	return 0
 
@@ -449,54 +447,53 @@ func outrider(v0, v1, v2, v3) -> Variant:
 	var v11: Variant = 0
 	v4 = group.sim_count(v0)
 	if v4 == 1:
-		pass
-	else:
-		v11 = group.nth_sim(v0, 0)
-		v5 = (v4 - 1) / 2
-		v9 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
-		while true:
+		return 0
+	v11 = group.nth_sim(v0, 0)
+	v5 = (v4 - 1) / 2
+	v9 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
+	while true:
+		v6 = v6 + 1
+		v10 = group.nth_sim(v0, v6)
+		if v3:
+			sim.place_relative_to(v10, v11, v8, 0.0, v9 + 10.0)
+			if iship.cast(v10):
+				iai.give_escort_order(iship.cast(v10), v11, v8, 0.0, v9 + 10.0, v2)
+		else:
+			iai.give_escort_order(iship.cast(v10), iship.cast(v11), v8, 0.0, v9 + 10.0, v2)
+		v8 = v8 + v9
+		if v6 + 1 <= v5:
 			v6 = v6 + 1
 			v10 = group.nth_sim(v0, v6)
 			if v3:
-				sim.place_relative_to(v10, v11, v8, 0.0, v9 + 10.0)
+				sim.place_relative_to(v10, v11, -(v8), 0.0, v9 + 10.0)
 				if iship.cast(v10):
-					iai.give_escort_order(iship.cast(v10), v11, v8, 0.0, v9 + 10.0, v2)
+					iai.give_escort_order(iship.cast(v10), v11, -(v8), 0.0, v9 + 10.0, v2)
 			else:
-				iai.give_escort_order(iship.cast(v10), iship.cast(v11), v8, 0.0, v9 + 10.0, v2)
-			v8 = v8 + v9
-			if v6 + 1 <= v5:
-				v6 = v6 + 1
-				v10 = group.nth_sim(v0, v6)
-				if v3:
-					sim.place_relative_to(v10, v11, -(v8), 0.0, v9 + 10.0)
-					if iship.cast(v10):
-						iai.give_escort_order(iship.cast(v10), v11, -(v8), 0.0, v9 + 10.0, v2)
-				else:
-					iai.give_escort_order(iship.cast(v10), iship.cast(v11), -(v8), 0.0, v9 + 10.0, v2)
-			if not (v6 < v5):
-				break
-		v8 = 0.0
-		while true:
+				iai.give_escort_order(iship.cast(v10), iship.cast(v11), -(v8), 0.0, v9 + 10.0, v2)
+		if not (v6 < v5):
+			break
+	v8 = 0.0
+	while true:
+		v6 = v6 + 1
+		v10 = group.nth_sim(v0, v6)
+		if v3:
+			sim.place_relative_to(v10, v11, v8, 0.0, -(v9 + 10.0))
+			if iship.cast(v10):
+				iai.give_escort_order(iship.cast(v10), v11, v8, 0.0, -(v9 + 10.0), v2)
+		else:
+			iai.give_escort_order(iship.cast(v10), iship.cast(v11), v8, 0.0, -(v9 + 10.0), v2)
+		v8 = v8 + v9
+		if v6 + 1 <= v4 - 1:
 			v6 = v6 + 1
 			v10 = group.nth_sim(v0, v6)
 			if v3:
-				sim.place_relative_to(v10, v11, v8, 0.0, -(v9 + 10.0))
+				sim.place_relative_to(v10, v11, -(v8), 0.0, -(v9 + 10.0))
 				if iship.cast(v10):
-					iai.give_escort_order(iship.cast(v10), v11, v8, 0.0, -(v9 + 10.0), v2)
+					iai.give_escort_order(iship.cast(v10), v11, -(v8), 0.0, -(v9 + 10.0), v2)
 			else:
-				iai.give_escort_order(iship.cast(v10), iship.cast(v11), v8, 0.0, -(v9 + 10.0), v2)
-			v8 = v8 + v9
-			if v6 + 1 <= v4 - 1:
-				v6 = v6 + 1
-				v10 = group.nth_sim(v0, v6)
-				if v3:
-					sim.place_relative_to(v10, v11, -(v8), 0.0, -(v9 + 10.0))
-					if iship.cast(v10):
-						iai.give_escort_order(iship.cast(v10), v11, -(v8), 0.0, -(v9 + 10.0), v2)
-				else:
-					iai.give_escort_order(iship.cast(v10), iship.cast(v11), -(v8), 0.0, -(v9 + 10.0), v2)
-			if not (v6 < v4 - 1):
-				break
+				iai.give_escort_order(iship.cast(v10), iship.cast(v11), -(v8), 0.0, -(v9 + 10.0), v2)
+		if not (v6 < v4 - 1):
+			break
 	return 0
 	return 0
 
@@ -604,19 +601,29 @@ func claw(v0, v1, v2, v3) -> Variant:
 	v5 = 1
 	v9 = 10.0
 	if v4 == 1:
-		pass
-	else:
-		v12 = group.nth_sim(v0, 0)
-		v10 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
-		while true:
-			v6 = v6 + 1.0
-			if v6 < 4.0:
-				v9 = v9 * v6
-			else:
-				v9 = v9 + v9
+		return 0
+	v12 = group.nth_sim(v0, 0)
+	v10 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v1
+	while true:
+		v6 = v6 + 1.0
+		if v6 < 4.0:
+			v9 = v9 * v6
+		else:
+			v9 = v9 + v9
+		v11 = group.nth_sim(v0, v5)
+		v7 = v6 * v10 + v1
+		v8 = v6 * v10 + v1
+		if v3:
+			sim.place_relative_to(v11, v12, v7, v8, v9)
+			if iship.cast(v11):
+				iai.give_escort_order(iship.cast(v11), v12, v7, v8, v9, v2)
+		else:
+			iai.give_escort_order(iship.cast(v11), iship.cast(v12), v7, v8, v9, v2)
+		v5 = v5 + 1
+		if v5 < v4:
 			v11 = group.nth_sim(v0, v5)
-			v7 = v6 * v10 + v1
-			v8 = v6 * v10 + v1
+			v7 = v6 * v10
+			v8 = -(v6 * v10)
 			if v3:
 				sim.place_relative_to(v11, v12, v7, v8, v9)
 				if iship.cast(v11):
@@ -626,8 +633,8 @@ func claw(v0, v1, v2, v3) -> Variant:
 			v5 = v5 + 1
 			if v5 < v4:
 				v11 = group.nth_sim(v0, v5)
-				v7 = v6 * v10
-				v8 = -(v6 * v10)
+				v7 = -(v6 * v10)
+				v8 = v6 * v10
 				if v3:
 					sim.place_relative_to(v11, v12, v7, v8, v9)
 					if iship.cast(v11):
@@ -638,7 +645,7 @@ func claw(v0, v1, v2, v3) -> Variant:
 				if v5 < v4:
 					v11 = group.nth_sim(v0, v5)
 					v7 = -(v6 * v10)
-					v8 = v6 * v10
+					v8 = -(v6 * v10)
 					if v3:
 						sim.place_relative_to(v11, v12, v7, v8, v9)
 						if iship.cast(v11):
@@ -646,19 +653,8 @@ func claw(v0, v1, v2, v3) -> Variant:
 					else:
 						iai.give_escort_order(iship.cast(v11), iship.cast(v12), v7, v8, v9, v2)
 					v5 = v5 + 1
-					if v5 < v4:
-						v11 = group.nth_sim(v0, v5)
-						v7 = -(v6 * v10)
-						v8 = -(v6 * v10)
-						if v3:
-							sim.place_relative_to(v11, v12, v7, v8, v9)
-							if iship.cast(v11):
-								iai.give_escort_order(iship.cast(v11), v12, v7, v8, v9, v2)
-						else:
-							iai.give_escort_order(iship.cast(v11), iship.cast(v12), v7, v8, v9, v2)
-						v5 = v5 + 1
-			if not (v5 < v4):
-				break
+		if not (v5 < v4):
+			break
 	return 0
 	return 0
 
@@ -834,8 +830,8 @@ func lock_groups_in_formation(v0, v1, v2, v3, v4, v5, v6) -> Variant:
 		sim.place_relative_to(v10, v9, v2, v3, v4)
 		if iship.cast(v10):
 			iai.give_escort_order(iship.cast(v10), v9, v2, v3, v4, v5)
-	else:
-		iai.give_escort_order(iship.cast(v10), v9, v2, v3, v4, v5)
+		return 0
+	iai.give_escort_order(iship.cast(v10), v9, v2, v3, v4, v5)
 	return 0
 	return 0
 
@@ -962,22 +958,32 @@ func in_formation_claw(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 	v10 = 0
 	v14 = 10.0
 	if v9 == 1:
-		pass
+		return 0
+	if group.cast(v1):
+		v17 = group.nth_sim(group.cast(v1), v2)
 	else:
-		if group.cast(v1):
-			v17 = group.nth_sim(group.cast(v1), v2)
+		v17 = iship.cast(v1)
+	v15 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v6
+	while true:
+		v11 = v11 + 1.0
+		if v11 < 4.0:
+			v14 = v14 * v11
 		else:
-			v17 = iship.cast(v1)
-		v15 = 2.0 * await iutilities.get_largest_ship_radius(v0) + v6
-		while true:
-			v11 = v11 + 1.0
-			if v11 < 4.0:
-				v14 = v14 * v11
-			else:
-				v14 = v14 + v14
+			v14 = v14 + v14
+		v16 = group.nth_sim(v0, v10)
+		v12 = v11 * v15 + v6
+		v13 = v11 * v15 + v6
+		if v8:
+			sim.place_relative_to(v16, v17, v12 + v3, v13 + v4, v14 + v5)
+			if iship.cast(v16):
+				iai.give_escort_order(iship.cast(v16), v1, v12 + v3, v13 + v4, v14 + v5, v7)
+		else:
+			iai.give_escort_order(iship.cast(v16), v1, v12 + v3, v13 + v4, v14 + v5, v7)
+		v10 = v10 + 1
+		if v10 < v9:
 			v16 = group.nth_sim(v0, v10)
-			v12 = v11 * v15 + v6
-			v13 = v11 * v15 + v6
+			v12 = v11 * v15
+			v13 = -(v11 * v15)
 			if v8:
 				sim.place_relative_to(v16, v17, v12 + v3, v13 + v4, v14 + v5)
 				if iship.cast(v16):
@@ -987,8 +993,8 @@ func in_formation_claw(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 			v10 = v10 + 1
 			if v10 < v9:
 				v16 = group.nth_sim(v0, v10)
-				v12 = v11 * v15
-				v13 = -(v11 * v15)
+				v12 = -(v11 * v15)
+				v13 = v11 * v15
 				if v8:
 					sim.place_relative_to(v16, v17, v12 + v3, v13 + v4, v14 + v5)
 					if iship.cast(v16):
@@ -999,7 +1005,7 @@ func in_formation_claw(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 				if v10 < v9:
 					v16 = group.nth_sim(v0, v10)
 					v12 = -(v11 * v15)
-					v13 = v11 * v15
+					v13 = -(v11 * v15)
 					if v8:
 						sim.place_relative_to(v16, v17, v12 + v3, v13 + v4, v14 + v5)
 						if iship.cast(v16):
@@ -1007,19 +1013,8 @@ func in_formation_claw(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 					else:
 						iai.give_escort_order(iship.cast(v16), v1, v12 + v3, v13 + v4, v14 + v5, v7)
 					v10 = v10 + 1
-					if v10 < v9:
-						v16 = group.nth_sim(v0, v10)
-						v12 = -(v11 * v15)
-						v13 = -(v11 * v15)
-						if v8:
-							sim.place_relative_to(v16, v17, v12 + v3, v13 + v4, v14 + v5)
-							if iship.cast(v16):
-								iai.give_escort_order(iship.cast(v16), v1, v12 + v3, v13 + v4, v14 + v5, v7)
-						else:
-							iai.give_escort_order(iship.cast(v16), v1, v12 + v3, v13 + v4, v14 + v5, v7)
-						v10 = v10 + 1
-			if not (v10 < v9):
-				break
+		if not (v10 < v9):
+			break
 	return 0
 	return 0
 

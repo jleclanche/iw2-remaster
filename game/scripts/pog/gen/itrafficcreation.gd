@@ -51,13 +51,10 @@ func disable_traffic_report() -> Variant:
 
 func local_27(v0) -> Variant:
 	if global.exists("gl_traffic_creation_no_report"):
-		if global.pog_bool("gl_traffic_creation_no_report") != 1:
-			if PogRuntime.TRACE:
-				debug.print_string(v0)
+		if global.pog_bool("gl_traffic_creation_no_report") == 1:
 			return 0
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string(v0)
+	if PogRuntime.TRACE:
+		debug.print_string(v0)
 	return 0
 	return 0
 

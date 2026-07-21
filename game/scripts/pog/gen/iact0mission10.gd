@@ -99,8 +99,8 @@ func local_548() -> Variant:
 		await _pog_movie("/movies/prelude")
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 

@@ -65,30 +65,28 @@ func _link() -> void:
 func local_0(v0) -> Variant:
 	if object.property_exists(v0, "player"):
 		imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) + 1)
-	else:
-		if not (object.property_exists(v0, "frag_count")):
-			pass
-		else:
-			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 1)
+		return 0
+	if not (object.property_exists(v0, "frag_count")):
+		return 0
+	object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") + 1)
 	return 0
 	return 0
 
 func local_165(v0) -> Variant:
 	if object.property_exists(v0, "player"):
 		imultiplay.server_set_player_frags_count(v0, imultiplay.server_player_frag_count(v0) - 1)
-	else:
-		if not (object.property_exists(v0, "frag_count")):
-			pass
-		else:
-			object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") - 1)
+		return 0
+	if not (object.property_exists(v0, "frag_count")):
+		return 0
+	object.set_int_property(v0, "frag_count", object.int_property(v0, "frag_count") - 1)
 	return 0
 	return 0
 
 func local_330(v0) -> Variant:
 	if object.property_exists(v0, "player"):
 		imultiplay.server_set_player_died_count(v0, imultiplay.server_player_died_count(v0) + 1)
-	else:
-		object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
+		return 0
+	object.set_int_property(v0, "bot_deaths", object.int_property(v0, "bot_deaths") + 1)
 	return 0
 	return 0
 
@@ -185,8 +183,8 @@ func score_screen_back_button() -> Variant:
 		gui.pop_screen()
 		gui.push_screen("icPDAOverlayManager")
 		gui.overlay_screen("icNetworkScreen")
-	else:
-		gui.remove_overlays_after("icSpaceFlightScreenOverlay")
+		return 0
+	gui.remove_overlays_after("icSpaceFlightScreenOverlay")
 	return 0
 	return 0
 
@@ -201,8 +199,8 @@ func local_2576(v0, v1) -> Variant:
 	v2 = ifaction.pog_name(isim.faction(iship.find_player_ship()))
 	if _pog_eq(v1, v2):
 		gui.set_window_state_colours(v0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0)
-	else:
-		gui.set_window_state_colours(v0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+		return 0
+	gui.set_window_state_colours(v0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 	return 0
 	return 0
 
@@ -495,42 +493,41 @@ func server_player_enter() -> Variant:
 	object.set_string_property(v0, "death_script", "iTeamDeathMatch.PlayerDeath")
 	object.add_bool_property(v0, "player", 1)
 	if v5 == 2048 or _pog_is_null(v5):
-		pass
+		return 0
+	v2 = imultiplay.server_player_team(v0)
+	if _pog_eq(v2, "none"):
+		v4 = global.pog_int("CurrentTeamSelector")
+		if _pog_is_null(v4):
+			v2 = text.field("mp_flag_team_a", 0)
+			global.set_int("CurrentTeamSelector", 1)
+		else:
+			v2 = text.field("mp_flag_team_b", 0)
+			global.set_int("CurrentTeamSelector", 0)
+		v1 = ifaction.find(v2)
+		isim.set_faction(isim.cast(v0), v1)
+		imultiplay.server_set_player_team(v0, v2)
+		imultiplay.server_send_user_message(1, v0, 0, v2)
+		if _pog_eq(v2, text.field("mp_flag_team_b", 0)):
+			v3 = "mp_flag_joined_team_b"
+		else:
+			v3 = "mp_flag_joined_team_a"
+		imultiplay.server_broadcast_message(v0, v3, 3)
 	else:
-		v2 = imultiplay.server_player_team(v0)
-		if _pog_eq(v2, "none"):
-			v4 = global.pog_int("CurrentTeamSelector")
-			if _pog_is_null(v4):
-				v2 = text.field("mp_flag_team_a", 0)
-				global.set_int("CurrentTeamSelector", 1)
-			else:
-				v2 = text.field("mp_flag_team_b", 0)
-				global.set_int("CurrentTeamSelector", 0)
-			v1 = ifaction.find(v2)
-			isim.set_faction(isim.cast(v0), v1)
-			imultiplay.server_set_player_team(v0, v2)
-			imultiplay.server_send_user_message(1, v0, 0, v2)
-			if _pog_eq(v2, text.field("mp_flag_team_b", 0)):
-				v3 = "mp_flag_joined_team_b"
-			else:
-				v3 = "mp_flag_joined_team_a"
-			imultiplay.server_broadcast_message(v0, v3, 3)
-		else:
-			v1 = ifaction.find(v2)
-			isim.set_faction(isim.cast(v0), v1)
-			imultiplay.server_send_user_message(1, v0, 0, v2)
-		await imputils.spawn_player(v0, v7)
-		imultiplay.set_ship_limits(iship.cast(v0))
-		imultiplay.link_ship_weapons(iship.cast(v0))
-		if not (v10 and imultiplay.use_a_i_bots() and imultiplay.a_i_bots_count() > 0):
-			return 0
-		if _pog_eq(v2, text.field("mp_flag_team_a", 0)):
-			v8 = group.cast(global.handle("g_bots_a_handle"))
-		else:
-			v8 = group.cast(global.handle("g_bots_b_handle"))
-		v9 = isim.cast(group.nth_sim(v8, 0))
-		group.remove_sim(v8, v9)
-		sim.destroy(v9)
+		v1 = ifaction.find(v2)
+		isim.set_faction(isim.cast(v0), v1)
+		imultiplay.server_send_user_message(1, v0, 0, v2)
+	await imputils.spawn_player(v0, v7)
+	imultiplay.set_ship_limits(iship.cast(v0))
+	imultiplay.link_ship_weapons(iship.cast(v0))
+	if not (v10 and imultiplay.use_a_i_bots() and imultiplay.a_i_bots_count() > 0):
+		return 0
+	if _pog_eq(v2, text.field("mp_flag_team_a", 0)):
+		v8 = group.cast(global.handle("g_bots_a_handle"))
+	else:
+		v8 = group.cast(global.handle("g_bots_b_handle"))
+	v9 = isim.cast(group.nth_sim(v8, 0))
+	group.remove_sim(v8, v9)
+	sim.destroy(v9)
 	return 0
 	return 0
 
@@ -812,11 +809,11 @@ func server_on_update_scores() -> Variant:
 		v1 = v1 + 1
 	if global.pog_int("ATeamFrags") < global.pog_int("BTeamFrags"):
 		imultiplay.server_set_winning_team(text.field("mp_flag_team_b", 0))
-	else:
-		if global.pog_int("ATeamFrags") > global.pog_int("BTeamFrags"):
-			imultiplay.server_set_winning_team(text.field("mp_flag_team_a", 0))
-		else:
-			imultiplay.server_set_winning_team("")
+		return 0
+	if global.pog_int("ATeamFrags") > global.pog_int("BTeamFrags"):
+		imultiplay.server_set_winning_team(text.field("mp_flag_team_a", 0))
+		return 0
+	imultiplay.server_set_winning_team("")
 	return 0
 	return 0
 
@@ -1078,29 +1075,29 @@ func local_16790(v0, v1) -> Variant:
 		await local_459(v1, v3)
 		imultiplay.set_ship_limits(v3)
 		_pog_detach(_pog_spawn(local_16657.bind(v3)))
-	else:
-		v2 = group.cast(v0)
-		if not _pog_is_null(v2):
-			if _pog_eq(isim.faction(isim.cast(group.leader(v2))), ifaction.find(text.field("mp_flag_team_a", 0))):
-				v6 = imapentity.cast(global.handle("g_a_start"))
-			else:
-				v6 = imapentity.cast(global.handle("g_b_start"))
-			v4 = group.sim_count(v2)
-			v5 = 0
-			while v5 < v4:
-				v3 = iship.cast(group.nth_sim(v2, v5))
-				object.set_string_property(v3, "death_script", "iTeamDeathMatch.BotDeath")
-				imultiplay.set_ship_limits(v3)
-				_pog_detach(_pog_spawn(local_16657.bind(v3)))
-				v5 = v5 + 1
+		return 0
+	v2 = group.cast(v0)
+	if not _pog_is_null(v2):
+		if _pog_eq(isim.faction(isim.cast(group.leader(v2))), ifaction.find(text.field("mp_flag_team_a", 0))):
+			v6 = imapentity.cast(global.handle("g_a_start"))
 		else:
-			if _pog_eq(isim.faction(isim.cast(v0)), ifaction.find(text.field("mp_flag_team_a", 0))):
-				v6 = imapentity.cast(global.handle("g_a_start"))
-			else:
-				v6 = imapentity.cast(global.handle("g_b_start"))
-			object.set_string_property(v0, "death_script", "iTeamDeathMatch.BotDeath")
+			v6 = imapentity.cast(global.handle("g_b_start"))
+		v4 = group.sim_count(v2)
+		v5 = 0
+		while v5 < v4:
+			v3 = iship.cast(group.nth_sim(v2, v5))
+			object.set_string_property(v3, "death_script", "iTeamDeathMatch.BotDeath")
 			imultiplay.set_ship_limits(v3)
-			_pog_detach(_pog_spawn(local_16657.bind(iship.cast(v0))))
+			_pog_detach(_pog_spawn(local_16657.bind(v3)))
+			v5 = v5 + 1
+		return 0
+	if _pog_eq(isim.faction(isim.cast(v0)), ifaction.find(text.field("mp_flag_team_a", 0))):
+		v6 = imapentity.cast(global.handle("g_a_start"))
+	else:
+		v6 = imapentity.cast(global.handle("g_b_start"))
+	object.set_string_property(v0, "death_script", "iTeamDeathMatch.BotDeath")
+	imultiplay.set_ship_limits(v3)
+	_pog_detach(_pog_spawn(local_16657.bind(iship.cast(v0))))
 	return 0
 	return 0
 

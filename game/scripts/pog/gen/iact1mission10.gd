@@ -115,8 +115,8 @@ func local_356() -> Variant:
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
 		await imissiontracker.add_mission(v0, 1, 10)
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 

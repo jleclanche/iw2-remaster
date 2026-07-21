@@ -102,9 +102,9 @@ func local_303() -> Variant:
 		await _pog_wait(0.5)
 	if await iutilities.skip_mission(" ( Clash of the titans )"):
 		global.set_bool("g_act3_clash_of_titans_complete", 1)
-	else:
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
+		return
+	v0 = _pog_spawn(mission_handler.bind())
+	_pog_detach(v0)
 	return
 	return 0
 
@@ -1046,94 +1046,85 @@ func local_19559(v0) -> Variant:
 	if not (v9):
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.localpatrol: Invalid Lead patroler!\n")
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
-		object.add_handle_property(v9, "traffic_handler_task", _pog_current())
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
-		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 0)), v7, v11, 0.0, v12)
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 1)), v7, v11, v11 - 100.0, v12)
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 2)), v7, 0.0, v11, v12)
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 3)), v7, -(v11), v11 - 100.0, v12)
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 4)), v7, -(v11), 0.0, v12)
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 5)), v7, -(v11), -(v11) + 100.0, v12)
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 6)), v7, 0.0, -(v11), v12)
-		sim.place_relative_to(sim.cast(group.nth_sim(v4, 7)), v7, v11, -(v11) + 100.0, v12)
-		v1 = 0
-		iai.give_approach_order(v9, group.nth_sim(v4, v1))
-		if PogRuntime.TRACE:
-			debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
-			debug.print_string(object.string_property(v9, "name"))
-			debug.print_string(" setting off for destination ")
-			debug.print_string(object.string_property(group.nth_sim(v4, 0), "name"))
-			debug.print_string("\n")
-		while true:
-			await _pog_wait(5)
-			if not _pog_eq(group.sim_count(v0), v3):
-				v3 = group.sim_count(v0)
-				if not _pog_is_null(v3):
-					v9 = iship.cast(group.leader(v0))
-					await iformation.goose(v0, 40.0, 0)
-					iai.give_approach_order(v9, group.nth_sim(v4, v1))
-				else:
-					break
-			if not _pog_eq(sim.group(v9), v0) or not (await iutilities.player_in_range_of_group(v0)):
-				if PogRuntime.TRACE:
-					debug.print_string("iScriptedOrders.Localpatrol: player out of range: ")
-					debug.print_int(sim.distance_between(v9, v13))
-					debug.print_string("m \n")
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("M3.2 Clash of the Titans: Checking vessel ")
-				debug.print_string(object.string_property(v9, "name"))
-				debug.print_string(" (")
-				debug.print_handle(v9)
-				debug.print_string(")")
-				debug.print_string(" for its order status\n")
-			if sim.distance_between(v9, group.nth_sim(v4, v1)) > 300.0:
-				continue
-			if v1 < 8:
-				v1 = v1 + 1
-			else:
-				if PogRuntime.TRACE:
-					debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
-					debug.print_string(object.string_property(v9, "name"))
-					debug.print_string(" its first pass of waypoints.\n")
-				group.destroy(v4, 1)
-				v12 = math.random(100.0, 300.0)
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
-				group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
-				sim.place_relative_to(group.nth_sim(v4, 0), v7, v11, 0.0, v12)
-				sim.place_relative_to(group.nth_sim(v4, 1), v7, v11, v11 - 100.0, v12)
-				sim.place_relative_to(group.nth_sim(v4, 2), v7, 0.0, v11, v12)
-				sim.place_relative_to(group.nth_sim(v4, 3), v7, -(v11), v11 - 100.0, v12)
-				sim.place_relative_to(group.nth_sim(v4, 4), v7, -(v11), 0.0, v12)
-				sim.place_relative_to(group.nth_sim(v4, 5), v7, -(v11), -(v11) + 100.0, v12)
-				sim.place_relative_to(group.nth_sim(v4, 6), v7, 0.0, -(v11), v12)
-				sim.place_relative_to(group.nth_sim(v4, 7), v7, v11, -(v11) + 100.0, v12)
-				v1 = 0
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
+	object.add_handle_property(v9, "traffic_handler_task", _pog_current())
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
+	group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 0)), v7, v11, 0.0, v12)
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 1)), v7, v11, v11 - 100.0, v12)
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 2)), v7, 0.0, v11, v12)
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 3)), v7, -(v11), v11 - 100.0, v12)
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 4)), v7, -(v11), 0.0, v12)
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 5)), v7, -(v11), -(v11) + 100.0, v12)
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 6)), v7, 0.0, -(v11), v12)
+	sim.place_relative_to(sim.cast(group.nth_sim(v4, 7)), v7, v11, -(v11) + 100.0, v12)
+	v1 = 0
+	iai.give_approach_order(v9, group.nth_sim(v4, v1))
+	if PogRuntime.TRACE:
+		debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
+		debug.print_string(object.string_property(v9, "name"))
+		debug.print_string(" setting off for destination ")
+		debug.print_string(object.string_property(group.nth_sim(v4, 0), "name"))
+		debug.print_string("\n")
+	while true:
+		await _pog_wait(5)
+		if not _pog_eq(group.sim_count(v0), v3):
+			v3 = group.sim_count(v0)
+			if not _pog_is_null(v3):
+				v9 = iship.cast(group.leader(v0))
+				await iformation.goose(v0, 40.0, 0)
 				iai.give_approach_order(v9, group.nth_sim(v4, v1))
-				if PogRuntime.TRACE:
-					debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
-					debug.print_string(object.string_property(v9, "name"))
-					debug.print_string(" setting off for destination ")
-					debug.print_string(object.string_property(group.nth_sim(v4, v1), "name"))
-					debug.print_string("\n")
+			else:
+				break
+		if not _pog_eq(sim.group(v9), v0) or not (await iutilities.player_in_range_of_group(v0)):
 			if PogRuntime.TRACE:
-				debug.print_string("iScriptedOrders: Waypoint Reached\n")
+				debug.print_string("iScriptedOrders.Localpatrol: player out of range: ")
+				debug.print_int(sim.distance_between(v9, v13))
+				debug.print_string("m \n")
+			break
+		if PogRuntime.TRACE:
+			debug.print_string("M3.2 Clash of the Titans: Checking vessel ")
+			debug.print_string(object.string_property(v9, "name"))
+			debug.print_string(" (")
+			debug.print_handle(v9)
+			debug.print_string(")")
+			debug.print_string(" for its order status\n")
+		if sim.distance_between(v9, group.nth_sim(v4, v1)) > 300.0:
+			continue
+		if v1 < 8:
+			v1 = v1 + 1
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
+				debug.print_string(object.string_property(v9, "name"))
+				debug.print_string(" its first pass of waypoints.\n")
+			group.destroy(v4, 1)
+			v12 = math.random(100.0, 300.0)
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 4"))
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 5"))
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 6"))
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 7"))
+			group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 8"))
+			sim.place_relative_to(group.nth_sim(v4, 0), v7, v11, 0.0, v12)
+			sim.place_relative_to(group.nth_sim(v4, 1), v7, v11, v11 - 100.0, v12)
+			sim.place_relative_to(group.nth_sim(v4, 2), v7, 0.0, v11, v12)
+			sim.place_relative_to(group.nth_sim(v4, 3), v7, -(v11), v11 - 100.0, v12)
+			sim.place_relative_to(group.nth_sim(v4, 4), v7, -(v11), 0.0, v12)
+			sim.place_relative_to(group.nth_sim(v4, 5), v7, -(v11), -(v11) + 100.0, v12)
+			sim.place_relative_to(group.nth_sim(v4, 6), v7, 0.0, -(v11), v12)
+			sim.place_relative_to(group.nth_sim(v4, 7), v7, v11, -(v11) + 100.0, v12)
+			v1 = 0
 			iai.give_approach_order(v9, group.nth_sim(v4, v1))
 			if PogRuntime.TRACE:
 				debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
@@ -1142,11 +1133,20 @@ func local_19559(v0) -> Variant:
 				debug.print_string(object.string_property(group.nth_sim(v4, v1), "name"))
 				debug.print_string("\n")
 		if PogRuntime.TRACE:
+			debug.print_string("iScriptedOrders: Waypoint Reached\n")
+		iai.give_approach_order(v9, group.nth_sim(v4, v1))
+		if PogRuntime.TRACE:
 			debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
 			debug.print_string(object.string_property(v9, "name"))
-			debug.print_string(" Has outlived its usefulness and is about to be killed\n")
-		group.destroy(v0, 1)
-		group.destroy(v4, 1)
+			debug.print_string(" setting off for destination ")
+			debug.print_string(object.string_property(group.nth_sim(v4, v1), "name"))
+			debug.print_string("\n")
+	if PogRuntime.TRACE:
+		debug.print_string("M3.2 Clash of the Titans: LocalPatrol ship ")
+		debug.print_string(object.string_property(v9, "name"))
+		debug.print_string(" Has outlived its usefulness and is about to be killed\n")
+	group.destroy(v0, 1)
+	group.destroy(v4, 1)
 	return
 	return 0
 

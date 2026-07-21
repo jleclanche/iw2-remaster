@@ -792,9 +792,8 @@ func make_waypoint_visible(v0, v1, v2) -> Variant:
 	if _pog_is_null(v1):
 		isim.set_sensor_visibility(isim.cast(v0), 0)
 		return 0
-	else:
-		object.set_string_property(v0, "name", v2)
-		isim.set_sensor_visibility(isim.cast(v0), 1)
+	object.set_string_property(v0, "name", v2)
+	isim.set_sensor_visibility(isim.cast(v0), 1)
 	return 0
 	return 0
 
@@ -857,15 +856,15 @@ func allow_mission_skipping() -> Variant:
 	if global.exists("g_setup_skipper_already") == 1 and global.pog_bool("g_setup_skipper_already") == 1:
 		if PogRuntime.TRACE:
 			debug.print_string("iUtilities.AllowMissionSkipping ignored - it's been done once already.\n")
-	else:
-		global.create_bool("g_skip_ok", 2, 1)
-		global.create_bool("g_skip_to_specific", 2, 0)
-		global.create_string("g_skip_to_mission", 2, "none")
-		global.create_int("g_skip_to_mission_number", 2, 0)
-		global.create_int("g_skip_to_act", 2, 1)
-		global.create_bool("g_skip_locked", 2, 0)
-		global.create_bool("g_skip_missions_is_ok", 2, 0)
-		global.create_bool("g_setup_skipper_already", 2, 1)
+		return 0
+	global.create_bool("g_skip_ok", 2, 1)
+	global.create_bool("g_skip_to_specific", 2, 0)
+	global.create_string("g_skip_to_mission", 2, "none")
+	global.create_int("g_skip_to_mission_number", 2, 0)
+	global.create_int("g_skip_to_act", 2, 1)
+	global.create_bool("g_skip_locked", 2, 0)
+	global.create_bool("g_skip_missions_is_ok", 2, 0)
+	global.create_bool("g_setup_skipper_already", 2, 1)
 	return 0
 	return 0
 
@@ -997,10 +996,10 @@ func g_m_delayed_disabler() -> Variant:
 			await _pog_wait(100.0)
 			if not (1):
 				break
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iUtiltites.GMDelayedDisable: ditching mission skipper altogether.\n")
-		await local_9845()
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iUtiltites.GMDelayedDisable: ditching mission skipper altogether.\n")
+	await local_9845()
 	return
 	return 0
 
@@ -1285,9 +1284,8 @@ func wait_on_skip_mission(v0, v1) -> Variant:
 	while _pog_is_running(v0):
 		await _pog_wait(1.0)
 	if global.exists(v1):
-		if global.pog_bool(v1) != 1:
-			return 0
-		return 1
+		if global.pog_bool(v1) == 1:
+			return 1
 	return 0
 	return 0
 
@@ -1460,8 +1458,8 @@ func sim_place_between_exact(v0, v1, v2, v3) -> Variant:
 	v4 = sim.distance_between(v1, v2)
 	if _pog_is_null(v4):
 		sim.place_at(v0, v1)
-	else:
-		sim.place_between(v0, v1, v2, v3 / v4)
+		return 0
+	sim.place_between(v0, v1, v2, v3 / v4)
 	return 0
 	return 0
 
@@ -1476,12 +1474,11 @@ func group_set_cullable(v0, v1) -> Variant:
 			v3 = v3 + 1
 	v2 = group.group_count(v0)
 	if _pog_is_null(v2):
-		pass
-	else:
-		v3 = 0
-		while v3 < v2:
-			await group_set_cullable(group.nth_group(v0, v3), v1)
-			v3 = v3 + 1
+		return 0
+	v3 = 0
+	while v3 < v2:
+		await group_set_cullable(group.nth_group(v0, v3), v1)
+		v3 = v3 + 1
 	return 0
 	return 0
 
@@ -1625,16 +1622,15 @@ func capsule_jump_group(v0, v1, v2) -> Variant:
 	await local_21360(v0)
 	v3 = group.group_count(v0)
 	if _pog_is_null(v3):
-		pass
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iUtilities.CapsuleJumpGroup: Processing ")
-			debug.print_int(v3)
-			debug.print_string(" subgroup(s).\n")
-		v4 = 0
-		while v4 < v3:
-			await capsule_jump_group(group.nth_group(v0, v4), v1, v2)
-			v4 = v4 + 1
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iUtilities.CapsuleJumpGroup: Processing ")
+		debug.print_int(v3)
+		debug.print_string(" subgroup(s).\n")
+	v4 = 0
+	while v4 < v3:
+		await capsule_jump_group(group.nth_group(v0, v4), v1, v2)
+		v4 = v4 + 1
 	return 0
 	return 0
 
@@ -1739,8 +1735,8 @@ func create_player(v0, v1) -> Variant:
 		sim.place_relative_to(v2, v1, 7000.0, 10000.0, -19000.0)
 		sim.copy_orientation(v2, v1)
 		sim.point_at(v2, v1)
-	else:
-		sim.place_near(v2, v1, 5000.0)
+		return 0
+	sim.place_near(v2, v1, 5000.0)
 	return 0
 	return 0
 
@@ -1798,12 +1794,11 @@ func group_set_faction(v0, v1) -> Variant:
 			v3 = v3 + 1
 	v2 = group.group_count(v0)
 	if _pog_is_null(v2):
-		pass
-	else:
-		v3 = 0
-		while v3 < v2:
-			await group_set_faction(group.nth_group(v0, v3), v1)
-			v3 = v3 + 1
+		return 0
+	v3 = 0
+	while v3 < v2:
+		await group_set_faction(group.nth_group(v0, v3), v1)
+		v3 = v3 + 1
 	return 0
 	return 0
 
@@ -1825,11 +1820,9 @@ func random_centre_weighted(v0, v1) -> Variant:
 
 func send_story_element(v0, v1, v2) -> Variant:
 	if global.exists("g_skip_to_specific") and global.pog_bool("g_skip_to_specific") == 1:
-		if not (not _pog_eq(v2, global.pog_int("g_skip_to_mission_number")) or not _pog_eq(v1, global.pog_int("g_skip_to_act"))):
-			global.set_int(v0, 1)
-			return 1
-		global.set_int(v0, 2)
-		return 0
+		if not _pog_eq(v2, global.pog_int("g_skip_to_mission_number")) or not _pog_eq(v1, global.pog_int("g_skip_to_act")):
+			global.set_int(v0, 2)
+			return 0
 	global.set_int(v0, 1)
 	return 1
 	return 0
@@ -1851,64 +1844,64 @@ func critical_ship_monitor(v0, v1) -> Variant:
 			debug.print_string(object.string_property(v0, "name"))
 		if PogRuntime.TRACE:
 			debug.print_string(" is invalid. Not monitoring\n")
-	else:
+		return
+	if not (isim.is_mission_critical(v0)):
+		if PogRuntime.TRACE:
+			debug.print_string("iUtilities.CriticalShipMonitor: ")
+		if PogRuntime.TRACE:
+			debug.print_string(object.string_property(v0, "name"))
+		if PogRuntime.TRACE:
+			debug.print_string(" is not a critical ship. Not monitoring\n")
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iUtilities.CriticalShipMonitor: Monitoring critical ship - ")
+	if PogRuntime.TRACE:
+		debug.print_string(object.string_property(v0, "name"))
+	if PogRuntime.TRACE:
+		debug.print_string("\n")
+	while true:
+		await _pog_wait(1)
+		if sim.is_dead(v0) or isim.is_dying(v0):
+			return
 		if not (isim.is_mission_critical(v0)):
 			if PogRuntime.TRACE:
 				debug.print_string("iUtilities.CriticalShipMonitor: ")
 			if PogRuntime.TRACE:
 				debug.print_string(object.string_property(v0, "name"))
 			if PogRuntime.TRACE:
-				debug.print_string(" is not a critical ship. Not monitoring\n")
+				debug.print_string(" is no longer a critical ship. Monitoring terminated\n")
+		if not (iship.attacked(v0)):
+			continue
+		if icomms.is_busy():
+			continue
+		if _pog_eq(iship.last_attacker(v0), v2):
+			v3 = v3 + 1
+			if v3 > 3:
+				v3 = 0
+			match v3:
+				0:
+					icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_1")
+				1:
+					icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_2")
+				2:
+					icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_3")
+				3:
+					icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_4")
+			await _pog_wait(v1)
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iUtilities.CriticalShipMonitor: Monitoring critical ship - ")
-			if PogRuntime.TRACE:
-				debug.print_string(object.string_property(v0, "name"))
-			if PogRuntime.TRACE:
-				debug.print_string("\n")
-			while true:
-				await _pog_wait(1)
-				if sim.is_dead(v0) or isim.is_dying(v0):
-					return
-				if not (isim.is_mission_critical(v0)):
-					if PogRuntime.TRACE:
-						debug.print_string("iUtilities.CriticalShipMonitor: ")
-					if PogRuntime.TRACE:
-						debug.print_string(object.string_property(v0, "name"))
-					if PogRuntime.TRACE:
-						debug.print_string(" is no longer a critical ship. Monitoring terminated\n")
-				if not (iship.attacked(v0)):
+			v4 = v4 + 1
+			if v4 > 3:
+				v4 = 0
+			match v4:
+				0:
+					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_1")
+				1:
+					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_2")
+				2:
+					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_3")
+				3:
+					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_4")
 					continue
-				if icomms.is_busy():
-					continue
-				if _pog_eq(iship.last_attacker(v0), v2):
-					v3 = v3 + 1
-					if v3 > 3:
-						v3 = 0
-					match v3:
-						0:
-							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_1")
-						1:
-							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_2")
-						2:
-							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_3")
-						3:
-							icomms.shout(0, "name_clay", "stock_clay_critical_player_attack_4")
-					await _pog_wait(v1)
-				else:
-					v4 = v4 + 1
-					if v4 > 3:
-						v4 = 0
-					match v4:
-						0:
-							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_1")
-						1:
-							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_2")
-						2:
-							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_3")
-						3:
-							icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_4")
-							continue
 	return
 	return 0
 
@@ -1933,16 +1926,14 @@ func group_set_local_velocity(v0, v1, v2, v3, v4, v5) -> Variant:
 			sim.set_angular_velocity_euler(group.nth_sim(v0, v6), 0.0, 0.0, 0.0)
 		v6 = v6 + 1
 	if not (v5):
-		pass
-	else:
-		v7 = group.group_count(v8)
-		if _pog_is_null(v7):
-			pass
-		else:
-			v6 = 0
-			while v6 < v7:
-				await group_set_local_velocity(group.nth_group(v8, v6), v1, v2, v3, v4, v5)
-				v6 = v6 + 1
+		return 0
+	v7 = group.group_count(v8)
+	if _pog_is_null(v7):
+		return 0
+	v6 = 0
+	while v6 < v7:
+		await group_set_local_velocity(group.nth_group(v8, v6), v1, v2, v3, v4, v5)
+		v6 = v6 + 1
 	return 0
 	return 0
 

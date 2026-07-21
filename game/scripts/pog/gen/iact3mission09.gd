@@ -102,9 +102,9 @@ func local_261() -> Variant:
 		await _pog_wait(0.5)
 	if await iutilities.skip_mission(" ( Antimatter Cordon )"):
 		global.set_bool("g_act3_antimatter_cordon_complete", 1)
-	else:
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
+		return
+	v0 = _pog_spawn(mission_handler.bind())
+	_pog_detach(v0)
 	return
 	return 0
 

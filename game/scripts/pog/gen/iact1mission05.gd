@@ -95,8 +95,8 @@ func local_317() -> Variant:
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission("Marauder Cache?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -173,248 +173,248 @@ func mission_handler() -> Variant:
 		iemail.send_email("a1_m05_email_sender", "a1_m05_email_subject", "html:/text/act_1/act1_mission05_email", 1)
 		if PogRuntime.TRACE:
 			debug.print_string("iAct1_Mission05.MissionHandler: Email Sent - EXITING\n")
-	else:
-		if not (iemail.read(v25)):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1_Mission05.MissionHandler: Email not read yet - EXITING\n")
-		else:
-			await local_129(v24)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1_Mission05.MissionHandler: Checking State\n")
-			if _pog_is_null(object.property_exists(v24, "given_obj_1")):
-				object.add_int_property(v24, "given_obj_1", 1)
-				iobjectives.add("a1_m05_objectives_meet")
-			_pog_detach(_pog_spawn(local_446.bind(_pog_current(), v24, v7, v8, v9, v10, v11, v12, v13, v16, v17, v18, v19, v21, v1)))
-			v5 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
-			if PogRuntime.TRACE:
-				if _pog_is_null(v5):
-					debug.error("Unable to find player base ")
-			v3 = imapentity.find_by_name_in_system("Blackfoot", "map:/geog/badlands/hoffers_wake")
-			if PogRuntime.TRACE:
-				if _pog_is_null(v3):
-					debug.error("Unable to find blackfoot ")
-			v4 = imapentity.find_by_name_in_system("Blackfoot", "map:/geog/badlands/hoffers_wake")
-			if PogRuntime.TRACE:
-				if _pog_is_null(v4):
-					debug.error("Unable to find blackfoot ")
-			v6 = imapentity.find_by_name_in_system("Hoffer's Gap", "map:/geog/badlands/hoffers_wake")
-			if PogRuntime.TRACE:
-				if _pog_is_null(v6):
-					debug.error("Unable to find hoffers gap ")
+		return
+	if not (iemail.read(v25)):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct1_Mission05.MissionHandler: Email not read yet - EXITING\n")
+		return
+	await local_129(v24)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1_Mission05.MissionHandler: Checking State\n")
+	if _pog_is_null(object.property_exists(v24, "given_obj_1")):
+		object.add_int_property(v24, "given_obj_1", 1)
+		iobjectives.add("a1_m05_objectives_meet")
+	_pog_detach(_pog_spawn(local_446.bind(_pog_current(), v24, v7, v8, v9, v10, v11, v12, v13, v16, v17, v18, v19, v21, v1)))
+	v5 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
+	if PogRuntime.TRACE:
+		if _pog_is_null(v5):
+			debug.error("Unable to find player base ")
+	v3 = imapentity.find_by_name_in_system("Blackfoot", "map:/geog/badlands/hoffers_wake")
+	if PogRuntime.TRACE:
+		if _pog_is_null(v3):
+			debug.error("Unable to find blackfoot ")
+	v4 = imapentity.find_by_name_in_system("Blackfoot", "map:/geog/badlands/hoffers_wake")
+	if PogRuntime.TRACE:
+		if _pog_is_null(v4):
+			debug.error("Unable to find blackfoot ")
+	v6 = imapentity.find_by_name_in_system("Hoffer's Gap", "map:/geog/badlands/hoffers_wake")
+	if PogRuntime.TRACE:
+		if _pog_is_null(v6):
+			debug.error("Unable to find hoffers gap ")
+	while true:
+		var _sw1: Variant = state.progress(v24)
+		var _arm1: int = -1
+		if _pog_eq(_sw1, 1):
+			_arm1 = 0
+		elif _pog_eq(_sw1, 2):
+			_arm1 = 1
+		if _arm1 == -1:
+			break
+		if _arm1 <= 0:
+			v27 = 1
+			if not (object.property_exists(v24, "oregon_alive")):
+				object.add_bool_property(v24, "oregon_alive", 1)
+			await irangecheck.add_traffic_exception(v3)
+			v1 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m05_waypoint_meeting"))
+			isim.set_sensor_visibility(v1, 1)
+			sim.set_cullable(v1, 0)
+			await iutilities.sim_place_between_exact(v1, v4, v5, 10000.0)
 			while true:
-				var _sw1: Variant = state.progress(v24)
-				var _arm1: int = -1
-				if _pog_eq(_sw1, 1):
-					_arm1 = 0
-				elif _pog_eq(_sw1, 2):
-					_arm1 = 1
-				if _arm1 == -1:
-					break
-				if _arm1 <= 0:
-					v27 = 1
-					if not (object.property_exists(v24, "oregon_alive")):
-						object.add_bool_property(v24, "oregon_alive", 1)
-					await irangecheck.add_traffic_exception(v3)
-					v1 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m05_waypoint_meeting"))
-					isim.set_sensor_visibility(v1, 1)
-					sim.set_cullable(v1, 0)
-					await iutilities.sim_place_between_exact(v1, v4, v5, 10000.0)
-					while true:
-						await _pog_wait(1)
-						if not (await iutilities.player_in_range(v1)):
-							continue
-						break
-					v17 = await local_6341(v4)
-					if PogRuntime.TRACE:
-						if _pog_is_null(group.sim_count(v17)):
-							debug.error("Unable to setup miners ")
-					v7 = iship.cast(group.leader(v17))
-					v8 = iship.cast(group.nth_sim(v17, 1))
-					v9 = iship.cast(group.nth_sim(v17, 2))
-					while true:
-						await _pog_wait(1)
-						if sim.distance_between(v0, v1) >= 8000.0:
-							continue
-						break
-					iobjectives.set_state("a1_m05_objectives_meet", 1)
-					await iconversation.one_liner(v7, "", "a1_m05_dialogue_miner_who_goes_there")
-					await iconversation.one_liner(0, "name_cal", "a1_m05_dialogue_player_its_cal_what_did_you_want")
-					await iconversation.one_liner(v7, "", "a1_m05_dialogue_miner_i_have_some_marauder_info")
-					isim.set_sensor_visibility(v1, 0)
-					v16 = await local_6905(v0, 25000.0)
-					v10 = iship.cast(group.leader(v16))
-					v11 = iship.cast(group.nth_sim(v16, 1))
-					v12 = iship.cast(group.nth_sim(v16, 2))
-					if PogRuntime.TRACE:
-						if _pog_is_null(v16):
-							debug.error("marauder_group is invalid")
-					sim.point_at(v10, v4)
-					await iformation.v(v16, 0.0, 1)
-					await iformation.v(v22, 0.0, 1)
-					await iconversation.one_liner(v7, "", "a1_m05_dialogue_miner_oh_no_its_the_marauders")
-					iai.give_attack_order(v10, v7)
-					iai.give_attack_order(v11, v8)
-					iai.give_attack_order(v12, v9)
-					v23 = 0
-					while true:
-						await _pog_wait(1)
-						if iai.is_order_complete(v10) or not (iai.has_order(v10)):
-							iai.give_attack_order(v10, v0)
-						if iai.is_order_complete(v11) or not (iai.has_order(v11)):
-							iai.give_attack_order(v11, v0)
-						if iai.is_order_complete(v12) or not (iai.has_order(v12)):
-							iai.give_attack_order(v12, v0)
-						if not (await iutilities.player_in_range(v1)):
-							sim.destroy(v1)
-							sim.destroy(v4)
-							group.destroy(v16, 0)
-							group.destroy(v17, 0)
-							await iconversation.begin()
-							await iconversation.say(v7, "", "a1_m05_dialogue_miner_help_the_marauders_are_here")
-							await iconversation.say(v7, "", "a1_m05_dialogue_miner_arrrghhh")
-							await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_we_cant_help_him_now")
-							await iconversation.end()
-							text.remove("csv:/text/act_1/act1_mission05")
-							state.destroy(_pog_current())
-							await imissiontracker.remove_mission(_pog_current())
-							return
-						if sim.is_dead(v7) and _pog_is_null(v23):
-							v23 = 1
-							object.remove_property(v24, "oregon_alive")
-							await iconversation.begin()
-							await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_darn_the_marauders_got_him")
-							await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_we_messed_up_there")
-							await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_we_cant_help_him_now")
-							await iconversation.end()
-						if sim.is_alive(v10):
-							if not (await iutilities.player_in_range(v10)):
-								sim.destroy(v10)
-						if sim.is_alive(v11):
-							if not (await iutilities.player_in_range(v11)):
-								sim.destroy(v11)
-						if sim.is_alive(v12):
-							if not (await iutilities.player_in_range(v12)):
-								sim.destroy(v12)
-						if not _pog_is_null(group.sim_count(v16)):
-							continue
-						if sim.is_alive(v7):
-							await iconversation.begin()
-							await iconversation.say(v7, "", "a1_m05_dialogue_miner_thanks")
-							await iconversation.say(v7, "", "a1_m05_dialogue_miner_i_found_a_marauder_supply_cache")
-							await iconversation.say(v7, "", "a1_m05_dialogue_miner_ive_transmitted_you_the_waypoint")
-							await iconversation.end()
-							iobjectives.add("a1_m05_objectives_checkout")
-						else:
-							await iconversation.begin()
-							await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_well_we_avenged_him_for_what_its_worth")
-							await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_hey_kid_check_your_sensors")
-							await iconversation.end()
-						break
-					state.set_progress(v24, 2)
-				if _arm1 <= 1:
-					v2 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m05_waypoint_cache"))
-					sim.place_between(v2, v4, v6, 0.4000000059604645)
-					isim.set_sensor_visibility(v2, 1)
-					if v27:
-						while true:
-							await _pog_wait(0.1)
-							if sim.distance_between(v0, v1) <= 150000.0:
-								continue
-							break
-						if object.property_exists(v24, "oregon_alive") and sim.is_dead(v7):
-							if PogRuntime.TRACE:
-								debug.print_string("iAct1_Mission05: Naughty player killed oregon, so he'll not get the big reward. \n")
-							object.remove_property(v24, "oregon_alive")
-					if sim.is_alive(v1):
-						sim.destroy(v1)
-					while true:
-						await _pog_wait(0.1)
-						if sim.distance_between(v0, v2) >= 250000.0:
-							continue
-						break
-					await irangecheck.remove_traffic_exception(v3)
-					group.destroy(v17, 0)
+				await _pog_wait(1)
+				if not (await iutilities.player_in_range(v1)):
+					continue
+				break
+			v17 = await local_6341(v4)
+			if PogRuntime.TRACE:
+				if _pog_is_null(group.sim_count(v17)):
+					debug.error("Unable to setup miners ")
+			v7 = iship.cast(group.leader(v17))
+			v8 = iship.cast(group.nth_sim(v17, 1))
+			v9 = iship.cast(group.nth_sim(v17, 2))
+			while true:
+				await _pog_wait(1)
+				if sim.distance_between(v0, v1) >= 8000.0:
+					continue
+				break
+			iobjectives.set_state("a1_m05_objectives_meet", 1)
+			await iconversation.one_liner(v7, "", "a1_m05_dialogue_miner_who_goes_there")
+			await iconversation.one_liner(0, "name_cal", "a1_m05_dialogue_player_its_cal_what_did_you_want")
+			await iconversation.one_liner(v7, "", "a1_m05_dialogue_miner_i_have_some_marauder_info")
+			isim.set_sensor_visibility(v1, 0)
+			v16 = await local_6905(v0, 25000.0)
+			v10 = iship.cast(group.leader(v16))
+			v11 = iship.cast(group.nth_sim(v16, 1))
+			v12 = iship.cast(group.nth_sim(v16, 2))
+			if PogRuntime.TRACE:
+				if _pog_is_null(v16):
+					debug.error("marauder_group is invalid")
+			sim.point_at(v10, v4)
+			await iformation.v(v16, 0.0, 1)
+			await iformation.v(v22, 0.0, 1)
+			await iconversation.one_liner(v7, "", "a1_m05_dialogue_miner_oh_no_its_the_marauders")
+			iai.give_attack_order(v10, v7)
+			iai.give_attack_order(v11, v8)
+			iai.give_attack_order(v12, v9)
+			v23 = 0
+			while true:
+				await _pog_wait(1)
+				if iai.is_order_complete(v10) or not (iai.has_order(v10)):
+					iai.give_attack_order(v10, v0)
+				if iai.is_order_complete(v11) or not (iai.has_order(v11)):
+					iai.give_attack_order(v11, v0)
+				if iai.is_order_complete(v12) or not (iai.has_order(v12)):
+					iai.give_attack_order(v12, v0)
+				if not (await iutilities.player_in_range(v1)):
+					sim.destroy(v1)
+					sim.destroy(v4)
 					group.destroy(v16, 0)
-					v18 = group.create()
-					v16 = await local_6905(v2, 3000.0)
-					group.add_group(v18, v16)
-					await iformation.goose(v16, 0.0, 1)
-					v19 = await ishipcreation.create_cargo_pods(385, 7)
-					v20 = await ishipcreation.create_cargo_pods(561, 2)
-					group.add_group(v19, v20)
-					group.flatten(v19)
-					group.add_group(v18, v19)
-					v14 = iship.create("ini:/sims/ships/utility/cargo_pod", "")
-					object.set_int_property(v14, "cargo", 560)
-					isim.set_indestructable(v14, 1)
-					await iutilities.rename_sim(v14, icargo.pog_name(icargo.find(560)))
-					group.add_sim(v19, v14)
-					sim.place_near(group.leader(v19), v2, 500.0)
-					await iformation.box(v19, 100.0, 1)
-					await iformation.jiggle(v19, 50.0, 90.0)
-					if object.property_exists(v24, "oregon_alive"):
-						if PogRuntime.TRACE:
-							debug.print_string("iAct1_Mission05: Oregon's alive, so we're creating the freighter \n")
-						v13 = iship.create("ini:/sims/ships/utility/freighter", "a1_m05_ship_marauder_freighter")
-						group.add_sim(v18, v13)
-						await ipilotsetup.generic_cargo_pod(v13)
-						isim.set_faction(v13, ifaction.find("Marauders"))
-						sim.place_near(v13, v2, 1500.0)
-						v21 = await ishipcreation.create_cargo_pods(385, 4)
-						group.add_group(v18, v21)
-						v15 = iship.create("ini:/sims/ships/utility/cargo_pod", "")
-						object.set_int_property(v15, "cargo", 216)
-						isim.set_indestructable(v15, 1)
-						await iutilities.rename_sim(v15, icargo.pog_name(icargo.find(216)))
-						group.add_sim(v21, v15)
-						await local_7715(v21, v13)
-					v26 = group.sim_count(v16)
-					while true:
-						await _pog_wait(1)
-						if not (sim.distance_between(v0, v2) < 30000.0 or not _pog_eq(group.sim_count(v16), v26)):
-							continue
-						break
-					iai.give_attack_order(v16, await iwingmen.group())
-					iobjectives.set_state("a1_m05_objectives_checkout", 1)
-					if object.property_exists(v24, "oregon_alive"):
-						await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_there_it_is")
-					if group.sim_count(v16) > 0:
-						await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_uhoh_marauders_ahead")
-					if object.property_exists(v24, "oregon_alive"):
-						_pog_spawn(local_7537.bind(v13, 40.0))
-					v23 = 0
-					while true:
-						await _pog_wait(1)
-						if _pog_is_null(group.sim_count(v16)) and sim.is_dead(v13):
-							await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_that_took_care_of_the_marauders")
-							break
-						if object.property_exists(v24, "oregon_alive"):
-							if not (await iutilities.player_in_range(v13)) and sim.distance_between(v13, v2) > 200000.0 and _pog_is_null(v23):
-								if sim.is_alive(v13):
-									v23 = 1
-									await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_the_freighters_escaped")
-									await iconversation.end()
-						if await iutilities.player_in_range(v2):
-							continue
-						sim.destroy(v2)
-						await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_darn_the_beacons_gone")
-						break
-					while true:
-						await _pog_wait(1)
-						if sim.is_dead(v2):
-							break
-						if sim.distance_between(v0, v2) >= 10000.0:
-							continue
-						break
-					if sim.is_alive(v2):
-						sim.destroy(v2)
-					group.destroy(v18, 0)
-					if global.exists("g_act1_destroyed_marauder_cache"):
-						global.set_bool("g_act1_destroyed_marauder_cache", 1)
+					group.destroy(v17, 0)
+					await iconversation.begin()
+					await iconversation.say(v7, "", "a1_m05_dialogue_miner_help_the_marauders_are_here")
+					await iconversation.say(v7, "", "a1_m05_dialogue_miner_arrrghhh")
+					await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_we_cant_help_him_now")
+					await iconversation.end()
+					text.remove("csv:/text/act_1/act1_mission05")
+					state.destroy(_pog_current())
+					await imissiontracker.remove_mission(_pog_current())
+					return
+				if sim.is_dead(v7) and _pog_is_null(v23):
+					v23 = 1
+					object.remove_property(v24, "oregon_alive")
+					await iconversation.begin()
+					await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_darn_the_marauders_got_him")
+					await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_we_messed_up_there")
+					await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_we_cant_help_him_now")
+					await iconversation.end()
+				if sim.is_alive(v10):
+					if not (await iutilities.player_in_range(v10)):
+						sim.destroy(v10)
+				if sim.is_alive(v11):
+					if not (await iutilities.player_in_range(v11)):
+						sim.destroy(v11)
+				if sim.is_alive(v12):
+					if not (await iutilities.player_in_range(v12)):
+						sim.destroy(v12)
+				if not _pog_is_null(group.sim_count(v16)):
+					continue
+				if sim.is_alive(v7):
+					await iconversation.begin()
+					await iconversation.say(v7, "", "a1_m05_dialogue_miner_thanks")
+					await iconversation.say(v7, "", "a1_m05_dialogue_miner_i_found_a_marauder_supply_cache")
+					await iconversation.say(v7, "", "a1_m05_dialogue_miner_ive_transmitted_you_the_waypoint")
+					await iconversation.end()
+					iobjectives.add("a1_m05_objectives_checkout")
+				else:
+					await iconversation.begin()
+					await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_well_we_avenged_him_for_what_its_worth")
+					await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_hey_kid_check_your_sensors")
+					await iconversation.end()
+				break
+			state.set_progress(v24, 2)
+		if _arm1 <= 1:
+			v2 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m05_waypoint_cache"))
+			sim.place_between(v2, v4, v6, 0.4000000059604645)
+			isim.set_sensor_visibility(v2, 1)
+			if v27:
+				while true:
+					await _pog_wait(0.1)
+					if sim.distance_between(v0, v1) <= 150000.0:
+						continue
 					break
-			state.destroy(_pog_current())
-			await imissiontracker.remove_mission(_pog_current())
-			await iutilities.remove_mission_restart()
+				if object.property_exists(v24, "oregon_alive") and sim.is_dead(v7):
+					if PogRuntime.TRACE:
+						debug.print_string("iAct1_Mission05: Naughty player killed oregon, so he'll not get the big reward. \n")
+					object.remove_property(v24, "oregon_alive")
+			if sim.is_alive(v1):
+				sim.destroy(v1)
+			while true:
+				await _pog_wait(0.1)
+				if sim.distance_between(v0, v2) >= 250000.0:
+					continue
+				break
+			await irangecheck.remove_traffic_exception(v3)
+			group.destroy(v17, 0)
+			group.destroy(v16, 0)
+			v18 = group.create()
+			v16 = await local_6905(v2, 3000.0)
+			group.add_group(v18, v16)
+			await iformation.goose(v16, 0.0, 1)
+			v19 = await ishipcreation.create_cargo_pods(385, 7)
+			v20 = await ishipcreation.create_cargo_pods(561, 2)
+			group.add_group(v19, v20)
+			group.flatten(v19)
+			group.add_group(v18, v19)
+			v14 = iship.create("ini:/sims/ships/utility/cargo_pod", "")
+			object.set_int_property(v14, "cargo", 560)
+			isim.set_indestructable(v14, 1)
+			await iutilities.rename_sim(v14, icargo.pog_name(icargo.find(560)))
+			group.add_sim(v19, v14)
+			sim.place_near(group.leader(v19), v2, 500.0)
+			await iformation.box(v19, 100.0, 1)
+			await iformation.jiggle(v19, 50.0, 90.0)
+			if object.property_exists(v24, "oregon_alive"):
+				if PogRuntime.TRACE:
+					debug.print_string("iAct1_Mission05: Oregon's alive, so we're creating the freighter \n")
+				v13 = iship.create("ini:/sims/ships/utility/freighter", "a1_m05_ship_marauder_freighter")
+				group.add_sim(v18, v13)
+				await ipilotsetup.generic_cargo_pod(v13)
+				isim.set_faction(v13, ifaction.find("Marauders"))
+				sim.place_near(v13, v2, 1500.0)
+				v21 = await ishipcreation.create_cargo_pods(385, 4)
+				group.add_group(v18, v21)
+				v15 = iship.create("ini:/sims/ships/utility/cargo_pod", "")
+				object.set_int_property(v15, "cargo", 216)
+				isim.set_indestructable(v15, 1)
+				await iutilities.rename_sim(v15, icargo.pog_name(icargo.find(216)))
+				group.add_sim(v21, v15)
+				await local_7715(v21, v13)
+			v26 = group.sim_count(v16)
+			while true:
+				await _pog_wait(1)
+				if not (sim.distance_between(v0, v2) < 30000.0 or not _pog_eq(group.sim_count(v16), v26)):
+					continue
+				break
+			iai.give_attack_order(v16, await iwingmen.group())
+			iobjectives.set_state("a1_m05_objectives_checkout", 1)
+			if object.property_exists(v24, "oregon_alive"):
+				await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_there_it_is")
+			if group.sim_count(v16) > 0:
+				await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_uhoh_marauders_ahead")
+			if object.property_exists(v24, "oregon_alive"):
+				_pog_spawn(local_7537.bind(v13, 40.0))
+			v23 = 0
+			while true:
+				await _pog_wait(1)
+				if _pog_is_null(group.sim_count(v16)) and sim.is_dead(v13):
+					await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_that_took_care_of_the_marauders")
+					break
+				if object.property_exists(v24, "oregon_alive"):
+					if not (await iutilities.player_in_range(v13)) and sim.distance_between(v13, v2) > 200000.0 and _pog_is_null(v23):
+						if sim.is_alive(v13):
+							v23 = 1
+							await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_the_freighters_escaped")
+							await iconversation.end()
+				if await iutilities.player_in_range(v2):
+					continue
+				sim.destroy(v2)
+				await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_darn_the_beacons_gone")
+				break
+			while true:
+				await _pog_wait(1)
+				if sim.is_dead(v2):
+					break
+				if sim.distance_between(v0, v2) >= 10000.0:
+					continue
+				break
+			if sim.is_alive(v2):
+				sim.destroy(v2)
+			group.destroy(v18, 0)
+			if global.exists("g_act1_destroyed_marauder_cache"):
+				global.set_bool("g_act1_destroyed_marauder_cache", 1)
+			break
+	state.destroy(_pog_current())
+	await imissiontracker.remove_mission(_pog_current())
+	await iutilities.remove_mission_restart()
 	return
 	return 0
 
@@ -475,10 +475,9 @@ func local_7537(v0, v1) -> Variant:
 	group.add_sim(v2, v0)
 	await _pog_wait(v1)
 	if sim.is_dead(v0):
-		pass
-	else:
-		await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_the_freighters_running_for_it")
-		_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v2, _pog_clone("Random"))))
+		return
+	await iconversation.one_liner(0, "name_clay", "a1_m05_dialogue_clay_the_freighters_running_for_it")
+	_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v2, _pog_clone("Random"))))
 	return
 	return 0
 

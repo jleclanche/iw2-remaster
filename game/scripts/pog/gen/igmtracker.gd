@@ -40,9 +40,9 @@ func initialise_mission_generator() -> Variant:
 		_pog_detach(v0)
 		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker:InitialiseMissionGenerator created and detached task.\n")
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string("iGMTracker:InitialiseMissionGenerator mission generator already initialised.\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iGMTracker:InitialiseMissionGenerator mission generator already initialised.\n")
 	return 0
 	return 0
 

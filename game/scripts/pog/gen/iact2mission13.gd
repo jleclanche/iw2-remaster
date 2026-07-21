@@ -117,9 +117,8 @@ func local_334() -> Variant:
 	if await iutilities.skip_mission("Kong Fracture?"):
 		await stub()
 		return
-	else:
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
+	v0 = _pog_spawn(mission_handler.bind())
+	_pog_detach(v0)
 	return
 	return 0
 

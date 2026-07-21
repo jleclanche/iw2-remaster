@@ -1210,11 +1210,11 @@ func local_8506(v0, v1) -> Variant:
 	if _pog_is_null(v2):
 		if PogRuntime.TRACE:
 			debug.error("iAct3.group_jump: destination is not a LaGrange point!")
-	else:
-		v3 = 0
-		while v3 < group.sim_count(v0):
-			isim.capsule_jump(isim.cast(group.nth_sim(v0, v3)), v2)
-			v3 = v3 + 1
+		return 0
+	v3 = 0
+	while v3 < group.sim_count(v0):
+		isim.capsule_jump(isim.cast(group.nth_sim(v0, v3)), v2)
+		v3 = v3 + 1
 	return 0
 	return 0
 
@@ -1235,21 +1235,21 @@ func local_8691(v0, v1) -> Variant:
 			sim.place_near(v0, v2, v6)
 		else:
 			sim.place_near(v0, v1, 5000.0)
-	else:
-		if v3 > v6 * 5.0:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct3.place_traffic - location is miles from player, placing in close vicinity.\n")
-			sim.place_near(v0, v1, math.random(5000.0, 50000.0))
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct3.place_traffic - Station is outside players senser range - placing traffic between player & ship \n")
-			v4 = math.random(v6, v6 + v3)
-			v7 = sim.create("ini:/sims/nav/waypoint", "Traffic centre")
-			sim.place_between(v7, v2, v1, v4 / v3)
-			v5 = v4 - v6
-			if v5 > v6:
-				v5 = v6
-			sim.place_near(v0, v7, math.random(0.0, v5))
+		return 0
+	if v3 > v6 * 5.0:
+		if PogRuntime.TRACE:
+			debug.print_string("iAct3.place_traffic - location is miles from player, placing in close vicinity.\n")
+		sim.place_near(v0, v1, math.random(5000.0, 50000.0))
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iAct3.place_traffic - Station is outside players senser range - placing traffic between player & ship \n")
+	v4 = math.random(v6, v6 + v3)
+	v7 = sim.create("ini:/sims/nav/waypoint", "Traffic centre")
+	sim.place_between(v7, v2, v1, v4 / v3)
+	v5 = v4 - v6
+	if v5 > v6:
+		v5 = v6
+	sim.place_near(v0, v7, math.random(0.0, v5))
 	return 0
 	return 0
 
@@ -2296,57 +2296,57 @@ func local_22728(v0, v1, v2, v3) -> Variant:
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct3.generate_flavour_for_l_point: Passed Null L-point.\n")
-	else:
-		if await local_8094(isim.world_name(v0)) <= v1:
-			if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
-				if v2:
-					v4 = 15
-				else:
-					v4 = 3
-				v6 = 10000
+		return 0
+	if await local_8094(isim.world_name(v0)) <= v1:
+		if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
+			if v2:
+				v4 = 15
 			else:
-				if v2:
-					v4 = 3
-				else:
-					v4 = 1
-				v6 = 999
+				v4 = 3
+			v6 = 10000
 		else:
-			if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
-				if v2:
-					v4 = 3
-				else:
-					v4 = 1
-				v6 = 10000
+			if v2:
+				v4 = 3
 			else:
 				v4 = 1
-				v6 = 999
-		v5 = v4 - p_set.item_count(isim.sims_in_radius(v0, 75000.0, 536838144))
-		if v5 + global.pog_int("g_total_refugees_running") > v3:
-			v5 = v3 - global.pog_int("g_total_refugees_running")
-		if v5 > 0:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct3.generate_flavour_at_l_point: Creating ")
-			if PogRuntime.TRACE:
-				debug.print_string(string.from_int(v5))
-			if PogRuntime.TRACE:
-				debug.print_string(string.join(" from ", string.from_int(v4)))
-			if PogRuntime.TRACE:
-				debug.print_string(" at ")
-			if PogRuntime.TRACE:
-				debug.print_handle(v0)
-			if PogRuntime.TRACE:
-				debug.print_string("\n")
-			while true:
-				v5 = v5 - await local_4713(v0, await local_23575(v0), v6)
-				if not (v5 > 0):
-					break
+			v6 = 999
+	else:
+		if not _pog_eq(isim.world_name(v0), isim.active_world()) or ilagrangepoint.interstellar(v0):
+			if v2:
+				v4 = 3
+			else:
+				v4 = 1
+			v6 = 10000
 		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct3.Event3_30: No free slots after capping at ")
-			if PogRuntime.TRACE:
-				debug.print_handle(v0)
-			if PogRuntime.TRACE:
-				debug.print_string(".\n")
+			v4 = 1
+			v6 = 999
+	v5 = v4 - p_set.item_count(isim.sims_in_radius(v0, 75000.0, 536838144))
+	if v5 + global.pog_int("g_total_refugees_running") > v3:
+		v5 = v3 - global.pog_int("g_total_refugees_running")
+	if v5 > 0:
+		if PogRuntime.TRACE:
+			debug.print_string("iAct3.generate_flavour_at_l_point: Creating ")
+		if PogRuntime.TRACE:
+			debug.print_string(string.from_int(v5))
+		if PogRuntime.TRACE:
+			debug.print_string(string.join(" from ", string.from_int(v4)))
+		if PogRuntime.TRACE:
+			debug.print_string(" at ")
+		if PogRuntime.TRACE:
+			debug.print_handle(v0)
+		if PogRuntime.TRACE:
+			debug.print_string("\n")
+		while true:
+			v5 = v5 - await local_4713(v0, await local_23575(v0), v6)
+			if not (v5 > 0):
+				break
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iAct3.Event3_30: No free slots after capping at ")
+	if PogRuntime.TRACE:
+		debug.print_handle(v0)
+	if PogRuntime.TRACE:
+		debug.print_string(".\n")
 	return 0
 	return 0
 

@@ -66,57 +66,57 @@ func gangster_call_for_backup(v0, v1) -> Variant:
 	v12 = ""
 	if global.exists("g_running_gangster_call_for_backup"):
 		group.destroy(v9, 1)
+		return
+	if object.i_d_modulus(v0, 2) == 1:
+		v12 = "_male_1"
 	else:
-		if object.i_d_modulus(v0, 2) == 1:
-			v12 = "_male_1"
-		else:
-			v12 = "_female_1"
-		global.create_bool("g_running_gangster_call_for_backup", 1, 1)
+		v12 = "_female_1"
+	global.create_bool("g_running_gangster_call_for_backup", 1, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.GangsterCallForBackup: Starting task\n")
+	v6 = await iutilities.filter_on_friendly_habitats(v5, v7)
+	if _pog_is_null(p_set.item_count(v6)):
 		if PogRuntime.TRACE:
-			debug.print_string("iFight.GangsterCallForBackup: Starting task\n")
-		v6 = await iutilities.filter_on_friendly_habitats(v5, v7)
-		if _pog_is_null(p_set.item_count(v6)):
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.GangsterCallForBackup: Unable to find habitat of the correct allegiance to send out ships from!!\n")
-		else:
-			v8 = await local_0()
-			v3 = inifile.pog_int(v8, "stock_warn", "num_entries", 1)
-			v2 = math.random_int(1, v3)
-			v11 = iship.find_player_ship()
-			if _pog_eq(v1, v11) and sim.distance_between(v11, v0) < 50000.0:
-				icomms.shout(v0, "", string.join(string.join("stock_warn_", string.from_int(v2)), v12))
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.GangsterCallForBackup: Placing Head Ship\n")
-			sim.place_relative_to(v10, imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.GangsterCallForBackup: Placing ")
-				debug.print_int(group.sim_count(v9))
-				debug.print_string(" Ships in Formation\n")
-			if group.sim_count(v9) > 1:
-				await iformation.impi(v9, 20.0, 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.GangsterCallForBackup: Giving formate orders at destination\n")
-			iai.give_formate_order(v10, v0, 0.0, 0.0, 0.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.GangsterCallForBackup: Starting Wait for arrival loop\n")
-			if not _pog_is_null(v0) and not _pog_is_null(v1):
-				iai.give_attack_order(v0, v1)
-			while true:
-				await _pog_wait(30)
-				if not (iai.is_order_complete(v10)):
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.GangsterCallForBackup: Arrived at destination, staying alive while player is here\n")
-			while true:
-				await _pog_wait(50)
-				if not (await iutilities.player_in_range(group.leader(v9))):
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.GangsterCallForBackup: Destroying support vessels\n")
-			group.destroy(v9, 1)
-			global.destroy("g_running_gangster_call_for_backup")
+			debug.print_string("iFight.GangsterCallForBackup: Unable to find habitat of the correct allegiance to send out ships from!!\n")
+		return
+	v8 = await local_0()
+	v3 = inifile.pog_int(v8, "stock_warn", "num_entries", 1)
+	v2 = math.random_int(1, v3)
+	v11 = iship.find_player_ship()
+	if _pog_eq(v1, v11) and sim.distance_between(v11, v0) < 50000.0:
+		icomms.shout(v0, "", string.join(string.join("stock_warn_", string.from_int(v2)), v12))
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.GangsterCallForBackup: Placing Head Ship\n")
+	sim.place_relative_to(v10, imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.GangsterCallForBackup: Placing ")
+		debug.print_int(group.sim_count(v9))
+		debug.print_string(" Ships in Formation\n")
+	if group.sim_count(v9) > 1:
+		await iformation.impi(v9, 20.0, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.GangsterCallForBackup: Giving formate orders at destination\n")
+	iai.give_formate_order(v10, v0, 0.0, 0.0, 0.0)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.GangsterCallForBackup: Starting Wait for arrival loop\n")
+	if not _pog_is_null(v0) and not _pog_is_null(v1):
+		iai.give_attack_order(v0, v1)
+	while true:
+		await _pog_wait(30)
+		if not (iai.is_order_complete(v10)):
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.GangsterCallForBackup: Arrived at destination, staying alive while player is here\n")
+	while true:
+		await _pog_wait(50)
+		if not (await iutilities.player_in_range(group.leader(v9))):
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.GangsterCallForBackup: Destroying support vessels\n")
+	group.destroy(v9, 1)
+	global.destroy("g_running_gangster_call_for_backup")
 	return
 	return 0
 
@@ -144,57 +144,57 @@ func police_call_for_backup(v0, v1) -> Variant:
 	v13 = ""
 	if global.exists("g_running_police_call_for_backup"):
 		group.destroy(v10, 1)
+		return
+	if object.i_d_modulus(v0, 2) == 1:
+		v13 = "_male_1"
 	else:
-		if object.i_d_modulus(v0, 2) == 1:
-			v13 = "_male_1"
-		else:
-			v13 = "_female_1"
-		global.create_bool("g_running_police_call_for_backup", 1, 1)
+		v13 = "_female_1"
+	global.create_bool("g_running_police_call_for_backup", 1, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.PoliceCallForBackup: Starting task\n")
+	v6 = ihabitat.filter_on_type(v5, 68)
+	p_set.union(v6, ihabitat.filter_on_type(v5, 69))
+	if _pog_is_null(p_set.item_count(v6)):
 		if PogRuntime.TRACE:
-			debug.print_string("iFight.PoliceCallForBackup: Starting task\n")
-		v6 = ihabitat.filter_on_type(v5, 68)
-		p_set.union(v6, ihabitat.filter_on_type(v5, 69))
-		if _pog_is_null(p_set.item_count(v6)):
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.PoliceCallForBackup: Unable to find Police Facility to find backup from!\n")
-		else:
-			v9 = await local_0()
-			v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
-			v2 = math.random_int(1, v3)
-			v12 = iship.find_player_ship()
-			if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
-				icomms.shout(v0, "", string.join("stock_attack_", string.from_int(v2)))
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.PoliceCallForBackup: Placing Head Ship\n")
-			sim.place_relative_to(v11, imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.PoliceCallForBackup: Placing ")
-				debug.print_int(group.sim_count(v10))
-				debug.print_string(" Ships in Formation\n")
-			await iformation.claw(v10, 20.0, 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.PoliceCallForBackup: Giving support ships destination orders\n")
-			iai.give_formate_order(v11, v0, 0.0, 0.0, 0.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.PoliceCallForBackup: Starting Wait for arrival loop\n")
-			if not _pog_is_null(v0) and not _pog_is_null(v1):
-				iai.give_attack_order(v0, v1)
-			while true:
-				await _pog_wait(30)
-				if not (iai.is_order_complete(v11)):
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.PoliceCallForBackup: Arrived at destination, staying alive while player is here\n")
-			while true:
-				await _pog_wait(50)
-				if not (await iutilities.player_in_range(group.leader(v10))):
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.PoliceCallForBackup: Destroying support vessels\n")
-			global.destroy("g_running_police_call_for_backup")
-			group.destroy(v10, 1)
+			debug.print_string("iFight.PoliceCallForBackup: Unable to find Police Facility to find backup from!\n")
+		return
+	v9 = await local_0()
+	v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
+	v2 = math.random_int(1, v3)
+	v12 = iship.find_player_ship()
+	if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
+		icomms.shout(v0, "", string.join("stock_attack_", string.from_int(v2)))
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.PoliceCallForBackup: Placing Head Ship\n")
+	sim.place_relative_to(v11, imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.PoliceCallForBackup: Placing ")
+		debug.print_int(group.sim_count(v10))
+		debug.print_string(" Ships in Formation\n")
+	await iformation.claw(v10, 20.0, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.PoliceCallForBackup: Giving support ships destination orders\n")
+	iai.give_formate_order(v11, v0, 0.0, 0.0, 0.0)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.PoliceCallForBackup: Starting Wait for arrival loop\n")
+	if not _pog_is_null(v0) and not _pog_is_null(v1):
+		iai.give_attack_order(v0, v1)
+	while true:
+		await _pog_wait(30)
+		if not (iai.is_order_complete(v11)):
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.PoliceCallForBackup: Arrived at destination, staying alive while player is here\n")
+	while true:
+		await _pog_wait(50)
+		if not (await iutilities.player_in_range(group.leader(v10))):
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.PoliceCallForBackup: Destroying support vessels\n")
+	global.destroy("g_running_police_call_for_backup")
+	group.destroy(v10, 1)
 	return
 	return 0
 
@@ -222,65 +222,65 @@ func military_call_for_backup(v0, v1) -> Variant:
 	v13 = ""
 	if global.exists("g_running_military_call_for_backup"):
 		group.destroy(v10, 1)
-	else:
-		global.create_bool("g_running_military_call_for_backup", 1, 1)
+		return
+	global.create_bool("g_running_military_call_for_backup", 1, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.MilitaryCallForBackup: Starting task\n")
+	v6 = ihabitat.filter_on_type(v5, 72)
+	p_set.union(v6, ihabitat.filter_on_type(v5, 73))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 70))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 71))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 79))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 82))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 85))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 54))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 55))
+	p_set.union(v6, ihabitat.filter_on_type(v5, 78))
+	if _pog_is_null(p_set.item_count(v6)):
 		if PogRuntime.TRACE:
-			debug.print_string("iFight.MilitaryCallForBackup: Starting task\n")
-		v6 = ihabitat.filter_on_type(v5, 72)
-		p_set.union(v6, ihabitat.filter_on_type(v5, 73))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 70))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 71))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 79))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 82))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 85))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 54))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 55))
-		p_set.union(v6, ihabitat.filter_on_type(v5, 78))
-		if _pog_is_null(p_set.item_count(v6)):
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.MilitaryCallForBackup: Unable to find Police Facility to find backup from!\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.MilitaryCallForBackup: Placing Head Ship\n")
-			if object.i_d_modulus(v0, 2) == 1:
-				v13 = "_male_1"
-			else:
-				v13 = "_female_1"
-			sim.place_relative_to(group.nth_sim(v10, 0), imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.MilitaryCallForBackup: Placing ")
-				debug.print_int(group.sim_count(v10))
-				debug.print_string(" Ships in Formation\n")
-			await iformation.wedge(v10, 20.0, 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.MilitaryCallForBackup: Giving support ships destination orders\n")
-			iai.give_formate_order(v11, v0, 0.0, 0.0, 0.0)
-			v9 = await local_0()
-			v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
-			v2 = math.random_int(1, v3)
-			v12 = iship.find_player_ship()
-			if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
-				icomms.shout(v0, "", string.join(string.join("stock_attack_", string.from_int(v2)), v13))
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.MilitaryCallForBackup: Starting Wait for arrival loop\n")
-			if not _pog_is_null(v0) and not _pog_is_null(v1):
-				iai.give_attack_order(v0, v1)
-			while true:
-				await _pog_wait(30)
-				if not (iai.is_order_complete(v11)):
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.MilitaryCallForBackup: Arrived at destination, staying alive while player is here\n")
-			while true:
-				await _pog_wait(50)
-				if not (await iutilities.player_in_range(group.leader(v10))):
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iFight.MilitaryCallForBackup: Destroying support vessels\n")
-			global.destroy("g_running_military_call_for_backup")
-			group.destroy(v10, 1)
+			debug.print_string("iFight.MilitaryCallForBackup: Unable to find Police Facility to find backup from!\n")
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.MilitaryCallForBackup: Placing Head Ship\n")
+	if object.i_d_modulus(v0, 2) == 1:
+		v13 = "_male_1"
+	else:
+		v13 = "_female_1"
+	sim.place_relative_to(group.nth_sim(v10, 0), imapentity.waypoint_for_entity(ihabitat.nearest(v6, v0)), 500.0, 0.0, 0.0)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.MilitaryCallForBackup: Placing ")
+		debug.print_int(group.sim_count(v10))
+		debug.print_string(" Ships in Formation\n")
+	await iformation.wedge(v10, 20.0, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.MilitaryCallForBackup: Giving support ships destination orders\n")
+	iai.give_formate_order(v11, v0, 0.0, 0.0, 0.0)
+	v9 = await local_0()
+	v3 = inifile.pog_int(v9, "stock_attack", "num_entries", 1)
+	v2 = math.random_int(1, v3)
+	v12 = iship.find_player_ship()
+	if _pog_eq(v1, v12) and sim.distance_between(v12, v0) < 50000.0:
+		icomms.shout(v0, "", string.join(string.join("stock_attack_", string.from_int(v2)), v13))
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.MilitaryCallForBackup: Starting Wait for arrival loop\n")
+	if not _pog_is_null(v0) and not _pog_is_null(v1):
+		iai.give_attack_order(v0, v1)
+	while true:
+		await _pog_wait(30)
+		if not (iai.is_order_complete(v11)):
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.MilitaryCallForBackup: Arrived at destination, staying alive while player is here\n")
+	while true:
+		await _pog_wait(50)
+		if not (await iutilities.player_in_range(group.leader(v10))):
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iFight.MilitaryCallForBackup: Destroying support vessels\n")
+	global.destroy("g_running_military_call_for_backup")
+	group.destroy(v10, 1)
 	return
 	return 0
 

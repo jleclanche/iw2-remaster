@@ -89,24 +89,24 @@ func surrender() -> Variant:
 	if _pog_is_null(p_set.item_count(v5)):
 		if PogRuntime.TRACE:
 			debug.print_string("iFlee.CivilianCallForHelp: Unable to find Police Facility to find backup from!\n")
-	else:
-		v6 = ihabitat.nearest(v5, v0)
-		iai.give_approach_order(v0, imapentity.waypoint_for_entity(v6))
-		global.create_int(string.join("g_", object.string_property(v0, "name")), 1, 2)
-		if math.random_int(1, 6) == 5:
-			v3 = inifile.pog_int(v7, "stock_complain", "num_entries", 1)
-			v2 = math.random_int(1, v3)
-			if _pog_eq(v1, v9) and sim.distance_between(v9, v0) < 50000.0:
-				icomms.shout(v0, "", string.join(string.join("stock_complain_", string.from_int(v2)), v8))
-		while true:
-			await _pog_wait(30)
-			if iai.is_order_complete(v0):
-				if PogRuntime.TRACE:
-					debug.print_string("iSelfPreservation.surrender: arrived at police station.......... killing\n")
-				break
-			if await iutilities.player_in_range(sim.cast(v0)):
-				continue
+		return
+	v6 = ihabitat.nearest(v5, v0)
+	iai.give_approach_order(v0, imapentity.waypoint_for_entity(v6))
+	global.create_int(string.join("g_", object.string_property(v0, "name")), 1, 2)
+	if math.random_int(1, 6) == 5:
+		v3 = inifile.pog_int(v7, "stock_complain", "num_entries", 1)
+		v2 = math.random_int(1, v3)
+		if _pog_eq(v1, v9) and sim.distance_between(v9, v0) < 50000.0:
+			icomms.shout(v0, "", string.join(string.join("stock_complain_", string.from_int(v2)), v8))
+	while true:
+		await _pog_wait(30)
+		if iai.is_order_complete(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iSelfPreservation.surrender: arrived at police station.......... killing\n")
 			break
+		if await iutilities.player_in_range(sim.cast(v0)):
+			continue
+		break
 	return
 	return 0
 

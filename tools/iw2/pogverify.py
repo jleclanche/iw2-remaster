@@ -35,7 +35,7 @@ import argparse
 import collections
 from pathlib import Path
 
-from .pogdec import (Assign, Bin, Call, Const, Debug, Decompiler, Dispatch, Do,
+from .pogdec import (Assign, Bin, Call, Case, Const, Debug, Decompiler, Dispatch, Do,
                      DoWhile, Every, Every as _E, Expr, If, Ret, Str, Un, Var,
                      While, argc_census)
 from .pogdis import decode, parse_pkg
@@ -105,6 +105,10 @@ def _ast_facts(body):
                 walk(s.body)
             elif isinstance(s, (Every, Debug)):
                 walk(s.body)
+            elif isinstance(s, Case):
+                expr(s.sel)
+                for _vals, blk, _brk in s.arms:
+                    walk(blk)
             elif isinstance(s, Dispatch):
                 for _addr, blk in s.blocks:
                     walk(blk)

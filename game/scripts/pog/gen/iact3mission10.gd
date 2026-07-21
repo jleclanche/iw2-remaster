@@ -101,8 +101,8 @@ func local_224() -> Variant:
 	if not (await iutilities.skip_mission("The Finale??")):
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
-	else:
-		global.set_bool("g_act3_the_end_complete", 1)
+		return
+	global.set_bool("g_act3_the_end_complete", 1)
 	return
 	return 0
 

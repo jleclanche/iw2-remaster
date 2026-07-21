@@ -94,8 +94,8 @@ func local_253() -> Variant:
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
 		await imissiontracker.add_mission(v0, 3, 5)
-	else:
-		global.set_bool("g_act3_deep_cover_completed", 1)
+		return
+	global.set_bool("g_act3_deep_cover_completed", 1)
 	return
 	return 0
 

@@ -388,8 +388,8 @@ func story_element2_200() -> Variant:
 		debug.print_string("iActTwo.StoryElement2_200 : Story element has begun.\n")
 	if _pog_is_null(global.pog_bool("g_act2_kong_fracture_success")):
 		iemail.send_email("a2_master_league_mail_sender", "a2_master_story2.200b_mail_subject", "html:/text/act_2/act2_master_leaguemail_2_200b", 1)
-	else:
-		iemail.send_email("a2_master_kong_mail_sender", "a2_master_story2.200_mail_subject", "html:/text/act_2/act2_master_kongmail_2_200", 1)
+		return
+	iemail.send_email("a2_master_kong_mail_sender", "a2_master_story2.200_mail_subject", "html:/text/act_2/act2_master_kongmail_2_200", 1)
 	return
 	return 0
 
@@ -718,8 +718,8 @@ func local_11088(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.'MwariPilotsTally : player has reached reqwuired pilot level!\n")
 		global.set_bool("g_act2_reached_pilot_total", 1)
-	else:
-		global.set_int("g_act2_mwari_pilots", v1)
+		return 0
+	global.set_int("g_act2_mwari_pilots", v1)
 	return 0
 	return 0
 
@@ -1964,291 +1964,291 @@ func kompira_story_script() -> Variant:
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/kompira"):
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.KompiraStoryScript : trying to start script outside of kompira system, quitting\n")
-	else:
-		v5 = ihabitat.filter_on_allegiance(imapentity.system_habitats(), 19)
-		if not (v1):
-			v1 = state.create(v0, 0)
-			global.set_handle("g_kompira_state", v1)
-		if PogRuntime.TRACE:
-			debug.print_string("iActTwo.KompiraStoryScript : Commencing  Kompira story script\n")
-		while true:
-			var _sw3: Variant = state.progress(v1)
-			var _arm3: int = -1
-			if _pog_eq(_sw3, 0):
-				_arm3 = 0
-			elif _pog_eq(_sw3, 1):
-				_arm3 = 1
-			elif _pog_eq(_sw3, 2):
-				_arm3 = 2
-			elif _pog_eq(_sw3, 3):
-				_arm3 = 3
-			elif _pog_eq(_sw3, 4):
-				_arm3 = 4
-			elif _pog_eq(_sw3, 5):
-				_arm3 = 5
-			elif _pog_eq(_sw3, 6):
-				_arm3 = 6
-			elif _pog_eq(_sw3, 7):
-				_arm3 = 7
-			if _arm3 == -1:
-				break
-			if _arm3 <= 0:
-				await isystemcutscene.kompira()
-				while true:
-					await _pog_wait(1.0)
-					if not (not (idirector.is_busy())):
-						break
-				await iconversation.begin()
-				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_me_and_your_grandma_didnt_spend_much_time_here")
-				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_ever_thought_of_a_career_as_a_travel_guide")
-				await iconversation.end()
-				state.set_progress(v1, 1)
-			if _arm3 <= 1:
-				while true:
-					if not (v3):
-						if sim.distance_between(v4, ihabitat.nearest(v5, v4)) < 300000.0:
-							if not (v7) and not (v15):
-								if PogRuntime.TRACE:
-									debug.print_string("iActTwo.KompiraStoryScript : Player hs approached an Oman station - intercepting....\n")
-								v6 = await local_8945(v4)
-								v7 = 1
-								iai.give_approach_order(v6, v4)
-								while v7:
-									if sim.distance_between(group.leader(v6), v4) > 500000.0 and not (iship.is_in_l_d_s(iship.cast(group.leader(v6)))):
-										if PogRuntime.TRACE:
-											debug.print_string("iAct2.KompiraStoryScript : player has lost the Oman intercept group.\n")
-										group.destroy(v6, 1)
-										v7 = 0
-										v8 = 0
-										v9 = 0
-									else:
-										if sim.distance_between(group.leader(v6), v4) < 50000.0 and _pog_is_null(v8):
-											if v11:
-												await iconversation.one_liner(0, "name_clay", "")
-												v8 = 1
-											else:
-												await iconversation.one_liner(0, "name_clay", "a2_master_dialogue_clay_looks_like_we_got_company_again")
-												v8 = 1
+		return
+	v5 = ihabitat.filter_on_allegiance(imapentity.system_habitats(), 19)
+	if not (v1):
+		v1 = state.create(v0, 0)
+		global.set_handle("g_kompira_state", v1)
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.KompiraStoryScript : Commencing  Kompira story script\n")
+	while true:
+		var _sw3: Variant = state.progress(v1)
+		var _arm3: int = -1
+		if _pog_eq(_sw3, 0):
+			_arm3 = 0
+		elif _pog_eq(_sw3, 1):
+			_arm3 = 1
+		elif _pog_eq(_sw3, 2):
+			_arm3 = 2
+		elif _pog_eq(_sw3, 3):
+			_arm3 = 3
+		elif _pog_eq(_sw3, 4):
+			_arm3 = 4
+		elif _pog_eq(_sw3, 5):
+			_arm3 = 5
+		elif _pog_eq(_sw3, 6):
+			_arm3 = 6
+		elif _pog_eq(_sw3, 7):
+			_arm3 = 7
+		if _arm3 == -1:
+			break
+		if _arm3 <= 0:
+			await isystemcutscene.kompira()
+			while true:
+				await _pog_wait(1.0)
+				if not (not (idirector.is_busy())):
+					break
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_me_and_your_grandma_didnt_spend_much_time_here")
+			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_ever_thought_of_a_career_as_a_travel_guide")
+			await iconversation.end()
+			state.set_progress(v1, 1)
+		if _arm3 <= 1:
+			while true:
+				if not (v3):
+					if sim.distance_between(v4, ihabitat.nearest(v5, v4)) < 300000.0:
+						if not (v7) and not (v15):
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.KompiraStoryScript : Player hs approached an Oman station - intercepting....\n")
+							v6 = await local_8945(v4)
+							v7 = 1
+							iai.give_approach_order(v6, v4)
+							while v7:
+								if sim.distance_between(group.leader(v6), v4) > 500000.0 and not (iship.is_in_l_d_s(iship.cast(group.leader(v6)))):
+									if PogRuntime.TRACE:
+										debug.print_string("iAct2.KompiraStoryScript : player has lost the Oman intercept group.\n")
+									group.destroy(v6, 1)
+									v7 = 0
+									v8 = 0
+									v9 = 0
+								else:
+									if sim.distance_between(group.leader(v6), v4) < 50000.0 and _pog_is_null(v8):
+										if v11:
+											await iconversation.one_liner(0, "name_clay", "")
+											v8 = 1
 										else:
-											if sim.distance_between(group.leader(v6), v4) < 10000.0 and _pog_is_null(v9) and not (v15):
-												if PogRuntime.TRACE:
-													debug.print_string("iActTwo.KompiraStoryScript : oman are in hailing range of the player, starting comunication...\n")
-												v9 = 1
-												await iconversation.begin()
-												await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_you_are_passing_through_oman_territory")
+											await iconversation.one_liner(0, "name_clay", "a2_master_dialogue_clay_looks_like_we_got_company_again")
+											v8 = 1
+									else:
+										if sim.distance_between(group.leader(v6), v4) < 10000.0 and _pog_is_null(v9) and not (v15):
+											if PogRuntime.TRACE:
+												debug.print_string("iActTwo.KompiraStoryScript : oman are in hailing range of the player, starting comunication...\n")
+											v9 = 1
+											await iconversation.begin()
+											await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_you_are_passing_through_oman_territory")
+											if v11:
+												await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_we_better_do_as_these_guys_say")
+											await iconversation.end()
+										else:
+											if iai.is_order_complete(group.leader(v6)) or sim.distance_between(group.leader(v6), v4) < 1000.0 and not (v15):
 												if v11:
-													await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_we_better_do_as_these_guys_say")
-												await iconversation.end()
-											else:
-												if iai.is_order_complete(group.leader(v6)) or sim.distance_between(group.leader(v6), v4) < 1000.0 and not (v15):
-													if v11:
-														await iconversation.one_liner(group.leader(v6), "", "a2_master_dialogue_oman_ah_we_have_heard")
+													await iconversation.one_liner(group.leader(v6), "", "a2_master_dialogue_oman_ah_we_have_heard")
+													v7 = 0
+													v3 = 1
+												else:
+													await iconversation.begin()
+													await iconversation.add_response("a2_master_option_cal_im_looking_for_assistance", "a2_master_dialogue_cal_im_looking_for_assistance")
+													await iconversation.add_response("a2_master_dialogue_cal_i_wish_to_speak_to_your_commander", "a2_master_dialogue_cal_i_wish_to_speak_to_your_commander")
+													await iconversation.add_response("a2_master_dialogue_cal_dont_mind_me", "a2_master_dialogue_cal_dont_mind_me")
+													v12 = await iconversation.ask(group.leader(v6), "", "a2_master_dialogue_oman_what_is_your_business_here")
+													if v12 == 1:
+														await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_you_must_speak_with_our_leader")
+														await iconversation.end()
 														v7 = 0
 														v3 = 1
 													else:
-														await iconversation.begin()
-														await iconversation.add_response("a2_master_option_cal_im_looking_for_assistance", "a2_master_dialogue_cal_im_looking_for_assistance")
-														await iconversation.add_response("a2_master_dialogue_cal_i_wish_to_speak_to_your_commander", "a2_master_dialogue_cal_i_wish_to_speak_to_your_commander")
-														await iconversation.add_response("a2_master_dialogue_cal_dont_mind_me", "a2_master_dialogue_cal_dont_mind_me")
-														v12 = await iconversation.ask(group.leader(v6), "", "a2_master_dialogue_oman_what_is_your_business_here")
-														if v12 == 1:
-															await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_you_must_speak_with_our_leader")
+														if v12 == 2:
+															await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_very_well_you_are_clearly_not_a_marauder")
 															await iconversation.end()
 															v7 = 0
 															v3 = 1
 														else:
-															if v12 == 2:
-																await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_very_well_you_are_clearly_not_a_marauder")
+															if v12 == 3:
+																await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_very_well_but_be_warned_that_the_oman_do_not_tolerate")
 																await iconversation.end()
+																iai.give_approach_order(v6, ihabitat.nearest(v5, v4))
+																await _pog_wait(10.0)
+																await iconversation.begin()
+																await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_you_idiot")
+																await iconversation.end()
+																v15 = 1
 																v7 = 0
-																v3 = 1
-															else:
-																if v12 == 3:
-																	await iconversation.say(group.leader(v6), "", "a2_master_dialogue_oman_very_well_but_be_warned_that_the_oman_do_not_tolerate")
-																	await iconversation.end()
-																	iai.give_approach_order(v6, ihabitat.nearest(v5, v4))
-																	await _pog_wait(10.0)
-																	await iconversation.begin()
-																	await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_you_idiot")
-																	await iconversation.end()
-																	v15 = 1
-																	v7 = 0
-												else:
-													if PogRuntime.TRACE:
-														debug.print_string("iActTwo.KompiraStoryScript : Oman intercept group is active, but no events of interest have taken place, sleeping\n")
-													await _pog_wait(10.0)
-							else:
-								if PogRuntime.TRACE:
-									debug.print_string("iActTwo.KompiraStoryScripy : Player has approached an oman station, but an intercept is already active...\n")
+											else:
+												if PogRuntime.TRACE:
+													debug.print_string("iActTwo.KompiraStoryScript : Oman intercept group is active, but no events of interest have taken place, sleeping\n")
+												await _pog_wait(10.0)
 						else:
 							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.KompiraStoryScript : Player is nowhere near an oman station, sleeping....\n")
-							await _pog_wait(2.0)
-						continue
-					while true:
-						if _pog_eq(sim.group(iship.current_target(v4)), v6) and (iai.current_order_type(v4) == 2 or iai.current_order_type(v4) == 3):
-							v14 = 1
-						else:
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.KompiraStoryScript : waiting for player to give order to formate or approahc one of the oman ships\n")
-							await _pog_wait(2.0)
-						if not (_pog_is_null(v14)):
-							break
-					v13 = ihabitat.find_by_name("Daru el-Salam")
-					await irangecheck.add_traffic_exception(v13)
-					if PogRuntime.TRACE:
-						debug.print_string("iAct2.kompirascript: Given approach to HQ........\n")
-					iai.give_approach_order(v6, v13)
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iAct2.kompirascript: waiting to arrive at daru el salam.......")
-						await _pog_wait(2.0)
-						if not (not (iai.is_order_complete(v6)) and sim.distance_between(group.leader(v6), v13) > 100000.0):
-							break
-					await _pog_wait(2.0)
-					v7 = 0
-					v8 = 0
-					v9 = 0
-					v11 = 1
-					if not (sim.distance_between(v4, v13) > 100000.0):
-						break
-				state.set_progress(v1, 2)
-			if _arm3 <= 2:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.KompiraStoryScript : waiting for the player to approach Daru el-Salam\n")
-					await _pog_wait(1.0)
-					if not (sim.distance_between(v4, v13) > 8000.0):
-						break
-				await iconversation.begin()
-				await iconversation.say(v13, "", "a2_master_dialogue_main_oman_welcome_to_daru_el_salam")
-				await iconversation.end()
-				state.set_progress(v1, 3)
-			if _arm3 <= 3:
-				while not (v10):
-					if not (isim.is_docked_to_structure(v4, v13)):
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.KompiraStoryScript : Waiting for the player to dock to Daru el-Salam\n")
-						await _pog_wait(1.0)
+								debug.print_string("iActTwo.KompiraStoryScripy : Player has approached an oman station, but an intercept is already active...\n")
 					else:
-						if _pog_is_null(global.pog_bool("g_act2_oman_test_offered")):
-							await iconversation.begin()
-							await iconversation.add_response("a2_master_option_cal_hoffers_wake_needs_help", "a2_master_dialogue_cal_hoffers_wake_needs_help")
-							await iconversation.add_response("a2_master_option_cal_i_represent_the_league", "a2_master_dialogue_cal_i_represent_the_league")
-							v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_welcome_stranger_i_am_the_elder")
-							if v12 == 1:
-								await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_i_sympathise_but_we_all_have_troubles_with_the_marauders")
-							else:
-								if v12 == 2:
-									await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_i_know_the_league_and_understand_your_plight_but_we_are_all_having_trouble")
-							await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_we_do_not_have_the_stregnth")
-							await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_and_how_do_i_prove_myself_worthy")
-							await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_simple_my_friend_all_we_ask_of_you")
-							await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_i_was_afraid")
-							await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_the_oman_are_supposed_to_be_tough_cookies")
-							await iconversation.add_response("a2_master_dialogue_cal_yes_ill_take_the_test", "a2_master_dialogue_cal_yes_ill_take_the_test")
-							await iconversation.add_response("a2_master_dialogue_cal_not_just_yet", "a2_master_dialogue_cal_not_just_yet")
-							v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_do_you_wish_to_take_the_test")
-							if v12 == 1:
-								await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_very_good")
-								await iconversation.end()
-								v10 = 1
-							else:
-								await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_as_you_wish")
-								await iconversation.end()
-								global.set_bool("g_act2_oman_test_offered", 1)
-								while isim.is_docked_to_structure(v4, v13):
-									if PogRuntime.TRACE:
-										debug.print_string("iActTwo.KompiraStoryScript : player has turned down oman initiation, waiting for player to unbdock from Daru el-salam\n")
-									await _pog_wait(5.0)
-						else:
-							if global.pog_bool("g_act2_oman_test_offered") != 1:
-								continue
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.KompiraStoryScript : player has docked to the daru el salam, and has already been offered initiation test once, trying again\n")
-							await iconversation.begin()
-							await iconversation.add_response("a2_master_dialogue_cal_yes_ill_take_the_test", "a2_master_dialogue_cal_yes_ill_take_the_test")
-							await iconversation.add_response("a2_master_dialogue_cal_not_just_yet", "a2_master_not_just_yet")
-							v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_welcome_back")
-							if v12 == 1:
-								await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_very_good")
-								await iconversation.end()
-								v10 = 1
-							else:
-								await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_as_you_wish")
-								await iconversation.end()
-								global.set_bool("g_act2_oman_test_offered", 1)
-								while isim.is_docked_to_structure(v4, v13):
-									if PogRuntime.TRACE:
-										debug.print_string("iActTwo.KompiraStoryScript : player has turned down oman initiation, waiting for player to unbdock from Daru el-salam\n")
-									await _pog_wait(5.0)
-				await iact2mission02.main()
-				state.set_progress(v1, 4)
-			if _arm3 <= 4:
-				while _pog_is_null(global.pog_bool("g_act2_oman_initiation_complete")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.KompiraStoryScript : waiting for the player to finish act 02 mission 02 -meet the oman, sleeping.\n")
-					await _pog_wait(5.0)
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.KompiraStoryScript : Player is nowhere near an oman station, sleeping....\n")
+						await _pog_wait(2.0)
+					continue
+				while true:
+					if _pog_eq(sim.group(iship.current_target(v4)), v6) and (iai.current_order_type(v4) == 2 or iai.current_order_type(v4) == 3):
+						v14 = 1
+					else:
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.KompiraStoryScript : waiting for player to give order to formate or approahc one of the oman ships\n")
+						await _pog_wait(2.0)
+					if not (_pog_is_null(v14)):
+						break
+				v13 = ihabitat.find_by_name("Daru el-Salam")
+				await irangecheck.add_traffic_exception(v13)
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.KompiraStoryScript : adding Oman trades to trade list...\n")
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 517, 1, 32, 1, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 532, 1, 12, 1, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 534, 1, 7, 1, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 593, 1, 13, 1, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("The Oman"), 594, 1, 372, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 195, 1, 25, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("The Oman"), 169, 1, 462, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 247, 1, 49, 2, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 571, 1, 19, 3, 3))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 555, 1, 38, 2, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 305, 1, 22, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 570, 1, 20, 1, 3))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 594, 1, 55, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 519, 1, 36, 1, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 304, 1, 49, 3, 1))
-				iemail.send_email("a2_master_oman_sender", "a2_master_story2.12_mail_subject", "html:/text/act_2/act2_master_omanmail_2_2", 1)
-				if _pog_is_null(global.exists("g_added_gm_batch_8")):
-					await igmtracker.add_g_m_enum(20)
-					await igmtracker.add_g_m_enum(21)
-					await igmtracker.add_g_m_enum(23)
-					await igmtracker.set_g_m_range(20, 23)
-					global.create_bool("g_added_gm_batch_8", 1, 1)
-				state.set_progress(v1, 5)
-			if _arm3 <= 5:
-				v16 = _pog_spawn(local_24677.bind(1))
+					debug.print_string("iAct2.kompirascript: Given approach to HQ........\n")
+				iai.give_approach_order(v6, v13)
 				while true:
 					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.KompiraStoryScript : waiting for MCa needing pilots, sleeping.\n")
+						debug.print_string("iAct2.kompirascript: waiting to arrive at daru el salam.......")
+					await _pog_wait(2.0)
+					if not (not (iai.is_order_complete(v6)) and sim.distance_between(group.leader(v6), v13) > 100000.0):
+						break
+				await _pog_wait(2.0)
+				v7 = 0
+				v8 = 0
+				v9 = 0
+				v11 = 1
+				if not (sim.distance_between(v4, v13) > 100000.0):
+					break
+			state.set_progress(v1, 2)
+		if _arm3 <= 2:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.KompiraStoryScript : waiting for the player to approach Daru el-Salam\n")
+				await _pog_wait(1.0)
+				if not (sim.distance_between(v4, v13) > 8000.0):
+					break
+			await iconversation.begin()
+			await iconversation.say(v13, "", "a2_master_dialogue_main_oman_welcome_to_daru_el_salam")
+			await iconversation.end()
+			state.set_progress(v1, 3)
+		if _arm3 <= 3:
+			while not (v10):
+				if not (isim.is_docked_to_structure(v4, v13)):
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.KompiraStoryScript : Waiting for the player to dock to Daru el-Salam\n")
 					await _pog_wait(1.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_need_pilots"))):
-						break
-				state.set_progress(v1, 6)
-			if _arm3 <= 6:
-				if _pog_is_null(v16):
-					v16 = _pog_spawn(local_24677.bind(2))
 				else:
-					_pog_halt(v16)
-					v16 = _pog_spawn(local_24677.bind(2))
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.KompiraStoryScript : waiting for the Oman to provide pilots to the player\n")
-					await _pog_wait(10.0)
-					if not (_pog_is_null(global.pog_bool("g_oman_provided_pilots"))):
-						break
-				state.set_progress(v1, 7)
-			if _arm3 <= 7:
-				if _pog_is_null(v16):
-					v16 = _pog_spawn(local_24677.bind(3))
-				else:
-					_pog_halt(v16)
-					v16 = _pog_spawn(local_24677.bind(3))
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.KompiraStoryScript : just hanging around at end of script so player can talk to Abdul Hadi\n")
-					await _pog_wait(10.0)
-					if not (_pog_is_null(global.pog_bool("g_kompira_script_complete"))):
-						break
-				break
+					if _pog_is_null(global.pog_bool("g_act2_oman_test_offered")):
+						await iconversation.begin()
+						await iconversation.add_response("a2_master_option_cal_hoffers_wake_needs_help", "a2_master_dialogue_cal_hoffers_wake_needs_help")
+						await iconversation.add_response("a2_master_option_cal_i_represent_the_league", "a2_master_dialogue_cal_i_represent_the_league")
+						v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_welcome_stranger_i_am_the_elder")
+						if v12 == 1:
+							await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_i_sympathise_but_we_all_have_troubles_with_the_marauders")
+						else:
+							if v12 == 2:
+								await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_i_know_the_league_and_understand_your_plight_but_we_are_all_having_trouble")
+						await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_we_do_not_have_the_stregnth")
+						await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_and_how_do_i_prove_myself_worthy")
+						await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_simple_my_friend_all_we_ask_of_you")
+						await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_i_was_afraid")
+						await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_the_oman_are_supposed_to_be_tough_cookies")
+						await iconversation.add_response("a2_master_dialogue_cal_yes_ill_take_the_test", "a2_master_dialogue_cal_yes_ill_take_the_test")
+						await iconversation.add_response("a2_master_dialogue_cal_not_just_yet", "a2_master_dialogue_cal_not_just_yet")
+						v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_do_you_wish_to_take_the_test")
+						if v12 == 1:
+							await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_very_good")
+							await iconversation.end()
+							v10 = 1
+						else:
+							await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_as_you_wish")
+							await iconversation.end()
+							global.set_bool("g_act2_oman_test_offered", 1)
+							while isim.is_docked_to_structure(v4, v13):
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.KompiraStoryScript : player has turned down oman initiation, waiting for player to unbdock from Daru el-salam\n")
+								await _pog_wait(5.0)
+					else:
+						if global.pog_bool("g_act2_oman_test_offered") != 1:
+							continue
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.KompiraStoryScript : player has docked to the daru el salam, and has already been offered initiation test once, trying again\n")
+						await iconversation.begin()
+						await iconversation.add_response("a2_master_dialogue_cal_yes_ill_take_the_test", "a2_master_dialogue_cal_yes_ill_take_the_test")
+						await iconversation.add_response("a2_master_dialogue_cal_not_just_yet", "a2_master_not_just_yet")
+						v12 = await iconversation.ask(0, "Abdul-Hadi", "a2_master_dialogue_hadi_welcome_back")
+						if v12 == 1:
+							await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_very_good")
+							await iconversation.end()
+							v10 = 1
+						else:
+							await iconversation.say(0, "Abdul-Hadi", "a2_master_dialogue_hadi_as_you_wish")
+							await iconversation.end()
+							global.set_bool("g_act2_oman_test_offered", 1)
+							while isim.is_docked_to_structure(v4, v13):
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.KompiraStoryScript : player has turned down oman initiation, waiting for player to unbdock from Daru el-salam\n")
+								await _pog_wait(5.0)
+			await iact2mission02.main()
+			state.set_progress(v1, 4)
+		if _arm3 <= 4:
+			while _pog_is_null(global.pog_bool("g_act2_oman_initiation_complete")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.KompiraStoryScript : waiting for the player to finish act 02 mission 02 -meet the oman, sleeping.\n")
+				await _pog_wait(5.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.KompiraStoryScript : adding Oman trades to trade list...\n")
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 517, 1, 32, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 532, 1, 12, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 534, 1, 7, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 593, 1, 13, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("The Oman"), 594, 1, 372, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 195, 1, 25, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("The Oman"), 169, 1, 462, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 247, 1, 49, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 571, 1, 19, 3, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 555, 1, 38, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 305, 1, 22, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 570, 1, 20, 1, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 594, 1, 55, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 519, 1, 36, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("The Oman"), 304, 1, 49, 3, 1))
+			iemail.send_email("a2_master_oman_sender", "a2_master_story2.12_mail_subject", "html:/text/act_2/act2_master_omanmail_2_2", 1)
+			if _pog_is_null(global.exists("g_added_gm_batch_8")):
+				await igmtracker.add_g_m_enum(20)
+				await igmtracker.add_g_m_enum(21)
+				await igmtracker.add_g_m_enum(23)
+				await igmtracker.set_g_m_range(20, 23)
+				global.create_bool("g_added_gm_batch_8", 1, 1)
+			state.set_progress(v1, 5)
+		if _arm3 <= 5:
+			v16 = _pog_spawn(local_24677.bind(1))
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.KompiraStoryScript : waiting for MCa needing pilots, sleeping.\n")
+				await _pog_wait(1.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_need_pilots"))):
+					break
+			state.set_progress(v1, 6)
+		if _arm3 <= 6:
+			if _pog_is_null(v16):
+				v16 = _pog_spawn(local_24677.bind(2))
+			else:
+				_pog_halt(v16)
+				v16 = _pog_spawn(local_24677.bind(2))
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.KompiraStoryScript : waiting for the Oman to provide pilots to the player\n")
+				await _pog_wait(10.0)
+				if not (_pog_is_null(global.pog_bool("g_oman_provided_pilots"))):
+					break
+			state.set_progress(v1, 7)
+		if _arm3 <= 7:
+			if _pog_is_null(v16):
+				v16 = _pog_spawn(local_24677.bind(3))
+			else:
+				_pog_halt(v16)
+				v16 = _pog_spawn(local_24677.bind(3))
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.KompiraStoryScript : just hanging around at end of script so player can talk to Abdul Hadi\n")
+				await _pog_wait(10.0)
+				if not (_pog_is_null(global.pog_bool("g_kompira_script_complete"))):
+					break
+			break
 	return
 	return 0
 
@@ -2449,89 +2449,89 @@ func firefrost_story_script() -> Variant:
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/firefrost") and global.pog_bool("g_skip_to_specific") != 1:
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.FirefrostStoryScript : trying to start task, but current world is not firefrost, quitting\n")
-	else:
-		if not (v1):
-			v1 = state.create(v0, 0)
-			global.set_handle("g_firefrost_state", v1)
-		if PogRuntime.TRACE:
-			debug.print_string("iActTwo.FirefrostStoryScript : Commencing  Firefrost story script\n")
-		_pog_spawn(firefrost_conversations.bind())
-		while true:
-			var _sw4: Variant = state.progress(v1)
-			var _arm4: int = -1
-			if _pog_eq(_sw4, 0):
-				_arm4 = 0
-			elif _pog_eq(_sw4, 1):
-				_arm4 = 1
-			elif _pog_eq(_sw4, 2):
-				_arm4 = 2
-			elif _pog_eq(_sw4, 3):
-				_arm4 = 3
-			elif _pog_eq(_sw4, 4):
-				_arm4 = 4
-			if _arm4 == -1:
-				break
-			if _arm4 <= 0:
+		return
+	if not (v1):
+		v1 = state.create(v0, 0)
+		global.set_handle("g_firefrost_state", v1)
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.FirefrostStoryScript : Commencing  Firefrost story script\n")
+	_pog_spawn(firefrost_conversations.bind())
+	while true:
+		var _sw4: Variant = state.progress(v1)
+		var _arm4: int = -1
+		if _pog_eq(_sw4, 0):
+			_arm4 = 0
+		elif _pog_eq(_sw4, 1):
+			_arm4 = 1
+		elif _pog_eq(_sw4, 2):
+			_arm4 = 2
+		elif _pog_eq(_sw4, 3):
+			_arm4 = 3
+		elif _pog_eq(_sw4, 4):
+			_arm4 = 4
+		if _arm4 == -1:
+			break
+		if _arm4 <= 0:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.FirefrostStoryScript : initialising firefrost intro cut scene\n")
+			if global.pog_bool("g_skip_to_specific") != 1:
+				await isystemcutscene.firefrost()
+			while true:
+				await _pog_wait(1.0)
+				if not (not (idirector.is_busy())):
+					break
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_firefrost_be_careful_in_this_system_cal")
+			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_keep_your_eyes_peeled")
+			await iconversation.end()
+			await iconversation.one_liner(0, "name_clay", "a2_master_dialogue_clay_dont_worry_if_your_electronics")
+			await iconversation.one_liner(0, "name_cal", "a2_master_dialogue_cal_spare_the_lecture_clay")
+			await iconversation.one_liner(0, "name_clay", "a2_master_dialogue_clay_hey_kid_just_offering_a_little_advice")
+			await iconversation.one_liner(0, "name_cal", "a2_master_dialogue_cal_im_sorry_youre_right_youve_been_here_before")
+			idirector.end()
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_ok_thats_more_like_it")
+			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_sounds_as_good_a_place")
+			await iconversation.end()
+			iobjectives.add("a2_master_objectives_firefrost1")
+			state.set_progress(v1, 1)
+		if _arm4 <= 1:
+			state.set_progress(v1, 2)
+		if _arm4 <= 2:
+			while _pog_is_null(global.pog_bool("g_act2_high_noon_offered")) and global.pog_bool("g_skip_to_specific") != 1:
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.FirefrostStoryScript : initialising firefrost intro cut scene\n")
-				if global.pog_bool("g_skip_to_specific") != 1:
-					await isystemcutscene.firefrost()
-				while true:
-					await _pog_wait(1.0)
-					if not (not (idirector.is_busy())):
-						break
-				await iconversation.begin()
-				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_firefrost_be_careful_in_this_system_cal")
-				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_keep_your_eyes_peeled")
-				await iconversation.end()
-				await iconversation.one_liner(0, "name_clay", "a2_master_dialogue_clay_dont_worry_if_your_electronics")
-				await iconversation.one_liner(0, "name_cal", "a2_master_dialogue_cal_spare_the_lecture_clay")
-				await iconversation.one_liner(0, "name_clay", "a2_master_dialogue_clay_hey_kid_just_offering_a_little_advice")
-				await iconversation.one_liner(0, "name_cal", "a2_master_dialogue_cal_im_sorry_youre_right_youve_been_here_before")
-				idirector.end()
-				await iconversation.begin()
-				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_ok_thats_more_like_it")
-				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_sounds_as_good_a_place")
-				await iconversation.end()
-				iobjectives.add("a2_master_objectives_firefrost1")
-				state.set_progress(v1, 1)
-			if _arm4 <= 1:
-				state.set_progress(v1, 2)
-			if _arm4 <= 2:
-				while _pog_is_null(global.pog_bool("g_act2_high_noon_offered")) and global.pog_bool("g_skip_to_specific") != 1:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.FirefrostStoryScript : waiting for player to accept ranch mission from firefrost sherrif, sleeping\n")
-					await _pog_wait(10.0)
-				await iact2mission04.main()
-				state.set_progress(v1, 3)
-			if _arm4 <= 3:
-				while _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.FirefrostStoryScript : watinig for the player to finish act 02 mission 04 - high noon, sleeping \n")
-					await _pog_wait(10.0)
-				await igangsterincidentgen.set_active(1)
-				await igangsterincidentgen.set_faction(17)
-				await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
-				await igangsterincidentgen.set_number_of_station_attackers_var(3)
-				await igangsterincidentgen.set_delay_check(40.0)
-				_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
-				state.set_progress(v1, 4)
-			if _arm4 <= 4:
-				while _pog_is_null(global.pog_bool("g_act2_need_pilots")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.FirefrostStoryScript : waiting until the MCA need pilots, sleeping\n")
-					await _pog_wait(10.0)
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.FirefrostStoryScript : waiting until the MCA need pilots, sleeping\n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.exists("g_got_firefrost_pilots"))):
-						break
-				global.destroy("g_got_firefrost_pilots")
-				state.destroy(_pog_current())
-				global.set_bool("g_firefrost_script_complete", 1)
-				return
-				break
+					debug.print_string("iActTwo.FirefrostStoryScript : waiting for player to accept ranch mission from firefrost sherrif, sleeping\n")
+				await _pog_wait(10.0)
+			await iact2mission04.main()
+			state.set_progress(v1, 3)
+		if _arm4 <= 3:
+			while _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.FirefrostStoryScript : watinig for the player to finish act 02 mission 04 - high noon, sleeping \n")
+				await _pog_wait(10.0)
+			await igangsterincidentgen.set_active(1)
+			await igangsterincidentgen.set_faction(17)
+			await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
+			await igangsterincidentgen.set_number_of_station_attackers_var(3)
+			await igangsterincidentgen.set_delay_check(40.0)
+			_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
+			state.set_progress(v1, 4)
+		if _arm4 <= 4:
+			while _pog_is_null(global.pog_bool("g_act2_need_pilots")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.FirefrostStoryScript : waiting until the MCA need pilots, sleeping\n")
+				await _pog_wait(10.0)
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.FirefrostStoryScript : waiting until the MCA need pilots, sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.exists("g_got_firefrost_pilots"))):
+					break
+			global.destroy("g_got_firefrost_pilots")
+			state.destroy(_pog_current())
+			global.set_bool("g_firefrost_script_complete", 1)
+			return
+			break
 	return
 	return 0
 
@@ -2544,115 +2544,115 @@ func coyote_story_script() -> Variant:
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.CoyoteStoryScript : trying to start task, but current world is not coyote, quitting\n")
-	else:
-		if not (v1):
-			v1 = state.create(v0, 0)
-			global.set_handle("g_coyote_state", v1)
-		if PogRuntime.TRACE:
-			debug.print_string("iActTwo.CoyoteStoryScript : Commencing  Coyote story script\n")
-		if global.pog_bool("g_skip_to_specific") == 1:
-			global.set_bool("g_act2_referred_to_hoffer", 1)
-			global.set_bool("g_act2_spoken_to_hoffer", 1)
-		if _pog_is_null(global.pog_bool("g_act2_referred_to_hoffer")):
-			_pog_detach(_pog_spawn(local_14092.bind()))
-		if _pog_is_null(global.pog_bool("g_act2_spoken_to_hoffer")) and _pog_is_null(object.property_exists(v1, "ran_jackson_encounter")):
-			object.add_bool_property(v1, "ran_jackson_encounter", 1)
-			_pog_detach(_pog_spawn(jackson_encounter_setup.bind()))
-		while true:
-			var _sw5: Variant = state.progress(v1)
-			var _arm5: int = -1
-			if _pog_eq(_sw5, 0):
-				_arm5 = 0
-			elif _pog_eq(_sw5, 1):
-				_arm5 = 1
-			if _arm5 == -1:
-				break
-			if _arm5 <= 0:
-				while _pog_is_null(global.pog_bool("g_act2_league_plea")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.CoyoteStoryScript : wating for the player to be sent to get help by league...Sleeping.\n")
-					await _pog_wait(3.0)
+		return
+	if not (v1):
+		v1 = state.create(v0, 0)
+		global.set_handle("g_coyote_state", v1)
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.CoyoteStoryScript : Commencing  Coyote story script\n")
+	if global.pog_bool("g_skip_to_specific") == 1:
+		global.set_bool("g_act2_referred_to_hoffer", 1)
+		global.set_bool("g_act2_spoken_to_hoffer", 1)
+	if _pog_is_null(global.pog_bool("g_act2_referred_to_hoffer")):
+		_pog_detach(_pog_spawn(local_14092.bind()))
+	if _pog_is_null(global.pog_bool("g_act2_spoken_to_hoffer")) and _pog_is_null(object.property_exists(v1, "ran_jackson_encounter")):
+		object.add_bool_property(v1, "ran_jackson_encounter", 1)
+		_pog_detach(_pog_spawn(jackson_encounter_setup.bind()))
+	while true:
+		var _sw5: Variant = state.progress(v1)
+		var _arm5: int = -1
+		if _pog_eq(_sw5, 0):
+			_arm5 = 0
+		elif _pog_eq(_sw5, 1):
+			_arm5 = 1
+		if _arm5 == -1:
+			break
+		if _arm5 <= 0:
+			while _pog_is_null(global.pog_bool("g_act2_league_plea")):
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.CoyoteStoryScript : Starting Coyote cut scene\n")
-				if global.pog_bool("g_skip_to_specific") != 1:
-					await isystemcutscene.coyote()
-					while true:
-						await _pog_wait(0.5)
-						if not (not (idirector.is_busy())):
-							break
-					await iconversation.begin()
-					await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_c1_coyote_wow")
-					await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_coyote_yeh")
-					await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_c1_coyote_hey")
-					await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_coyote_ahh")
-					await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_c1_coyote_you")
-					await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_coyote_sure")
-					await iconversation.end()
-					while true:
-						await _pog_wait(1.0)
-						if not (idirector.is_busy()):
-							break
-					while true:
-						await _pog_wait(1.0)
-						if not (idirector.is_busy()):
-							break
-				state.set_progress(v1, 1)
-			if _arm5 <= 1:
-				if global.pog_bool("g_act2_referred_to_hoffer") == 1:
-					iobjectives.add("a2_master_objectives_talk_jackson")
+					debug.print_string("iActTwo.CoyoteStoryScript : wating for the player to be sent to get help by league...Sleeping.\n")
+				await _pog_wait(3.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.CoyoteStoryScript : Starting Coyote cut scene\n")
+			if global.pog_bool("g_skip_to_specific") != 1:
+				await isystemcutscene.coyote()
 				while true:
-					if global.pog_bool("g_act2_referred_to_hoffer") == 1:
-						v2 = v2 + 1
-						if v2 == 30:
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.CoyoteStoryScript : prompting the player to visit first contacts in the system & sleeping.\n")
-							v2 = 0
-							if _pog_is_null(global.exists("g_act2_at_jacksons")):
-								await iconversation.begin()
-								await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_remember_why_we_are_here")
-								await iconversation.end()
-						else:
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.CoyoteStoryScript : Waiting for the player to talk to Frederick Jackson, sleeping.\n")
-						await _pog_wait(5.0)
+					await _pog_wait(0.5)
+					if not (not (idirector.is_busy())):
+						break
+				await iconversation.begin()
+				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_c1_coyote_wow")
+				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_coyote_yeh")
+				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_c1_coyote_hey")
+				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_coyote_ahh")
+				await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_c1_coyote_you")
+				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_coyote_sure")
+				await iconversation.end()
+				while true:
+					await _pog_wait(1.0)
+					if not (idirector.is_busy()):
+						break
+				while true:
+					await _pog_wait(1.0)
+					if not (idirector.is_busy()):
+						break
+			state.set_progress(v1, 1)
+		if _arm5 <= 1:
+			if global.pog_bool("g_act2_referred_to_hoffer") == 1:
+				iobjectives.add("a2_master_objectives_talk_jackson")
+			while true:
+				if global.pog_bool("g_act2_referred_to_hoffer") == 1:
+					v2 = v2 + 1
+					if v2 == 30:
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.CoyoteStoryScript : prompting the player to visit first contacts in the system & sleeping.\n")
+						v2 = 0
+						if _pog_is_null(global.exists("g_act2_at_jacksons")):
+							await iconversation.begin()
+							await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_remember_why_we_are_here")
+							await iconversation.end()
 					else:
 						if PogRuntime.TRACE:
-							debug.print_string("iAct2,CoyoteStoryScript : waiting for the player to be reffered to Frederick Jackson, sleeping.\n")
-						await _pog_wait(5.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_spoken_to_hoffer"))):
-						break
-				await iact2mission07.main()
-				await _pog_wait(1.0)
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2CoyoteStoryScript : adding trades fron Jacksons yard....\n")
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 302, 1, 8, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 302, 1, 10, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 303, 1, 12, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 303, 1, 11, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 568, 1, 32, 1, 3))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 581, 1, 14, 1, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 264, 1, 15, 1, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 309, 1, 16, 3, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 590, 1, 12, 2, 4))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 574, 1, 10, 2, 5))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 526, 1, 18, 1, 0))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 223, 1, 45, 3, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 194, 1, 21, 2, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 196, 1, 48, 1, 1))
-				itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 590, 1, 382, 1, 2))
-				itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 511, 1, 24, 2, 3))
-				if _pog_is_null(global.exists("g_added_gm_batch_9")):
-					await igmtracker.add_g_m_enum(24)
-					await igmtracker.add_g_m_enum(25)
-					await igmtracker.add_g_m_enum(26)
-					await igmtracker.add_g_m_enum(27)
-					await igmtracker.add_g_m_enum(28)
-					await igmtracker.add_g_m_enum(29)
-					await igmtracker.set_g_m_range(24, 29)
-					global.create_bool("g_added_gm_batch_9", 1, 1)
-				state.destroy(_pog_current())
-				global.set_bool("g_coyote_script_complete", 1)
-				break
+							debug.print_string("iActTwo.CoyoteStoryScript : Waiting for the player to talk to Frederick Jackson, sleeping.\n")
+					await _pog_wait(5.0)
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iAct2,CoyoteStoryScript : waiting for the player to be reffered to Frederick Jackson, sleeping.\n")
+					await _pog_wait(5.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_spoken_to_hoffer"))):
+					break
+			await iact2mission07.main()
+			await _pog_wait(1.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2CoyoteStoryScript : adding trades fron Jacksons yard....\n")
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 302, 1, 8, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 302, 1, 10, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 303, 1, 12, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 303, 1, 11, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 568, 1, 32, 1, 3))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 581, 1, 14, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 264, 1, 15, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 309, 1, 16, 3, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 590, 1, 12, 2, 4))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 574, 1, 10, 2, 5))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 526, 1, 18, 1, 0))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 223, 1, 45, 3, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 194, 1, 21, 2, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 196, 1, 48, 1, 1))
+			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 590, 1, 382, 1, 2))
+			itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 511, 1, 24, 2, 3))
+			if _pog_is_null(global.exists("g_added_gm_batch_9")):
+				await igmtracker.add_g_m_enum(24)
+				await igmtracker.add_g_m_enum(25)
+				await igmtracker.add_g_m_enum(26)
+				await igmtracker.add_g_m_enum(27)
+				await igmtracker.add_g_m_enum(28)
+				await igmtracker.add_g_m_enum(29)
+				await igmtracker.set_g_m_range(24, 29)
+				global.create_bool("g_added_gm_batch_9", 1, 1)
+			state.destroy(_pog_current())
+			global.set_bool("g_coyote_script_complete", 1)
+			break
 	return
 	return 0
 
@@ -2730,108 +2730,108 @@ func dagda_story_script() -> Variant:
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/dagda"):
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.DagdaStoryScript : trying to start task, but current world is not dagda, quitting\n")
-	else:
-		if not (v1):
-			v1 = state.create(v0, 0)
-			global.set_handle("g_dagda_state", v1)
-		if PogRuntime.TRACE:
-			debug.print_string("iActTwo.DagdaStoryScript - Commencing Dagda Story Script.\n")
-		v13 = await iutilities.create_waypoint_relative_to(v7, -900.0, 500.0, -3000.0)
-		await iutilities.make_waypoint_visible(v13, 1, "a2_master_name_waypoint_stage_1")
-		v14 = await iutilities.create_waypoint_relative_to(v7, -500.0, 500.0, -3000.0)
-		await iutilities.make_waypoint_visible(v14, 1, "a2_master_name_waypoint_stage_2")
-		v15 = await iutilities.create_waypoint_relative_to(v7, -100.0, 500.0, -3000.0)
-		await iutilities.make_waypoint_visible(v15, 1, "a2_master_name_waypoint_stage_3")
-		v16 = await iutilities.create_waypoint_relative_to(v7, 300.0, 500.0, -3000.0)
-		await iutilities.make_waypoint_visible(v16, 1, "a2_master_name_waypoint_stage_4")
-		v17 = await iutilities.create_waypoint_relative_to(v7, 700.0, 500.0, -3000.0)
-		await iutilities.make_waypoint_visible(v17, 1, "a2_master_name_waypoint_stage_5")
-		v18 = await iutilities.create_waypoint_relative_to(v7, 1100.0, 500.0, -3000.0)
-		await iutilities.make_waypoint_visible(v18, 1, "a2_master_name_waypoint_stage_6")
-		group.add_sim(v6, v13)
-		group.add_sim(v6, v14)
-		group.add_sim(v6, v15)
-		group.add_sim(v6, v16)
-		group.add_sim(v6, v17)
-		group.add_sim(v6, v18)
-		global.create_handle("g_dagda_waypoints", 1, v6)
-		if _pog_is_null(global.pog_int("g_act2_dagda_visits")):
-			v10 = iship.create("ini:/sims/ships/utility/truck", "a2_master_kiwi")
-			await ipilotsetup.generic_freight(v10)
-			isim.set_faction(v10, ifaction.find(await iutilities.from_allegiance_enum(1)))
-			sim.place_at(v10, v14)
-			isim.set_indestructable(v10, 1)
-			v11 = iship.create("ini:/sims/ships/utility/fueltransporter_small", "a2_master_waste_not")
-			await ipilotsetup.generic_freight(v11)
-			isim.set_faction(v11, ifaction.find(await iutilities.from_allegiance_enum(11)))
-			sim.place_at(v11, v15)
-			isim.set_indestructable(v11, 1)
-			_pog_spawn(local_39403.bind(v10, v11, v13, v1))
-		while true:
-			var _sw6: Variant = state.progress(v1)
-			var _arm6: int = -1
-			if _pog_eq(_sw6, 0):
-				_arm6 = 0
-			elif _pog_eq(_sw6, 1):
-				_arm6 = 1
-			if _arm6 == -1:
-				break
-			if _arm6 <= 0:
-				if _pog_is_null(global.exists("g_running_corporate_holdings")):
-					await isystemcutscene.dagda()
-					while true:
-						await _pog_wait(1.0)
-						if not (not (idirector.is_busy())):
-							break
-					await iconversation.begin()
-					await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_dagda_wooa")
-					await iconversation.end()
-					state.set_progress(v1, 1)
-			if _arm6 <= 1:
-				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.DagdaStoryScript : commencing the Dagda traffic control loop\n")
-				if sim.distance_between(v9, v7) < 15000.0:
-					while v2:
-						if sim.distance_between(v9, v7) < 5000.0:
-							v4 = 0
-							if v3:
-								await iconversation.begin()
-								await iconversation.say(v8, "a2_master_dagda_stc", "a2_master_dialogue_dagda_stc_attention_arriving_vessel")
-								await iconversation.end()
-								v3 = 0
-							else:
-								if PogRuntime.TRACE:
-									debug.print_string("iActTwo.DagdaStoryScript : The player is inside the staging area od Dagda L -point, nothing else to do but sleep...\n")
-								await _pog_wait(2.0)
+		return
+	if not (v1):
+		v1 = state.create(v0, 0)
+		global.set_handle("g_dagda_state", v1)
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.DagdaStoryScript - Commencing Dagda Story Script.\n")
+	v13 = await iutilities.create_waypoint_relative_to(v7, -900.0, 500.0, -3000.0)
+	await iutilities.make_waypoint_visible(v13, 1, "a2_master_name_waypoint_stage_1")
+	v14 = await iutilities.create_waypoint_relative_to(v7, -500.0, 500.0, -3000.0)
+	await iutilities.make_waypoint_visible(v14, 1, "a2_master_name_waypoint_stage_2")
+	v15 = await iutilities.create_waypoint_relative_to(v7, -100.0, 500.0, -3000.0)
+	await iutilities.make_waypoint_visible(v15, 1, "a2_master_name_waypoint_stage_3")
+	v16 = await iutilities.create_waypoint_relative_to(v7, 300.0, 500.0, -3000.0)
+	await iutilities.make_waypoint_visible(v16, 1, "a2_master_name_waypoint_stage_4")
+	v17 = await iutilities.create_waypoint_relative_to(v7, 700.0, 500.0, -3000.0)
+	await iutilities.make_waypoint_visible(v17, 1, "a2_master_name_waypoint_stage_5")
+	v18 = await iutilities.create_waypoint_relative_to(v7, 1100.0, 500.0, -3000.0)
+	await iutilities.make_waypoint_visible(v18, 1, "a2_master_name_waypoint_stage_6")
+	group.add_sim(v6, v13)
+	group.add_sim(v6, v14)
+	group.add_sim(v6, v15)
+	group.add_sim(v6, v16)
+	group.add_sim(v6, v17)
+	group.add_sim(v6, v18)
+	global.create_handle("g_dagda_waypoints", 1, v6)
+	if _pog_is_null(global.pog_int("g_act2_dagda_visits")):
+		v10 = iship.create("ini:/sims/ships/utility/truck", "a2_master_kiwi")
+		await ipilotsetup.generic_freight(v10)
+		isim.set_faction(v10, ifaction.find(await iutilities.from_allegiance_enum(1)))
+		sim.place_at(v10, v14)
+		isim.set_indestructable(v10, 1)
+		v11 = iship.create("ini:/sims/ships/utility/fueltransporter_small", "a2_master_waste_not")
+		await ipilotsetup.generic_freight(v11)
+		isim.set_faction(v11, ifaction.find(await iutilities.from_allegiance_enum(11)))
+		sim.place_at(v11, v15)
+		isim.set_indestructable(v11, 1)
+		_pog_spawn(local_39403.bind(v10, v11, v13, v1))
+	while true:
+		var _sw6: Variant = state.progress(v1)
+		var _arm6: int = -1
+		if _pog_eq(_sw6, 0):
+			_arm6 = 0
+		elif _pog_eq(_sw6, 1):
+			_arm6 = 1
+		if _arm6 == -1:
+			break
+		if _arm6 <= 0:
+			if _pog_is_null(global.exists("g_running_corporate_holdings")):
+				await isystemcutscene.dagda()
+				while true:
+					await _pog_wait(1.0)
+					if not (not (idirector.is_busy())):
+						break
+				await iconversation.begin()
+				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_dagda_wooa")
+				await iconversation.end()
+				state.set_progress(v1, 1)
+		if _arm6 <= 1:
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.DagdaStoryScript : commencing the Dagda traffic control loop\n")
+			if sim.distance_between(v9, v7) < 15000.0:
+				while v2:
+					if sim.distance_between(v9, v7) < 5000.0:
+						v4 = 0
+						if v3:
+							await iconversation.begin()
+							await iconversation.say(v8, "a2_master_dagda_stc", "a2_master_dialogue_dagda_stc_attention_arriving_vessel")
+							await iconversation.end()
+							v3 = 0
 						else:
-							if v4:
-								if PogRuntime.TRACE:
-									debug.print_string("iAct2.DagdaScript: called attack!!!!!!\n")
-								v2 = 0
-								await iconversation.begin()
-								await iconversation.say(v8, "a2_master_dagda_stc", "a2_master_dialogue_dagda_stc_attention_vessel_you_are_in_violation")
-								await iconversation.end()
-								iai.give_attack_order(v12, v9)
-							else:
-								await iconversation.one_liner(v8, "a2_master_dagda_stc", "a2_master_dialogue_dagda_stc_warning")
-								v4 = 1
-								if PogRuntime.TRACE:
-									debug.print_string("iAct2.DagdaScript: warned player for going out of staging area waiting 10 secs\n")
-								await _pog_wait(10.0)
-								if PogRuntime.TRACE:
-									debug.print_string("iAct2.DagdaScript: finished wait.........\n")
-				while v5:
-					if _pog_is_null(group.group_count(v12)):
-						group.destroy(v12, 1)
-						v12 = await local_10299(ihabitat.nearest(imapentity.system_habitats(), v9))
-						iai.give_attack_order(v12, v9)
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.DagdaStoryScript : The player is inside the staging area od Dagda L -point, nothing else to do but sleep...\n")
+							await _pog_wait(2.0)
 					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.DagdaStoryScript : a maas patrol is already on the player tail, sleeping\n")
-						await _pog_wait(10.0)
-				state.destroy(_pog_current())
-				global.set_bool("g_dagda_script_complete", 1)
-				break
+						if v4:
+							if PogRuntime.TRACE:
+								debug.print_string("iAct2.DagdaScript: called attack!!!!!!\n")
+							v2 = 0
+							await iconversation.begin()
+							await iconversation.say(v8, "a2_master_dagda_stc", "a2_master_dialogue_dagda_stc_attention_vessel_you_are_in_violation")
+							await iconversation.end()
+							iai.give_attack_order(v12, v9)
+						else:
+							await iconversation.one_liner(v8, "a2_master_dagda_stc", "a2_master_dialogue_dagda_stc_warning")
+							v4 = 1
+							if PogRuntime.TRACE:
+								debug.print_string("iAct2.DagdaScript: warned player for going out of staging area waiting 10 secs\n")
+							await _pog_wait(10.0)
+							if PogRuntime.TRACE:
+								debug.print_string("iAct2.DagdaScript: finished wait.........\n")
+			while v5:
+				if _pog_is_null(group.group_count(v12)):
+					group.destroy(v12, 1)
+					v12 = await local_10299(ihabitat.nearest(imapentity.system_habitats(), v9))
+					iai.give_attack_order(v12, v9)
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.DagdaStoryScript : a maas patrol is already on the player tail, sleeping\n")
+					await _pog_wait(10.0)
+			state.destroy(_pog_current())
+			global.set_bool("g_dagda_script_complete", 1)
+			break
 	return
 	return 0
 
@@ -2860,74 +2860,74 @@ func santa_romera_story_script() -> Variant:
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera") and global.pog_bool("g_skip_to_specific") != 1:
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.SantaRomeraStoryScript : trying to start task, but current world is not Santa Romera, quitting\n")
-	else:
-		if not (v1):
-			v1 = state.create(v0, 0)
-			global.set_handle("g_santa_romera_state", v1)
-		if PogRuntime.TRACE:
-			debug.print_string("iActTwo.SantaRomeraStoryScript - Commencing Santa Romera Story Script.\n")
-		while true:
-			var _sw7: Variant = state.progress(v1)
-			var _arm7: int = -1
-			if _pog_eq(_sw7, 0):
-				_arm7 = 0
-			elif _pog_eq(_sw7, 1):
-				_arm7 = 1
-			elif _pog_eq(_sw7, 2):
-				_arm7 = 2
-			elif _pog_eq(_sw7, 3):
-				_arm7 = 3
-			if _arm7 == -1:
-				break
-			if _arm7 <= 0:
-				_pog_spawn(accelerator_cut_scene_monitor.bind())
-				await iconversation.begin()
-				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_this_is_santa_romera")
-				await iconversation.end()
-				_pog_spawn(ritz_intro_monitor.bind())
-				state.set_progress(v1, 1)
-			if _arm7 <= 1:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iAct2SantaRomeraStoryScript : Waiting for the player to visit the Ritz, sleeping for 30 seconds. \n")
-					await _pog_wait(5.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_ritz_introduced")) and global.pog_bool("g_skip_to_specific") != 1):
-						break
-				if _pog_is_null(iemail.find("html:/text/act_2/act2_mission05_email")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.SantaRomeraStoryscript : giving player blockade runner mission, yip\n")
-					await iact2mission05.main()
-					_pog_detach(_pog_spawn(santa_waiter.bind()))
-					if _pog_is_null(global.exists("g_added_gm_batch_10")):
-						await igmtracker.add_g_m_enum(30)
-						await igmtracker.add_g_m_enum(32)
-						await igmtracker.add_g_m_enum(33)
-						await igmtracker.add_g_m_enum(34)
-						await igmtracker.add_g_m_enum(35)
-						await igmtracker.set_g_m_range(30, 35)
-						global.create_bool("g_added_gm_batch_10", 1, 1)
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("Not starting blockade runner twice\n")
-				state.set_progress(v1, 2)
-			if _arm7 <= 2:
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iAct2SantaRomeraStoryScript : wating for the player to complete a blocakde run to Mwari. sleeping for 30 seconds\n")
-					await _pog_wait(1.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_completed_blockade_run"))):
-						break
-				state.set_progress(v1, 3)
-			if _arm7 <= 3:
-				state.destroy(_pog_current())
-				global.set_bool("g_santaromera_script_complete", 1)
-				if _pog_is_null(iemail.find("html:/text/act_2/act2_mission10_email")):
-					await iact2mission10.main()
-				else:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.SantaRomeraStoryScript: Not starting grassy knoll twice\n")
-				await _pog_wait(3.0)
-				break
+		return
+	if not (v1):
+		v1 = state.create(v0, 0)
+		global.set_handle("g_santa_romera_state", v1)
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.SantaRomeraStoryScript - Commencing Santa Romera Story Script.\n")
+	while true:
+		var _sw7: Variant = state.progress(v1)
+		var _arm7: int = -1
+		if _pog_eq(_sw7, 0):
+			_arm7 = 0
+		elif _pog_eq(_sw7, 1):
+			_arm7 = 1
+		elif _pog_eq(_sw7, 2):
+			_arm7 = 2
+		elif _pog_eq(_sw7, 3):
+			_arm7 = 3
+		if _arm7 == -1:
+			break
+		if _arm7 <= 0:
+			_pog_spawn(accelerator_cut_scene_monitor.bind())
+			await iconversation.begin()
+			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_this_is_santa_romera")
+			await iconversation.end()
+			_pog_spawn(ritz_intro_monitor.bind())
+			state.set_progress(v1, 1)
+		if _arm7 <= 1:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iAct2SantaRomeraStoryScript : Waiting for the player to visit the Ritz, sleeping for 30 seconds. \n")
+				await _pog_wait(5.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_ritz_introduced")) and global.pog_bool("g_skip_to_specific") != 1):
+					break
+			if _pog_is_null(iemail.find("html:/text/act_2/act2_mission05_email")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.SantaRomeraStoryscript : giving player blockade runner mission, yip\n")
+				await iact2mission05.main()
+				_pog_detach(_pog_spawn(santa_waiter.bind()))
+				if _pog_is_null(global.exists("g_added_gm_batch_10")):
+					await igmtracker.add_g_m_enum(30)
+					await igmtracker.add_g_m_enum(32)
+					await igmtracker.add_g_m_enum(33)
+					await igmtracker.add_g_m_enum(34)
+					await igmtracker.add_g_m_enum(35)
+					await igmtracker.set_g_m_range(30, 35)
+					global.create_bool("g_added_gm_batch_10", 1, 1)
+			else:
+				if PogRuntime.TRACE:
+					debug.print_string("Not starting blockade runner twice\n")
+			state.set_progress(v1, 2)
+		if _arm7 <= 2:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iAct2SantaRomeraStoryScript : wating for the player to complete a blocakde run to Mwari. sleeping for 30 seconds\n")
+				await _pog_wait(1.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_completed_blockade_run"))):
+					break
+			state.set_progress(v1, 3)
+		if _arm7 <= 3:
+			state.destroy(_pog_current())
+			global.set_bool("g_santaromera_script_complete", 1)
+			if _pog_is_null(iemail.find("html:/text/act_2/act2_mission10_email")):
+				await iact2mission10.main()
+			else:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.SantaRomeraStoryScript: Not starting grassy knoll twice\n")
+			await _pog_wait(3.0)
+			break
 	return
 	return 0
 
@@ -2996,110 +2996,110 @@ func mwari_story_script() -> Variant:
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/mwari") and global.pog_bool("g_skip_to_specific") != 1:
 		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.MwariStoryScript : trying to start task, but current world is not Mwari, quitting\n")
-	else:
-		if not (v1):
-			v1 = state.create(v0, 0)
-			global.set_handle("g_mwari_state", v1)
-		if PogRuntime.TRACE:
-			debug.print_string("iChapterOne.MwariStorySequence - Commencing Mwari Story Sequence.\n")
-		await igangsterincidentgen.set_active(1)
-		await igangsterincidentgen.set_faction(17)
-		await igangsterincidentgen.set_number_of_vessel_attackers_var(3)
-		await igangsterincidentgen.set_number_of_station_attackers_var(4)
-		await igangsterincidentgen.set_delay_check(40.0)
-		await istation.add_reactive_exception(ihabitat.cast(v2))
-		while true:
-			var _sw9: Variant = state.progress(v1)
-			var _arm9: int = -1
-			if _pog_eq(_sw9, 0):
-				_arm9 = 0
-			elif _pog_eq(_sw9, 1):
-				_arm9 = 1
-			if _arm9 == -1:
-				break
-			if _arm9 <= 0:
-				state.set_progress(v1, 1)
-			if _arm9 <= 1:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if sim.distance_between(v3, v2) < 10000.0:
-							if global.pog_bool("g_act2_completed_blockade_run") == 1 or global.exists("g_blockade_runner_running"):
-								global.set_bool("g_act2_mca_introduced", 1)
-							else:
-								if v4:
-									if PogRuntime.TRACE:
-										debug.print_string("iActTwo.MwariStoryScript : Player is near the MCA Headquarters, but it has already spoken, sleeping\n")
-									await _pog_wait(10.0)
-								else:
-									v4 = 1
-									match global.pog_int("g_act2_mwari_conversations"):
-										0:
-											await iconversation.begin()
-											await iconversation.add_response("a2_master_option_cal_looking_for_allies", "a2_master_dialogue_cal_looking_for_allies")
-											await iconversation.add_response("a2_master_dialogue_cal_come_to_fight_marauders", "a2_master_dialogue_cal_come_to_fight_marauders")
-											await iconversation.add_response("a2_master_dialogue_cal_mca_just_passing", "a2_master_dialogue_cal_mca_just_passing")
-											v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_you_have_entered_mca_space")
-											if v5 == 1:
-												await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_maybe_you_hadnt_noticed")
-											else:
-												if v5 == 2:
-													await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_then_good_luck_to_you")
-												else:
-													if v5 == 3:
-														await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_then_i_recomend_you_turn_around")
-											await iconversation.end()
-											global.set_int("g_act2_mwari_conversations", global.pog_int("g_act2_mwari_conversations") + 1)
-										1:
-											await iconversation.begin()
-											await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_you_again")
-											await iconversation.end()
-											global.set_int("g_act2_mwari_conversations", global.pog_int("g_act2_mwari_conversations") + 1)
-										2:
-											await iconversation.begin()
-											await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_your_prescence_here_is_unwelcome")
-											await iconversation.end()
+		return
+	if not (v1):
+		v1 = state.create(v0, 0)
+		global.set_handle("g_mwari_state", v1)
+	if PogRuntime.TRACE:
+		debug.print_string("iChapterOne.MwariStorySequence - Commencing Mwari Story Sequence.\n")
+	await igangsterincidentgen.set_active(1)
+	await igangsterincidentgen.set_faction(17)
+	await igangsterincidentgen.set_number_of_vessel_attackers_var(3)
+	await igangsterincidentgen.set_number_of_station_attackers_var(4)
+	await igangsterincidentgen.set_delay_check(40.0)
+	await istation.add_reactive_exception(ihabitat.cast(v2))
+	while true:
+		var _sw9: Variant = state.progress(v1)
+		var _arm9: int = -1
+		if _pog_eq(_sw9, 0):
+			_arm9 = 0
+		elif _pog_eq(_sw9, 1):
+			_arm9 = 1
+		if _arm9 == -1:
+			break
+		if _arm9 <= 0:
+			state.set_progress(v1, 1)
+		if _arm9 <= 1:
+			if global.pog_bool("g_skip_to_specific") != 1:
+				while true:
+					if sim.distance_between(v3, v2) < 10000.0:
+						if global.pog_bool("g_act2_completed_blockade_run") == 1 or global.exists("g_blockade_runner_running"):
+							global.set_bool("g_act2_mca_introduced", 1)
 						else:
-							if PogRuntime.TRACE:
-								debug.print_string("iActTwo.MwariStoryScript : player is not near MCA base, sleeping \n")
-							await _pog_wait(10.0)
-						if not (_pog_is_null(global.pog_bool("g_act2_mca_introduced"))):
-							break
-					while true:
-						await _pog_wait(2.0)
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.MwariStoryScript : Waiting for blockade runner to complete before doing Act script MCA station dialogue. \n")
-						if not (global.exists("g_blockade_runner_running")):
-							break
-					if global.pog_int("g_act2_mwari_conversations") > 0:
-						await iconversation.begin()
-						await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_so_you_have_finally_made_yourself_useful")
+							if v4:
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.MwariStoryScript : Player is near the MCA Headquarters, but it has already spoken, sleeping\n")
+								await _pog_wait(10.0)
+							else:
+								v4 = 1
+								match global.pog_int("g_act2_mwari_conversations"):
+									0:
+										await iconversation.begin()
+										await iconversation.add_response("a2_master_option_cal_looking_for_allies", "a2_master_dialogue_cal_looking_for_allies")
+										await iconversation.add_response("a2_master_dialogue_cal_come_to_fight_marauders", "a2_master_dialogue_cal_come_to_fight_marauders")
+										await iconversation.add_response("a2_master_dialogue_cal_mca_just_passing", "a2_master_dialogue_cal_mca_just_passing")
+										v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_you_have_entered_mca_space")
+										if v5 == 1:
+											await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_maybe_you_hadnt_noticed")
+										else:
+											if v5 == 2:
+												await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_then_good_luck_to_you")
+											else:
+												if v5 == 3:
+													await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_then_i_recomend_you_turn_around")
+										await iconversation.end()
+										global.set_int("g_act2_mwari_conversations", global.pog_int("g_act2_mwari_conversations") + 1)
+									1:
+										await iconversation.begin()
+										await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_you_again")
+										await iconversation.end()
+										global.set_int("g_act2_mwari_conversations", global.pog_int("g_act2_mwari_conversations") + 1)
+									2:
+										await iconversation.begin()
+										await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_your_prescence_here_is_unwelcome")
+										await iconversation.end()
 					else:
-						await iconversation.begin()
-					await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_thank_you")
-					await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_mca", "a2_master_dialogue_cal_tell_me_about_the_mca")
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.MwariStoryScript : player is not near MCA base, sleeping \n")
+						await _pog_wait(10.0)
+					if not (_pog_is_null(global.pog_bool("g_act2_mca_introduced"))):
+						break
+				while true:
+					await _pog_wait(2.0)
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.MwariStoryScript : Waiting for blockade runner to complete before doing Act script MCA station dialogue. \n")
+					if not (global.exists("g_blockade_runner_running")):
+						break
+				if global.pog_int("g_act2_mwari_conversations") > 0:
+					await iconversation.begin()
+					await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_so_you_have_finally_made_yourself_useful")
+				else:
+					await iconversation.begin()
+				await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_thank_you")
+				await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_mca", "a2_master_dialogue_cal_tell_me_about_the_mca")
+				await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_marauders", "a2_master_dialogue_cal_tell_me_about_the_marauders")
+				v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_unfortunately_the_situation_with_the_marauders")
+				if v5 == 1:
+					await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_we_are_a_democracy")
 					await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_marauders", "a2_master_dialogue_cal_tell_me_about_the_marauders")
-					v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_unfortunately_the_situation_with_the_marauders")
+					v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_anything_else")
 					if v5 == 1:
-						await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_we_are_a_democracy")
+						await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_the_marauders_have_been")
+				else:
+					if v5 == 2:
+						await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_the_marauders_have_been")
 						await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_marauders", "a2_master_dialogue_cal_tell_me_about_the_marauders")
 						v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_anything_else")
 						if v5 == 1:
-							await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_the_marauders_have_been")
-					else:
-						if v5 == 2:
-							await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_the_marauders_have_been")
-							await iconversation.add_response("a2_master_dialogue_cal_tell_me_about_the_marauders", "a2_master_dialogue_cal_tell_me_about_the_marauders")
-							v5 = await iconversation.ask(0, "a2_master_mca_control", "a2_master_dialogue_mca_anything_else")
-							if v5 == 1:
-								await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_we_are_a_democracy")
-					await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_sorry_we_cannot_be_of_further_help")
-					await iconversation.end()
-					await iutilities.send_story_element("g_story_2.140", 2, 0)
-				v6 = _pog_spawn(mwari_blockade_events.bind())
-				_pog_detach(v6)
-				state.destroy(_pog_current())
-				global.set_bool("g_mwari_script_complete", 1)
-				break
+							await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_we_are_a_democracy")
+				await iconversation.say(0, "a2_master_mca_control", "a2_master_dialogue_mca_sorry_we_cannot_be_of_further_help")
+				await iconversation.end()
+				await iutilities.send_story_element("g_story_2.140", 2, 0)
+			v6 = _pog_spawn(mwari_blockade_events.bind())
+			_pog_detach(v6)
+			state.destroy(_pog_current())
+			global.set_bool("g_mwari_script_complete", 1)
+			break
 	return
 	return 0
 
@@ -3939,241 +3939,241 @@ func master_script() -> Variant:
 		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 609, 1, 35, 4, 1))
 		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 507, 1, 25, 1, 0))
 		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 507, 1, 38, 1, 0))
+		return
+	if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_1")):
+		_pog_spawn(local_50472.bind())
 	else:
-		if iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_1")):
+		if global.pog_bool("g_skip_to_specific") == 1 and not _pog_eq(global.string("g_skip_to_mission"), "The Great Escape?"):
 			_pog_spawn(local_50472.bind())
-		else:
-			if global.pog_bool("g_skip_to_specific") == 1 and not _pog_eq(global.string("g_skip_to_mission"), "The Great Escape?"):
-				_pog_spawn(local_50472.bind())
-		await local_11088(0)
-		if PogRuntime.TRACE:
-			debug.print_string("iChapterOne.PiracyRatingTracker - Commencing Act Two Chapter Script.\n")
-		while true:
-			var _sw12: Variant = state.progress(v1)
-			var _arm12: int = -1
-			if _pog_eq(_sw12, 0):
-				_arm12 = 0
-			elif _pog_eq(_sw12, 1):
-				_arm12 = 1
-			elif _pog_eq(_sw12, 3):
-				_arm12 = 2
-			elif _pog_eq(_sw12, 4):
-				_arm12 = 3
-			elif _pog_eq(_sw12, 5):
-				_arm12 = 4
-			elif _pog_eq(_sw12, 6):
-				_arm12 = 5
-			elif _pog_eq(_sw12, 7):
-				_arm12 = 6
-			elif _pog_eq(_sw12, 8):
-				_arm12 = 7
-			elif _pog_eq(_sw12, 11):
-				_arm12 = 8
-			elif _pog_eq(_sw12, 12):
-				_arm12 = 9
-			elif _pog_eq(_sw12, 14):
-				_arm12 = 10
-			elif _pog_eq(_sw12, 15):
-				_arm12 = 11
-			elif _pog_eq(_sw12, 16):
-				_arm12 = 12
-			elif _pog_eq(_sw12, 17):
-				_arm12 = 13
-			elif _pog_eq(_sw12, 18):
-				_arm12 = 14
-			elif _pog_eq(_sw12, 19):
-				_arm12 = 15
-			elif _pog_eq(_sw12, 20):
-				_arm12 = 16
-			if _arm12 == -1:
-				break
-			if _arm12 <= 0:
-				await iact2mission01.main()
-				state.set_progress(v1, 1)
-			if _arm12 <= 1:
-				while true:
-					await _pog_wait(2)
-					if global.pog_bool("g_act2_survivors_rescued") == 1:
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.MasterScript - player has completed act 02 Mission 01 - Pickin up the pieces.\n")
-						break
-					else:
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.MasterScript - Still waiting for player to complete act 02 Mission 01 - Picking up the pieces.\n")
+	await local_11088(0)
+	if PogRuntime.TRACE:
+		debug.print_string("iChapterOne.PiracyRatingTracker - Commencing Act Two Chapter Script.\n")
+	while true:
+		var _sw12: Variant = state.progress(v1)
+		var _arm12: int = -1
+		if _pog_eq(_sw12, 0):
+			_arm12 = 0
+		elif _pog_eq(_sw12, 1):
+			_arm12 = 1
+		elif _pog_eq(_sw12, 3):
+			_arm12 = 2
+		elif _pog_eq(_sw12, 4):
+			_arm12 = 3
+		elif _pog_eq(_sw12, 5):
+			_arm12 = 4
+		elif _pog_eq(_sw12, 6):
+			_arm12 = 5
+		elif _pog_eq(_sw12, 7):
+			_arm12 = 6
+		elif _pog_eq(_sw12, 8):
+			_arm12 = 7
+		elif _pog_eq(_sw12, 11):
+			_arm12 = 8
+		elif _pog_eq(_sw12, 12):
+			_arm12 = 9
+		elif _pog_eq(_sw12, 14):
+			_arm12 = 10
+		elif _pog_eq(_sw12, 15):
+			_arm12 = 11
+		elif _pog_eq(_sw12, 16):
+			_arm12 = 12
+		elif _pog_eq(_sw12, 17):
+			_arm12 = 13
+		elif _pog_eq(_sw12, 18):
+			_arm12 = 14
+		elif _pog_eq(_sw12, 19):
+			_arm12 = 15
+		elif _pog_eq(_sw12, 20):
+			_arm12 = 16
+		if _arm12 == -1:
+			break
+		if _arm12 <= 0:
+			await iact2mission01.main()
+			state.set_progress(v1, 1)
+		if _arm12 <= 1:
+			while true:
+				await _pog_wait(2)
+				if global.pog_bool("g_act2_survivors_rescued") == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.MasterScript - player has completed act 02 Mission 01 - Pickin up the pieces.\n")
+					break
+				else:
+					if PogRuntime.TRACE:
+						debug.print_string("iActTwo.MasterScript - Still waiting for player to complete act 02 Mission 01 - Picking up the pieces.\n")
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.MasterScript - initilising story element S2.10.\n")
+			iobjectives.add("a2_master_objectives_look_help")
+			global.set_int("g_story_2.10", 1)
+			state.set_progress(v1, 3)
+		if _arm12 <= 2:
+			while _pog_is_null(global.pog_bool("g_act2_ambassador_rescued")):
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.MasterScript - initilising story element S2.10.\n")
-				iobjectives.add("a2_master_objectives_look_help")
-				global.set_int("g_story_2.10", 1)
-				state.set_progress(v1, 3)
-			if _arm12 <= 2:
-				while _pog_is_null(global.pog_bool("g_act2_ambassador_rescued")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript - Waiting for the player to complete act 02 mission 07 - the ambassador, sleeping\n")
-					await _pog_wait(2.0)
-				iemail.send_email("a2_master_ambassador_mail_sender", "a2_master_ambassador_mail_subject", "html:/text/act_2/act2_master_ambassador", 1)
-				await iutilities.send_story_element("g_story_2.170", 2, 0)
-				_pog_spawn(mwari_wars_story_script.bind())
-				await iact2mission11.main()
-				await iutilities.send_story_element("g_story_2.190", 2, 0)
-				state.set_progress(v1, 4)
-			if _arm12 <= 3:
-				while _pog_is_null(global.pog_bool("g_act2_unification_complete")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : waiting for the player to complete act 2 mission 11 - unification, sleeping\n")
-					await _pog_wait(2.0)
-				await iact2mission13.main()
-				state.set_progress(v1, 5)
-			if _arm12 <= 4:
-				while _pog_is_null(global.pog_bool("g_act2_kong_fracture_complete")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : Waiting for the player to complete act 2 mission 13 - The kong Fracture, Sleeping\n")
-					await _pog_wait(2.0)
+					debug.print_string("iActTwo.MasterScript - Waiting for the player to complete act 02 mission 07 - the ambassador, sleeping\n")
+				await _pog_wait(2.0)
+			iemail.send_email("a2_master_ambassador_mail_sender", "a2_master_ambassador_mail_subject", "html:/text/act_2/act2_master_ambassador", 1)
+			await iutilities.send_story_element("g_story_2.170", 2, 0)
+			_pog_spawn(mwari_wars_story_script.bind())
+			await iact2mission11.main()
+			await iutilities.send_story_element("g_story_2.190", 2, 0)
+			state.set_progress(v1, 4)
+		if _arm12 <= 3:
+			while _pog_is_null(global.pog_bool("g_act2_unification_complete")):
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.MasterScript : sending story sequence 2.200\n")
-				await iutilities.send_story_element("g_story_2.200", 2, 0)
+					debug.print_string("iActTwo.MasterScript : waiting for the player to complete act 2 mission 11 - unification, sleeping\n")
+				await _pog_wait(2.0)
+			await iact2mission13.main()
+			state.set_progress(v1, 5)
+		if _arm12 <= 4:
+			while _pog_is_null(global.pog_bool("g_act2_kong_fracture_complete")):
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.MasterScript : Starting gangster gen for wolpack encounters\n")
-				await igangsterincidentgen.set_active(1)
-				await igangsterincidentgen.set_faction(17)
-				await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
-				await igangsterincidentgen.set_number_of_station_attackers_var(6)
-				await igangsterincidentgen.set_delay_check(37.0)
-				_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
-				state.set_progress(v1, 6)
-			if _arm12 <= 5:
-				await iutilities.send_story_element("g_story_2.210", 2, 0)
-				await iutilities.send_story_element("g_story_2.180", 2, 0)
-				_pog_spawn(hoffer_reveal_monitor.bind())
-				state.set_progress(v1, 7)
-			if _arm12 <= 6:
-				if global.pog_bool("g_skip_to_specific") != 1:
-					while true:
-						if PogRuntime.TRACE:
-							debug.print_string("iActTwo.MasterScript : waiting for the player to read the e-mail about plans to move the players base\n")
-						await _pog_wait(2.0)
-						if not (not (iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_180")))):
-							break
-				if global.pog_bool("g_skip_to_specific") != 1:
-					isim.set_indestructable(v3, 1)
-					await icutsceneutilities.handle_abort(_pog_spawn(local_66422.bind(v2)))
-					object.remove_property(v4, "reactive_exception")
-				v5 = await istartsystem.move_player_base("map:/geog/badlands/hoffers_wake", "map:/geog/badlands/santa_romera")
-				sim.place_relative_to(v3, v5, 5000.0, 500.0, 6000.0)
-				sim.point_at(v3, v5)
-				isim.set_indestructable(v3, 0)
-				iai.clear_autopilot()
-				global.set_bool("g_act2_base_has_moved", 1)
-				state.set_progress(v1, 8)
-			if _arm12 <= 7:
+					debug.print_string("iActTwo.MasterScript : Waiting for the player to complete act 2 mission 13 - The kong Fracture, Sleeping\n")
+				await _pog_wait(2.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.MasterScript : sending story sequence 2.200\n")
+			await iutilities.send_story_element("g_story_2.200", 2, 0)
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.MasterScript : Starting gangster gen for wolpack encounters\n")
+			await igangsterincidentgen.set_active(1)
+			await igangsterincidentgen.set_faction(17)
+			await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
+			await igangsterincidentgen.set_number_of_station_attackers_var(6)
+			await igangsterincidentgen.set_delay_check(37.0)
+			_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
+			state.set_progress(v1, 6)
+		if _arm12 <= 5:
+			await iutilities.send_story_element("g_story_2.210", 2, 0)
+			await iutilities.send_story_element("g_story_2.180", 2, 0)
+			_pog_spawn(hoffer_reveal_monitor.bind())
+			state.set_progress(v1, 7)
+		if _arm12 <= 6:
+			if global.pog_bool("g_skip_to_specific") != 1:
 				while true:
 					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : waiting for the player base to be moved to anta Romera, Sleeping\n")
+						debug.print_string("iActTwo.MasterScript : waiting for the player to read the e-mail about plans to move the players base\n")
 					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_base_has_moved"))):
+					if not (not (iemail.read(iemail.find("html:/text/act_2/act2_master_leaguemail_2_180")))):
 						break
-				state.set_progress(v1, 11)
-			if _arm12 <= 8:
-				await iact2mission18.main()
-				state.set_progress(v1, 12)
-			if _arm12 <= 9:
+			if global.pog_bool("g_skip_to_specific") != 1:
+				isim.set_indestructable(v3, 1)
+				await icutsceneutilities.handle_abort(_pog_spawn(local_66422.bind(v2)))
+				object.remove_property(v4, "reactive_exception")
+			v5 = await istartsystem.move_player_base("map:/geog/badlands/hoffers_wake", "map:/geog/badlands/santa_romera")
+			sim.place_relative_to(v3, v5, 5000.0, 500.0, 6000.0)
+			sim.point_at(v3, v5)
+			isim.set_indestructable(v3, 0)
+			iai.clear_autopilot()
+			global.set_bool("g_act2_base_has_moved", 1)
+			state.set_progress(v1, 8)
+		if _arm12 <= 7:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.MasterScript : waiting for the player base to be moved to anta Romera, Sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_base_has_moved"))):
+					break
+			state.set_progress(v1, 11)
+		if _arm12 <= 8:
+			await iact2mission18.main()
+			state.set_progress(v1, 12)
+		if _arm12 <= 9:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.MasterScript : waiting for player to complete act 02 mission 18 - momma wolf, sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_mommma_wolf_destroyed"))):
+					break
+			await iutilities.send_story_element("g_story_2.270", 2, 0)
+			_pog_spawn(allied_search_encounters.bind())
+			await iutilities.send_story_element("g_story_2.260", 2, 0)
+			await iutilities.send_story_element("g_story_2.280", 2, 0)
+			state.set_progress(v1, 14)
+		if _arm12 <= 10:
+			while _pog_is_null(global.pog_bool("g_act2_got_hyperspace_tracker")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.MasterScript : Waiting for the player to get his hands on the hyperspace tracker\n")
+				await _pog_wait(2.0)
+			await iact2mission22.main()
+			state.set_progress(v1, 15)
+		if _arm12 <= 11:
+			await igangsterincidentgen.set_active(1)
+			await igangsterincidentgen.set_faction(17)
+			await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
+			await igangsterincidentgen.set_number_of_station_attackers_var(6)
+			await igangsterincidentgen.set_delay_check(25.0)
+			_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.MasterScript : Waiting for the player to complete act 2 mission 22 - wolfs lair, sleeping\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_wolfs_lair_complete"))):
+					break
+			await igangsterincidentgen.set_active(1)
+			await igangsterincidentgen.set_faction(17)
+			await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
+			await igangsterincidentgen.set_number_of_station_attackers_var(6)
+			await igangsterincidentgen.set_delay_check(45.0)
+			state.set_progress(v1, 16)
+		if _arm12 <= 12:
+			while true:
+				await _pog_wait(1.0)
+				if not (not (global.exists("g_revealed_hoffer"))):
+					break
+			await iutilities.send_story_element("g_story_2.320", 2, 0)
+			state.set_progress(v1, 17)
+		if _arm12 <= 13:
+			if global.pog_bool("g_skip_to_specific") == 1:
+				_pog_spawn(firefrost_story_script.bind())
+				_pog_spawn(santa_romera_story_script.bind())
+				_pog_spawn(mwari_story_script.bind())
+				_pog_spawn(kompira_story_script.bind())
+			if _pog_is_null(global.pog_bool("g_skip_to_specific")):
+				if not (object.property_exists(v1, "a2_m24_waiter")):
+					object.add_int_property(v1, "a2_m24_waiter", 0)
 				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : waiting for player to complete act 02 mission 18 - momma wolf, sleeping\n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_mommma_wolf_destroyed"))):
-						break
-				await iutilities.send_story_element("g_story_2.270", 2, 0)
-				_pog_spawn(allied_search_encounters.bind())
-				await iutilities.send_story_element("g_story_2.260", 2, 0)
-				await iutilities.send_story_element("g_story_2.280", 2, 0)
-				state.set_progress(v1, 14)
-			if _arm12 <= 10:
-				while _pog_is_null(global.pog_bool("g_act2_got_hyperspace_tracker")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : Waiting for the player to get his hands on the hyperspace tracker\n")
-					await _pog_wait(2.0)
-				await iact2mission22.main()
-				state.set_progress(v1, 15)
-			if _arm12 <= 11:
-				await igangsterincidentgen.set_active(1)
-				await igangsterincidentgen.set_faction(17)
-				await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
-				await igangsterincidentgen.set_number_of_station_attackers_var(6)
-				await igangsterincidentgen.set_delay_check(25.0)
-				_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
-				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : Waiting for the player to complete act 2 mission 22 - wolfs lair, sleeping\n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_wolfs_lair_complete"))):
-						break
-				await igangsterincidentgen.set_active(1)
-				await igangsterincidentgen.set_faction(17)
-				await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
-				await igangsterincidentgen.set_number_of_station_attackers_var(6)
-				await igangsterincidentgen.set_delay_check(45.0)
-				state.set_progress(v1, 16)
-			if _arm12 <= 12:
-				while true:
+					object.set_int_property(v1, "a2_m24_waiter", object.int_property(v1, "a2_m24_waiter") + 1)
 					await _pog_wait(1.0)
-					if not (not (global.exists("g_revealed_hoffer"))):
+					if not (object.int_property(v1, "a2_m24_waiter") < 120):
 						break
-				await iutilities.send_story_element("g_story_2.320", 2, 0)
-				state.set_progress(v1, 17)
-			if _arm12 <= 13:
-				if global.pog_bool("g_skip_to_specific") == 1:
-					_pog_spawn(firefrost_story_script.bind())
-					_pog_spawn(santa_romera_story_script.bind())
-					_pog_spawn(mwari_story_script.bind())
-					_pog_spawn(kompira_story_script.bind())
-				if _pog_is_null(global.pog_bool("g_skip_to_specific")):
-					if not (object.property_exists(v1, "a2_m24_waiter")):
-						object.add_int_property(v1, "a2_m24_waiter", 0)
-					while true:
-						object.set_int_property(v1, "a2_m24_waiter", object.int_property(v1, "a2_m24_waiter") + 1)
-						await _pog_wait(1.0)
-						if not (object.int_property(v1, "a2_m24_waiter") < 120):
-							break
-					object.remove_property(v1, "a2_m24_waiter")
-				await iact2mission24.main()
-				state.set_progress(v1, 18)
-			if _arm12 <= 14:
+				object.remove_property(v1, "a2_m24_waiter")
+			await iact2mission24.main()
+			state.set_progress(v1, 18)
+		if _arm12 <= 14:
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.MasterScript : Waiting for player to complete act 2 mission 24 - Hide And Seek.\n")
+				await _pog_wait(2.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_dante_system_scouted"))):
+					break
+			if global.pog_bool("g_skip_to_specific") == 1 and global.pog_int("g_skip_to_mission_number") != 25:
 				while true:
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : Waiting for player to complete act 2 mission 24 - Hide And Seek.\n")
-					await _pog_wait(2.0)
-					if not (_pog_is_null(global.pog_bool("g_act2_dante_system_scouted"))):
+					await _pog_wait(500.0)
+					if not (1):
 						break
-				if global.pog_bool("g_skip_to_specific") == 1 and global.pog_int("g_skip_to_mission_number") != 25:
-					while true:
-						await _pog_wait(500.0)
-						if not (1):
-							break
-				state.set_progress(v1, 19)
-			if _arm12 <= 15:
-				if _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")) and _pog_is_null(iemail.find("html:/text/act_2/act2_master_hoffermail_mwari")):
-					iemail.send_email("a2_master_hoffer_mail_sender", "a2_m13_email_subject", "html:/text/act_2/act2_master_hoffermail_mwari", 1)
-				while _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")):
-					await _pog_wait(1.0)
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : Waiting for the player complete clear seige in Mwari\n")
-				await iact2mission25.main()
-				state.set_progress(v1, 20)
-			if _arm12 <= 16:
-				while global.pog_bool("g_skip_to_specific") == 1:
-					await _pog_wait(1.0)
-				while _pog_is_null(global.pog_bool("g_act2_marauders_defeated")):
-					if PogRuntime.TRACE:
-						debug.print_string("iActTwo.MasterScript : Waiting for the player complete act 2 Mission 25 - Marauder War\n")
-					await _pog_wait(5.0)
+			state.set_progress(v1, 19)
+		if _arm12 <= 15:
+			if _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")) and _pog_is_null(iemail.find("html:/text/act_2/act2_master_hoffermail_mwari")):
+				iemail.send_email("a2_master_hoffer_mail_sender", "a2_m13_email_subject", "html:/text/act_2/act2_master_hoffermail_mwari", 1)
+			while _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")):
+				await _pog_wait(1.0)
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.MasterScript : player has finished act two, smartass, shutting down act\n")
-				await destry_act_two_globals()
-				state.destroy(_pog_current())
+					debug.print_string("iActTwo.MasterScript : Waiting for the player complete clear seige in Mwari\n")
+			await iact2mission25.main()
+			state.set_progress(v1, 20)
+		if _arm12 <= 16:
+			while global.pog_bool("g_skip_to_specific") == 1:
+				await _pog_wait(1.0)
+			while _pog_is_null(global.pog_bool("g_act2_marauders_defeated")):
 				if PogRuntime.TRACE:
-					debug.print_string("iActTwo.MasterScript : Calling Act Three\n")
-				igame.next_act("iActThree")
-				break
+					debug.print_string("iActTwo.MasterScript : Waiting for the player complete act 2 Mission 25 - Marauder War\n")
+				await _pog_wait(5.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.MasterScript : player has finished act two, smartass, shutting down act\n")
+			await destry_act_two_globals()
+			state.destroy(_pog_current())
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.MasterScript : Calling Act Three\n")
+			igame.next_act("iActThree")
+			break
 	return
 	return 0
 
@@ -4400,9 +4400,8 @@ func main() -> Variant:
 			text.add("csv:/text/act_2/act2_master_addendum3")
 			text.add("csv:/text/act_2/act2_master_addendum4")
 	if v0:
-		pass
-	else:
-		await iutilities.create_player("", imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
+		return 0
+	await iutilities.create_player("", imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system")))
 	return 0
 	return 0
 

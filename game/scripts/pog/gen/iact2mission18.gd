@@ -120,8 +120,8 @@ func local_458() -> Variant:
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission("Momma Wolf?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -239,411 +239,410 @@ func mission_handler() -> Variant:
 	v49 = iemail.find("html:/text/act_2/act2_mission18_email")
 	if not (v49):
 		iemail.send_email("a1_m06_email_sender", "a1_m06_email_subject", "html:/text/act_2/act2_mission18_email", 1)
-	else:
-		if not (iemail.read(v49)):
-			pass
-		else:
-			sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_freighter")
-			sim.pog_preload("ini:/sims/custom/act2_mission18/umbilical")
-			sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_support_freighter")
-			sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_antenna")
-			sim.pog_preload("ini:/sims/ships/utility/megapod")
-			sim.pog_preload("ini:/sims/ships/utility/freighter")
-			sim.pog_preload("ini:/sims/ships/navy/old_corvette")
-			sim.pog_preload("ini:/sims/custom/act2_mission18/remote_fighter")
-			sim.pog_preload("ini:/sims/ships/utility/megapod_open_rear_port")
-			sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_cutter")
-			text.add("csv:/text/act_2/act2_mission18")
-			text.add("csv:/text/act_2/act2_mission18_addendum")
-			text.add("csv:/text/act_2/act2_mission15")
-			ifaction.set_feeling(v37, v36, 1.0)
-			ifaction.set_feeling(v36, v37, 1.0)
-			v7 = group.create()
-			v8 = group.create()
-			group.add_group(v7, v8)
-			v2 = imapentity.find_by_name_in_system("Freelancers Co-op Aid Centre", "map:/geog/badlands/hoffers_wake")
-			if PogRuntime.TRACE:
-				if _pog_is_null(v2):
-					debug.print_string("iAct2Mission18.MissionHandler: ERROR - Can't find Aid-Centre. EXITING.\n")
-					return
-			await istation.add_reactive_exception(ihabitat.cast(v2))
-			v3 = imapentity.find_by_name_in_system("Hoffer's Gap", "map:/geog/badlands/hoffers_wake")
-			if PogRuntime.TRACE:
-				if _pog_is_null(v3):
-					debug.print_string("iAct2Mission18.MissionHandler: ERROR - Can't find Hoffer's gap. EXITING.\n")
-					return
-			v1 = sim.create("ini:/sims/nav/waypoint", "a2_m18_waypoint_rendezvous")
-			await iutilities.sim_place_between_exact(v1, v2, v3, 5000.0)
-			isim.set_sensor_visibility(isim.cast(v1), 1)
-			v4 = sim.create("ini:/sims/nav/waypoint", "a2_m18_waypoint_ambush")
-			await iutilities.sim_place_between_exact(v4, v1, v3, 500000000.0)
-			await local_138(v48)
-			iobjectives.add("a2_m18_objectives_fly_to_rendezvous")
-			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
-			_pog_detach(v50)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission18.MissionHandler: Waiting for player to enter the hoffer's wake system.\n")
-			while true:
-				await _pog_wait(1.0)
-				if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/hoffers_wake")):
-					break
-			await istation.add_reactive_exception(ihabitat.cast(v2))
-			await irangecheck.add_traffic_exception(imapentity.cast(v2))
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission18.MissionHandler: Waiting for player to enter range of rendezvous waypoint.\n")
-			while true:
-				await _pog_wait(1)
-				if sim.distance_between(v0, v1) >= 300000.0:
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission18.MissionHandler: Setting up convoy at rendezvous waypoint.\n")
-			v9 = await local_13151(v1, 1000.0, 0)
-			group.add_group(v8, v9)
-			await iutilities.group_set_cullable(v9, 0)
-			v13 = iship.cast(group.leader(v9))
-			object.set_string_property(v13, "death_script", "iDeathScript.CriticalShipDeath")
-			v15 = iship.cast(group.nth_sim(v9, 1))
-			v16 = iship.cast(group.nth_sim(v9, 2))
-			isim.set_sensor_visibility(v13, 1)
-			_pog_spawn(local_14140.bind(v13, 10))
-			isim.set_mission_critical(v13, 1)
-			v12 = await ishipcreation.create_cargo_pods(325, 10)
-			group.add_group(v12, v9)
-			v39 = 0
-			while v39 < group.sim_count(v12):
-				iship.dock(group.nth_sim(v12, v39), v13)
-				sim.set_cullable(group.nth_sim(v12, v39), 0)
-				v39 = v39 + 1
-			await iutilities.group_set_cullable(v9, 0)
-			v10 = await local_13151(v1, 1000.0, 1)
-			group.add_group(v8, v10)
-			v14 = iship.cast(group.leader(v10))
-			object.set_string_property(v14, "death_script", "iDeathScript.CriticalShipDeath")
-			v17 = iship.cast(group.nth_sim(v10, 1))
-			v18 = iship.cast(group.nth_sim(v10, 2))
-			isim.set_mission_critical(v14, 1)
-			_pog_spawn(local_14140.bind(v14, 10))
-			v12 = await ishipcreation.create_cargo_pods(325, 8)
-			group.add_group(v12, v10)
-			v11 = await local_13632(v14)
-			group.add_group(v7, v11)
-			v39 = 0
-			while v39 < group.sim_count(v12):
-				iship.dock(group.nth_sim(v12, v39), v14)
-				sim.set_cullable(group.nth_sim(v12, v39), 0)
-				v39 = v39 + 1
-			await iutilities.group_set_cullable(v10, 0)
-			sim.point_at(v13, v3)
-			sim.point_at(v14, v3)
-			await iescort.cross(v9, 0.0, 10000.0, 1)
-			await iescort.cross(v10, 0.0, 10000.0, 1)
-			iai.give_formate_order(v14, v13, 0.0, 1000.0, -2000.0)
-			_pog_halt(v50)
-			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
-			_pog_detach(v50)
-			await local_138(v48)
-			if PogRuntime.TRACE:
-				debug.print_string("Act2Mission18.MissionHandler: Waiting for player to approach rendezvous waypoint.\n")
-			while true:
-				await _pog_wait(1)
-				if sim.distance_between(v0, v1) >= 15000.0:
-					continue
-				break
-			iobjectives.set_state("a2_m18_objectives_fly_to_rendezvous", 1)
-			iobjectives.add("a2_m18_objectives_listen_to_briefing")
-			if PogRuntime.TRACE:
-				debug.print_string("Act2Mission18.MissionHandler: Player reached rendezvous waypoint.\n")
-			await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_greetings_glad_you_could_make_it")
-			await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_the_plan_is_to_head_for_hoffers_gap")
-			await _pog_wait(5.0)
-			await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_ok_formate_with_us_and_lets_go")
-			iobjectives.set_state("a2_m18_objectives_listen_to_briefing", 1)
-			iobjectives.add("a2_m18_objectives_protect_freighters")
-			iobjectives.add("a2_m18_objectives_formate_with_freighter")
-			await local_138(v48)
-			while true:
-				await _pog_wait(1)
-				if not (_pog_eq(iship.current_target(v0), v13) or _pog_eq(iship.current_target(v0), v14)):
-					continue
-				if PogRuntime.TRACE:
-					debug.print_string("iAct2_Mission18.MissionHandler: Player has an order.\n")
-				if iai.current_order_type(v0) != 2:
-					continue
-				break
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission18.MissionHandler: Player formateing with freighter.\n")
-			iobjectives.set_state("a2_m18_objectives_formate_with_freighter", 1)
-			iobjectives.add("a2_m18_objectives_escort_freighters")
-			await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_setting_course_for_hoffers_gap")
-			if PogRuntime.TRACE:
-				debug.print_string("Act2Mission18.MissionHandler: Convoy ordered to approach Hoffers Gap.\n")
-			await ibacktobase.inhibit()
-			iai.give_approach_order(v13, v4)
-			await local_138(v48)
-			if PogRuntime.TRACE:
-				debug.print_string("Act2Mission18.MissionHandler: Waiting for player to enter range of ambush waypoint.\n")
-			while true:
-				await _pog_wait(1)
-				if sim.distance_between(v0, v13) > 1000000000.0:
-					iobjectives.set_state("a2_m18_objectives_escort_freighters", 2)
-					object.add_bool_property(v0, "destroy_sim", 0)
-					_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_generic"))))
-					await local_15269(v7)
-					return
-				if not (sim.distance_between(v13, v4) < 30000.0 and sim.distance_between(v14, v4) < 30000.0):
-					continue
-				break
-			await local_138(v48)
-			if PogRuntime.TRACE:
-				debug.print_string("Act2Mission18.MissionHandler: Setting up ambush.\n")
-			sim.destroy(v1)
-			iai.purge_orders(v13)
-			iai.purge_orders(v14)
-			await ijafsscript.disable_jafs()
-			v34 = iregion.create_l_d_s_i(group.leader(v8), 250000.0)
-			await imusic.set_suite(1)
-			await imusic.set_mood(4)
-			await local_17530(v8, 1.0)
-			await local_17345(v8, 0.0, 0.0, 500.0, 1)
-			await local_17530(await iwingmen.group(), 1.0)
-			await local_17345(await iwingmen.group(), 0.0, 0.0, 500.0, 1)
-			await _pog_wait(2.0)
-			iobjectives.set_state("a2_m18_objectives_escort_freighters", 1)
-			await iconversation.begin()
-			await iconversation.say(v15, "", "a2_m18_dialogue_escort_1_our_ldsi_drives_have_cut_out")
-			await iconversation.say(v15, "", "a2_m18_dialogue_escort_1_watch_out_for_marauders")
-			await iconversation.end()
-			if sim.distance_between(v0, v4) > 300000.0:
-				await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_cal_where_the_heck_are_you")
-			v21 = await local_13893(v4, 4, 30000.0)
-			group.add_group(v7, v21)
-			await iformation.goose(v21, 0.0, 1)
-			iai.give_attack_order(v21, v9)
-			v22 = await local_13893(v4, 5, 35000.0)
-			group.add_group(v7, v10)
-			await iformation.goose(v22, 0.0, 1)
-			iai.give_attack_order(v22, v7)
-			iai.give_generic_attack_order(v15)
-			iai.give_generic_attack_order(v16)
-			iai.give_generic_attack_order(v17)
-			iai.give_generic_attack_order(v18)
-			await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_marauders_incoming")
-			iobjectives.add("a2_m18_objectives_destroy_marauders")
-			if not _pog_is_null(group.sim_count(v11)):
-				await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_were_releasing_the_remote_fighters_now")
-				v39 = 0
-				while v39 < group.sim_count(v11):
-					v19 = iship.cast(group.nth_sim(v11, v39))
-					isim.undock(v19, v14)
-					sim.set_velocity_local_to_sim(v19, 0.0, 0.0, 500.0)
-					await iremotepilot.enable_remote_connection(v19, 1)
-					v39 = v39 + 1
-				await iwingmen.from_group(v11, 1)
-				await iwingmen.escort_ship(await iwingmen.group(), v0)
-			v38 = 0
-			_pog_halt(v50)
-			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
-			_pog_detach(v50)
-			object.set_string_property(v13, "death_script", "")
-			object.set_string_property(v14, "death_script", "")
-			if sim.is_alive(v13):
-				sim.place_at(v4, v13)
-			else:
-				if sim.is_alive(v13):
-					sim.place_at(v4, v14)
-			while true:
-				await _pog_wait(1)
-				if sim.distance_between(v0, v4) > 110000.0:
-					iobjectives.set_state("a2_m18_objectives_escort_freighters", 2)
-					if sim.is_alive(v13):
-						object.add_bool_property(v0, "destroy_sim", 0)
-						await _pog_wait(0.5)
-						object.set_string_property(v13, "death_script", "iDeathScript.CriticalShipDeath")
-						isim.kill(v13)
-					else:
-						if sim.is_alive(v14):
-							object.add_bool_property(v0, "destroy_sim", 0)
-							await _pog_wait(0.5)
-							object.set_string_property(v13, "death_script", "iDeathScript.CriticalShipDeath")
-							sim.destroy(v14)
-					await local_15269(v7)
-					return
-				if _pog_is_null(group.sim_count(v21)) and _pog_is_null(group.sim_count(v22)):
-					break
-				if _pog_is_null(v38):
-					if sim.is_dead(v13) or sim.is_dead(v14):
-						if sim.is_alive(v13) or sim.is_alive(v14):
-							await iconversation.one_liner(0, "name_clay", "a2_m18_dialogue_clay_weve_lost_a_freighter")
-							v38 = 1
-				if v38 != 1:
-					continue
-				if not (sim.is_dead(v13) and sim.is_dead(v14)):
-					continue
-				iobjectives.set_state("a2_m18_objectives_protect_freighters", 2)
-				await iconversation.one_liner(0, "name_clay", "a2_m18_dialogue_clay_dammit_there_goes_the_other_one")
-				await local_15269(v7)
-				object.add_bool_property(v0, "destroy_sim", 0)
-				_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_ship_destroyed"))))
-			iregion.destroy(v34)
-			iobjectives.set_state("a2_m18_objectives_protect_freighters", 1)
-			iobjectives.set_state("a2_m18_objectives_destroy_marauders", 1)
-			iobjectives.add("a2_m18_objectives_investigate_ldsi_signal")
-			await local_138(v48)
-			if sim.is_alive(v13):
-				await iformation.v(v9, 0.0, 0)
-				iai.give_approach_order(v13, v3)
-				await iutilities.group_set_cullable(v9, 1)
-				isim.set_mission_critical(v13, 0)
-			if sim.is_alive(v14):
-				await iformation.v(v10, 0.0, 0)
-				iai.give_approach_order(v14, v3)
-				await iutilities.group_set_cullable(v10, 1)
-				isim.set_mission_critical(v14, 0)
-			await _pog_wait(5.0)
-			idirector.begin()
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			await imusic.pause()
-			v5 = sim.create("ini:/sims/nav/waypoint", "a2_m18_waypoint_ldsi")
-			sim.place_relative_to(v5, v0, 200000.0, 60000.0, 200000.0)
-			isim.set_sensor_visibility(isim.cast(v5), 1)
-			v23 = await local_11759(v5)
-			group.add_group(v7, v23)
-			v24 = group.nth_group(v23, 0)
-			v25 = group.nth_group(v23, 1)
-			v26 = group.nth_group(v23, 2)
-			v27 = iship.cast(group.leader(v23))
-			isim.set_indestructable(v27, 1)
-			v28 = iship.cast(group.nth_sim(v25, 0))
-			isim.set_indestructable(v28, 1)
-			v29 = iship.cast(group.nth_sim(v25, 1))
-			isim.set_indestructable(v29, 1)
-			v30 = iship.cast(group.nth_sim(v25, 2))
-			isim.set_indestructable(v30, 1)
-			v31 = iship.cast(group.nth_sim(v24, 0))
-			v32 = iship.cast(group.nth_sim(v24, 1))
-			v33 = iship.cast(group.nth_sim(v24, 2))
-			v35 = iregion.create_l_d_s_i(v27, 500000.0)
-			v21 = await local_13893(v27, 2, 1000.0)
-			_pog_halt(v50)
-			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
-			_pog_detach(v50)
-			await local_138(v48)
-			await icutsceneutilities.handle_abort(_pog_spawn(local_15592.bind(v0, v27)))
-			group.destroy(v8, 1)
-			sim.place_relative_to(v0, v27, 11000.0, 100.0, 0.0)
-			sim.point_at(v0, v27)
-			await iformation.goose(await iwingmen.group(), 0.0, 1)
-			await local_17345(await iwingmen.group(), 0.0, 0.0, 500.0, 1)
-			stream.stop(0, 0)
-			stream.stop(1, 0)
-			await imusic.pog_resume()
-			await imusic.set_suite(1)
-			await imusic.set_mood(4)
-			iai.give_attack_order(v21, await iwingmen.group())
-			sim.destroy(v4)
-			iobjectives.set_state("a2_m18_objectives_investigate_ldsi_signal", 1)
-			iobjectives.add("a2_m18_objectives_destroy_ldsi_ship")
-			v43 = 1
-			v44 = 0
-			v45 = 0
-			v46 = 0
-			v47 = 0
-			v42 = object.float_property(v27, "max_hit_points") / 6.0
-			while true:
-				await _pog_wait(1)
-				if v43 == 1:
-					if iship.attacked(v27) and group.sim_count(v24) == 3:
-						v43 = 0
-						await iconversation.begin()
-						await iconversation.say(0, "name_smith", "a2_m18_dialogue_smith_the_ships_are_too_well_shielded")
-						await iconversation.say(0, "name_clay", "a2_m18_dialogue_clay_weve_got_to_shut_off_the_power_somehow")
-						await iconversation.end()
-				if not _pog_is_null(group.sim_count(v25)):
-					if sim.is_alive(v28):
-						if sim.is_dead(v31):
-							if not (isim.is_dying(v28)):
-								if PogRuntime.TRACE:
-									debug.print_string("Act 2 Mission 18 - Umbilical 1 destroyed. Destroying Support 1\n")
-								v41 = object.float_property(v27, "hit_points")
-								object.set_float_property(v27, "hit_points", v41 - v42)
-								iship.undock(v28, v27)
-								sim.set_velocity_local_to_sim(v28, -100.0, 0.0, 0.0)
-								sim.set_angular_velocity_euler(v28, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
-								isim.set_indestructable(v28, 0)
-								isim.kill(v28)
-					if sim.is_alive(v29):
-						if sim.is_dead(v32):
-							if not (isim.is_dying(v29)):
-								if PogRuntime.TRACE:
-									debug.print_string("Act 2 Mission 18 - Umbilical 2 destroyed. Destroying Support 2\n")
-								v41 = object.float_property(v27, "hit_points")
-								object.set_float_property(v27, "hit_points", v41 - v42)
-								iship.undock(v29, v27)
-								sim.set_velocity_local_to_sim(v29, -100.0, 0.0, 0.0)
-								sim.set_angular_velocity_euler(v29, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
-								isim.set_indestructable(v29, 0)
-								isim.kill(v29)
-					if sim.is_alive(v30):
-						if sim.is_dead(v33):
-							if not (isim.is_dying(v30)):
-								if PogRuntime.TRACE:
-									debug.print_string("Act 2 Mission 18 - Umbilical 3 destroyed. Destroying Support 3\n")
-								v41 = object.float_property(v27, "hit_points")
-								object.set_float_property(v27, "hit_points", v41 - v42)
-								iship.undock(v30, v27)
-								sim.set_velocity_local_to_sim(v30, -100.0, 0.0, 0.0)
-								sim.set_angular_velocity_euler(v30, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
-								isim.set_indestructable(v30, 0)
-								isim.kill(v30)
-				if group.sim_count(v24) <= 2 and not (v45):
-					v45 = 1
-					_pog_spawn(local_14627.bind(v27, v26, v23, v21, 60.0))
-					await iconversation.begin()
-					await iconversation.say(0, "name_smith", "a2_m18_dialogue_smith_its_launching_ships")
-					await iconversation.end()
-				if group.sim_count(v24) <= 1 and not (v46):
-					v46 = 1
-					iregion.destroy(v35)
-					await iconversation.one_liner(0, "name_smith", "a2_m18_dialogue_smith_the_ldsi_field_is_down")
-				if _pog_is_null(group.sim_count(v24)) and not (v47):
-					v47 = 1
-					isim.set_indestructable(v27, 0)
-					await iconversation.one_liner(0, "name_smith", "a2_m18_dialogue_smith_that_did_it_their_shields_are_down")
-				if sim.distance_between(v0, v27) > 500000.0:
-					sim.destroy(v5)
-					iregion.destroy(v34)
-					iregion.destroy(v35)
-					iobjectives.set_state("a2_m18_objectives_destroy_ldsi_ship", 2)
-					await iconversation.begin()
-					await iconversation.say(0, "name_smith", "a2_m18_dialogue_smith_hey_ive_lost_the_ldsi_signal")
-					await iconversation.end()
-					await local_15269(v7)
-					object.add_bool_property(v0, "destroy_sim", 0)
-					_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_generic"))))
-					return
-				if not (isim.is_dying(v27)):
-					continue
-				break
-			iai.give_flee_order(v21, v0)
-			group.remove_group(v7, v23)
-			_pog_detach(_pog_spawn(local_15339.bind(v23)))
-			iobjectives.set_state("a2_m18_objectives_destroy_ldsi_ship", 1)
-			await iconversation.begin()
-			await iconversation.say(0, "name_clay", "a2_m18_dialogue_clay_way_to_go")
-			await iconversation.say(0, "name_clay", "a2_m18_dialogue_clay_i_think_i_think_the_league_owe_you")
-			await iconversation.end()
-			v11 = await iwingmen.purge_to_group()
-			group.destroy(v11, 0)
-			await ijafsscript.enable_jafs()
-			await iutilities.remove_mission_restart()
-			itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("League"), 475, 1, 377, 7, 0))
-			sim.destroy(v5)
+		return
+	if not (iemail.read(v49)):
+		return
+	sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_freighter")
+	sim.pog_preload("ini:/sims/custom/act2_mission18/umbilical")
+	sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_support_freighter")
+	sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_antenna")
+	sim.pog_preload("ini:/sims/ships/utility/megapod")
+	sim.pog_preload("ini:/sims/ships/utility/freighter")
+	sim.pog_preload("ini:/sims/ships/navy/old_corvette")
+	sim.pog_preload("ini:/sims/custom/act2_mission18/remote_fighter")
+	sim.pog_preload("ini:/sims/ships/utility/megapod_open_rear_port")
+	sim.pog_preload("ini:/sims/custom/act2_mission18/ldsi_cutter")
+	text.add("csv:/text/act_2/act2_mission18")
+	text.add("csv:/text/act_2/act2_mission18_addendum")
+	text.add("csv:/text/act_2/act2_mission15")
+	ifaction.set_feeling(v37, v36, 1.0)
+	ifaction.set_feeling(v36, v37, 1.0)
+	v7 = group.create()
+	v8 = group.create()
+	group.add_group(v7, v8)
+	v2 = imapentity.find_by_name_in_system("Freelancers Co-op Aid Centre", "map:/geog/badlands/hoffers_wake")
+	if PogRuntime.TRACE:
+		if _pog_is_null(v2):
+			debug.print_string("iAct2Mission18.MissionHandler: ERROR - Can't find Aid-Centre. EXITING.\n")
+			return
+	await istation.add_reactive_exception(ihabitat.cast(v2))
+	v3 = imapentity.find_by_name_in_system("Hoffer's Gap", "map:/geog/badlands/hoffers_wake")
+	if PogRuntime.TRACE:
+		if _pog_is_null(v3):
+			debug.print_string("iAct2Mission18.MissionHandler: ERROR - Can't find Hoffer's gap. EXITING.\n")
+			return
+	v1 = sim.create("ini:/sims/nav/waypoint", "a2_m18_waypoint_rendezvous")
+	await iutilities.sim_place_between_exact(v1, v2, v3, 5000.0)
+	isim.set_sensor_visibility(isim.cast(v1), 1)
+	v4 = sim.create("ini:/sims/nav/waypoint", "a2_m18_waypoint_ambush")
+	await iutilities.sim_place_between_exact(v4, v1, v3, 500000000.0)
+	await local_138(v48)
+	iobjectives.add("a2_m18_objectives_fly_to_rendezvous")
+	v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+	_pog_detach(v50)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission18.MissionHandler: Waiting for player to enter the hoffer's wake system.\n")
+	while true:
+		await _pog_wait(1.0)
+		if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/hoffers_wake")):
+			break
+	await istation.add_reactive_exception(ihabitat.cast(v2))
+	await irangecheck.add_traffic_exception(imapentity.cast(v2))
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission18.MissionHandler: Waiting for player to enter range of rendezvous waypoint.\n")
+	while true:
+		await _pog_wait(1)
+		if sim.distance_between(v0, v1) >= 300000.0:
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission18.MissionHandler: Setting up convoy at rendezvous waypoint.\n")
+	v9 = await local_13151(v1, 1000.0, 0)
+	group.add_group(v8, v9)
+	await iutilities.group_set_cullable(v9, 0)
+	v13 = iship.cast(group.leader(v9))
+	object.set_string_property(v13, "death_script", "iDeathScript.CriticalShipDeath")
+	v15 = iship.cast(group.nth_sim(v9, 1))
+	v16 = iship.cast(group.nth_sim(v9, 2))
+	isim.set_sensor_visibility(v13, 1)
+	_pog_spawn(local_14140.bind(v13, 10))
+	isim.set_mission_critical(v13, 1)
+	v12 = await ishipcreation.create_cargo_pods(325, 10)
+	group.add_group(v12, v9)
+	v39 = 0
+	while v39 < group.sim_count(v12):
+		iship.dock(group.nth_sim(v12, v39), v13)
+		sim.set_cullable(group.nth_sim(v12, v39), 0)
+		v39 = v39 + 1
+	await iutilities.group_set_cullable(v9, 0)
+	v10 = await local_13151(v1, 1000.0, 1)
+	group.add_group(v8, v10)
+	v14 = iship.cast(group.leader(v10))
+	object.set_string_property(v14, "death_script", "iDeathScript.CriticalShipDeath")
+	v17 = iship.cast(group.nth_sim(v10, 1))
+	v18 = iship.cast(group.nth_sim(v10, 2))
+	isim.set_mission_critical(v14, 1)
+	_pog_spawn(local_14140.bind(v14, 10))
+	v12 = await ishipcreation.create_cargo_pods(325, 8)
+	group.add_group(v12, v10)
+	v11 = await local_13632(v14)
+	group.add_group(v7, v11)
+	v39 = 0
+	while v39 < group.sim_count(v12):
+		iship.dock(group.nth_sim(v12, v39), v14)
+		sim.set_cullable(group.nth_sim(v12, v39), 0)
+		v39 = v39 + 1
+	await iutilities.group_set_cullable(v10, 0)
+	sim.point_at(v13, v3)
+	sim.point_at(v14, v3)
+	await iescort.cross(v9, 0.0, 10000.0, 1)
+	await iescort.cross(v10, 0.0, 10000.0, 1)
+	iai.give_formate_order(v14, v13, 0.0, 1000.0, -2000.0)
+	_pog_halt(v50)
+	v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+	_pog_detach(v50)
+	await local_138(v48)
+	if PogRuntime.TRACE:
+		debug.print_string("Act2Mission18.MissionHandler: Waiting for player to approach rendezvous waypoint.\n")
+	while true:
+		await _pog_wait(1)
+		if sim.distance_between(v0, v1) >= 15000.0:
+			continue
+		break
+	iobjectives.set_state("a2_m18_objectives_fly_to_rendezvous", 1)
+	iobjectives.add("a2_m18_objectives_listen_to_briefing")
+	if PogRuntime.TRACE:
+		debug.print_string("Act2Mission18.MissionHandler: Player reached rendezvous waypoint.\n")
+	await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_greetings_glad_you_could_make_it")
+	await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_the_plan_is_to_head_for_hoffers_gap")
+	await _pog_wait(5.0)
+	await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_ok_formate_with_us_and_lets_go")
+	iobjectives.set_state("a2_m18_objectives_listen_to_briefing", 1)
+	iobjectives.add("a2_m18_objectives_protect_freighters")
+	iobjectives.add("a2_m18_objectives_formate_with_freighter")
+	await local_138(v48)
+	while true:
+		await _pog_wait(1)
+		if not (_pog_eq(iship.current_target(v0), v13) or _pog_eq(iship.current_target(v0), v14)):
+			continue
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2_Mission18.MissionHandler: Player has an order.\n")
+		if iai.current_order_type(v0) != 2:
+			continue
+		break
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2_Mission18.MissionHandler: Player formateing with freighter.\n")
+	iobjectives.set_state("a2_m18_objectives_formate_with_freighter", 1)
+	iobjectives.add("a2_m18_objectives_escort_freighters")
+	await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_setting_course_for_hoffers_gap")
+	if PogRuntime.TRACE:
+		debug.print_string("Act2Mission18.MissionHandler: Convoy ordered to approach Hoffers Gap.\n")
+	await ibacktobase.inhibit()
+	iai.give_approach_order(v13, v4)
+	await local_138(v48)
+	if PogRuntime.TRACE:
+		debug.print_string("Act2Mission18.MissionHandler: Waiting for player to enter range of ambush waypoint.\n")
+	while true:
+		await _pog_wait(1)
+		if sim.distance_between(v0, v13) > 1000000000.0:
+			iobjectives.set_state("a2_m18_objectives_escort_freighters", 2)
+			object.add_bool_property(v0, "destroy_sim", 0)
+			_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_generic"))))
 			await local_15269(v7)
-			global.set_bool("g_act2_mommma_wolf_destroyed", 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct_Mission18.Main - MISSION COMPLETE\n")
-			await ibacktobase.allow()
+			return
+		if not (sim.distance_between(v13, v4) < 30000.0 and sim.distance_between(v14, v4) < 30000.0):
+			continue
+		break
+	await local_138(v48)
+	if PogRuntime.TRACE:
+		debug.print_string("Act2Mission18.MissionHandler: Setting up ambush.\n")
+	sim.destroy(v1)
+	iai.purge_orders(v13)
+	iai.purge_orders(v14)
+	await ijafsscript.disable_jafs()
+	v34 = iregion.create_l_d_s_i(group.leader(v8), 250000.0)
+	await imusic.set_suite(1)
+	await imusic.set_mood(4)
+	await local_17530(v8, 1.0)
+	await local_17345(v8, 0.0, 0.0, 500.0, 1)
+	await local_17530(await iwingmen.group(), 1.0)
+	await local_17345(await iwingmen.group(), 0.0, 0.0, 500.0, 1)
+	await _pog_wait(2.0)
+	iobjectives.set_state("a2_m18_objectives_escort_freighters", 1)
+	await iconversation.begin()
+	await iconversation.say(v15, "", "a2_m18_dialogue_escort_1_our_ldsi_drives_have_cut_out")
+	await iconversation.say(v15, "", "a2_m18_dialogue_escort_1_watch_out_for_marauders")
+	await iconversation.end()
+	if sim.distance_between(v0, v4) > 300000.0:
+		await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_cal_where_the_heck_are_you")
+	v21 = await local_13893(v4, 4, 30000.0)
+	group.add_group(v7, v21)
+	await iformation.goose(v21, 0.0, 1)
+	iai.give_attack_order(v21, v9)
+	v22 = await local_13893(v4, 5, 35000.0)
+	group.add_group(v7, v10)
+	await iformation.goose(v22, 0.0, 1)
+	iai.give_attack_order(v22, v7)
+	iai.give_generic_attack_order(v15)
+	iai.give_generic_attack_order(v16)
+	iai.give_generic_attack_order(v17)
+	iai.give_generic_attack_order(v18)
+	await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_marauders_incoming")
+	iobjectives.add("a2_m18_objectives_destroy_marauders")
+	if not _pog_is_null(group.sim_count(v11)):
+		await iconversation.one_liner(v15, "", "a2_m18_dialogue_escort_1_were_releasing_the_remote_fighters_now")
+		v39 = 0
+		while v39 < group.sim_count(v11):
+			v19 = iship.cast(group.nth_sim(v11, v39))
+			isim.undock(v19, v14)
+			sim.set_velocity_local_to_sim(v19, 0.0, 0.0, 500.0)
+			await iremotepilot.enable_remote_connection(v19, 1)
+			v39 = v39 + 1
+		await iwingmen.from_group(v11, 1)
+		await iwingmen.escort_ship(await iwingmen.group(), v0)
+	v38 = 0
+	_pog_halt(v50)
+	v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+	_pog_detach(v50)
+	object.set_string_property(v13, "death_script", "")
+	object.set_string_property(v14, "death_script", "")
+	if sim.is_alive(v13):
+		sim.place_at(v4, v13)
+	else:
+		if sim.is_alive(v13):
+			sim.place_at(v4, v14)
+	while true:
+		await _pog_wait(1)
+		if sim.distance_between(v0, v4) > 110000.0:
+			iobjectives.set_state("a2_m18_objectives_escort_freighters", 2)
+			if sim.is_alive(v13):
+				object.add_bool_property(v0, "destroy_sim", 0)
+				await _pog_wait(0.5)
+				object.set_string_property(v13, "death_script", "iDeathScript.CriticalShipDeath")
+				isim.kill(v13)
+			else:
+				if sim.is_alive(v14):
+					object.add_bool_property(v0, "destroy_sim", 0)
+					await _pog_wait(0.5)
+					object.set_string_property(v13, "death_script", "iDeathScript.CriticalShipDeath")
+					sim.destroy(v14)
+			await local_15269(v7)
+			return
+		if _pog_is_null(group.sim_count(v21)) and _pog_is_null(group.sim_count(v22)):
+			break
+		if _pog_is_null(v38):
+			if sim.is_dead(v13) or sim.is_dead(v14):
+				if sim.is_alive(v13) or sim.is_alive(v14):
+					await iconversation.one_liner(0, "name_clay", "a2_m18_dialogue_clay_weve_lost_a_freighter")
+					v38 = 1
+		if v38 != 1:
+			continue
+		if not (sim.is_dead(v13) and sim.is_dead(v14)):
+			continue
+		iobjectives.set_state("a2_m18_objectives_protect_freighters", 2)
+		await iconversation.one_liner(0, "name_clay", "a2_m18_dialogue_clay_dammit_there_goes_the_other_one")
+		await local_15269(v7)
+		object.add_bool_property(v0, "destroy_sim", 0)
+		_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_ship_destroyed"))))
+	iregion.destroy(v34)
+	iobjectives.set_state("a2_m18_objectives_protect_freighters", 1)
+	iobjectives.set_state("a2_m18_objectives_destroy_marauders", 1)
+	iobjectives.add("a2_m18_objectives_investigate_ldsi_signal")
+	await local_138(v48)
+	if sim.is_alive(v13):
+		await iformation.v(v9, 0.0, 0)
+		iai.give_approach_order(v13, v3)
+		await iutilities.group_set_cullable(v9, 1)
+		isim.set_mission_critical(v13, 0)
+	if sim.is_alive(v14):
+		await iformation.v(v10, 0.0, 0)
+		iai.give_approach_order(v14, v3)
+		await iutilities.group_set_cullable(v10, 1)
+		isim.set_mission_critical(v14, 0)
+	await _pog_wait(5.0)
+	idirector.begin()
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	await imusic.pause()
+	v5 = sim.create("ini:/sims/nav/waypoint", "a2_m18_waypoint_ldsi")
+	sim.place_relative_to(v5, v0, 200000.0, 60000.0, 200000.0)
+	isim.set_sensor_visibility(isim.cast(v5), 1)
+	v23 = await local_11759(v5)
+	group.add_group(v7, v23)
+	v24 = group.nth_group(v23, 0)
+	v25 = group.nth_group(v23, 1)
+	v26 = group.nth_group(v23, 2)
+	v27 = iship.cast(group.leader(v23))
+	isim.set_indestructable(v27, 1)
+	v28 = iship.cast(group.nth_sim(v25, 0))
+	isim.set_indestructable(v28, 1)
+	v29 = iship.cast(group.nth_sim(v25, 1))
+	isim.set_indestructable(v29, 1)
+	v30 = iship.cast(group.nth_sim(v25, 2))
+	isim.set_indestructable(v30, 1)
+	v31 = iship.cast(group.nth_sim(v24, 0))
+	v32 = iship.cast(group.nth_sim(v24, 1))
+	v33 = iship.cast(group.nth_sim(v24, 2))
+	v35 = iregion.create_l_d_s_i(v27, 500000.0)
+	v21 = await local_13893(v27, 2, 1000.0)
+	_pog_halt(v50)
+	v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+	_pog_detach(v50)
+	await local_138(v48)
+	await icutsceneutilities.handle_abort(_pog_spawn(local_15592.bind(v0, v27)))
+	group.destroy(v8, 1)
+	sim.place_relative_to(v0, v27, 11000.0, 100.0, 0.0)
+	sim.point_at(v0, v27)
+	await iformation.goose(await iwingmen.group(), 0.0, 1)
+	await local_17345(await iwingmen.group(), 0.0, 0.0, 500.0, 1)
+	stream.stop(0, 0)
+	stream.stop(1, 0)
+	await imusic.pog_resume()
+	await imusic.set_suite(1)
+	await imusic.set_mood(4)
+	iai.give_attack_order(v21, await iwingmen.group())
+	sim.destroy(v4)
+	iobjectives.set_state("a2_m18_objectives_investigate_ldsi_signal", 1)
+	iobjectives.add("a2_m18_objectives_destroy_ldsi_ship")
+	v43 = 1
+	v44 = 0
+	v45 = 0
+	v46 = 0
+	v47 = 0
+	v42 = object.float_property(v27, "max_hit_points") / 6.0
+	while true:
+		await _pog_wait(1)
+		if v43 == 1:
+			if iship.attacked(v27) and group.sim_count(v24) == 3:
+				v43 = 0
+				await iconversation.begin()
+				await iconversation.say(0, "name_smith", "a2_m18_dialogue_smith_the_ships_are_too_well_shielded")
+				await iconversation.say(0, "name_clay", "a2_m18_dialogue_clay_weve_got_to_shut_off_the_power_somehow")
+				await iconversation.end()
+		if not _pog_is_null(group.sim_count(v25)):
+			if sim.is_alive(v28):
+				if sim.is_dead(v31):
+					if not (isim.is_dying(v28)):
+						if PogRuntime.TRACE:
+							debug.print_string("Act 2 Mission 18 - Umbilical 1 destroyed. Destroying Support 1\n")
+						v41 = object.float_property(v27, "hit_points")
+						object.set_float_property(v27, "hit_points", v41 - v42)
+						iship.undock(v28, v27)
+						sim.set_velocity_local_to_sim(v28, -100.0, 0.0, 0.0)
+						sim.set_angular_velocity_euler(v28, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
+						isim.set_indestructable(v28, 0)
+						isim.kill(v28)
+			if sim.is_alive(v29):
+				if sim.is_dead(v32):
+					if not (isim.is_dying(v29)):
+						if PogRuntime.TRACE:
+							debug.print_string("Act 2 Mission 18 - Umbilical 2 destroyed. Destroying Support 2\n")
+						v41 = object.float_property(v27, "hit_points")
+						object.set_float_property(v27, "hit_points", v41 - v42)
+						iship.undock(v29, v27)
+						sim.set_velocity_local_to_sim(v29, -100.0, 0.0, 0.0)
+						sim.set_angular_velocity_euler(v29, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
+						isim.set_indestructable(v29, 0)
+						isim.kill(v29)
+			if sim.is_alive(v30):
+				if sim.is_dead(v33):
+					if not (isim.is_dying(v30)):
+						if PogRuntime.TRACE:
+							debug.print_string("Act 2 Mission 18 - Umbilical 3 destroyed. Destroying Support 3\n")
+						v41 = object.float_property(v27, "hit_points")
+						object.set_float_property(v27, "hit_points", v41 - v42)
+						iship.undock(v30, v27)
+						sim.set_velocity_local_to_sim(v30, -100.0, 0.0, 0.0)
+						sim.set_angular_velocity_euler(v30, math.random(-20.0, 20.0), math.random(-20.0, 20.0), math.random(-20.0, 20.0))
+						isim.set_indestructable(v30, 0)
+						isim.kill(v30)
+		if group.sim_count(v24) <= 2 and not (v45):
+			v45 = 1
+			_pog_spawn(local_14627.bind(v27, v26, v23, v21, 60.0))
+			await iconversation.begin()
+			await iconversation.say(0, "name_smith", "a2_m18_dialogue_smith_its_launching_ships")
+			await iconversation.end()
+		if group.sim_count(v24) <= 1 and not (v46):
+			v46 = 1
+			iregion.destroy(v35)
+			await iconversation.one_liner(0, "name_smith", "a2_m18_dialogue_smith_the_ldsi_field_is_down")
+		if _pog_is_null(group.sim_count(v24)) and not (v47):
+			v47 = 1
+			isim.set_indestructable(v27, 0)
+			await iconversation.one_liner(0, "name_smith", "a2_m18_dialogue_smith_that_did_it_their_shields_are_down")
+		if sim.distance_between(v0, v27) > 500000.0:
+			sim.destroy(v5)
+			iregion.destroy(v34)
+			iregion.destroy(v35)
+			iobjectives.set_state("a2_m18_objectives_destroy_ldsi_ship", 2)
+			await iconversation.begin()
+			await iconversation.say(0, "name_smith", "a2_m18_dialogue_smith_hey_ive_lost_the_ldsi_signal")
+			await iconversation.end()
+			await local_15269(v7)
+			object.add_bool_property(v0, "destroy_sim", 0)
+			_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("caption_failed_generic"))))
+			return
+		if not (isim.is_dying(v27)):
+			continue
+		break
+	iai.give_flee_order(v21, v0)
+	group.remove_group(v7, v23)
+	_pog_detach(_pog_spawn(local_15339.bind(v23)))
+	iobjectives.set_state("a2_m18_objectives_destroy_ldsi_ship", 1)
+	await iconversation.begin()
+	await iconversation.say(0, "name_clay", "a2_m18_dialogue_clay_way_to_go")
+	await iconversation.say(0, "name_clay", "a2_m18_dialogue_clay_i_think_i_think_the_league_owe_you")
+	await iconversation.end()
+	v11 = await iwingmen.purge_to_group()
+	group.destroy(v11, 0)
+	await ijafsscript.enable_jafs()
+	await iutilities.remove_mission_restart()
+	itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("League"), 475, 1, 377, 7, 0))
+	sim.destroy(v5)
+	await local_15269(v7)
+	global.set_bool("g_act2_mommma_wolf_destroyed", 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct_Mission18.Main - MISSION COMPLETE\n")
+	await ibacktobase.allow()
 	return
 	return 0
 
@@ -978,12 +977,11 @@ func local_17530(v0, v1) -> Variant:
 			v3 = v3 + 1
 	v2 = group.group_count(v0)
 	if _pog_is_null(v2):
-		pass
-	else:
-		v3 = 0
-		while v3 < v2:
-			await local_17530(group.nth_group(v0, v3), v1)
-			v3 = v3 + 1
+		return 0
+	v3 = 0
+	while v3 < v2:
+		await local_17530(group.nth_group(v0, v3), v1)
+		v3 = v3 + 1
 	return 0
 	return 0
 

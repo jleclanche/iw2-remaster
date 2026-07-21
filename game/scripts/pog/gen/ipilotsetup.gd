@@ -124,76 +124,76 @@ func marauder(v0) -> Variant:
 func string_description(v0, v1) -> Variant:
 	if _pog_eq(v1, "Generic"):
 		await generic(v0)
-	else:
-		if _pog_eq(v1, "GenericAggressive"):
-			await generic_aggressive(v0)
-		else:
-			if _pog_eq(v1, "GenericCoward"):
-				await generic_coward(v0)
-			else:
-				if _pog_eq(v1, "GenericSupply"):
-					await generic_supply(v0)
-				else:
-					if _pog_eq(v1, "GenericTrade"):
-						await generic_trade(v0)
-					else:
-						if _pog_eq(v1, "GenericFreight"):
-							await generic_freight(v0)
-						else:
-							if _pog_eq(v1, "GenericCargoPod"):
-								await generic_cargo_pod(v0)
-							else:
-								if _pog_eq(v1, "GenericPolice"):
-									await generic_police(v0)
-								else:
-									if _pog_eq(v1, "GenericMilitary"):
-										await generic_military(v0)
-									else:
-										if _pog_eq(v1, "GenericOfficial"):
-											await generic_official(v0)
-										else:
-											if _pog_eq(v1, "GenericUnderworld"):
-												await generic_underworld(v0)
-											else:
-												if _pog_eq(v1, "GenericScum"):
-													await generic_scum(v0)
-												else:
-													if _pog_eq(v1, "GangsterAggressive"):
-														await gangster_aggressive(v0)
-													else:
-														if _pog_eq(v1, "GangsterCoward"):
-															await gangster_coward(v0)
-														else:
-															if _pog_eq(v1, "PoliceHeroic"):
-																await police_heroic(v0)
-															else:
-																if _pog_eq(v1, "MilitaryAggessive"):
-																	await military_aggressive(v0)
-																else:
-																	if _pog_eq(v1, "MilitarySupply"):
-																		await military_supply(v0)
-																	else:
-																		if _pog_eq(v1, "TradeAggressive"):
-																			await trade_aggressive(v0)
-																		else:
-																			if _pog_eq(v1, "TradeCoward"):
-																				await trade_coward(v0)
-																			else:
-																				if _pog_eq(v1, "CourierSecure"):
-																					await courier_secure(v0)
-																				else:
-																					if _pog_eq(v1, "Marauder"):
-																						await marauder(v0)
-																					else:
-																						if _pog_eq(v1, "None"):
-																							if PogRuntime.TRACE:
-																								debug.print_string("iPilotSetup.StringDescription: Not installing and AI pilot...\n")
-																						else:
-																							if PogRuntime.TRACE:
-																								debug.print_string("iPilotSetup.StringDescription: ERROR - The string - ")
-																								debug.print_string(v1)
-																								debug.print_string(" cannot be found as a pilot type, using generic pilot type instead. So there. \n")
-																							await generic(v0)
+		return 0
+	if _pog_eq(v1, "GenericAggressive"):
+		await generic_aggressive(v0)
+		return 0
+	if _pog_eq(v1, "GenericCoward"):
+		await generic_coward(v0)
+		return 0
+	if _pog_eq(v1, "GenericSupply"):
+		await generic_supply(v0)
+		return 0
+	if _pog_eq(v1, "GenericTrade"):
+		await generic_trade(v0)
+		return 0
+	if _pog_eq(v1, "GenericFreight"):
+		await generic_freight(v0)
+		return 0
+	if _pog_eq(v1, "GenericCargoPod"):
+		await generic_cargo_pod(v0)
+		return 0
+	if _pog_eq(v1, "GenericPolice"):
+		await generic_police(v0)
+		return 0
+	if _pog_eq(v1, "GenericMilitary"):
+		await generic_military(v0)
+		return 0
+	if _pog_eq(v1, "GenericOfficial"):
+		await generic_official(v0)
+		return 0
+	if _pog_eq(v1, "GenericUnderworld"):
+		await generic_underworld(v0)
+		return 0
+	if _pog_eq(v1, "GenericScum"):
+		await generic_scum(v0)
+		return 0
+	if _pog_eq(v1, "GangsterAggressive"):
+		await gangster_aggressive(v0)
+		return 0
+	if _pog_eq(v1, "GangsterCoward"):
+		await gangster_coward(v0)
+		return 0
+	if _pog_eq(v1, "PoliceHeroic"):
+		await police_heroic(v0)
+		return 0
+	if _pog_eq(v1, "MilitaryAggessive"):
+		await military_aggressive(v0)
+		return 0
+	if _pog_eq(v1, "MilitarySupply"):
+		await military_supply(v0)
+		return 0
+	if _pog_eq(v1, "TradeAggressive"):
+		await trade_aggressive(v0)
+		return 0
+	if _pog_eq(v1, "TradeCoward"):
+		await trade_coward(v0)
+		return 0
+	if _pog_eq(v1, "CourierSecure"):
+		await courier_secure(v0)
+		return 0
+	if _pog_eq(v1, "Marauder"):
+		await marauder(v0)
+		return 0
+	if _pog_eq(v1, "None"):
+		if PogRuntime.TRACE:
+			debug.print_string("iPilotSetup.StringDescription: Not installing and AI pilot...\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iPilotSetup.StringDescription: ERROR - The string - ")
+		debug.print_string(v1)
+		debug.print_string(" cannot be found as a pilot type, using generic pilot type instead. So there. \n")
+	await generic(v0)
 	return 0
 	return 0
 

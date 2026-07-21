@@ -715,25 +715,24 @@ func set_cyclic_control_focus_path(v0) -> Variant:
 	v1 = list.item_count(v0)
 	v5 = 0
 	if _pog_is_null(v1):
-		pass
-	else:
-		if v1 == 1:
-			v2 = gui.cast(list.head(v0))
-			gui.set_window_previous_focus(v2, v2)
-			gui.set_window_next_focus(v2, v2)
-		else:
-			v2 = gui.cast(list.head(v0))
-			v4 = gui.cast(list.tail(v0))
-			v6 = 0
-			while v6 < list.item_count(v0):
-				v3 = gui.cast(list.get_nth(v0, v6))
-				gui.set_window_previous_focus(v3, v5)
-				if v5:
-					gui.set_window_next_focus(v5, v3)
-				v5 = v3
-				v6 = v6 + 1
-			gui.set_window_previous_focus(v2, v4)
-			gui.set_window_next_focus(v4, v2)
+		return 0
+	if v1 == 1:
+		v2 = gui.cast(list.head(v0))
+		gui.set_window_previous_focus(v2, v2)
+		gui.set_window_next_focus(v2, v2)
+		return 0
+	v2 = gui.cast(list.head(v0))
+	v4 = gui.cast(list.tail(v0))
+	v6 = 0
+	while v6 < list.item_count(v0):
+		v3 = gui.cast(list.get_nth(v0, v6))
+		gui.set_window_previous_focus(v3, v5)
+		if v5:
+			gui.set_window_next_focus(v5, v3)
+		v5 = v3
+		v6 = v6 + 1
+	gui.set_window_previous_focus(v2, v4)
+	gui.set_window_next_focus(v4, v2)
 	return 0
 	return 0
 

@@ -71,21 +71,21 @@ func wrong_disk_screen() -> Variant:
 	await wrong_disk_screen__on_retry()
 	if global.exists("WrongDiskScreen_GotDisk") == 1:
 		global.destroy("WrongDiskScreen_GotDisk")
-	else:
-		await local_1187(v9, "wrongdisk_pleaseinsert")
-		v9 = v9 + v8
-		await local_1187(v9, "wrongdisk_playdisk")
-		v1 = gui.create_window(v6 - v4 / 2, v7, v6 + v4 / 2, v7 + v5, gui.top_window())
-		v2 = await igui.create_fancy_button(0, 0, v1)
-		gui.set_window_title(v2, text.field("gui_cancel", 0))
-		gui.set_button_function_pog(v2, "iFrontendGUI.WrongDiskScreen_OnQuit")
-		gui.set_window_text_formatting(v2, 1, 0)
-		list.add_tail(v3, v2)
-		gui.set_first_control_focus(gui.cast(list.head(v3)))
-		await igui.set_cyclic_control_focus_path(v3)
-		v0 = _pog_spawn(local_1016.bind())
-		_pog_detach(v0)
-		global.create_handle("wrong_disk_monitor_task", 2, v0)
+		return 0
+	await local_1187(v9, "wrongdisk_pleaseinsert")
+	v9 = v9 + v8
+	await local_1187(v9, "wrongdisk_playdisk")
+	v1 = gui.create_window(v6 - v4 / 2, v7, v6 + v4 / 2, v7 + v5, gui.top_window())
+	v2 = await igui.create_fancy_button(0, 0, v1)
+	gui.set_window_title(v2, text.field("gui_cancel", 0))
+	gui.set_button_function_pog(v2, "iFrontendGUI.WrongDiskScreen_OnQuit")
+	gui.set_window_text_formatting(v2, 1, 0)
+	list.add_tail(v3, v2)
+	gui.set_first_control_focus(gui.cast(list.head(v3)))
+	await igui.set_cyclic_control_focus_path(v3)
+	v0 = _pog_spawn(local_1016.bind())
+	_pog_detach(v0)
+	global.create_handle("wrong_disk_monitor_task", 2, v0)
 	return 0
 	return 0
 

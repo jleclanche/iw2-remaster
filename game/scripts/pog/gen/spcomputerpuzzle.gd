@@ -572,10 +572,10 @@ func local_8358() -> Variant:
 			iinventory.remove(171, v16)
 		await ibasegui.set_triangulation_screen_enabled(0)
 		global.create_bool("g_got_match", 2, 1)
-	else:
-		gui.play_sound(3)
-		v11 = text.field("triangulation_nomatches", 0)
-		gui.set_window_title(v6, v11)
+		return
+	gui.play_sound(3)
+	v11 = text.field("triangulation_nomatches", 0)
+	gui.set_window_title(v6, v11)
 	return
 	return 0
 

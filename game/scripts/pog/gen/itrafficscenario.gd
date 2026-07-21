@@ -1203,135 +1203,135 @@ func haulage_out(v0) -> Variant:
 	if global.pog_int("g_total_haulage_running") >= 7:
 		if PogRuntime.TRACE:
 			debug.print_string("iTrafficScenario.Haualge: Aborting haulage sceneario.... capped value reached\n")
-	else:
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join(" iTrafficScenario.HaulageOut - Created HaulageOut Scenario for - ", object.string_property(v0, "name")))
+		debug.print_string(" \n")
+	v23 = ihabitat.cast(v0)
+	if _pog_is_null(v23):
+		v29 = ilagrangepoint.cast(v0)
 		if PogRuntime.TRACE:
-			debug.print_string(string.join(" iTrafficScenario.HaulageOut - Created HaulageOut Scenario for - ", object.string_property(v0, "name")))
-			debug.print_string(" \n")
-		v23 = ihabitat.cast(v0)
-		if _pog_is_null(v23):
-			v29 = ilagrangepoint.cast(v0)
+			debug.print_string("iTrafficScenario.HaulageOut  - location is an l-point, finding a location to generate ships \n")
+		v25 = global.pog_set("g_filtered_system_habitats")
+		while not (v28):
+			v23 = ihabitat.nearest(v25, v29)
 			if PogRuntime.TRACE:
-				debug.print_string("iTrafficScenario.HaulageOut  - location is an l-point, finding a location to generate ships \n")
-			v25 = global.pog_set("g_filtered_system_habitats")
-			while not (v28):
-				v23 = ihabitat.nearest(v25, v29)
+				debug.print_string("iTrafficScenario.HaulageOut - l point is local \n")
+			v8 = ihabitat.type(v23)
+			v27 = v8
+			if v27 >= 11 and v27 <= 34:
 				if PogRuntime.TRACE:
-					debug.print_string("iTrafficScenario.HaulageOut - l point is local \n")
-				v8 = ihabitat.type(v23)
-				v27 = v8
-				if v27 >= 11 and v27 <= 34:
+					debug.print_string(string.join("iTrafficScenario.HaulagEOut - substitute location for interstellar L-point is - ", object.string_property(v23, "name")))
+					debug.print_string("\n")
+				v28 = 1
+			else:
+				if p_set.is_empty(v25) == 1:
 					if PogRuntime.TRACE:
-						debug.print_string(string.join("iTrafficScenario.HaulagEOut - substitute location for interstellar L-point is - ", object.string_property(v23, "name")))
+						debug.print_string(string.join("iTrafficScenario.HaulageOut - unable to find appropriate haualge out location for system, gonna have to take water to - ", object.string_property(v23, "name")))
 						debug.print_string("\n")
 					v28 = 1
 				else:
-					if p_set.is_empty(v25) == 1:
-						if PogRuntime.TRACE:
-							debug.print_string(string.join("iTrafficScenario.HaulageOut - unable to find appropriate haualge out location for system, gonna have to take water to - ", object.string_property(v23, "name")))
-							debug.print_string("\n")
-						v28 = 1
-					else:
-						p_set.remove(v25, v23)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string(" ITrafficScenario.HaulageOut - location is a habitat.\n")
-		v8 = ihabitat.type(v23)
-		v9 = ihabitat.allegiance(v23)
-		if v8 == 122 or v8 == 121:
-			if PogRuntime.TRACE:
-				debug.print_string(" iTrafficScenario.HaulageOut - location is a beanstalk or transfer station - finding a surface location\n ")
-		v3 = await local_363(v23)
-		if v3 == 1:
-			v3 = 2
-		v4 = math.random_int(1, v3)
-		if global.pog_int("g_total_haulage_running") + v4 > 7:
-			v4 = 7 - global.pog_int("g_total_haulage_running")
-		v9 = ihabitat.allegiance(v23)
+					p_set.remove(v25, v23)
+	else:
 		if PogRuntime.TRACE:
-			debug.print_string(string.join("iTrafficScenario.HaulageOut - total freighters to create =  ", string.from_int(v4)))
-			debug.print_string("\n")
-		v31 = math.random(10.0, 100.0)
-		if v8 == 22 or v8 == 32:
-			v31 = v31 + 20.0
-		if v31 > 90.0:
-			v11 = await ishipcreation.get_traffic(3, v9, v4)
-		else:
-			if v31 >= 50.0:
-				v11 = await ishipcreation.get_traffic(1, v9, v4)
-			else:
-				v11 = await ishipcreation.get_traffic(0, v9, v4)
-		v6 = group.sim_count(v11)
-		v5 = math.random_int(0, 4)
-		if v5 <= 3 or object.property_exists(group.leader(v11), "mega_freighter") == 1:
-			v2 = 0
-			while v2 < v6:
-				v14 = iship.cast(group.nth_sim(v11, v2))
-				if PogRuntime.TRACE:
-					debug.print_string(string.join(" ITrafficScenario.HaulOut - Installing Cargo for ship number  - ", string.from_int(v2)))
-					debug.print_string(" \n ")
-				await ishipcreation.create_haulage_cargo(v14, v8)
-				v2 = v2 + 1
-		v10 = await local_588(v11)
-		if v10 > 0:
-			if PogRuntime.TRACE:
-				debug.print_string(string.join("iTrafficScenario.HaulageOut - Number of escorts to create = ", string.from_int(v10)))
-				debug.print_string("\n")
-			v12 = await ishipcreation.get_traffic(await local_876(v11), v9, v10)
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iTrafficScenario.HaulageOut -  No escorts generated \n")
-		if not _pog_is_null(v29):
-			v32 = await place_traffic(group.nth_sim(v11, 0), v29)
-		else:
-			v32 = await place_traffic(group.nth_sim(v11, 0), v0)
-		if v6 > 1:
-			if PogRuntime.TRACE:
-				debug.print_string(" iTrafficScenario.HaulOut - Placing  additional freighters in formation \n")
-			if v32:
-				await local_1259(v29, 30)
-				await iutilities.capsule_jump_group(v11, v29, math.random(1.0, 2.0))
-				await iformation.line_ahead(v11, math.random(1.0, 100.0), 0)
-			else:
-				await iformation.line_ahead(v11, math.random(1.0, 100.0), 1)
-		else:
-			if v32:
-				await local_1259(v29, 30)
-				isim.capsule_jump_staggered(isim.cast(group.leader(v11)), v29)
-		if v10 > 0:
-			if PogRuntime.TRACE:
-				debug.print_string(" iTrafficScenario.HaulOut - Placing lead escort\n")
-			if v10 > 1:
-				if PogRuntime.TRACE:
-					debug.print_string(" iTrafficScenario.HaulIn  - placing additional escorts in formation \n ")
-				if v32:
-					await local_1259(v29, 3)
-					await iutilities.capsule_jump_group(v12, v29, math.random(1.0, 2.0))
-					await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 0)
-				else:
-					await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 1)
-			else:
-				if v32:
-					await local_1259(v29, 3)
-					isim.capsule_jump_staggered(isim.cast(group.leader(v12)), v29)
-				else:
-					sim.place_relative_to(group.leader(v12), group.nth_sim(v11, 0), 0.0, 100.0, -100.0)
-				iai.give_escort_order(group.leader(v12), v11, 0.0, 100.0, -100.0, 8000.0)
-		if v10 > 0:
-			group.add_group(v11, v12)
+			debug.print_string(" ITrafficScenario.HaulageOut - location is a habitat.\n")
+	v8 = ihabitat.type(v23)
+	v9 = ihabitat.allegiance(v23)
+	if v8 == 122 or v8 == 121:
 		if PogRuntime.TRACE:
-			debug.print_string("iTrafficScenario.HaulOut - Assigning haualge orders to list, lead by ship called -  ")
-			debug.print_string(object.string_property(group.nth_sim(v11, 0), "name"))
-			debug.print_string("\n")
-		v30 = _pog_spawn(iscriptedorders.haulage.bind(v11, v0))
-		_pog_detach(v30)
-		if v5 <= 3:
-			if PogRuntime.TRACE:
-				debug.print_string(string.join("iTrafficScenario.HaulOut  - Hauled goods are being carried from  -  ", object.string_property(v0, "name")))
-				debug.print_string("\n")
+			debug.print_string(" iTrafficScenario.HaulageOut - location is a beanstalk or transfer station - finding a surface location\n ")
+	v3 = await local_363(v23)
+	if v3 == 1:
+		v3 = 2
+	v4 = math.random_int(1, v3)
+	if global.pog_int("g_total_haulage_running") + v4 > 7:
+		v4 = 7 - global.pog_int("g_total_haulage_running")
+	v9 = ihabitat.allegiance(v23)
+	if PogRuntime.TRACE:
+		debug.print_string(string.join("iTrafficScenario.HaulageOut - total freighters to create =  ", string.from_int(v4)))
+		debug.print_string("\n")
+	v31 = math.random(10.0, 100.0)
+	if v8 == 22 or v8 == 32:
+		v31 = v31 + 20.0
+	if v31 > 90.0:
+		v11 = await ishipcreation.get_traffic(3, v9, v4)
+	else:
+		if v31 >= 50.0:
+			v11 = await ishipcreation.get_traffic(1, v9, v4)
 		else:
+			v11 = await ishipcreation.get_traffic(0, v9, v4)
+	v6 = group.sim_count(v11)
+	v5 = math.random_int(0, 4)
+	if v5 <= 3 or object.property_exists(group.leader(v11), "mega_freighter") == 1:
+		v2 = 0
+		while v2 < v6:
+			v14 = iship.cast(group.nth_sim(v11, v2))
 			if PogRuntime.TRACE:
-				debug.print_string(string.join("iTrafficScenario.HaulOut - empty ships are approaching ", object.string_property(v0, "name")))
-				debug.print_string("\n")
+				debug.print_string(string.join(" ITrafficScenario.HaulOut - Installing Cargo for ship number  - ", string.from_int(v2)))
+				debug.print_string(" \n ")
+			await ishipcreation.create_haulage_cargo(v14, v8)
+			v2 = v2 + 1
+	v10 = await local_588(v11)
+	if v10 > 0:
+		if PogRuntime.TRACE:
+			debug.print_string(string.join("iTrafficScenario.HaulageOut - Number of escorts to create = ", string.from_int(v10)))
+			debug.print_string("\n")
+		v12 = await ishipcreation.get_traffic(await local_876(v11), v9, v10)
+	else:
+		if PogRuntime.TRACE:
+			debug.print_string("iTrafficScenario.HaulageOut -  No escorts generated \n")
+	if not _pog_is_null(v29):
+		v32 = await place_traffic(group.nth_sim(v11, 0), v29)
+	else:
+		v32 = await place_traffic(group.nth_sim(v11, 0), v0)
+	if v6 > 1:
+		if PogRuntime.TRACE:
+			debug.print_string(" iTrafficScenario.HaulOut - Placing  additional freighters in formation \n")
+		if v32:
+			await local_1259(v29, 30)
+			await iutilities.capsule_jump_group(v11, v29, math.random(1.0, 2.0))
+			await iformation.line_ahead(v11, math.random(1.0, 100.0), 0)
+		else:
+			await iformation.line_ahead(v11, math.random(1.0, 100.0), 1)
+	else:
+		if v32:
+			await local_1259(v29, 30)
+			isim.capsule_jump_staggered(isim.cast(group.leader(v11)), v29)
+	if v10 > 0:
+		if PogRuntime.TRACE:
+			debug.print_string(" iTrafficScenario.HaulOut - Placing lead escort\n")
+		if v10 > 1:
+			if PogRuntime.TRACE:
+				debug.print_string(" iTrafficScenario.HaulIn  - placing additional escorts in formation \n ")
+			if v32:
+				await local_1259(v29, 3)
+				await iutilities.capsule_jump_group(v12, v29, math.random(1.0, 2.0))
+				await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 0)
+			else:
+				await iescort.in_formation_goose(v12, v11, 0, 0.0, 100.0, -100.0, 40.0, 8000.0, 1)
+		else:
+			if v32:
+				await local_1259(v29, 3)
+				isim.capsule_jump_staggered(isim.cast(group.leader(v12)), v29)
+			else:
+				sim.place_relative_to(group.leader(v12), group.nth_sim(v11, 0), 0.0, 100.0, -100.0)
+			iai.give_escort_order(group.leader(v12), v11, 0.0, 100.0, -100.0, 8000.0)
+	if v10 > 0:
+		group.add_group(v11, v12)
+	if PogRuntime.TRACE:
+		debug.print_string("iTrafficScenario.HaulOut - Assigning haualge orders to list, lead by ship called -  ")
+		debug.print_string(object.string_property(group.nth_sim(v11, 0), "name"))
+		debug.print_string("\n")
+	v30 = _pog_spawn(iscriptedorders.haulage.bind(v11, v0))
+	_pog_detach(v30)
+	if v5 <= 3:
+		if PogRuntime.TRACE:
+			debug.print_string(string.join("iTrafficScenario.HaulOut  - Hauled goods are being carried from  -  ", object.string_property(v0, "name")))
+			debug.print_string("\n")
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string(string.join("iTrafficScenario.HaulOut - empty ships are approaching ", object.string_property(v0, "name")))
+		debug.print_string("\n")
 	return 0
 	return 0
 

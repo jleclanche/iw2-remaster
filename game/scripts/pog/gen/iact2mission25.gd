@@ -137,8 +137,8 @@ func local_773() -> Variant:
 func main_task() -> Variant:
 	if not (await iutilities.skip_mission("Marauder War?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -232,98 +232,98 @@ func mission_handler() -> Variant:
 		iemail.send_email("a2_m25_email_sender", "a2_m25_email_subject", "html:/text/act_2/act2_mission25_email", 1)
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2_Mission24.MissionHandler: Email Sent - EXITING\n")
-	else:
-		if not (iemail.read(v29)):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2_Mission25.MissionHandler: Email not read yet - EXITING\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission25. Email read - starting mission \n")
-			global.create_bool("g_hoffer_disabled", 2, 1)
-			ifaction.set_feeling(v19, v20, 1.0)
-			ifaction.set_feeling(v20, v19, 1.0)
-			v2 = isim.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
-			if _pog_is_null(v2):
-				if PogRuntime.TRACE:
-					debug.error("iAct2Mission25.mission_handler:Hoffer-Dante L-Point is invalid\n")
-			isim.set_sensor_visibility(v2, 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission25.MissionHandler: Progress = MS_Mission_Started. Waiting for player to enter Dante system.\n")
-			v27 = _pog_spawn(end_tasker.bind(_pog_current(), v28, v1, v11, v12, v13, v14, v15, v16, v17, v18))
-			_pog_detach(v27)
-			await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake"))
-			await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"))
-			iobjectives.add("a2_m25_objectives_meet_fleet_at_dante_faust_lpoint")
-			while true:
-				await _pog_wait(1)
-				if not _pog_eq(isim.active_world(), "map:/geog/badlands/dante"):
-					continue
-				break
-			isim.set_standard_sensor_visibility(v2, 1)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission25.MissionHandler: State Progress set to MS_In_Dante_System\n")
-			if state.progress(v28) == 1:
-				state.set_progress(v28, 2)
-			v4 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Central HQ")))
-			v5 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Shipyard")))
-			v6 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Supply Depot")))
-			v7 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Faust-Alpha L-Point")))
-			v3 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Dante Interstellar L-Point")))
-			v10 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Interstellar L-Point Defense Station")))
-			if PogRuntime.TRACE:
-				if _pog_is_null(v7):
-					debug.error("iAct2Mission25.mission_handler: Faust-Alpha L-Point is invalid\n")
-				if _pog_is_null(v4):
-					debug.error("iAct2Mission25.mission_handler: Dante L-Point is invalid\n")
-				if _pog_is_null(v5):
-					debug.error("iAct2Mission25.mission_handler: Marauder Shipyard is invalid\n")
-				if _pog_is_null(v6):
-					debug.error("iAct2Mission25.mission_handler: Marauder Cargo yard is invalid\n")
-				if _pog_is_null(v3):
-					debug.error("iAct2Mission25.mission_handler: Cannot find Dante L-point\n")
-				if _pog_is_null(v10):
-					debug.error("iAct2Mission25.mission_handler: Cannot find Dante L-point Defense station\n")
-			await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Central HQ"))
-			await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Shipyard"))
-			await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Supply Depot"))
-			await irangecheck.add_traffic_exception(imapentity.find_by_name("Faust-Alpha L-Point"))
-			await irangecheck.add_traffic_exception(imapentity.find_by_name("Dante Interstellar L-Point"))
-			await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Interstellar L-Point Defense Station"))
-			await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Central HQ")))
-			await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Shipyard")))
-			await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Supply Depot")))
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante")), 1)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"), 1)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante")), 1)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake")), 1)
-			ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")), 1)
-			imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost"), 1)
-			if state.progress(v28) != 5:
-				v26 = _pog_spawn(monitor_lpoint.bind(v7, v28))
-				if _pog_is_null(object.int_property(v28, "hq_destroyed")):
-					v23 = _pog_spawn(monitor_hq.bind(v4, v28))
-				if _pog_is_null(object.int_property(v28, "cargo_destroyed")):
-					v25 = _pog_spawn(monitor_cargo.bind(v6, v28))
-				if _pog_is_null(object.int_property(v28, "shipyard_destroyed")):
-					v24 = _pog_spawn(monitor_shipyard.bind(v5, v28))
-			iobjectives.set_state("a2_m25_objectives_meet_fleet_at_dante_faust_lpoint", 1)
-			while true:
-				await _pog_wait(1)
-				if state.progress(v28) != 5:
-					continue
-				break
-			await _pog_wait(5.0)
-			await iconversation.begin()
-			await iconversation.say(0, "name_hoffer", "a2_m25_dialogue_hoffer_all_bases_destroyed")
-			await iconversation.say(0, "name_cal", "a2_m25_dialogue_cal_lets_go")
-			await iconversation.end()
-			await local_24920(v0, v3, v10, v28)
-			global.set_bool("g_act2_marauders_defeated", 1)
-			global.destroy("g_hoffer_disabled")
-			state.destroy(_pog_current())
-			await imissiontracker.remove_mission(_pog_current())
-			if PogRuntime.TRACE:
-				debug.print_string("iAct2Mission25.mission_handler: MISSION COMPLETE\n")
+		return
+	if not (iemail.read(v29)):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct2_Mission25.MissionHandler: Email not read yet - EXITING\n")
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission25. Email read - starting mission \n")
+	global.create_bool("g_hoffer_disabled", 2, 1)
+	ifaction.set_feeling(v19, v20, 1.0)
+	ifaction.set_feeling(v20, v19, 1.0)
+	v2 = isim.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante"))
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
+			debug.error("iAct2Mission25.mission_handler:Hoffer-Dante L-Point is invalid\n")
+	isim.set_sensor_visibility(v2, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission25.MissionHandler: Progress = MS_Mission_Started. Waiting for player to enter Dante system.\n")
+	v27 = _pog_spawn(end_tasker.bind(_pog_current(), v28, v1, v11, v12, v13, v14, v15, v16, v17, v18))
+	_pog_detach(v27)
+	await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake"))
+	await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"))
+	iobjectives.add("a2_m25_objectives_meet_fleet_at_dante_faust_lpoint")
+	while true:
+		await _pog_wait(1)
+		if not _pog_eq(isim.active_world(), "map:/geog/badlands/dante"):
+			continue
+		break
+	isim.set_standard_sensor_visibility(v2, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission25.MissionHandler: State Progress set to MS_In_Dante_System\n")
+	if state.progress(v28) == 1:
+		state.set_progress(v28, 2)
+	v4 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Central HQ")))
+	v5 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Shipyard")))
+	v6 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Supply Depot")))
+	v7 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Faust-Alpha L-Point")))
+	v3 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Dante Interstellar L-Point")))
+	v10 = isim.cast(imapentity.waypoint_for_entity(imapentity.find_by_name("Marauder Interstellar L-Point Defense Station")))
+	if PogRuntime.TRACE:
+		if _pog_is_null(v7):
+			debug.error("iAct2Mission25.mission_handler: Faust-Alpha L-Point is invalid\n")
+		if _pog_is_null(v4):
+			debug.error("iAct2Mission25.mission_handler: Dante L-Point is invalid\n")
+		if _pog_is_null(v5):
+			debug.error("iAct2Mission25.mission_handler: Marauder Shipyard is invalid\n")
+		if _pog_is_null(v6):
+			debug.error("iAct2Mission25.mission_handler: Marauder Cargo yard is invalid\n")
+		if _pog_is_null(v3):
+			debug.error("iAct2Mission25.mission_handler: Cannot find Dante L-point\n")
+		if _pog_is_null(v10):
+			debug.error("iAct2Mission25.mission_handler: Cannot find Dante L-point Defense station\n")
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Central HQ"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Shipyard"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Supply Depot"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Faust-Alpha L-Point"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Dante Interstellar L-Point"))
+	await irangecheck.add_traffic_exception(imapentity.find_by_name("Marauder Interstellar L-Point Defense Station"))
+	await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Central HQ")))
+	await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Shipyard")))
+	await istation.add_reactive_exception(ihabitat.cast(imapentity.find_by_name("Marauder Supply Depot")))
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Faust-Alpha L-Point", "map:/geog/badlands/dante")), 1)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"), 1)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante")), 1)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake")), 1)
+	ilagrangepoint.set_usable(ilagrangepoint.cast(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost")), 1)
+	imapentity.set_map_visibility(imapentity.find_by_name_in_system("Dainn I L-Point", "map:/geog/badlands/firefrost"), 1)
+	if state.progress(v28) != 5:
+		v26 = _pog_spawn(monitor_lpoint.bind(v7, v28))
+		if _pog_is_null(object.int_property(v28, "hq_destroyed")):
+			v23 = _pog_spawn(monitor_hq.bind(v4, v28))
+		if _pog_is_null(object.int_property(v28, "cargo_destroyed")):
+			v25 = _pog_spawn(monitor_cargo.bind(v6, v28))
+		if _pog_is_null(object.int_property(v28, "shipyard_destroyed")):
+			v24 = _pog_spawn(monitor_shipyard.bind(v5, v28))
+	iobjectives.set_state("a2_m25_objectives_meet_fleet_at_dante_faust_lpoint", 1)
+	while true:
+		await _pog_wait(1)
+		if state.progress(v28) != 5:
+			continue
+		break
+	await _pog_wait(5.0)
+	await iconversation.begin()
+	await iconversation.say(0, "name_hoffer", "a2_m25_dialogue_hoffer_all_bases_destroyed")
+	await iconversation.say(0, "name_cal", "a2_m25_dialogue_cal_lets_go")
+	await iconversation.end()
+	await local_24920(v0, v3, v10, v28)
+	global.set_bool("g_act2_marauders_defeated", 1)
+	global.destroy("g_hoffer_disabled")
+	state.destroy(_pog_current())
+	await imissiontracker.remove_mission(_pog_current())
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission25.mission_handler: MISSION COMPLETE\n")
 	return
 	return 0
 
@@ -912,23 +912,23 @@ func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission25.add_state_properties: State is invalid - not adding properties. \n")
-	else:
-		if not (object.property_exists(v0, "lpoint_first_time")):
-			object.add_int_property(v0, "lpoint_first_time", 0)
-		if not (object.property_exists(v0, "lpoint_wingmen_launched")):
-			object.add_int_property(v0, "lpoint_wingmen_launched", 0)
-		if not (object.property_exists(v0, "hq_first_time")):
-			object.add_int_property(v0, "hq_first_time", 1)
-		if not (object.property_exists(v0, "hq_destroyed")):
-			object.add_int_property(v0, "hq_destroyed", 0)
-		if not (object.property_exists(v0, "hq_gunstar_first_time")):
-			object.add_int_property(v0, "hq_gunstar_first_time", 1)
-		if not (object.property_exists(v0, "cargo_destroyed")):
-			object.add_int_property(v0, "cargo_destroyed", 0)
-		if not (object.property_exists(v0, "shipyard_destroyed")):
-			object.add_int_property(v0, "shipyard_destroyed", 0)
-		if PogRuntime.TRACE:
-			debug.print_string("iAct2Mission26.add_state_properties: Added State Properties\n")
+		return 0
+	if not (object.property_exists(v0, "lpoint_first_time")):
+		object.add_int_property(v0, "lpoint_first_time", 0)
+	if not (object.property_exists(v0, "lpoint_wingmen_launched")):
+		object.add_int_property(v0, "lpoint_wingmen_launched", 0)
+	if not (object.property_exists(v0, "hq_first_time")):
+		object.add_int_property(v0, "hq_first_time", 1)
+	if not (object.property_exists(v0, "hq_destroyed")):
+		object.add_int_property(v0, "hq_destroyed", 0)
+	if not (object.property_exists(v0, "hq_gunstar_first_time")):
+		object.add_int_property(v0, "hq_gunstar_first_time", 1)
+	if not (object.property_exists(v0, "cargo_destroyed")):
+		object.add_int_property(v0, "cargo_destroyed", 0)
+	if not (object.property_exists(v0, "shipyard_destroyed")):
+		object.add_int_property(v0, "shipyard_destroyed", 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission26.add_state_properties: Added State Properties\n")
 	return 0
 	return 0
 
@@ -2192,12 +2192,11 @@ func local_38366(v0, v1, v2) -> Variant:
 			v4 = v4 + 1
 	v3 = group.group_count(v0)
 	if _pog_is_null(v3):
-		pass
-	else:
-		v4 = 0
-		while v4 < v3:
-			await local_38366(group.nth_group(v0, v4), v1, v2)
-			v4 = v4 + 1
+		return 0
+	v4 = 0
+	while v4 < v3:
+		await local_38366(group.nth_group(v0, v4), v1, v2)
+		v4 = v4 + 1
 	return 0
 	return 0
 

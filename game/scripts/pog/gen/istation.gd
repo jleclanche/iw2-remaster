@@ -96,56 +96,21 @@ func enable_reactive_in_area(v0, v1) -> Variant:
 	return 0
 
 func local_498(v0, v1, v2) -> Variant:
-	var _pc: int = 498
-	while true:
-		if _pc == 498:
-			if global.exists("gl_station_reaction_no_report"):
-				_pc = 523
-				continue
-			else:
-				_pc = 555
-				continue
-		elif _pc == 523:
-			if global.pog_bool("gl_station_reaction_no_report") == 1:
-				_pc = 550
-				continue
-			else:
-				_pc = 555
-				continue
-		elif _pc == 550:
-			_pc = 742
-			continue
-		elif _pc == 555:
-			_pc = 742
-			continue
-		elif _pc == 560:
-			if _pog_is_null(v1):
-				_pc = 574
-				continue
-			else:
-				_pc = 600
-				continue
-		elif _pc == 574:
+	if global.exists("gl_station_reaction_no_report"):
+		if global.pog_bool("gl_station_reaction_no_report") == 1:
+			return 0
+	if PogRuntime.TRACE:
+		if _pog_is_null(v1):
 			debug.print_string("iStation : ")
-			_pc = 701
-			continue
-		elif _pc == 600:
+		else:
 			debug.print_string("iStation(")
 			debug.print_handle(v1)
 			debug.print_string("::")
 			debug.print_handle(v2)
 			debug.print_string(") : ")
-			_pc = 701
-			continue
-		elif _pc == 701:
-			debug.print_string(v0)
-			debug.print_string("\n")
-			_pc = 742
-			continue
-		elif _pc == 742:
-			return 0
-		else:
-			return 0
+		debug.print_string(v0)
+		debug.print_string("\n")
+	return 0
 	return 0
 
 func local_745(v0) -> Variant:
@@ -165,33 +130,30 @@ func local_837(v0, v1) -> Variant:
 	var v5: Variant = 0
 	v2 = ""
 	if ihabitat.allegiance(v0) == 53:
-		pass
+		return 0
+	if _pog_is_null(v0):
+		return 0
+	v3 = await local_798()
+	if _pog_is_null(v3):
+		return 0
+	v2 = await warning_name(v1)
+	if await local_745(v0):
+		match v1:
+			6:
+				v2 = "attack_guarded_cops_"
+			3:
+				v2 = "warning_gentle_cops_"
+	v2 = string.join("stock_station_", v2)
+	v4 = inifile.pog_int(v3, v2, "num_entries", 1)
+	v5 = math.random_int(1, v4)
+	v2 = string.join(v2, string.from_int(v5))
+	if object.i_d_modulus(v0, 13) > 7:
+		v2 = string.join(v2, "_male")
 	else:
-		if _pog_is_null(v0):
-			pass
-		else:
-			v3 = await local_798()
-			if _pog_is_null(v3):
-				pass
-			else:
-				v2 = await warning_name(v1)
-				if await local_745(v0):
-					match v1:
-						6:
-							v2 = "attack_guarded_cops_"
-						3:
-							v2 = "warning_gentle_cops_"
-				v2 = string.join("stock_station_", v2)
-				v4 = inifile.pog_int(v3, v2, "num_entries", 1)
-				v5 = math.random_int(1, v4)
-				v2 = string.join(v2, string.from_int(v5))
-				if object.i_d_modulus(v0, 13) > 7:
-					v2 = string.join(v2, "_male")
-				else:
-					v2 = string.join(v2, "_female")
-				if icomms.is_busy():
-					return 0
-				icomms.shout(v0, "", v2)
+		v2 = string.join(v2, "_female")
+	if icomms.is_busy():
+		return 0
+	icomms.shout(v0, "", v2)
 	return 0
 	return 0
 
@@ -236,51 +198,50 @@ func local_1627(v0, v1, v2) -> Variant:
 			object.add_int_property(v0, "warned_level", 1)
 		else:
 			object.add_int_property(v0, "warned_level", 2)
-	else:
-		v4 = object.list_property(v1, "enemy_list")
-		if not (object.property_exists(v0, "warned_level")):
-			if v2 < 1000.0:
-				object.add_int_property(v0, "warned_level", 1)
-			else:
-				object.add_int_property(v0, "warned_level", 2)
-			object.add_float_property(v0, "warned_time", igame.game_time())
+		return 0
+	v4 = object.list_property(v1, "enemy_list")
+	if not (object.property_exists(v0, "warned_level")):
+		if v2 < 1000.0:
+			object.add_int_property(v0, "warned_level", 1)
 		else:
-			v5 = object.int_property(v0, "warned_level")
-			v3 = igame.game_time() - object.float_property(v0, "warned_time")
-			match v5:
-				1:
-					if v3 <= 10.0:
-						if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
-							await local_837(v1, 5)
-						object.set_int_property(v0, "warned_level", 2)
-						object.set_float_property(v0, "warned_time", igame.game_time())
+			object.add_int_property(v0, "warned_level", 2)
+		object.add_float_property(v0, "warned_time", igame.game_time())
+		return 0
+	v5 = object.int_property(v0, "warned_level")
+	v3 = igame.game_time() - object.float_property(v0, "warned_time")
+	match v5:
+		1:
+			if v3 <= 10.0:
+				if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
+					await local_837(v1, 5)
+				object.set_int_property(v0, "warned_level", 2)
+				object.set_float_property(v0, "warned_time", igame.game_time())
+			else:
+				await local_498("add_station_enemy: This vessel was warned a while ago - sticking with gentle warn...", v1, v0)
+				if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
+					if v2 < 1000.0:
+						await local_837(v1, 3)
 					else:
-						await local_498("add_station_enemy: This vessel was warned a while ago - sticking with gentle warn...", v1, v0)
-						if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
-							if v2 < 1000.0:
-								await local_837(v1, 3)
-							else:
-								await local_837(v1, 5)
-						if v2 < 1000.0:
-							object.set_int_property(v0, "warned_level", 1)
-						else:
-							object.set_int_property(v0, "warned_level", 2)
-						object.set_float_property(v0, "warned_time", igame.game_time())
-					return 0
-				2:
-					if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
-						await local_837(v1, 6)
-					list.add_tail(v4, v0)
-					object.set_list_property(v1, "enemy_list", v4)
-					object.set_int_property(v0, "warned_level", 3)
-					object.set_float_property(v0, "warned_time", igame.game_time())
-					if not (object.property_exists(v1, "station_protection_handler")):
-						v6 = _pog_spawn(station_protection_handler.bind(v1))
-						_pog_detach(v6)
-						object.add_handle_property(v1, "station_protection_handler", v6)
-					return 0
-			await local_498("add_station_enemy: This ship is already in the bad books....", v1, v0)
+						await local_837(v1, 5)
+				if v2 < 1000.0:
+					object.set_int_property(v0, "warned_level", 1)
+				else:
+					object.set_int_property(v0, "warned_level", 2)
+				object.set_float_property(v0, "warned_time", igame.game_time())
 			return 0
+		2:
+			if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
+				await local_837(v1, 6)
+			list.add_tail(v4, v0)
+			object.set_list_property(v1, "enemy_list", v4)
+			object.set_int_property(v0, "warned_level", 3)
+			object.set_float_property(v0, "warned_time", igame.game_time())
+			if not (object.property_exists(v1, "station_protection_handler")):
+				v6 = _pog_spawn(station_protection_handler.bind(v1))
+				_pog_detach(v6)
+				object.add_handle_property(v1, "station_protection_handler", v6)
+			return 0
+	await local_498("add_station_enemy: This ship is already in the bad books....", v1, v0)
 	return 0
 	return 0
 
@@ -612,22 +573,21 @@ func station_reactive(v0, v1, v2) -> Variant:
 	v5 = ""
 	v6 = ""
 	if _pog_is_null(global.exists("g_active_location_list")):
-		pass
-	else:
-		v3 = global.list("g_active_location_list")
-		if list.contains(v3, v0) and not (object.property_exists(v0, "reactive_exception")):
-			if not (object.property_exists(v0, "station_protection_handler")):
-				await local_1627(iship.cast(v1), v0, v2)
-			else:
-				if object.property_exists(v1, "warned_level"):
-					if object.int_property(v1, "warned_level") == 3:
-						return
-				await local_1627(iship.cast(v1), v0, v2)
-				if PogRuntime.TRACE:
-					debug.print_string("iStation.StationReactive: Station protection handler already running... adding vessel to enermy list\n")
+		return
+	v3 = global.list("g_active_location_list")
+	if list.contains(v3, v0) and not (object.property_exists(v0, "reactive_exception")):
+		if not (object.property_exists(v0, "station_protection_handler")):
+			await local_1627(iship.cast(v1), v0, v2)
 		else:
+			if object.property_exists(v1, "warned_level"):
+				if object.int_property(v1, "warned_level") == 3:
+					return
+			await local_1627(iship.cast(v1), v0, v2)
 			if PogRuntime.TRACE:
-				debug.print_string("iStation.StationReactive: Attack going on outside active loaction list...\n")
+				debug.print_string("iStation.StationReactive: Station protection handler already running... adding vessel to enermy list\n")
+	else:
+		if PogRuntime.TRACE:
+			debug.print_string("iStation.StationReactive: Attack going on outside active loaction list...\n")
 	return
 	return 0
 

@@ -108,8 +108,8 @@ func local_365() -> Variant:
 	if not (await iutilities.skip_mission("Errand Boy?")):
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 

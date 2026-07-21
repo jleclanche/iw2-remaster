@@ -100,9 +100,8 @@ func local_275() -> Variant:
 	if await iutilities.skip_mission("Unification??"):
 		await stub()
 		return
-	else:
-		v0 = _pog_spawn(mission_handler.bind())
-		_pog_detach(v0)
+	v0 = _pog_spawn(mission_handler.bind())
+	_pog_detach(v0)
 	return
 	return 0
 

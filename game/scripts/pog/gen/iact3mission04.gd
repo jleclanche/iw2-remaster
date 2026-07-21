@@ -116,10 +116,10 @@ func local_325() -> Variant:
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission("Capture the Jump Accelerator?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		if not (global.exists("g_act3_capture_accelerator_complete")):
-			return
-		global.set_bool("g_act3_capture_accelerator_complete", 1)
+		return
+	if not (global.exists("g_act3_capture_accelerator_complete")):
+		return
+	global.set_bool("g_act3_capture_accelerator_complete", 1)
 	return
 	return 0
 
@@ -222,357 +222,357 @@ func mission_handler() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iAct3_Mission04 Sending Email\n")
 		iemail.send_email("a3_m04_email_sender", "a3_m04_email_subject", "html:/text/act_3/act3_mission04_email", 1)
-	else:
-		if not (iemail.read(v37)):
+		return
+	if not (iemail.read(v37)):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct3_Mission04 Email not read yet. Exiting\n")
+		return
+	await local_68(v36)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct3_Mission04 Email read. Starting Mission\n")
+	v40 = ifaction.find("MAAS Corporation")
+	v41 = ifaction.find("League")
+	v42 = ifaction.find("Player")
+	ifaction.set_feeling(v40, v42, -1.0)
+	ifaction.set_feeling(v42, v40, -1.0)
+	ifaction.set_feeling(v42, v41, 1.0)
+	ifaction.set_feeling(v41, v42, 1.0)
+	sim.pog_preload("ini:/sims/ships/utility/megatransporter")
+	sim.pog_preload("ini:/sims/ships/utility/megapod")
+	sim.pog_preload("ini:/sims/ships/utility/megapod_open_top_port")
+	sim.pog_preload("ini:/sims/ships/utility/puffin")
+	sim.pog_preload("ini:/sims/ships/independent/heavy_corvette_mca")
+	sim.pog_preload("ini:/sims/stations/JumpAccelerator")
+	text.add("csv:/text/act_3/act3_mission04")
+	text.add("csv:/text/act_3/act3_mission04_addendum")
+	text.add("csv:/text/act_3/act3_mission04_addendum2")
+	iobjectives.add("a3_m04_objective_dock_to_freighter")
+	v7 = group.create()
+	v8 = group.create()
+	v9 = group.create()
+	v10 = group.create()
+	v20 = group.create()
+	v21 = group.create()
+	v22 = group.create()
+	v23 = group.create()
+	group.add_group(v7, v8)
+	group.add_group(v7, v9)
+	group.add_group(v7, v10)
+	group.add_group(v7, v20)
+	group.add_group(v7, v21)
+	group.add_group(v7, v22)
+	group.add_group(v7, v23)
+	v1 = imapentity.find_by_name("Lucrecia's Base")
+	v5 = isim.cast(imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault"))
+	v6 = imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")
+	_pog_detach(_pog_spawn(local_487.bind(_pog_current(), v36, v3, v4, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25)))
+	if PogRuntime.TRACE:
+		if _pog_is_null(v1):
 			if PogRuntime.TRACE:
-				debug.print_string("iAct3_Mission04 Email not read yet. Exiting\n")
-		else:
-			await local_68(v36)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct3_Mission04 Email read. Starting Mission\n")
-			v40 = ifaction.find("MAAS Corporation")
-			v41 = ifaction.find("League")
-			v42 = ifaction.find("Player")
-			ifaction.set_feeling(v40, v42, -1.0)
-			ifaction.set_feeling(v42, v40, -1.0)
-			ifaction.set_feeling(v42, v41, 1.0)
-			ifaction.set_feeling(v41, v42, 1.0)
-			sim.pog_preload("ini:/sims/ships/utility/megatransporter")
-			sim.pog_preload("ini:/sims/ships/utility/megapod")
-			sim.pog_preload("ini:/sims/ships/utility/megapod_open_top_port")
-			sim.pog_preload("ini:/sims/ships/utility/puffin")
-			sim.pog_preload("ini:/sims/ships/independent/heavy_corvette_mca")
-			sim.pog_preload("ini:/sims/stations/JumpAccelerator")
-			text.add("csv:/text/act_3/act3_mission04")
-			text.add("csv:/text/act_3/act3_mission04_addendum")
-			text.add("csv:/text/act_3/act3_mission04_addendum2")
-			iobjectives.add("a3_m04_objective_dock_to_freighter")
-			v7 = group.create()
-			v8 = group.create()
-			v9 = group.create()
-			v10 = group.create()
-			v20 = group.create()
-			v21 = group.create()
-			v22 = group.create()
-			v23 = group.create()
-			group.add_group(v7, v8)
-			group.add_group(v7, v9)
-			group.add_group(v7, v10)
-			group.add_group(v7, v20)
-			group.add_group(v7, v21)
-			group.add_group(v7, v22)
-			group.add_group(v7, v23)
-			v1 = imapentity.find_by_name("Lucrecia's Base")
-			v5 = isim.cast(imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault"))
-			v6 = imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")
-			_pog_detach(_pog_spawn(local_487.bind(_pog_current(), v36, v3, v4, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25)))
-			if PogRuntime.TRACE:
-				if _pog_is_null(v1):
-					if PogRuntime.TRACE:
-						debug.print_string("iAct3Mission04.MissionHandler: Can't find player base: EXITING\n")
-				if _pog_is_null(v5):
-					debug.print_string("iAct3Mission04.mission_handler: Cannot find Formhault Jump Accelerator - EXITING\n")
-					return
-				if _pog_is_null(v6):
-					debug.print_string("iAct3Mission04.mission_handler: Cannot find Santa Romera Jump Accelerator - EXITING\n")
-					return
-				if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
-					v1 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")
-					await iconversation.one_liner(0, "DEBUG:", "Act 3 Mission 4 Mission being tested in isolation. Placing you in the correct starting location.")
-					sim.place_relative_to(v0, v1, 1000.0, 1000.0, 1000.0)
-					while true:
-						await _pog_wait(0.10000000149011612)
-						if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera")):
-							break
-			await irangecheck.add_traffic_exceptions_in_area(imapentity.cast(v6), 1000000.0)
-			await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))
-			await irangecheck.add_out_of_system_traffic_exception(imapentity.cast(v5))
-			await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault"))
-			await istation.disable_reactive_in_area(v6, 30000.0)
-			v11 = iship.create("ini:/sims/ships/utility/megatransporter_noports", "a3_m04_ship_megafreighter")
-			group.add_sim(v7, v11)
-			isim.set_mission_critical(v11, 1)
-			v39 = await local_17823(v11)
-			v12 = iship.create("ini:/sims/ships/utility/megapod_open_rotated", "a3_m04_player_pod")
-			v43 = idockport.cast(list.head(v39))
-			list.remove(v39, v43)
-			v44 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v12, 2, 1)))
-			idockport.dock(v44, v43)
-			sim.set_cullable(v12, 0)
-			group.add_sim(v7, v12)
-			isim.set_indestructable(v12, 1)
-			v30 = 0
-			while v30 < 4:
-				v14 = iship.create("ini:/sims/ships/utility/megapod_open_rotated", "a3_m04_ship_megapod")
-				v43 = idockport.cast(list.head(v39))
-				list.remove(v39, v43)
-				v44 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v14, 2, 1)))
-				idockport.dock(v43, v44)
-				sim.set_cullable(v14, 0)
-				group.add_sim(v9, v14)
-				isim.set_indestructable(v14, 1)
-				v15 = iship.create("ini:/sims/ships/independent/heavy_corvette_mca", string.join("a3_m04_ship_wingman_1+ +", string.from_int(v30 + 1)))
-				group.add_sim(v10, v15)
-				await ipilotsetup.marauder(v15)
-				isim.set_faction(v15, v41)
-				v30 = v30 + 1
-			v13 = iship.create("ini:/sims/ships/utility/megapod_open_rotated", "a3_m04_ship_marines_Pod")
-			sim.set_cullable(v13, 0)
-			v43 = idockport.cast(list.head(v39))
-			list.remove(v39, v43)
-			v44 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v13, 2, 1)))
-			isim.dock(v13, v11)
-			isim.set_indestructable(v13, 1)
-			v31 = idockport.count(v11, 3, 1)
-			v30 = 0
-			while v30 < v31:
-				v14 = iship.create("ini:/sims/ships/utility/megapod", "a3_m04_ship_megapod")
-				iship.dock(v14, v11)
-				sim.set_cullable(v14, 0)
-				isim.set_indestructable(v14, 1)
-				v30 = v30 + 1
-			v45 = idockport.cast(subsim.create("ini:/subsims/dockports/universal_port"))
-			sim.add_subsim(v11, v45)
-			sim.place_relative_to(v11, v1, 100.0, -200.0, 8000.0)
-			isim.set_indestructable(v11, 1)
-			sim.set_orientation_euler(v11, 90.0, 0.0, 30.0)
-			await iconversation.one_liner(v11, "", "a3_m04_dialogue_ship_megafreighter_were_ready_to_go")
-			while true:
-				await _pog_wait(0.5)
-				if sim.distance_between(v0, v11) >= 4000.0:
-					continue
-				break
-			iai.clear_autopilot()
-			subsim.destroy(v45)
-			global.create_bool("g_disable_traffic_momitor", 2, 1)
-			await imusic.pause()
-			await icutsceneutilities.handle_abort(_pog_spawn(local_10479.bind(v11, v0, v12, v1, v19, v5, v6)))
-			igame.enable_blackout(1)
-			global.destroy("g_disable_traffic_momitor")
-			iship.set_free_without_pilot(v0, 0)
-			sim.set_collision(v0, 1)
-			sim.set_collision(v11, 1)
-			sim.copy_orientation(v0, v12)
-			sim.add_child_relative_to(v12, v0, 0.0, 0.0, 0.0)
-			sim.place_relative_to(v11, v5, 0.0, 0.0, 10000.0)
+				debug.print_string("iAct3Mission04.MissionHandler: Can't find player base: EXITING\n")
+		if _pog_is_null(v5):
+			debug.print_string("iAct3Mission04.mission_handler: Cannot find Formhault Jump Accelerator - EXITING\n")
+			return
+		if _pog_is_null(v6):
+			debug.print_string("iAct3Mission04.mission_handler: Cannot find Santa Romera Jump Accelerator - EXITING\n")
+			return
+		if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
+			v1 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/santa_romera")
+			await iconversation.one_liner(0, "DEBUG:", "Act 3 Mission 4 Mission being tested in isolation. Placing you in the correct starting location.")
+			sim.place_relative_to(v0, v1, 1000.0, 1000.0, 1000.0)
 			while true:
 				await _pog_wait(0.10000000149011612)
-				if not (not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault")):
+				if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera")):
 					break
-			await istation.disable_reactive_in_area(v5, 100000.0)
-			sim.copy_orientation(v11, v5)
-			sim.set_velocity(v11, 0.0, 0.0, 0.0)
-			sim.set_angular_velocity(v11, 0.0, 0.0, 0.0, 0.0)
-			iship.set_free_without_pilot(v11, 0)
-			v19 = await local_16657(v5)
-			v21 = await local_10251("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_patrol_1", v5, 3)
-			v22 = await local_10251("ini:/sims/ships/cops/interceptor", "a3_m04_ship_patrol_2", v5, 3)
-			v23 = await local_10251("ini:/sims/ships/navy/heavy_corvette_mk1", "a3_m04_ship_patrol_3", v5, 3)
-			group.add_group(v20, v21)
-			group.add_group(v20, v22)
-			group.add_group(v20, v23)
-			v16 = iship.create("ini:/sims/ships/utility/puffin", "a3_m04_ship_marines")
-			sim.add_child_relative_to(v13, v16, 0.0, 0.0, 0.0)
-			group.add_sim(v7, v16)
-			await ipilotsetup.generic_cargo_pod(v16)
-			isim.set_faction(v16, v41)
-			isim.set_mission_critical(v16, 1)
-			isim.set_sensor_visibility(v16, 1)
-			object.set_string_property(v16, "death_script", "iDeathScript.CriticalShipDeath")
-			iobjectives.set_state("a3_m04_objective_dock_to_freighter", 1)
-			iobjectives.add("a3_m04_objective_launch_from_pod")
-			stream.stop(0, 0)
-			stream.stop(1, 0)
-			await imusic.pog_resume()
-			await imusic.set_suite(2)
-			await imusic.set_mood(4)
-			igame.enable_blackout(0)
-			await icutsceneutilities.handle_abort(_pog_spawn(local_16871.bind(v0, v12, v11, v10, v9)))
-			igame.enable_blackout(1)
-			if not _pog_is_null(sim.parent(v0)):
-				sim.detach_child(sim.parent(v0), v0)
-			iship.set_free_without_pilot(v0, 0)
-			sim.set_collision(v0, 1)
-			while v30 < group.sim_count(v10):
-				v17 = isim.cast(group.nth_sim(v10, v30))
-				sim.set_collision(v17, 1)
-				if not _pog_is_null(sim.parent(v17)):
-					sim.detach_child(sim.parent(v17), v17)
-				sim.set_velocity(v17, 0.0, 0.0, 0.0)
-				v30 = v30 + 1
-			await iwingmen.from_group(v10, 1)
-			sim.place_relative_to(v0, v12, 0.0, 2000.0, 0.0)
-			sim.point_away(v0, v12)
-			await iescort.goose(await iwingmen.group(), 0.0, 8000.0, 1)
-			sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
-			v2 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault")
-			imapentity.set_hidden(v2, 0)
-			await _pog_wait(0.10000000149011612)
-			isim.set_sensor_visibility(isim.cast(v2), 0)
-			await _pog_wait(0.10000000149011612)
-			imapentity.set_hidden(v2, 1)
-			isim.set_sensor_visibility(isim.cast(v2), 0)
-			igame.enable_blackout(0)
-			iobjectives.set_state("a3_m04_objective_launch_from_pod", 1)
-			iai.give_approach_order(v21, v11)
-			await _pog_wait(5.0)
-			iai.give_attack_order(v20, await iwingmen.group())
-			isim.set_sensor_visibility(v13, 1)
-			isim.set_mission_critical(v13, 1)
-			iobjectives.add("a3_m04_objective_break_out_marines")
-			_pog_spawn(local_22279.bind(v16))
-			v34 = 0
-			v30 = 0
-			while true:
-				await _pog_wait(1)
-				if not (v34):
-					if sim.distance_between(v0, v13) > 40000.0 or v30 > 40:
-						isim.kill(v16)
-						isim.kill(v13)
-						iobjectives.set_state("a3_m04_objective_break_out_marines", 2)
-						_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v13, _pog_clone("a3_m04_text_caption_mission_failed_marines_destroyed"))))
-						return
-					if isim.attacked(v13):
-						if _pog_eq(sim.group(isim.last_attacker(v13)), await iwingmen.group()) and await iutilities.return_hull_structure(v13) < 0.75:
-							sim.avatar_add_channel(v13, "door", 0.0)
-							sim.avatar_set_channel(v13, "door", 1.0)
-							await _pog_wait(0.5)
-							sim.set_collision(v16, 0)
-							sim.detach_child(v13, v16)
-							sim.set_velocity_local_to_sim(v16, 0.0, 0.0, 500.0)
-							v34 = 1
-							await _pog_wait(1.0)
-							iobjectives.set_state("a3_m04_objective_break_out_marines", 1)
-							_pog_spawn(local_22397.bind(v16))
-							iai.give_attack_order(v23, v16)
-							iai.give_dock_order(v16, v5)
-							iobjectives.add("a3_m04_objective_protect_marines")
-							_pog_spawn(local_22431.bind(v11))
-							await _pog_wait(2.0)
-							sim.set_collision(v16, 1)
-				else:
-					if not (isim.is_docked_to_structure(v16, v5)):
-						continue
-					_pog_halt(v28)
-					isim.set_sensor_visibility(v16, 0)
-					sim.set_cullable(v16, 1)
-					await iconversation.one_liner(v16, "", "a3_m04_dialogue_ship_marines_were_docked_boarding_now")
-					break
-			await _pog_wait(10.0)
-			isim.set_mission_critical(v16, 0)
+	await irangecheck.add_traffic_exceptions_in_area(imapentity.cast(v6), 1000000.0)
+	await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))
+	await irangecheck.add_out_of_system_traffic_exception(imapentity.cast(v5))
+	await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault"))
+	await istation.disable_reactive_in_area(v6, 30000.0)
+	v11 = iship.create("ini:/sims/ships/utility/megatransporter_noports", "a3_m04_ship_megafreighter")
+	group.add_sim(v7, v11)
+	isim.set_mission_critical(v11, 1)
+	v39 = await local_17823(v11)
+	v12 = iship.create("ini:/sims/ships/utility/megapod_open_rotated", "a3_m04_player_pod")
+	v43 = idockport.cast(list.head(v39))
+	list.remove(v39, v43)
+	v44 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v12, 2, 1)))
+	idockport.dock(v44, v43)
+	sim.set_cullable(v12, 0)
+	group.add_sim(v7, v12)
+	isim.set_indestructable(v12, 1)
+	v30 = 0
+	while v30 < 4:
+		v14 = iship.create("ini:/sims/ships/utility/megapod_open_rotated", "a3_m04_ship_megapod")
+		v43 = idockport.cast(list.head(v39))
+		list.remove(v39, v43)
+		v44 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v14, 2, 1)))
+		idockport.dock(v43, v44)
+		sim.set_cullable(v14, 0)
+		group.add_sim(v9, v14)
+		isim.set_indestructable(v14, 1)
+		v15 = iship.create("ini:/sims/ships/independent/heavy_corvette_mca", string.join("a3_m04_ship_wingman_1+ +", string.from_int(v30 + 1)))
+		group.add_sim(v10, v15)
+		await ipilotsetup.marauder(v15)
+		isim.set_faction(v15, v41)
+		v30 = v30 + 1
+	v13 = iship.create("ini:/sims/ships/utility/megapod_open_rotated", "a3_m04_ship_marines_Pod")
+	sim.set_cullable(v13, 0)
+	v43 = idockport.cast(list.head(v39))
+	list.remove(v39, v43)
+	v44 = idockport.cast(p_set.first_element(idockport.dockports_of_type(v13, 2, 1)))
+	isim.dock(v13, v11)
+	isim.set_indestructable(v13, 1)
+	v31 = idockport.count(v11, 3, 1)
+	v30 = 0
+	while v30 < v31:
+		v14 = iship.create("ini:/sims/ships/utility/megapod", "a3_m04_ship_megapod")
+		iship.dock(v14, v11)
+		sim.set_cullable(v14, 0)
+		isim.set_indestructable(v14, 1)
+		v30 = v30 + 1
+	v45 = idockport.cast(subsim.create("ini:/subsims/dockports/universal_port"))
+	sim.add_subsim(v11, v45)
+	sim.place_relative_to(v11, v1, 100.0, -200.0, 8000.0)
+	isim.set_indestructable(v11, 1)
+	sim.set_orientation_euler(v11, 90.0, 0.0, 30.0)
+	await iconversation.one_liner(v11, "", "a3_m04_dialogue_ship_megafreighter_were_ready_to_go")
+	while true:
+		await _pog_wait(0.5)
+		if sim.distance_between(v0, v11) >= 4000.0:
+			continue
+		break
+	iai.clear_autopilot()
+	subsim.destroy(v45)
+	global.create_bool("g_disable_traffic_momitor", 2, 1)
+	await imusic.pause()
+	await icutsceneutilities.handle_abort(_pog_spawn(local_10479.bind(v11, v0, v12, v1, v19, v5, v6)))
+	igame.enable_blackout(1)
+	global.destroy("g_disable_traffic_momitor")
+	iship.set_free_without_pilot(v0, 0)
+	sim.set_collision(v0, 1)
+	sim.set_collision(v11, 1)
+	sim.copy_orientation(v0, v12)
+	sim.add_child_relative_to(v12, v0, 0.0, 0.0, 0.0)
+	sim.place_relative_to(v11, v5, 0.0, 0.0, 10000.0)
+	while true:
+		await _pog_wait(0.10000000149011612)
+		if not (not _pog_eq(isim.active_world(), "map:/geog/gagarin/formhault")):
+			break
+	await istation.disable_reactive_in_area(v5, 100000.0)
+	sim.copy_orientation(v11, v5)
+	sim.set_velocity(v11, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity(v11, 0.0, 0.0, 0.0, 0.0)
+	iship.set_free_without_pilot(v11, 0)
+	v19 = await local_16657(v5)
+	v21 = await local_10251("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_patrol_1", v5, 3)
+	v22 = await local_10251("ini:/sims/ships/cops/interceptor", "a3_m04_ship_patrol_2", v5, 3)
+	v23 = await local_10251("ini:/sims/ships/navy/heavy_corvette_mk1", "a3_m04_ship_patrol_3", v5, 3)
+	group.add_group(v20, v21)
+	group.add_group(v20, v22)
+	group.add_group(v20, v23)
+	v16 = iship.create("ini:/sims/ships/utility/puffin", "a3_m04_ship_marines")
+	sim.add_child_relative_to(v13, v16, 0.0, 0.0, 0.0)
+	group.add_sim(v7, v16)
+	await ipilotsetup.generic_cargo_pod(v16)
+	isim.set_faction(v16, v41)
+	isim.set_mission_critical(v16, 1)
+	isim.set_sensor_visibility(v16, 1)
+	object.set_string_property(v16, "death_script", "iDeathScript.CriticalShipDeath")
+	iobjectives.set_state("a3_m04_objective_dock_to_freighter", 1)
+	iobjectives.add("a3_m04_objective_launch_from_pod")
+	stream.stop(0, 0)
+	stream.stop(1, 0)
+	await imusic.pog_resume()
+	await imusic.set_suite(2)
+	await imusic.set_mood(4)
+	igame.enable_blackout(0)
+	await icutsceneutilities.handle_abort(_pog_spawn(local_16871.bind(v0, v12, v11, v10, v9)))
+	igame.enable_blackout(1)
+	if not _pog_is_null(sim.parent(v0)):
+		sim.detach_child(sim.parent(v0), v0)
+	iship.set_free_without_pilot(v0, 0)
+	sim.set_collision(v0, 1)
+	while v30 < group.sim_count(v10):
+		v17 = isim.cast(group.nth_sim(v10, v30))
+		sim.set_collision(v17, 1)
+		if not _pog_is_null(sim.parent(v17)):
+			sim.detach_child(sim.parent(v17), v17)
+		sim.set_velocity(v17, 0.0, 0.0, 0.0)
+		v30 = v30 + 1
+	await iwingmen.from_group(v10, 1)
+	sim.place_relative_to(v0, v12, 0.0, 2000.0, 0.0)
+	sim.point_away(v0, v12)
+	await iescort.goose(await iwingmen.group(), 0.0, 8000.0, 1)
+	sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
+	v2 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/gagarin/formhault")
+	imapentity.set_hidden(v2, 0)
+	await _pog_wait(0.10000000149011612)
+	isim.set_sensor_visibility(isim.cast(v2), 0)
+	await _pog_wait(0.10000000149011612)
+	imapentity.set_hidden(v2, 1)
+	isim.set_sensor_visibility(isim.cast(v2), 0)
+	igame.enable_blackout(0)
+	iobjectives.set_state("a3_m04_objective_launch_from_pod", 1)
+	iai.give_approach_order(v21, v11)
+	await _pog_wait(5.0)
+	iai.give_attack_order(v20, await iwingmen.group())
+	isim.set_sensor_visibility(v13, 1)
+	isim.set_mission_critical(v13, 1)
+	iobjectives.add("a3_m04_objective_break_out_marines")
+	_pog_spawn(local_22279.bind(v16))
+	v34 = 0
+	v30 = 0
+	while true:
+		await _pog_wait(1)
+		if not (v34):
+			if sim.distance_between(v0, v13) > 40000.0 or v30 > 40:
+				isim.kill(v16)
+				isim.kill(v13)
+				iobjectives.set_state("a3_m04_objective_break_out_marines", 2)
+				_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v13, _pog_clone("a3_m04_text_caption_mission_failed_marines_destroyed"))))
+				return
+			if isim.attacked(v13):
+				if _pog_eq(sim.group(isim.last_attacker(v13)), await iwingmen.group()) and await iutilities.return_hull_structure(v13) < 0.75:
+					sim.avatar_add_channel(v13, "door", 0.0)
+					sim.avatar_set_channel(v13, "door", 1.0)
+					await _pog_wait(0.5)
+					sim.set_collision(v16, 0)
+					sim.detach_child(v13, v16)
+					sim.set_velocity_local_to_sim(v16, 0.0, 0.0, 500.0)
+					v34 = 1
+					await _pog_wait(1.0)
+					iobjectives.set_state("a3_m04_objective_break_out_marines", 1)
+					_pog_spawn(local_22397.bind(v16))
+					iai.give_attack_order(v23, v16)
+					iai.give_dock_order(v16, v5)
+					iobjectives.add("a3_m04_objective_protect_marines")
+					_pog_spawn(local_22431.bind(v11))
+					await _pog_wait(2.0)
+					sim.set_collision(v16, 1)
+		else:
+			if not (isim.is_docked_to_structure(v16, v5)):
+				continue
 			_pog_halt(v28)
-			object.set_string_property(v16, "death_script", "")
-			isim.set_faction(isim.cast(imapentity.find_by_name("Formhault Jump Accelerator")), ifaction.find("League"))
-			await iconversation.begin()
-			await iconversation.say(v5, "", "a3_m04_dialogue_ship_marines_weve_got_control")
-			await iconversation.say(0, "name_cal", "a3_m04_dialogue_cal_sending_ftl_signal")
-			await iconversation.end()
-			v30 = 0
-			while v30 < 6:
-				v24 = iship.cast(group.nth_sim(v19, v30))
-				isim.set_indestructable(v24, 0)
-				sim.avatar_add_channel(v24, "lda_on", 1.0)
-				v30 = v30 + 1
-			v25 = isim.cast(sim.create("ini:/sims/custom/jumpgate/jumpgate_shield", "shield"))
-			group.add_sim(v7, v25)
-			isim.set_indestructable(v25, 1)
-			sim.copy_orientation(v25, v5)
-			sim.add_child_relative_to(v5, v25, 0.0, 0.0, 0.0)
-			iobjectives.set_state("a3_m04_objective_protect_marines", 1)
-			iobjectives.add("a3_m04_objective_disable_lda_field")
-			v29 = _pog_spawn(local_22861.bind(v5))
-			v30 = 120
-			while true:
-				await _pog_wait(1)
-				v30 = v30 + -1
-				ihud.set_prompt(string.join("a3_m04_caption_fleet_arrives+ +", string.from_int(v30)), "")
-				if v30 < 1:
-					break
-				if not _pog_is_null(group.sim_count(v19)):
-					continue
-				sim.destroy(v25)
-				v35 = 0
-				iobjectives.set_state("a3_m04_objective_disable_lda_field", 1)
-				icomms.abort(0)
-				if _pog_is_running(v29):
-					_pog_halt(v29)
-				await iconversation.one_liner(0, "name_clay", "a3_m04_dialogue_clay_you_did_it")
+			isim.set_sensor_visibility(v16, 0)
+			sim.set_cullable(v16, 1)
+			await iconversation.one_liner(v16, "", "a3_m04_dialogue_ship_marines_were_docked_boarding_now")
+			break
+	await _pog_wait(10.0)
+	isim.set_mission_critical(v16, 0)
+	_pog_halt(v28)
+	object.set_string_property(v16, "death_script", "")
+	isim.set_faction(isim.cast(imapentity.find_by_name("Formhault Jump Accelerator")), ifaction.find("League"))
+	await iconversation.begin()
+	await iconversation.say(v5, "", "a3_m04_dialogue_ship_marines_weve_got_control")
+	await iconversation.say(0, "name_cal", "a3_m04_dialogue_cal_sending_ftl_signal")
+	await iconversation.end()
+	v30 = 0
+	while v30 < 6:
+		v24 = iship.cast(group.nth_sim(v19, v30))
+		isim.set_indestructable(v24, 0)
+		sim.avatar_add_channel(v24, "lda_on", 1.0)
+		v30 = v30 + 1
+	v25 = isim.cast(sim.create("ini:/sims/custom/jumpgate/jumpgate_shield", "shield"))
+	group.add_sim(v7, v25)
+	isim.set_indestructable(v25, 1)
+	sim.copy_orientation(v25, v5)
+	sim.add_child_relative_to(v5, v25, 0.0, 0.0, 0.0)
+	iobjectives.set_state("a3_m04_objective_protect_marines", 1)
+	iobjectives.add("a3_m04_objective_disable_lda_field")
+	v29 = _pog_spawn(local_22861.bind(v5))
+	v30 = 120
+	while true:
+		await _pog_wait(1)
+		v30 = v30 + -1
+		ihud.set_prompt(string.join("a3_m04_caption_fleet_arrives+ +", string.from_int(v30)), "")
+		if v30 < 1:
+			break
+		if not _pog_is_null(group.sim_count(v19)):
+			continue
+		sim.destroy(v25)
+		v35 = 0
+		iobjectives.set_state("a3_m04_objective_disable_lda_field", 1)
+		icomms.abort(0)
+		if _pog_is_running(v29):
+			_pog_halt(v29)
+		await iconversation.one_liner(0, "name_clay", "a3_m04_dialogue_clay_you_did_it")
+		break
+	ihud.set_prompt("", "")
+	group.add_sim(v8, iship.create("ini:/sims/ships/corporate/corp_cruiser", "a3_m04_ship_cruiser"))
+	group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor1"))
+	group.add_sim(v8, iship.create("ini:/sims/ships/independent/cutter", "a3_m04_ship_cutter1"))
+	group.add_sim(v8, iship.create("ini:/sims/ships/independent/cutter", "a3_m04_ship_cutter2"))
+	group.add_sim(v8, iship.create("ini:/sims/ships/navy/old_corvette", "a3_m04_ship_interceptor2"))
+	group.add_sim(v8, iship.create("ini:/sims/ships/navy/old_corvette", "a3_m04_ship_interceptor3"))
+	group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor2"))
+	group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor3"))
+	if group.sim_count(v19) > 0:
+		group.destroy(v8, 1)
+		await imusic.set_suite(2)
+		await imusic.set_mood(3)
+		await icutsceneutilities.handle_abort(_pog_spawn(local_13470.bind(v5, v25)))
+		igame.enable_blackout(0)
+		iobjectives.set_state("a3_m04_objective_disable_lda_field", 2)
+		object.add_bool_property(v0, "destroy_sim", 0)
+		_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("a3_m04_text_caption_mission_failed_fleet_destroyed"))))
+		return
+	await imusic.set_suite(1)
+	await imusic.set_mood(0)
+	iai.give_flee_order(v20, v0)
+	await icutsceneutilities.handle_abort(_pog_spawn(local_14088.bind(v5, v8, v0)))
+	v30 = 0
+	while v30 < group.sim_count(v8):
+		v24 = iship.cast(group.nth_sim(v8, v30))
+		iship.set_free_without_pilot(v24, 0)
+		sim.set_velocity(v24, 0.0, 0.0, 0.0)
+		isim.set_faction(v24, v41)
+		v30 = v30 + 1
+	sim.place_relative_to(group.leader(v8), v5, 0.0, 0.0, 12000.0)
+	await iformation.random_rectangle(v8, 0.0, 1)
+	iship.set_free_without_pilot(v0, 0)
+	sim.point_at(v0, group.leader(v8))
+	sim.set_velocity(v0, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+	v10 = await iwingmen.purge_to_group()
+	if group.sim_count(v10) > 0:
+		if group.sim_count(v10) > 1:
+			await iformation.goose(v10, 0.0, 0)
+			iai.give_approach_order(group.leader(v10), group.leader(v8))
+	await iconversation.one_liner(group.leader(v8), "", "a3_m04_dialogue_ship_cruiser_well_done")
+	await iconversation.one_liner(0, "name_cal", "a3_m04_dialogue_cal_youre_welcome")
+	await iconversation.one_liner(group.leader(v8), "", "a3_m04_dialogue_cruiser_ill_let_them_know")
+	await iutilities.group_set_cullable(v7, 1)
+	group.destroy(v7, 0)
+	text.remove("csv:/text/act_3/act3_mission04")
+	text.remove("csv:/text/act_3/act3_mission04_addendum")
+	text.remove("csv:/text/act_3/act3_mission04_addendum2")
+	isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Super Freighter Service Depot", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
+	isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
+	await icutsceneutilities.handle_abort(_pog_spawn(local_15369.bind(v5, v6, v0)))
+	if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera") and not (isim.is_capsule_jumping(v0)):
+		sim.place_relative_to(v0, v6, 0.0, 0.0, 6000.0)
+		while true:
+			await _pog_wait(0.10000000149011612)
+			if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera")):
 				break
-			ihud.set_prompt("", "")
-			group.add_sim(v8, iship.create("ini:/sims/ships/corporate/corp_cruiser", "a3_m04_ship_cruiser"))
-			group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor1"))
-			group.add_sim(v8, iship.create("ini:/sims/ships/independent/cutter", "a3_m04_ship_cutter1"))
-			group.add_sim(v8, iship.create("ini:/sims/ships/independent/cutter", "a3_m04_ship_cutter2"))
-			group.add_sim(v8, iship.create("ini:/sims/ships/navy/old_corvette", "a3_m04_ship_interceptor2"))
-			group.add_sim(v8, iship.create("ini:/sims/ships/navy/old_corvette", "a3_m04_ship_interceptor3"))
-			group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor2"))
-			group.add_sim(v8, iship.create("ini:/sims/ships/corporate/interceptor", "a3_m04_ship_interceptor3"))
-			if group.sim_count(v19) > 0:
-				group.destroy(v8, 1)
-				await imusic.set_suite(2)
-				await imusic.set_mood(3)
-				await icutsceneutilities.handle_abort(_pog_spawn(local_13470.bind(v5, v25)))
-				igame.enable_blackout(0)
-				iobjectives.set_state("a3_m04_objective_disable_lda_field", 2)
-				object.add_bool_property(v0, "destroy_sim", 0)
-				_pog_detach(_pog_spawn(istartsystem.critical_mission_fail.bind(v0, _pog_clone("a3_m04_text_caption_mission_failed_fleet_destroyed"))))
-			else:
-				await imusic.set_suite(1)
-				await imusic.set_mood(0)
-				iai.give_flee_order(v20, v0)
-				await icutsceneutilities.handle_abort(_pog_spawn(local_14088.bind(v5, v8, v0)))
-				v30 = 0
-				while v30 < group.sim_count(v8):
-					v24 = iship.cast(group.nth_sim(v8, v30))
-					iship.set_free_without_pilot(v24, 0)
-					sim.set_velocity(v24, 0.0, 0.0, 0.0)
-					isim.set_faction(v24, v41)
-					v30 = v30 + 1
-				sim.place_relative_to(group.leader(v8), v5, 0.0, 0.0, 12000.0)
-				await iformation.random_rectangle(v8, 0.0, 1)
-				iship.set_free_without_pilot(v0, 0)
-				sim.point_at(v0, group.leader(v8))
-				sim.set_velocity(v0, 0.0, 0.0, 0.0)
-				sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-				v10 = await iwingmen.purge_to_group()
-				if group.sim_count(v10) > 0:
-					if group.sim_count(v10) > 1:
-						await iformation.goose(v10, 0.0, 0)
-						iai.give_approach_order(group.leader(v10), group.leader(v8))
-				await iconversation.one_liner(group.leader(v8), "", "a3_m04_dialogue_ship_cruiser_well_done")
-				await iconversation.one_liner(0, "name_cal", "a3_m04_dialogue_cal_youre_welcome")
-				await iconversation.one_liner(group.leader(v8), "", "a3_m04_dialogue_cruiser_ill_let_them_know")
-				await iutilities.group_set_cullable(v7, 1)
-				group.destroy(v7, 0)
-				text.remove("csv:/text/act_3/act3_mission04")
-				text.remove("csv:/text/act_3/act3_mission04_addendum")
-				text.remove("csv:/text/act_3/act3_mission04_addendum2")
-				isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Super Freighter Service Depot", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
-				isim.set_faction(isim.cast(imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")), ifaction.find("League"))
-				await icutsceneutilities.handle_abort(_pog_spawn(local_15369.bind(v5, v6, v0)))
-				if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera") and not (isim.is_capsule_jumping(v0)):
-					sim.place_relative_to(v0, v6, 0.0, 0.0, 6000.0)
-					while true:
-						await _pog_wait(0.10000000149011612)
-						if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera")):
-							break
-					iship.set_free_without_pilot(v0, 0)
-					sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
-					sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-				stream.stop(0, 0)
-				stream.stop(1, 0)
-				await imusic.pog_resume()
-				await imusic.set_suite(1)
-				await imusic.set_mood(1)
-				igame.enable_blackout(0)
-				if global.exists("g_act3_capture_accelerator_complete"):
-					global.set_bool("g_act3_capture_accelerator_complete", 1)
-				state.destroy(_pog_current())
-				await iutilities.remove_mission_restart()
-				await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v6), 1000000.0)
-				await irangecheck.remove_traffic_exception(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))
-				if PogRuntime.TRACE:
-					debug.print_string("Act3 Mission 04 - MISSION COMPLETE")
+		iship.set_free_without_pilot(v0, 0)
+		sim.set_velocity_local_to_sim(v0, 0.0, 0.0, 500.0)
+		sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+	stream.stop(0, 0)
+	stream.stop(1, 0)
+	await imusic.pog_resume()
+	await imusic.set_suite(1)
+	await imusic.set_mood(1)
+	igame.enable_blackout(0)
+	if global.exists("g_act3_capture_accelerator_complete"):
+		global.set_bool("g_act3_capture_accelerator_complete", 1)
+	state.destroy(_pog_current())
+	await iutilities.remove_mission_restart()
+	await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v6), 1000000.0)
+	await irangecheck.remove_traffic_exception(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))
+	if PogRuntime.TRACE:
+		debug.print_string("Act3 Mission 04 - MISSION COMPLETE")
 	return
 	return 0
 

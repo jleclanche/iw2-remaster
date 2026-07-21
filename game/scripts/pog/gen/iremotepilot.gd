@@ -76,13 +76,13 @@ func install() -> Variant:
 			icomms.shout(0, "Generic", "Unable to make remote connection....")
 			return 0
 		_pog_spawn(local_0.bind(iship.cast(v2)))
-	else:
-		v1 = iship.find_player_ship()
-		iship.remove_pilot(v1)
-		iship.install_player_pilot(iship.cast(global.handle("g_player_ship_handle")))
-		global.destroy("g_player_ship_handle")
-		global.destroy("g_remote_vessel_handle")
-		icomms.shout(0, "Generic", "Remote Link Terminated....")
+		return 0
+	v1 = iship.find_player_ship()
+	iship.remove_pilot(v1)
+	iship.install_player_pilot(iship.cast(global.handle("g_player_ship_handle")))
+	global.destroy("g_player_ship_handle")
+	global.destroy("g_remote_vessel_handle")
+	icomms.shout(0, "Generic", "Remote Link Terminated....")
 	return 0
 	return 0
 
@@ -96,12 +96,12 @@ func enable_remote_connection(v0, v1) -> Variant:
 			if PogRuntime.TRACE:
 				debug.print_string("iRemotePilot.EnableRemote: Setting remote_connection_avaialbe int\n")
 			object.set_int_property(v0, "remote_connection_available", 1)
-	else:
-		if not (object.property_exists(v0, "remote_connection_available")):
-			return 0
-		if PogRuntime.TRACE:
-			debug.print_string("iRemotePilot.EnableRemote: Removing remote_connection_avaialbe int\n")
-		object.remove_property(v0, "remote_connection_available")
+		return 0
+	if not (object.property_exists(v0, "remote_connection_available")):
+		return 0
+	if PogRuntime.TRACE:
+		debug.print_string("iRemotePilot.EnableRemote: Removing remote_connection_avaialbe int\n")
+	object.remove_property(v0, "remote_connection_available")
 	return 0
 	return 0
 

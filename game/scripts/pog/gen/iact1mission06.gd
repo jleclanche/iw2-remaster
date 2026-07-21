@@ -101,8 +101,8 @@ func local_298() -> Variant:
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission("Gunstar Supermarket Sweep ?")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -158,142 +158,142 @@ func mission_handler() -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iAct1_Mission06 Sending Email\n")
 		iemail.send_email("a1_m06_email_sender", "a1_m06_email_subject", "html:/text/act_1/act1_mission06_email", 1)
-	else:
-		if not (iemail.read(v10)):
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1_Mission06 Email not read yet. Exiting\n")
-		else:
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1_Mission06 Email read. Starting Mission\n")
-			await local_68(v9)
-			text.add("csv:/text/act_1/act1_mission06")
-			text.add("csv:/text/act_1/act1_mission06_addendum")
-			v2 = isim.cast(imapentity.find_by_name("Military FTL Outpost"))
-			if PogRuntime.TRACE:
-				if _pog_is_null(v2):
-					debug.print_string("iAct1Mission06.MissionHandler: Can't find Outpost: EXITING\n")
-					return
-			_pog_detach(_pog_spawn(local_427.bind(_pog_current(), v9, v1, v3, v4, v5)))
-			await irangecheck.add_traffic_exception(imapentity.cast(v2))
-			await igangsterincidentgen.set_active(0)
-			v3 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m06_waypoint"))
-			await iutilities.sim_place_between_exact(v3, v2, v0, 8000.0)
-			isim.set_sensor_visibility(v3, 1)
-			iobjectives.add("a1_m06_objective_travel_to_base")
-			await _pog_wait(3.0)
-			await iconversation.one_liner(0, "name_clay", "a1_m06_dialogue_clay_lets_go")
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to get near outpost\n")
-			while true:
-				await _pog_wait(10)
-				if sim.distance_between(v0, v3) >= 500000.0:
-					continue
-				break
-			v5 = await local_3996(v2, 5000.0)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to get nearer outpost\n")
-			while true:
-				await _pog_wait(1)
-				if sim.distance_between(v0, v3) >= 40000.0:
-					continue
-				break
-			await imusic.set_suite(0)
-			await imusic.set_mood(3)
-			iobjectives.set_state("a1_m06_objective_travel_to_base", 1)
-			iobjectives.add("a1_m06_objective_dock_to_base")
-			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_lets_dock")
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to dock to outpost\n")
-			while true:
-				await _pog_wait(1)
-				if not (isim.is_docked_to_structure(v0, v2)):
-					continue
-				break
-			iobjectives.set_state("a1_m06_objective_dock_to_base", 1)
-			iobjectives.add("a1_m06_objective_retrieve_arming_keys")
-			state.set_progress(v9, 1)
-			isim.set_docking_lock(v0, v2, 1)
-			await ijafsscript.disable_jafs()
-			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_ill_get_the_arming_codes")
-			await iconversation.one_liner(0, "name_cal", "a1_m06_dialogue_cal_be_careful")
-			await _pog_wait(4.0)
-			v8 = iregion.create_l_d_s_i(v2, 250000.0)
-			v11 = _pog_spawn(local_6768.bind(v0, v2))
-			await local_5293(v0, v5, v4, v2)
-			await imusic.pause()
-			await imusic.play("sound:/audio/music/a1_action", 1, 1)
-			await _pog_wait(1.0)
-			await iconversation.begin()
-			await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_oops")
-			await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_whats_wrong")
-			await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_we_have_a_problem")
-			await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_what_did_you_do")
-			await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_the_gunstars_are_online")
-			await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_thats_great")
-			await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_theres_a_mine_field")
-			await iconversation.say(0, "name_clay", "a1_m06_dialogue_clay_clever_comment")
-			await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_what_do_we_do")
-			await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_we_could_remove_the_arming_keys")
-			await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_thats_suicide")
-			await iconversation.say(0, "name_clay", "a1_m06_dialogue_clay_its_our_only_way_out")
-			await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_the_gunstars_have_low_power")
-			await iconversation.end()
-			iobjectives.set_state("a1_m06_objective_retrieve_arming_keys", 1)
-			iobjectives.add("a1_m06_objective_disarm_gunstars")
-			isim.set_docking_lock(v0, v2, 0)
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to capture all the gunstars.\n")
-			while true:
-				await _pog_wait(1)
-				if group.sim_count(v4) != 6:
-					continue
-				break
-			group.add_group(v4, v5)
-			group.flatten(v4)
-			iai.purge_orders(v4)
-			v13 = 0
-			while v13 < group.sim_count(v4):
-				iship.lock_down_weapons(iship.cast(group.nth_sim(v4, v13)))
-				isim.set_hostile(iship.cast(group.nth_sim(v4, v13)), 0)
-				v13 = v13 + 1
-			iai.purge_orders(v5)
-			sim.destroy(v3)
-			iregion.destroy(v8)
-			_pog_halt(v11)
-			iobjectives.set_state("a1_m06_objective_disarm_gunstars", 1)
-			await imusic.play("sound:/audio/music/a1_discovery", 1, 1)
-			await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_the_last_one")
-			await iconversation.one_liner(0, "name_clay", "a1_m06_dialogue_clay_the_mines_have_deactivated")
-			await iconversation.one_liner(0, "name_cal", "a1_m06_dialogue_cal_call_in_the_freighter")
-			idirector.begin()
-			idirector.fade_out(0.0, 0.0, 0.0, 0.0)
-			iship.undock(v0, sim.parent(v0))
-			sim.place_near(v0, v2, 100000.0)
-			v1 = iship.create("ini:/sims/custom/act1_mission06/megatransporter_gunstar_transport", "")
-			v12 = _pog_spawn(local_7277.bind(v1, v0, v4, v2))
-			await icutsceneutilities.handle_abort(v12)
-			iship.set_free_without_pilot(v0, 0)
-			sim.place_near(v0, v2, 2000.0)
-			sim.point_at(v0, v2)
-			sim.set_velocity(v0, 0.0, 0.0, 0.0)
-			sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
-			iship.disrupt_l_d_s_drive(v0, 1.0)
-			stream.stop(0, 0)
-			stream.stop(1, 0)
-			await imusic.pog_resume()
-			await imusic.set_suite(0)
-			await imusic.set_mood(1)
-			await _pog_wait(3.0)
-			if global.exists("g_act1_retreived_gunstars"):
-				global.set_bool("g_act1_retreived_gunstars", 1)
-			text.remove("csv:/text/act_1/act1_mission06")
-			text.remove("csv:/text/act_1/act1_mission06_addendum")
-			await igangsterincidentgen.set_active(1)
-			await imissiontracker.remove_mission(_pog_current())
-			await iutilities.remove_mission_restart()
-			state.destroy(_pog_current())
-			if PogRuntime.TRACE:
-				debug.print_string("iAct1Mission06: MISSION COMPLETE\n")
+		return
+	if not (iemail.read(v10)):
+		if PogRuntime.TRACE:
+			debug.print_string("iAct1_Mission06 Email not read yet. Exiting\n")
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1_Mission06 Email read. Starting Mission\n")
+	await local_68(v9)
+	text.add("csv:/text/act_1/act1_mission06")
+	text.add("csv:/text/act_1/act1_mission06_addendum")
+	v2 = isim.cast(imapentity.find_by_name("Military FTL Outpost"))
+	if PogRuntime.TRACE:
+		if _pog_is_null(v2):
+			debug.print_string("iAct1Mission06.MissionHandler: Can't find Outpost: EXITING\n")
+			return
+	_pog_detach(_pog_spawn(local_427.bind(_pog_current(), v9, v1, v3, v4, v5)))
+	await irangecheck.add_traffic_exception(imapentity.cast(v2))
+	await igangsterincidentgen.set_active(0)
+	v3 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m06_waypoint"))
+	await iutilities.sim_place_between_exact(v3, v2, v0, 8000.0)
+	isim.set_sensor_visibility(v3, 1)
+	iobjectives.add("a1_m06_objective_travel_to_base")
+	await _pog_wait(3.0)
+	await iconversation.one_liner(0, "name_clay", "a1_m06_dialogue_clay_lets_go")
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to get near outpost\n")
+	while true:
+		await _pog_wait(10)
+		if sim.distance_between(v0, v3) >= 500000.0:
+			continue
+		break
+	v5 = await local_3996(v2, 5000.0)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to get nearer outpost\n")
+	while true:
+		await _pog_wait(1)
+		if sim.distance_between(v0, v3) >= 40000.0:
+			continue
+		break
+	await imusic.set_suite(0)
+	await imusic.set_mood(3)
+	iobjectives.set_state("a1_m06_objective_travel_to_base", 1)
+	iobjectives.add("a1_m06_objective_dock_to_base")
+	await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_lets_dock")
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to dock to outpost\n")
+	while true:
+		await _pog_wait(1)
+		if not (isim.is_docked_to_structure(v0, v2)):
+			continue
+		break
+	iobjectives.set_state("a1_m06_objective_dock_to_base", 1)
+	iobjectives.add("a1_m06_objective_retrieve_arming_keys")
+	state.set_progress(v9, 1)
+	isim.set_docking_lock(v0, v2, 1)
+	await ijafsscript.disable_jafs()
+	await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_ill_get_the_arming_codes")
+	await iconversation.one_liner(0, "name_cal", "a1_m06_dialogue_cal_be_careful")
+	await _pog_wait(4.0)
+	v8 = iregion.create_l_d_s_i(v2, 250000.0)
+	v11 = _pog_spawn(local_6768.bind(v0, v2))
+	await local_5293(v0, v5, v4, v2)
+	await imusic.pause()
+	await imusic.play("sound:/audio/music/a1_action", 1, 1)
+	await _pog_wait(1.0)
+	await iconversation.begin()
+	await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_oops")
+	await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_whats_wrong")
+	await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_we_have_a_problem")
+	await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_what_did_you_do")
+	await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_the_gunstars_are_online")
+	await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_thats_great")
+	await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_theres_a_mine_field")
+	await iconversation.say(0, "name_clay", "a1_m06_dialogue_clay_clever_comment")
+	await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_what_do_we_do")
+	await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_we_could_remove_the_arming_keys")
+	await iconversation.say(0, "name_cal", "a1_m06_dialogue_cal_thats_suicide")
+	await iconversation.say(0, "name_clay", "a1_m06_dialogue_clay_its_our_only_way_out")
+	await iconversation.say(0, "name_smith", "a1_m06_dialogue_smith_the_gunstars_have_low_power")
+	await iconversation.end()
+	iobjectives.set_state("a1_m06_objective_retrieve_arming_keys", 1)
+	iobjectives.add("a1_m06_objective_disarm_gunstars")
+	isim.set_docking_lock(v0, v2, 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission06.MissionHandler: Waiting for player to capture all the gunstars.\n")
+	while true:
+		await _pog_wait(1)
+		if group.sim_count(v4) != 6:
+			continue
+		break
+	group.add_group(v4, v5)
+	group.flatten(v4)
+	iai.purge_orders(v4)
+	v13 = 0
+	while v13 < group.sim_count(v4):
+		iship.lock_down_weapons(iship.cast(group.nth_sim(v4, v13)))
+		isim.set_hostile(iship.cast(group.nth_sim(v4, v13)), 0)
+		v13 = v13 + 1
+	iai.purge_orders(v5)
+	sim.destroy(v3)
+	iregion.destroy(v8)
+	_pog_halt(v11)
+	iobjectives.set_state("a1_m06_objective_disarm_gunstars", 1)
+	await imusic.play("sound:/audio/music/a1_discovery", 1, 1)
+	await iconversation.one_liner(0, "name_smith", "a1_m06_dialogue_smith_thats_the_last_one")
+	await iconversation.one_liner(0, "name_clay", "a1_m06_dialogue_clay_the_mines_have_deactivated")
+	await iconversation.one_liner(0, "name_cal", "a1_m06_dialogue_cal_call_in_the_freighter")
+	idirector.begin()
+	idirector.fade_out(0.0, 0.0, 0.0, 0.0)
+	iship.undock(v0, sim.parent(v0))
+	sim.place_near(v0, v2, 100000.0)
+	v1 = iship.create("ini:/sims/custom/act1_mission06/megatransporter_gunstar_transport", "")
+	v12 = _pog_spawn(local_7277.bind(v1, v0, v4, v2))
+	await icutsceneutilities.handle_abort(v12)
+	iship.set_free_without_pilot(v0, 0)
+	sim.place_near(v0, v2, 2000.0)
+	sim.point_at(v0, v2)
+	sim.set_velocity(v0, 0.0, 0.0, 0.0)
+	sim.set_angular_velocity_euler(v0, 0.0, 0.0, 0.0)
+	iship.disrupt_l_d_s_drive(v0, 1.0)
+	stream.stop(0, 0)
+	stream.stop(1, 0)
+	await imusic.pog_resume()
+	await imusic.set_suite(0)
+	await imusic.set_mood(1)
+	await _pog_wait(3.0)
+	if global.exists("g_act1_retreived_gunstars"):
+		global.set_bool("g_act1_retreived_gunstars", 1)
+	text.remove("csv:/text/act_1/act1_mission06")
+	text.remove("csv:/text/act_1/act1_mission06_addendum")
+	await igangsterincidentgen.set_active(1)
+	await imissiontracker.remove_mission(_pog_current())
+	await iutilities.remove_mission_restart()
+	state.destroy(_pog_current())
+	if PogRuntime.TRACE:
+		debug.print_string("iAct1Mission06: MISSION COMPLETE\n")
 	return
 	return 0
 

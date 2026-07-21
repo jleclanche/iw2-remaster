@@ -93,8 +93,8 @@ func local_232() -> Variant:
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
 		await imissiontracker.add_mission(v0, 3, 6)
-	else:
-		global.set_bool("g_act3_smokescreen_mission_complete", 1)
+		return
+	global.set_bool("g_act3_smokescreen_mission_complete", 1)
 	return
 	return 0
 
@@ -179,17 +179,17 @@ func local_1738(v0, v1, v2) -> Variant:
 				isim.set_faction(isim.cast(group.nth_sim(group.nth_group(v0, v7), v6)), v4)
 				v6 = v6 + 1
 			v7 = v7 + 1
-	else:
-		await local_1528(v1, v3)
-		v9 = group.group_count(v0)
-		v7 = 0
-		while v7 < v9:
-			v8 = group.sim_count(group.nth_group(v0, v7))
-			v6 = 0
-			while v6 < v8:
-				isim.set_faction(isim.cast(group.nth_sim(group.nth_group(v0, v7), v6)), v3)
-				v6 = v6 + 1
-			v7 = v7 + 1
+		return 0
+	await local_1528(v1, v3)
+	v9 = group.group_count(v0)
+	v7 = 0
+	while v7 < v9:
+		v8 = group.sim_count(group.nth_group(v0, v7))
+		v6 = 0
+		while v6 < v8:
+			isim.set_faction(isim.cast(group.nth_sim(group.nth_group(v0, v7), v6)), v3)
+			v6 = v6 + 1
+		v7 = v7 + 1
 	return 0
 	v1 = group.group_count(v0)
 	v2 = 0

@@ -76,13 +76,13 @@ func local_145(v0, v1) -> Variant:
 			isim.set_faction(v4, v2)
 			isim.set_indestructable(v4, 0)
 			v6 = v6 + 1
-	else:
-		v6 = 0
-		while v6 < v5:
-			v4 = isim.cast(group.nth_sim(v0, v6))
-			isim.set_faction(v4, v3)
-			isim.set_indestructable(v4, 1)
-			v6 = v6 + 1
+		return 0
+	v6 = 0
+	while v6 < v5:
+		v4 = isim.cast(group.nth_sim(v0, v6))
+		isim.set_faction(v4, v3)
+		isim.set_indestructable(v4, 1)
+		v6 = v6 + 1
 	return 0
 	return 0
 
@@ -394,41 +394,40 @@ func main_task() -> Variant:
 	v5 = []
 	v6 = state.find(_pog_current())
 	if global.exists("g_started_wingmen_training") and _pog_is_null(v6):
-		pass
+		return
+	if global.exists("g_got_position"):
+		state.destroy(_pog_current())
+		sim.destroy(v4)
+		global.destroy("g_started_wingmen_training")
+		return
+	if _pog_is_null(v6) and not _pog_is_null(await iwingmen.t_fighter_count()):
+		v6 = state.create(_pog_current(), 0)
+		object.add_int_property(v6, "best_time", 60)
+		text.add("csv:/text/act_1/act1_wingmen_training")
+		await iconversation.one_liner(0, "name_clay", "a1_training_clay_just_fly")
+		global.create_bool("g_started_wingmen_training", 2, 1)
 	else:
-		if global.exists("g_got_position"):
+		global.destroy("g_training_task_handle")
+	state.set_progress(v6, 0)
+	v4 = await iutilities.create_waypoint_relative_to(imapentity.find_by_name("Lucrecia's Base"), 20000.0, 0.0, 0.0)
+	await iutilities.make_waypoint_visible(v4, 1, "a1_training_waypoint_training_point")
+	while true:
+		await _pog_wait(1)
+		if global.pog_int("g_current_act") == 1:
+			if sim.distance_between(v3, v4) < global.pog_float("g_player_sensor_range") and not (v0):
+				v0 = 1
+				v1 = await local_1094(v4)
+		else:
 			state.destroy(_pog_current())
 			sim.destroy(v4)
+			global.destroy("g_training_task_handle")
 			global.destroy("g_started_wingmen_training")
-		else:
-			if _pog_is_null(v6) and not _pog_is_null(await iwingmen.t_fighter_count()):
-				v6 = state.create(_pog_current(), 0)
-				object.add_int_property(v6, "best_time", 60)
-				text.add("csv:/text/act_1/act1_wingmen_training")
-				await iconversation.one_liner(0, "name_clay", "a1_training_clay_just_fly")
-				global.create_bool("g_started_wingmen_training", 2, 1)
-			else:
-				global.destroy("g_training_task_handle")
-			state.set_progress(v6, 0)
-			v4 = await iutilities.create_waypoint_relative_to(imapentity.find_by_name("Lucrecia's Base"), 20000.0, 0.0, 0.0)
-			await iutilities.make_waypoint_visible(v4, 1, "a1_training_waypoint_training_point")
-			while true:
-				await _pog_wait(1)
-				if global.pog_int("g_current_act") == 1:
-					if sim.distance_between(v3, v4) < global.pog_float("g_player_sensor_range") and not (v0):
-						v0 = 1
-						v1 = await local_1094(v4)
-				else:
-					state.destroy(_pog_current())
-					sim.destroy(v4)
-					global.destroy("g_training_task_handle")
-					global.destroy("g_started_wingmen_training")
-					return
-				if not (sim.distance_between(v3, v4) <= 700.0 and (1 - _pog_is_running(v2)) == 1):
-					continue
-				if _pog_is_null(await iwingmen.t_fighter_count()):
-					continue
-				v2 = _pog_spawn(local_4349.bind(v4, v1, v6))
+			return
+		if not (sim.distance_between(v3, v4) <= 700.0 and (1 - _pog_is_running(v2)) == 1):
+			continue
+		if _pog_is_null(await iwingmen.t_fighter_count()):
+			continue
+		v2 = _pog_spawn(local_4349.bind(v4, v1, v6))
 	return
 	return 0
 

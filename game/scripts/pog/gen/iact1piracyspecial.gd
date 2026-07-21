@@ -203,11 +203,9 @@ func local_2402() -> Variant:
 	v0 = imapentity.find_by_name("Lucrecia's Base")
 	v1 = iship.cast(sim.find_by_name("name_jafs"))
 	if await ijafsscript.jafs_active():
-		if _pog_is_null(iship.cast(v1)):
-			return 0
-		if not (_pog_eq(iai.current_order_target(v1), isim.cast(v0)) and iai.current_order_type(v1) == 3):
-			return 0
-		return 1
+		if not _pog_is_null(iship.cast(v1)):
+			if _pog_eq(iai.current_order_target(v1), isim.cast(v0)) and iai.current_order_type(v1) == 3:
+				return 1
 	return 0
 	return 0
 

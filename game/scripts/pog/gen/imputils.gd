@@ -365,8 +365,8 @@ func spawn_killed_player_power_ups(v0) -> Variant:
 func client_taunt_return(v0) -> Variant:
 	if not (global.exists("mp_utils_last_taunt")):
 		global.create_string("mp_utils_last_taunt", 2, v0)
-	else:
-		global.set_string("mp_utils_last_taunt", v0)
+		return 0
+	global.set_string("mp_utils_last_taunt", v0)
 	return 0
 	return 0
 
@@ -407,114 +407,114 @@ func server_do_debug(v0, v1, v2) -> Variant:
 		v3 = string.join(v3, " ")
 		v3 = string.join(v3, string.from_float(imultiplay.debug_sim_position_z(v1)))
 		imultiplay.server_broadcast_message(v1, v3, 3)
-	else:
-		if not _pog_eq(imultiplay.server_player_i_p(v0), imultiplay.server_i_p()):
-			imultiplay.server_broadcast_message(v1, "access denied", 2)
-		else:
-			if _pog_eq(v2, "endgame"):
-				imultiplay.end_game()
-			else:
-				if _pog_eq(v2, "kill"):
-					isim.kill(v1)
-				else:
-					if _pog_eq(v2, "invincible"):
-						isim.set_indestructable(v1, 1)
-					else:
-						if _pog_eq(v2, "vincible"):
-							isim.set_indestructable(v1, 0)
-						else:
-							if _pog_eq(v2, "missiles"):
-								v4 = isim.cast(v1)
-								v5 = isim.cast(sim.create("ini:/sims/power_ups/missiles_plus_10", "Missile PowerUp+10"))
-								isim.set_faction(v5, ifaction.find("PowerUp"))
-								imultiplay.set_transmit_flag(v5, 1)
-								sim.place_in_front_of(v4, v5, 2000.0)
-							else:
-								if _pog_eq(v2, "speed"):
-									v4 = isim.cast(v1)
-									v5 = isim.cast(sim.create("ini:/sims/power_ups/speed_power_up_x2", ""))
-									isim.set_faction(v5, ifaction.find("PowerUp"))
-									sim.place_near(v5, v4, 1000.0)
-									imultiplay.set_transmit_flag(v5, 1)
-								else:
-									if _pog_eq(v2, "health"):
-										v4 = isim.cast(v1)
-										v5 = isim.cast(sim.create("ini:/sims/power_ups/health", ""))
-										isim.set_faction(v5, ifaction.find("PowerUp"))
-										sim.place_near(v5, v4, 1000.0)
-										imultiplay.set_transmit_flag(v5, 1)
-									else:
-										if _pog_eq(v2, "pups"):
-											v4 = isim.cast(v1)
-											v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_mining_laser", ""))
-											imultiplay.add_powerup_weapon(iship.cast(v4), v5)
-											v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_antimatter_beam", ""))
-											imultiplay.add_powerup_weapon(iship.cast(v4), v5)
-											v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_neutron", ""))
-											imultiplay.add_powerup_weapon(iship.cast(v4), v5)
-											await spawn_killed_player_power_ups(v4)
-										else:
-											if _pog_eq(v2, "test"):
-												v4 = isim.cast(v1)
-												v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_proximity_minelayer", ""))
-												isim.set_faction(v5, ifaction.find("PowerUp"))
-												sim.place_near(v5, v4, 1000.0)
-												imultiplay.set_transmit_flag(v5, 1)
-												v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_mining_laser", "test laser"))
-												isim.set_faction(v5, ifaction.find("PowerUp"))
-												sim.place_near(v5, v4, 1000.0)
-												imultiplay.set_transmit_flag(v5, 1)
-												v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_assault_cannon", ""))
-												isim.set_faction(v5, ifaction.find("PowerUp"))
-												sim.place_near(v5, v4, 1000.0)
-												imultiplay.set_transmit_flag(v5, 1)
-												v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_hammer_rocket", ""))
-												isim.set_faction(v5, ifaction.find("PowerUp"))
-												sim.place_near(v5, v4, 1000.0)
-												imultiplay.set_transmit_flag(v5, 1)
-												v5 = isim.cast(sim.create("ini:/sims/power_ups/health_60pc", ""))
-												isim.set_faction(v5, ifaction.find("PowerUp"))
-												sim.place_near(v5, v4, 1000.0)
-												imultiplay.set_transmit_flag(v5, 1)
-											else:
-												if _pog_eq(v2, "flag"):
-													v5 = isim.cast(sim.find_by_name(text.field("mp_flag_b_flag_name", 0)))
-													v4 = isim.cast(v1)
-													sim.place_near(v5, v4, 1000.0)
-													imultiplay.set_for_respawn(v5)
-												else:
-													if _pog_eq(v2, "alphawin"):
-														imultiplay.server_set_winning_team(text.field("mp_flag_team_a", 0))
-														imultiplay.end_game()
-													else:
-														if _pog_eq(v2, "betawin"):
-															imultiplay.server_set_winning_team(text.field("mp_flag_team_b", 0))
-															imultiplay.end_game()
-														else:
-															if _pog_eq(v2, "purge"):
-																v4 = isim.cast(v1)
-																iai.purge_orders(v1)
-																imultiplay.server_broadcast_message(v1, "purged orders", 3)
-															else:
-																if _pog_eq(v2, "carlosfandango"):
-																	v6 = _pog_spawn(local_2855.bind(v1))
-																	_pog_detach(v6)
-																else:
-																	if _pog_eq(v2, "pod"):
-																		v4 = isim.cast(v1)
-																		v5 = isim.cast(iship.create("ini:/sims/ships/utility/megapod", "Megapod"))
-																		isim.set_sensor_visibility(v5, 1)
-																		imultiplay.set_transmit_flag(v5, 1)
-																		sim.place_near(v5, v4, 1000.0)
-																	else:
-																		if _pog_eq(v2, "open"):
-																			v5 = isim.cast(sim.find_by_name("Megapod"))
-																			imultiplay.server_send_user_message(66, v5, 0, "door")
-																		else:
-																			if not _pog_eq(v2, "close"):
-																				return 0
-																			v5 = isim.cast(sim.find_by_name("Megapod"))
-																			imultiplay.server_send_user_message(67, v5, 0, "door")
+		return 0
+	if not _pog_eq(imultiplay.server_player_i_p(v0), imultiplay.server_i_p()):
+		imultiplay.server_broadcast_message(v1, "access denied", 2)
+		return 0
+	if _pog_eq(v2, "endgame"):
+		imultiplay.end_game()
+		return 0
+	if _pog_eq(v2, "kill"):
+		isim.kill(v1)
+		return 0
+	if _pog_eq(v2, "invincible"):
+		isim.set_indestructable(v1, 1)
+		return 0
+	if _pog_eq(v2, "vincible"):
+		isim.set_indestructable(v1, 0)
+		return 0
+	if _pog_eq(v2, "missiles"):
+		v4 = isim.cast(v1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/missiles_plus_10", "Missile PowerUp+10"))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		imultiplay.set_transmit_flag(v5, 1)
+		sim.place_in_front_of(v4, v5, 2000.0)
+		return 0
+	if _pog_eq(v2, "speed"):
+		v4 = isim.cast(v1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/speed_power_up_x2", ""))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_transmit_flag(v5, 1)
+		return 0
+	if _pog_eq(v2, "health"):
+		v4 = isim.cast(v1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/health", ""))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_transmit_flag(v5, 1)
+		return 0
+	if _pog_eq(v2, "pups"):
+		v4 = isim.cast(v1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_mining_laser", ""))
+		imultiplay.add_powerup_weapon(iship.cast(v4), v5)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_antimatter_beam", ""))
+		imultiplay.add_powerup_weapon(iship.cast(v4), v5)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_pbc_neutron", ""))
+		imultiplay.add_powerup_weapon(iship.cast(v4), v5)
+		await spawn_killed_player_power_ups(v4)
+		return 0
+	if _pog_eq(v2, "test"):
+		v4 = isim.cast(v1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_proximity_minelayer", ""))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_transmit_flag(v5, 1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_mining_laser", "test laser"))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_transmit_flag(v5, 1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_assault_cannon", ""))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_transmit_flag(v5, 1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/weapon_hammer_rocket", ""))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_transmit_flag(v5, 1)
+		v5 = isim.cast(sim.create("ini:/sims/power_ups/health_60pc", ""))
+		isim.set_faction(v5, ifaction.find("PowerUp"))
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_transmit_flag(v5, 1)
+		return 0
+	if _pog_eq(v2, "flag"):
+		v5 = isim.cast(sim.find_by_name(text.field("mp_flag_b_flag_name", 0)))
+		v4 = isim.cast(v1)
+		sim.place_near(v5, v4, 1000.0)
+		imultiplay.set_for_respawn(v5)
+		return 0
+	if _pog_eq(v2, "alphawin"):
+		imultiplay.server_set_winning_team(text.field("mp_flag_team_a", 0))
+		imultiplay.end_game()
+		return 0
+	if _pog_eq(v2, "betawin"):
+		imultiplay.server_set_winning_team(text.field("mp_flag_team_b", 0))
+		imultiplay.end_game()
+		return 0
+	if _pog_eq(v2, "purge"):
+		v4 = isim.cast(v1)
+		iai.purge_orders(v1)
+		imultiplay.server_broadcast_message(v1, "purged orders", 3)
+		return 0
+	if _pog_eq(v2, "carlosfandango"):
+		v6 = _pog_spawn(local_2855.bind(v1))
+		_pog_detach(v6)
+		return 0
+	if _pog_eq(v2, "pod"):
+		v4 = isim.cast(v1)
+		v5 = isim.cast(iship.create("ini:/sims/ships/utility/megapod", "Megapod"))
+		isim.set_sensor_visibility(v5, 1)
+		imultiplay.set_transmit_flag(v5, 1)
+		sim.place_near(v5, v4, 1000.0)
+		return 0
+	if _pog_eq(v2, "open"):
+		v5 = isim.cast(sim.find_by_name("Megapod"))
+		imultiplay.server_send_user_message(66, v5, 0, "door")
+		return 0
+	if not _pog_eq(v2, "close"):
+		return 0
+	v5 = isim.cast(sim.find_by_name("Megapod"))
+	imultiplay.server_send_user_message(67, v5, 0, "door")
 	return 0
 	return 0
 

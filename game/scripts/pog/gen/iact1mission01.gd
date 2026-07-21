@@ -111,8 +111,8 @@ func local_345() -> Variant:
 	if not (await iutilities.skip_mission("The Great Escape?")):
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -357,18 +357,16 @@ func local_6028(v0, v1, v2) -> Variant:
 		await iconversation.end()
 		iai.give_attack_order(v1, v0)
 		return
-	else:
-		if v3 >= 2:
-			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_right")
-			await iconversation.end()
-			state.set_progress(v2, 6)
-			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v1, _pog_clone("Random"))))
-			return
-		else:
-			await iconversation.say(v6, "", "a1_m01_dialogue_police_not_convinced")
-			await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
-			await iconversation.end()
-			iai.give_attack_order(v1, v0)
+	if v3 >= 2:
+		await iconversation.say(v6, "", "a1_m01_dialogue_police_all_right")
+		await iconversation.end()
+		state.set_progress(v2, 6)
+		_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v1, _pog_clone("Random"))))
+		return
+	await iconversation.say(v6, "", "a1_m01_dialogue_police_not_convinced")
+	await iconversation.say(v6, "", "a1_m01_dialogue_police_all_vessels_attack")
+	await iconversation.end()
+	iai.give_attack_order(v1, v0)
 	return
 	return 0
 

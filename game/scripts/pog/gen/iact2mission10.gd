@@ -111,8 +111,8 @@ func local_479() -> Variant:
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission(" Grassy Knoll??")):
 		_pog_detach(_pog_spawn(mission_handler.bind()))
-	else:
-		await stub()
+		return
+	await stub()
 	return
 	return 0
 
@@ -780,11 +780,11 @@ func add_state_properties(v0) -> Variant:
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission10.add_state_properties: State is invalid - not adding properties. \n")
-	else:
-		if not (object.property_exists(v0, "gun_pod_handle")):
-			object.add_handle_property(v0, "gun_pod_handle", 0)
-		if PogRuntime.TRACE:
-			debug.print_string("iAct2Mission10.add_state_properties: Added State Properties\n")
+		return 0
+	if not (object.property_exists(v0, "gun_pod_handle")):
+		object.add_handle_property(v0, "gun_pod_handle", 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission10.add_state_properties: Added State Properties\n")
 	return 0
 	return 0
 

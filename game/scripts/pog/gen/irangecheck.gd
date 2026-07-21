@@ -38,13 +38,10 @@ func local_27(v0) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	if global.exists("gl_Range_creation_no_report"):
-		if global.pog_bool("gl_Range_creation_no_report") != 1:
-			if PogRuntime.TRACE:
-				debug.print_string(v0)
+		if global.pog_bool("gl_Range_creation_no_report") == 1:
 			return 0
-	else:
-		if PogRuntime.TRACE:
-			debug.print_string(v0)
+	if PogRuntime.TRACE:
+		debug.print_string(v0)
 	return 0
 	v1 = []
 	v1 = list.from_set(v0)
@@ -104,10 +101,10 @@ func add_out_of_system_traffic_exception(v0) -> Variant:
 	if _pog_is_null(global.exists("g_out_of_system_exceptions")):
 		p_set.add(v1, v0)
 		global.create_set("g_out_of_system_exceptions", 2, v1)
-	else:
-		v1 = global.pog_set("g_out_of_system_exceptions")
-		p_set.add(v1, v0)
-		global.set_set("g_out_of_system_exceptions", v1)
+		return 0
+	v1 = global.pog_set("g_out_of_system_exceptions")
+	p_set.add(v1, v0)
+	global.set_set("g_out_of_system_exceptions", v1)
 	return 0
 	return 0
 
@@ -174,9 +171,9 @@ func purge_traffic_exception() -> Variant:
 	v3 = imapentity.find_by_name("Lucrecia's Base")
 	if p_set.contains(v1, v3):
 		p_set.remove(v1, v3)
-	else:
-		if PogRuntime.TRACE:
-			await local_27("iRangeCheck.PurgeTrafficException - cannot find lucrecias base in current system habitat set\n")
+		return 0
+	if PogRuntime.TRACE:
+		await local_27("iRangeCheck.PurgeTrafficException - cannot find lucrecias base in current system habitat set\n")
 	return 0
 	return 0
 

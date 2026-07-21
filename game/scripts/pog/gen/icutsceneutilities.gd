@@ -234,39 +234,39 @@ func follow_route(v0, v1, v2, v3, v4, v5) -> Variant:
 	if group.sim_count(v1) < 2:
 		if PogRuntime.TRACE:
 			debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
-	else:
-		while true:
-			v6 = isim.cast(group.nth_sim(v1, v5))
-			if not _pog_is_null(isim.cast(v6)):
-				v7 = sim.distance_between(v0, v6) * v2
-				iai.give_approach_order_advanced(v0, v6, 0.0, 1.0, 0)
-				if PogRuntime.TRACE:
-					debug.print_string("FollowRoute: Ship ")
-					debug.print_string(object.string_property(v0, "name"))
-					debug.print_string(" approaching location ")
-					debug.print_int(v5)
-					debug.print_string(" radius ")
-					debug.print_float(v7)
-					debug.print_string("\n")
-				while true:
-					if group.sim_count(v1) < 2:
-						if PogRuntime.TRACE:
-							debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
-						return 0
-					await _pog_wait(v3)
-					if not (sim.distance_between(v0, v6) > v7 and not (iai.is_order_complete(v0))):
-						break
-				v5 = v5 + 1
-			else:
-				if PogRuntime.TRACE:
-					debug.print_string("FollowWaypoints: Last route marker reached. Looping back to beginning\n")
-				v5 = 0
-			if not (isim.cast(v6)):
-				v4 = v4 + -1
-			if not (v4 > 0):
-				break
-		if PogRuntime.TRACE:
-			debug.print_string("FollowWaypoints: Completed. \n")
+		return 0
+	while true:
+		v6 = isim.cast(group.nth_sim(v1, v5))
+		if not _pog_is_null(isim.cast(v6)):
+			v7 = sim.distance_between(v0, v6) * v2
+			iai.give_approach_order_advanced(v0, v6, 0.0, 1.0, 0)
+			if PogRuntime.TRACE:
+				debug.print_string("FollowRoute: Ship ")
+				debug.print_string(object.string_property(v0, "name"))
+				debug.print_string(" approaching location ")
+				debug.print_int(v5)
+				debug.print_string(" radius ")
+				debug.print_float(v7)
+				debug.print_string("\n")
+			while true:
+				if group.sim_count(v1) < 2:
+					if PogRuntime.TRACE:
+						debug.print_string("FollowWaypoints: Less than 2 sims in route group. Exiting\n")
+					return 0
+				await _pog_wait(v3)
+				if not (sim.distance_between(v0, v6) > v7 and not (iai.is_order_complete(v0))):
+					break
+			v5 = v5 + 1
+		else:
+			if PogRuntime.TRACE:
+				debug.print_string("FollowWaypoints: Last route marker reached. Looping back to beginning\n")
+			v5 = 0
+		if not (isim.cast(v6)):
+			v4 = v4 + -1
+		if not (v4 > 0):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("FollowWaypoints: Completed. \n")
 	return 0
 	return 0
 
@@ -416,15 +416,15 @@ func setup_directed_death(v0, v1, v2, v3, v4, v5) -> Variant:
 		while v9 < v11:
 			await setup_directed_death(group.nth_group(v6, v9), v1, v2, v3, v4, v5)
 			v9 = v9 + 1
-	else:
-		if not (v7):
-			return 0
-		object.add_handle_property(v7, "Cutscene_DirectedDeath_Speaker", v1)
-		object.add_string_property(v7, "Cutscene_DirectedDeath_Speaker_Name", v2)
-		object.add_string_property(v7, "Cutscene_DirectedDeath_Obituary", v3)
-		object.add_string_property(v7, "Cutscene_DirectedDeath_Epitaph", v4)
-		object.add_int_property(v7, "Cutscene_DirectedDeath_EndGame", v5)
-		object.set_string_property(v7, "death_script", "iCutsceneUtilities.DirectedDeath")
+		return 0
+	if not (v7):
+		return 0
+	object.add_handle_property(v7, "Cutscene_DirectedDeath_Speaker", v1)
+	object.add_string_property(v7, "Cutscene_DirectedDeath_Speaker_Name", v2)
+	object.add_string_property(v7, "Cutscene_DirectedDeath_Obituary", v3)
+	object.add_string_property(v7, "Cutscene_DirectedDeath_Epitaph", v4)
+	object.add_int_property(v7, "Cutscene_DirectedDeath_EndGame", v5)
+	object.set_string_property(v7, "death_script", "iCutsceneUtilities.DirectedDeath")
 	return 0
 	return 0
 

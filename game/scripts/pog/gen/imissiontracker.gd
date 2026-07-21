@@ -30,19 +30,19 @@ func update_string() -> Variant:
 		global.create_string("g_mt_mstring", 2, "active missions: none")
 		if PogRuntime.TRACE:
 			debug.print_string("iMissionTracker.UpdateString called before iMissionTracker.Initialise")
-	else:
-		v3 = "active missions:"
-		v1 = global.pog_int("g_mt_mtask_counter")
-		v0 = 0
-		while v0 < v1:
-			v2 = _pog_task_cast(global.handle(string.join("g_mt_mtask_handle", string.from_int(v0))))
-			if _pog_is_running(v2):
-				v3 = string.join(v3, global.string(string.join("g_mt_mtask_string", string.from_int(v0))))
-			v0 = v0 + 1
-		global.set_string("g_mt_mstring", v3)
-		if PogRuntime.TRACE:
-			debug.print_string(v3)
-			debug.print_string("\n")
+		return 0
+	v3 = "active missions:"
+	v1 = global.pog_int("g_mt_mtask_counter")
+	v0 = 0
+	while v0 < v1:
+		v2 = _pog_task_cast(global.handle(string.join("g_mt_mtask_handle", string.from_int(v0))))
+		if _pog_is_running(v2):
+			v3 = string.join(v3, global.string(string.join("g_mt_mtask_string", string.from_int(v0))))
+		v0 = v0 + 1
+	global.set_string("g_mt_mstring", v3)
+	if PogRuntime.TRACE:
+		debug.print_string(v3)
+		debug.print_string("\n")
 	return 0
 	return 0
 
@@ -69,15 +69,15 @@ func remove_mission(v0) -> Variant:
 		global.create_string("g_mt_mstring", 2, "active missions: none")
 		if PogRuntime.TRACE:
 			debug.print_string("iMissionTracker.UpdateString called before iMissionTracker.Initialise")
-	else:
-		v2 = global.pog_int("g_mt_mtask_counter")
-		v1 = 0
-		while v1 < v2:
-			v3 = _pog_task_cast(global.handle(string.join("g_mt_mtask_handle", string.from_int(v1))))
-			if _pog_eq(v3, v0):
-				global.set_handle(string.join("g_mt_mtask_handle", string.from_int(v1)), 0)
-			v1 = v1 + 1
-		await update_string()
+		return 0
+	v2 = global.pog_int("g_mt_mtask_counter")
+	v1 = 0
+	while v1 < v2:
+		v3 = _pog_task_cast(global.handle(string.join("g_mt_mtask_handle", string.from_int(v1))))
+		if _pog_eq(v3, v0):
+			global.set_handle(string.join("g_mt_mtask_handle", string.from_int(v1)), 0)
+		v1 = v1 + 1
+	await update_string()
 	return 0
 	return 0
 

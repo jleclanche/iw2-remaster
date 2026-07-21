@@ -98,65 +98,14 @@ func local_218() -> Variant:
 
 func local_326() -> Variant:
 	var v0: Variant = 0
-	var v1: Variant = 0
-	var v2: Variant = 0
-	var v3: Variant = 0
-	var v4: Variant = 0
-	var v5: Variant = 0
-	var v6: Variant = 0
-	var v7: Variant = 0
-	var v8: Variant = 0
-	var v9: Variant = 0
-	var v10: Variant = 0
-	var v11: Variant = 0
-	var v12: Variant = 0
 	while icomms.is_in_conversation():
 		await _pog_wait(0.5)
 	if not (await iutilities.skip_mission("Wolf's Lair??")):
 		v0 = _pog_spawn(mission_handler.bind())
 		_pog_detach(v0)
 		await imissiontracker.add_mission(v0, 2, 22)
-	else:
-		await stub()
-	return
-	v4 = 0
-	v5 = ""
-	v6 = ""
-	v9 = []
-	v12 = ifaction.find("Marauders")
-	while true:
-		await _pog_wait(1)
-		if global.pog_bool("g_act2_got_hyperspace_tracker") != 1:
-			continue
-		v9 = imapentity.system_lagrange_points()
-		v11 = iship.current_target(v0)
-		if not _pog_is_null(v11):
-			if not _pog_eq(v11, v10):
-				sim.set_cullable(v10, 1)
-				sim.set_cullable(v11, 0)
-				v10 = v11
-				v7 = ilagrangepoint.nearest(v9, v10)
-			if sim.distance_between(v10, v7) < 2000.0 and not (v4):
-				v4 = 1
-			else:
-				if sim.distance_between(v10, v7) > 2000.0:
-					if v4:
-						v4 = 0
-					v7 = ilagrangepoint.nearest(v9, v10)
-		if not (v4):
-			continue
-		v8 = ilagrangepoint.nearest(v9, v10)
-		if _pog_eq(v7, v8):
-			continue
-		v6 = imapentity.pog_name(v8)
-		if _pog_eq(sim.cast(v8), v1):
-			if state.progress(v3) != 8:
-				state.set_progress(v3, 1)
-		if _pog_eq(sim.cast(v8), v2):
-			if state.progress(v3) != 8:
-				state.set_progress(v3, 6)
-		await iconversation.one_liner(0, "Tracker", string.join("Target has jumped to: ", v6))
-		v4 = 0
+		return
+	await stub()
 	return
 	return 0
 
