@@ -264,6 +264,11 @@ func _current() -> PogUi.PogWindow:
 ## consumes its mouse events in the GUI phase -- they NEVER reach
 ## _unhandled_input (where they used to be "handled": clicking any POG screen
 ## was dead while the keyboard worked).
+# A pointer drag on an options slider (FcSliderControl mouse tracking): the
+# thumb follows the cursor while the left button is down on the track.
+var _drag_slider: PogUi.PogWindow = null
+var _drag_rect := Rect2()
+
 func _gui_input(e: InputEvent) -> void:
 	if not visible or ui == null:
 		return
@@ -271,6 +276,14 @@ func _gui_input(e: InputEvent) -> void:
 			and e.button_index == MOUSE_BUTTON_LEFT:
 		# full-rect control at the origin: local coords == viewport coords
 		_click(e.position)
+		accept_event()
+		return
+	if e is InputEventMouseButton and not e.pressed \
+			and e.button_index == MOUSE_BUTTON_LEFT:
+		_drag_slider = null
+	if e is InputEventMouseMotion and _drag_slider != null:
+		var dp := ((e as InputEventMouseMotion).position - _origin()) / _scale()
+		_slider_to(_drag_slider, _drag_rect, dp)
 		accept_event()
 		return
 	# the wheel scrolls the list box under the cursor (our pointing device's
@@ -343,9 +356,11 @@ func _unhandled_input(e: InputEvent) -> void:
 		KEY_DOWN, KEY_S:
 			_step(1)
 		KEY_LEFT, KEY_A:
-			ui._fire(_current(), PogUi.IN_LEFT)
+			if not _slider_step(-1):
+				ui._fire(_current(), PogUi.IN_LEFT)
 		KEY_RIGHT, KEY_D:
-			ui._fire(_current(), PogUi.IN_RIGHT)
+			if not _slider_step(1):
+				ui._fire(_current(), PogUi.IN_RIGHT)
 		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
 			_activate(_current())
 		KEY_ESCAPE, KEY_BACKSPACE:
@@ -354,6 +369,19 @@ func _unhandled_input(e: InputEvent) -> void:
 		_:
 			return
 	get_viewport().set_input_as_handled()
+
+
+## An options slider row consumes left/right itself: iOptions::OnLeft/OnRight
+## step the FOCUSED row (the POG wires them on the list box,
+## ipdagui.pog:845-878); our rows carry their option index in .value.
+func _slider_step(dir: int) -> bool:
+	var win := _current()
+	if win == null or win.kind != "slider":
+		return false
+	ui._opt_step(int(win.value), dir)
+	ui.play_widget_sound(1)
+	queue_redraw()
+	return true
 
 
 func _step(dir: int) -> void:
@@ -379,6 +407,12 @@ func _step(dir: int) -> void:
 
 
 func _activate(win: PogUi.PogWindow) -> void:
+	if win != null and win.kind == "slider":
+		# iOptions::OnSelect on a non-bool row advances it one step
+		_beep(false)
+		ui._opt_step(int(win.value), 1)
+		queue_redraw()
+		return
 	if win == null:
 		# Nothing focusable: on an engine screen (the credits) Enter skips,
 		# the way the original's Game.MovieSkip binding did.
@@ -427,6 +461,15 @@ func _click(screen_p: Vector2) -> void:
 		if at >= 0:
 			win.focused_entry = at
 		_sync()
+		if win.kind == "slider":
+			# a click on the track places the thumb there and starts a drag;
+			# a click on the label half only takes the focus
+			if p.x >= r.position.x + r.size.x * 0.5:
+				_drag_slider = win
+				_drag_rect = r
+				_slider_to(win, r, p)
+			_beep(false)
+			return
 		# A click is a mouse-up on the control (eInputMessages slot 7), and the
 		# scripts wire that to the same function as Select.
 		var fn := win.override(PogUi.IN_MOUSE_UP)
@@ -439,6 +482,20 @@ func _click(screen_p: Vector2) -> void:
 			ui.dispatch(fn)
 		return
 	_beep(true)
+
+
+## The pill geometry mirrors _draw_slider; the cursor x lands the thumb at
+## that fraction of the track.
+func _slider_to(win: PogUi.PogWindow, r: Rect2, p: Vector2) -> void:
+	var tx := r.position.x + r.size.x * 0.5
+	var tw := r.size.x * 0.5 - 6.0
+	var th := minf(r.size.y - 6.0, 16.0)
+	var side := th - 6.0
+	var span := tw - side - 8.0
+	var frac := clampf((p.x - (tx + 4.0 + side * 0.5)) / maxf(span, 1.0),
+			0.0, 1.0)
+	ui.option_set_frac(int(win.value), frac)
+	queue_redraw()
 
 
 ## Focus follows the mouse (see _gui_input). Only redraws on a change.

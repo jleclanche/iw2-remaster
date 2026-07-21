@@ -1959,26 +1959,60 @@ func _opt_restore(_t, _a: Array) -> Variant:
 
 # @native ioptions.OnSelect
 func _opt_on_select(_t, a: Array) -> Variant:
-	# The player hit enter on row n: bools toggle, the rest advance one step.
-	var o := _option(int(a[0]))
+	# The player hit enter on a row: bools toggle, the rest advance one step.
+	var i := _opt_index(a)
+	var o := _option(i)
 	if o == null:
 		return 0
 	if o.kind == "bool":
 		_opt_store(o, 0 if PogVM._truthy(_opt_load(o)) else 1)
 	else:
-		return _opt_step(int(a[0]), 1)
+		return _opt_step(i, 1)
 	return 0
 
 # @native ioptions.OnLeft
 func _opt_on_left(_t, a: Array) -> Variant:
-	return _opt_step(int(a[0]), -1)
+	return _opt_step(_opt_index(a), -1)
 
 # @native ioptions.OnRight
 func _opt_on_right(_t, a: Array) -> Variant:
-	return _opt_step(int(a[0]), 1)
+	return _opt_step(_opt_index(a), 1)
+
+## The POG callbacks do NOT pass an option index: SPPDAOptionsCategory_On*
+## (ipdagui.pog:845-878) pass the options LIST BOX handle
+## (global.Handle("options_screen_list_box")) and the engine's iOptions steps
+## that box's FOCUSED entry. Our rows are focusable child windows of the box,
+## each carrying its option index in .value, and the base-screens focus ring
+## drives them directly -- so a window argument resolves through the row (or
+## the box's focused row); a plain int is still taken as a direct index.
+func _opt_index(a: Array) -> int:
+	if a.is_empty():
+		return -1
+	var w := _win(a[0])
+	if w != null:
+		if w.kind in ["slider", "button"] and w.value is int:
+			return int(w.value)      # a row itself
+		# the box: whichever of its rows the screen renderer has focused
+		if screen_ui != null:
+			var cur: PogWindow = screen_ui._current()
+			if cur != null and cur.parent == w and cur.value is int:
+				return int(cur.value)
+		for c: PogWindow in w.children:
+			if c.kind in ["slider", "button"] and c.value is int:
+				return int(c.value)  # no focus known: the first row
+		return -1
+	return int(a[0]) if (a[0] is int or a[0] is float) else -1
 
 func _option(i: int) -> PogOption:
 	return options[i] if i >= 0 and i < options.size() else null
+
+## Pointer input: the thumb lands at the clicked fraction of the track
+## (FcSliderControl's mouse tracking); the config value follows live.
+func option_set_frac(i: int, frac: float) -> void:
+	var o := _option(i)
+	if o == null:
+		return
+	_opt_store(o, o.lo + clampf(frac, 0.0, 1.0) * (o.hi - o.lo))
 
 # iOptions.RegisterFloat(name, class_name, property, start, end,
 # immediate_update): the row edits a LIVE engine property. The sound rows
@@ -2056,21 +2090,27 @@ func _opt_create_windows(_t, a: Array) -> Variant:
 	# kind nothing consumed and focusable() did not know -- the rows were
 	# never navigable.)
 	var parent := _win(a[0] if a.size() > 0 else null)
-	# real per-row geometry inside the parent box: the rows previously had
-	# none (x/y/w/h all zero) and every label drew stacked on one point
-	var row_h := 26
-	var top := 34
+	# Row geometry matched to the reference capture (sound screen, 640x480
+	# native: rows on a 23 px pitch from y~15 into the panel, labels in the
+	# GUI's small Handel Gothic -- igui.pog:34 GUI_type_font = handelgothic
+	# bt_8pt; the engine's own FcListBox metrics are GUI_listbox_entryheight
+	# = 10 + slider control art, igui.pog:236-237).
+	var row_h := 20
+	var top := 12
 	var pw: int = parent.w if parent != null and parent.w > 0 else 480
 	for i in options.size():
 		var o: PogOption = options[i]
 		var is_slider: bool = o.kind == "float"
 		var row := _new_window("button", [], 0)
 		row.parent = parent
+		if parent != null:
+			parent.children.append(row)   # _new_window([]) had no parent arg
 		row.x = 10
-		row.y = top + i * (row_h + 4)
+		row.y = top + i * (row_h + 3)
 		row.w = pw - 20
 		row.h = row_h
 		row.title = _option_text(o) if is_slider else _option_label(o)
+		row.font_url = "font:/fonts/handelgothic bt_8pt"
 		row.on_press = ""
 		row.overrides[IN_SELECT] = ""
 		row.value = i                 # which option this row steps
