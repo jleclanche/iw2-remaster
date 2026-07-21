@@ -106,15 +106,19 @@ the target-following flight code:
   feeds the LDSi **fence** (`_update_ldsi_fence`), the HUD **roundel**
   (`inhibit_charge`), and the LDS-engage inhibition test (`_lds_clearance`), so
   all three agree.
-- `main.gd::_lds_avoidance()` is now a **diagnostic metric only** (the demo
-  autoplay logs and gates on it). It is NOT a drive gate: `_lds_process` no
-  longer brakes or drops the drive on a mass. The drive breaks out on the
-  inhibit region alone (`icLDSDrive::Simulate @ 0x10037040`), so manual LDS near
-  a star re-engages cleanly instead of spool/break-looping (#56, the reported
-  "can't restart near a star" bug). The prior mass dropout was our invention:
-  every L-point sits inside its planet's shell (Alexander's is 132,000 km deep),
-  so "inside the shell = dropout" wedged the drive into a spool/breakout loop
-  the moment bodies got their real radii.
+- `main.gd::_lds_avoidance()` now feeds a **BRAKE ONLY**, never a dropout. The
+  cruise still slows near a closing mass (proximity speed cap, faithful to
+  `icLDSDrive::Simulate` case 2's target-relative cap `this+0x90`), so the drive
+  rounds a body instead of blasting past it -- but it no longer DROPS OUT on a
+  mass. The drive breaks out on the inhibit region alone
+  (`icLDSDrive::Simulate @ 0x10037040`), so manual LDS near a star re-engages
+  cleanly instead of spool/break-looping (#56, the reported "can't restart near
+  a star" bug). The invented dropout was the whole fault: every L-point sits
+  inside its planet's shell (Alexander's is 132,000 km deep), so "inside the
+  shell = dropout" wedged the drive into a spool/breakout loop the moment bodies
+  got their real radii. (Dropping the brake too was worse: without it the
+  route-around overshoots a huge shell at the LDS ceiling and flings the ship
+  off-course until its destination culls and the autopilot silently drops.)
 - `main.gd::_lds_avoid_waypoint(dest)` (new) is the route-around: the port of
   `CheckLDSAvoidance`. It returns the nose heading for an LDS transit — straight
   at `dest` unless a mass's 1.6×-radius shell blocks the corridor, then the
