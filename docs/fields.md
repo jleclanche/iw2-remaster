@@ -110,11 +110,22 @@ this+0x64 = 100.0 * max_radius        ; fmul [0x10119fa0]
      `t = clamp((v - 1) * 0.00200401, 0, 1)` (`_DAT_10119fc8` = 1/499, capped
      at `_DAT_10119fcc` = 500 m/s), `angle = t*0.4 + (1-t)*PI`
      (`_DAT_10117558` = 0.4 rad, `_DAT_10119464` = PI). Distance exactly `R`.
-   - **Sign caveat:** the decompiled basis math negates the travel direction
-     before building the cone frame, and `ConeVector`'s axis convention was
-     not fully resolved -- whether the cone opens ahead or astern is one sign
-     flip we could not pin. We spawn AHEAD (the only reading under which a
-     traversed field refreshes). UNKNOWN, flagged.
+   - **Sign RESOLVED (2026-07-21): the cone opens ASTERN.**
+     `FnRandom::ConeVector` (flux @ `0x10048200`) builds a quaternion from
+     its two half-angle rolls and returns it applied to **+Z** (the output
+     is the rotation matrix's third column: `x = 2(xz + wy)`,
+     `y = 2(yz - wx)`, `z = 1 - 2(x^2 + y^2)`). `FUN_1004a030` then builds
+     an orthonormal basis from `d = -direction` (`local_74 = -*param_2`,
+     with cross-products against world X/Y/Z fallbacks) and mixes the cone
+     vector as `cone.x * side + cone.y * third + cone.z * d` -- the cone's
+     mean axis IS the negated travel direction. Moving respawns land
+     BEHIND the traveller at the full shell radius `R`: at cruise the
+     field visibly thins out ahead (nothing ever pops in in front), and it
+     refills all around only when the half-angle widens back to PI below
+     ~1 m/s. The earlier AHEAD reading -- rationalised as "the only way a
+     traversed field refreshes" -- was wrong precisely because the
+     original does NOT refresh a traversed field ahead; leaving the rocks
+     behind is the authored behaviour.
 4. **Rock kinematics** (`FUN_10049d70 @ 0x10049d70`):
    - orientation: random;
    - spin: `size_frac = clamp((r - min_radius)/(max_radius - min_radius))`,

@@ -330,13 +330,17 @@ func _spawn(f: Field, vel: Vector3, speed: float) -> void:
 		dir = _unit_vector()
 		dist = spawn_r * randf_range(NEAR_FRACTION, 1.0)
 	else:
-		# half-angle PI..0.4 rad over 1..500 m/s. The decompiled basis math
-		# negates the travel direction before FnRandom::ConeVector; whether
-		# that lands the cone ahead or astern was not resolved (one sign flip
-		# in the camera-delta chain) -- we spawn AHEAD, which is the only
-		# reading under which a traversed field refreshes (docs/fields.md).
+		# half-angle PI..0.4 rad over 1..500 m/s, opening ASTERN -- resolved
+		# (the old AHEAD reading was wrong): FnRandom::ConeVector (flux @
+		# 0x10048200) rotates +Z by its sampled quaternion, and FUN_1004a030
+		# builds its basis from d = -direction (`local_74 = -*param_2`) with
+		# the cone's z mapped onto d (`... + local_60 * local_50`), so the
+		# cone's mean IS the negated travel direction. Moving respawns land
+		# BEHIND the traveller at the full shell radius: the field thins out
+		# ahead at speed and only refills around you once the cone widens
+		# back to the sphere below ~1 m/s. Rocks never pop in in front.
 		var t := clampf((speed - 1.0) * CONE_RAMP, 0.0, 1.0)
-		dir = _cone_vector(vel / speed, t * CONE_MIN + (1.0 - t) * PI)
+		dir = _cone_vector(-(vel / speed), t * CONE_MIN + (1.0 - t) * PI)
 	rk["ax"] = main.px + dir.x * dist
 	rk["ay"] = main.py + dir.y * dist
 	rk["az"] = main.pz + dir.z * dist
