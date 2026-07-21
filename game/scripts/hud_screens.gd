@@ -226,9 +226,9 @@ func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, scale := 1.0) -> void:
 	var tex: Texture2D = hud._sprites
 	if tex == null:
 		return
-	# fall back to the flight HUD's cells (hud.gd SPR) for shared sprites like
-	# the cursor star (3)
-	var s: Array = SPR2.get(id, Hud.SPR.get(id, []))
+	# hud.cell(): the generated engine table first (issue #49), then the
+	# hand dicts (SPR2 here, hud.gd's SPR)
+	var s: Array = hud.cell(id)
 	if s.is_empty():
 		return
 	var sz := Vector2(float(s[2]), float(s[3])) * scale

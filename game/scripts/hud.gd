@@ -191,6 +191,50 @@ const SPR_RET := {
 	94: [186, 80, 70, 70, 70, 0],     # INNER reticle: waypoint / L-point marker
 }
 
+# The ENGINE's own cell table, decoded from the fill run in FUN_100e6c60 by
+# tools/iw2/spritetable.py (issue #49) into data/json/hud_sprites.json:
+# id -> [x, y, w, h, ox, oy, texture] (texture 0 sprites / 1 lcd / 2 reticle
+# / 3 tri). When present it is AUTHORITATIVE and exhaustive; the hand dicts
+# above stay as the per-id semantic documentation and as the fallback.
+var sprite_table: Dictionary = {}
+
+func _load_sprite_table(base: String) -> void:
+	var path := base.path_join("data/json/hud_sprites.json")
+	if not FileAccess.file_exists(path):
+		push_warning("hud_sprites.json missing -- run tools/iw2/spritetable.py")
+		return
+	var d: Dictionary = JSON.parse_string(
+			FileAccess.get_file_as_string(path))
+	if d == null or not d.has("cells"):
+		push_warning("hud_sprites.json unreadable")
+		return
+	for k: String in d["cells"]:
+		var ints: Array = []
+		for v in d["cells"][k]:      # JSON numbers arrive as floats
+			ints.append(int(v))
+		sprite_table[int(k)] = ints
+	# the decode must agree with every hand cell it overlaps -- a divergence
+	# is exactly the eyeballed-cell bug class this table exists to kill
+	for pair: Array in [[SPR, 0], [SPR_RET, 2], [HudScreens.SPR2, 0]]:
+		for id: int in pair[0]:
+			var g: Array = sprite_table.get(id, [])
+			if g.size() != 7 or int(g[6]) != int(pair[1]):
+				continue
+			var hand: Array = []
+			for v in pair[0][id]:
+				hand.append(int(v))
+			if g.slice(0, 6) != hand.slice(0, 6):
+				push_warning("sprite cell %d: hand %s != decoded %s"
+						% [id, pair[0][id], g])
+
+## The blitters' cell lookup: the generated table first (texture 0 only --
+## the other sheets have their own blitters), then the hand dicts.
+func cell(id: int) -> Array:
+	var g: Array = sprite_table.get(id, [])
+	if g.size() == 7 and int(g[6]) == 0:
+		return g.slice(0, 6)
+	return SPR.get(id, HudScreens.SPR2.get(id, []))
+
 static func load_game_font(base: String, fnt: String) -> Font:
 	var path := base.path_join("data/fonts").path_join(fnt)
 	if FileAccess.file_exists(path):
@@ -232,6 +276,7 @@ func _ready() -> void:
 	_sprites = _load_mask(base, "sprites.png")
 	_reticle_tex = _load_mask(base, "reticle.png")
 	_ucp_tex = _load_mask(base, "ucp.png")
+	_load_sprite_table(base)
 	# the 1024-entry scanline-brightness table (FUN_100e8250 fill loop):
 	# (1 - r) * 0.75 + r with r uniform in [0,1)  (_DAT_10117d8c = 0.75)
 	noise.resize(1024)
@@ -1063,9 +1108,7 @@ func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, flags := 0,
 	var t: CanvasItem = self if ci == null else ci
 	if _sprites == null:
 		return
-	# the menu-screen cells (ZOOM IN/OUT 36/37, CANCEL 31...) live in
-	# HudScreens.SPR2; the starmap's command boxes borrow this blitter
-	var s: Array = SPR.get(id, HudScreens.SPR2.get(id, []))
+	var s: Array = cell(id)
 	if s.is_empty():
 		return
 	var sz := Vector2(float(s[2]), float(s[3]))
