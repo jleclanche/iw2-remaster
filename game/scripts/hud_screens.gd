@@ -127,24 +127,37 @@ func handle_key(key: int) -> bool:
 			return _map_key(key)
 	return false
 
-## The menu-page backdrop. The wash + 16 px grid are drawn by the flight
-## region under the menu elements; their draw was not recovered to an address,
-## so both are pixel-matched to the 2026-07-21 reference captures: background
-## composite over black space reads (112, 61, 13) -> wash (0.517, 0.282, 0.06)
-## at 0.85; grid lines read +(7, 10, 0) over the wash on a 16 px pitch --
-## additive HUD green at 0.04. (Address still an open question, docs/original.md.)
-const WASH := Color(0.517, 0.282, 0.06, 0.85)
+## The menu-page backdrop -- EXTRACTED: icHUD's host draw (FUN_100de1a0)
+## runs FUN_100ed260 @ 0x100ed260 below both element passes while a page is
+## up, fading over 1 s (host+0x70, clamp _DAT_1011d818 = 1.0):
+##  1. the WASH: one full-screen SRCALPHA quad, chartreuse (DAT_10176038 =
+##     0.5, 1.0, 0) x _DAT_1011b354 = 0.15, alpha = t x 0.5 (_DAT_10117738).
+##     It is genuinely TRANSLUCENT: the "brown" the 2026-07-21 captures
+##     measured was the nebula scene showing through, not a wash colour.
+##  2. the GRID: additive, full chartreuse, 16 px pitch (_DAT_101184a0),
+##     alpha = t x 0.04 + (1-t) x 0.2 (_DAT_1011d9cc / _DAT_101184ac) --
+##     brighter during the fade, settling at the measured 0.04.
+##  3. the SCAN BAND: additive, chartreuse x 0.15 scaled by t, 40 px tall
+##     (_DAT_1011849c): alpha ramps 0 -> full over 37 px then cuts over the
+##     last 3 px (_DAT_10118490); y = frac(ms / 3000) x (h + 40) - 40
+##     (_DAT_10118498 = 1/3000 -- the 3 s sweep).
+const WASH := Color(0.5 * 0.15, 1.0 * 0.15, 0.0, 0.5)
 const GRID_STEP := 16.0
 const GRID_A := 0.04
+const GRID_A_FADE := 0.2
+const SCAN_H := 40.0
+const SCAN_CUT := 3.0
+const SCAN_LEVEL := 0.15
 
 func _draw() -> void:
 	if hud == null or main == null or hud.screen == "":
 		return
 	_t = self
 	var size := get_viewport_rect().size
-	draw_rect(Rect2(Vector2.ZERO, size), WASH)
-	# the element's one-second fade-in (icHUDEngineering this+0x58)
+	# the element's one-second fade-in (host+0x70; icHUDEngineering this+0x58)
 	var fade := clampf(_open_t / FADE_T, 0.0, 1.0)
+	draw_rect(Rect2(Vector2.ZERO, size),
+			Color(WASH.r, WASH.g, WASH.b, WASH.a * fade))
 	# The caption band (FUN_100f1920): quad (16,16)-(w-16,48) in the HUD's
 	# general colour (DAT_10176038, the same register the body text uses) at
 	# alpha 0.25 (_DAT_101191ec).
@@ -181,9 +194,10 @@ func _draw_additive() -> void:
 	_t = _add
 	var size := get_viewport_rect().size
 	var fade := clampf(_open_t / FADE_T, 0.0, 1.0)
-	# the 16 px grid: additive HUD green at 0.04 (measured +(7, 10, 0) over
-	# the wash; the draw's address is still an open question, docs/original.md)
-	var grid := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, GRID_A)
+	# the 16 px grid (FUN_100ed260 pass 2): additive full chartreuse, alpha
+	# fading from 0.2 to the steady 0.04 as the page settles
+	var grid := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b,
+			fade * GRID_A + (1.0 - fade) * GRID_A_FADE)
 	var gx := GRID_STEP
 	while gx < size.x:
 		_add.draw_line(Vector2(gx, 0), Vector2(gx, size.y), grid, 1.0)
@@ -192,25 +206,30 @@ func _draw_additive() -> void:
 	while gy < size.y:
 		_add.draw_line(Vector2(0, gy), Vector2(size.x, gy), grid, 1.0)
 		gy += GRID_STEP
-	# The band text is the MENU NODE's own label drawn through the node
-	# member at (20,19) (FUN_100f1920 tail, member+0x24 vfunc(1, 20.0, 19.0))
-	# -- the reference capture shows "STARMAP", the hud_menu_map label, in
-	# the large OCR-B face, not the hud_map_caption string.
+	# The band text is the MENU NODE's own label drawn through the caption
+	# member at (20,19) (FUN_100f1920 tail, member+0x24 vfunc(1, 20.0, 19.0)).
+	# Font CITED: the shared page-base ctor FUN_100f1310 builds the member
+	# with FUN_100ee1f0(elem+0x24, 2, 0) -- font index 2, table 0x10162c60
+	# row 2 = fonts/ocrb_18pt; its slot-0 draw (0x100ee3d0, recovered from
+	# raw bytes) hands that index to FUN_100eb830, style 1 = alpha 1.0.
 	var caption := str(Hud.MENU.get(hud.screen, {}).get("label", ""))
 	hud._ea = fade
 	_glow_text(2, Vector2(20, 19), caption, Hud.GREEN)
-	# The page's green scan band, sweeping top to bottom. Row-profiled from
-	# the 2026-07-21 capture (rows 446..483): alpha ramps LINEARLY from 0 at
-	# the band's top edge to full at its bottom, then cuts hard -- the MFD
-	# scan-band law (FUN_10102490) at page scale, 38 px tall, peaking at
-	# additive green x 0.145 (+19,+37 over the wash). The renderer's address
-	# is untraced, like the wash.
+	# The scan band (FUN_100ed260 pass 3): 40 px, chartreuse x 0.15, alpha
+	# ramping 0 -> full over the first 37 px then cut over the last 3, on a
+	# 3 s sweep. (The capture's row profile measured 38 px at x0.145 --
+	# within a pixel and half a percent of the extracted law.)
 	var sweep := fposmod(Time.get_ticks_msec() / 3000.0, 1.0) \
-			* (size.y + 38.0) - 38.0
+			* (size.y + SCAN_H) - SCAN_H
+	var ramp := SCAN_H - SCAN_CUT
+	var band := Color(Hud.GREEN.r * SCAN_LEVEL, Hud.GREEN.g * SCAN_LEVEL,
+			Hud.GREEN.b * SCAN_LEVEL, 0.0)
 	for i in 10:
-		var la := (float(i) + 1.0) / 10.0 * 0.145 * fade
-		_add.draw_rect(Rect2(0.0, sweep + i * 3.8, size.x, 3.8),
-				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, la))
+		band.a = (float(i) + 0.5) / 10.0 * fade
+		_add.draw_rect(Rect2(0.0, sweep + i * ramp / 10.0, size.x,
+				ramp / 10.0), band)
+	band.a = 0.5 * fade
+	_add.draw_rect(Rect2(0.0, sweep + ramp, size.x, SCAN_CUT), band)
 	if hud.screen == "hud_menu_map":
 		_draw_starmap(fade)
 	# FUN_100f1400 (element vtable +0x24, shared by all five pages): with the
@@ -1838,9 +1857,15 @@ func _draw_starmap(fade: float) -> void:
 	if a_cluster > 0.0:
 		_draw_map_cluster(centre, c, a_cluster)
 
-	# the two header indicators, absolute (36,126) and (72,126), drawn after the
-	# projection is popped: sprite 53 backs both, then the live one blinks over.
-	# The capture shows them BRIGHT with bloom -- the additive sprite path.
+	# The two header indicators live in the SHARED body draw (0x100fbf50,
+	# lines 191695-191764 -- every state, both views), additive, colour
+	# DAT_10176038: sprite 53 backs both unconditionally; indicator 1
+	# (36,126) blinks while EITHER zoom is off target (system pair to 1e-14,
+	# cluster to 1e-6), glyph from the SYSTEM pair alone -- 36 descending,
+	# 37 ascending; indicator 2 (72,126) blinks sprite 29 while any SYSTEM
+	# camera axis is off target -- the cluster camera is never tested, so
+	# cluster panning never lights it. Blink: a 2 s triangle from 1.0 down
+	# to 0.1 (_DAT_1011dc5c = 0.0005, _DAT_1011dc58 = 1.8, 0.1 floor).
 	var t: float = Time.get_ticks_msec()
 	var blink: float = (absf(fposmod(t * 0.0005, 1.0) - 0.5) * 1.8 + 0.1) * fade
 	var backing := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade * 0.9)

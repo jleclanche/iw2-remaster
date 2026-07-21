@@ -2195,19 +2195,34 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
 
-### The menu-page wash and background grid
+### The menu-page wash and background grid — ANSWERED (2026-07-21 2nd pass)
 
-The brown full-screen tint and the 16 px background grid behind every HUD menu
-page (starmap included) are drawn by the flight region below the elements; the
-draw was not located in the decompile. Current values are **pixel-matched to
-the 2026-07-21 reference captures**: composite over black space reads
-(112, 61, 13) -> wash (0.517, 0.282, 0.06) at 0.85 alpha; grid lines read
-+(7, 10, 0) over the wash on a 16 px pitch (additive HUD green at 0.04). Find
-the drawing function and its colour statics to replace the empirical values.
-Also unpinned: the caption's exact font index (the band label renders in the
-large OCR-B face by cap-height measurement, ~16 px vs the 10 px body lines --
-consistent with `fonts/ocrb_18pt`, table index 2 @ `0x10162c60`, but the node
-label's own draw was not chased to its `FUN_100eb270` call).
+**Recovered: `FUN_100ed260 @ 0x100ed260`**, called from icHUD's host draw
+`FUN_100de1a0` below both element passes while a page is up
+(`host+0x1ac != 0`), with a 1 s fade `host+0x70` (clamp `_DAT_1011d818`).
+Colour base is the HUD chartreuse `DAT_10176038` = (0.5, 1.0, 0)
+(initialiser `FUN_100e67b0`). Three passes:
+
+1. **Wash**: full-screen SRCALPHA quad, chartreuse x `_DAT_1011b354` =
+   0.15, alpha = `t * master * _DAT_10117738` (0.5). The wash is
+   TRANSLUCENT GREEN, not brown: the (112, 61, 13) the captures measured
+   was the nebula scene compositing through it. The old opaque
+   (0.517, 0.282, 0.06) @ 0.85 stand-in was an artifact of treating the
+   capture background as black.
+2. **Grid**: additive, full chartreuse, 16 px pitch (`_DAT_101184a0`),
+   alpha = `t * 0.04 + (1 - t) * 0.2` (`_DAT_1011d9cc` / `_DAT_101184ac`)
+   -- settles on exactly the measured 0.04.
+3. **Scan band**: additive, chartreuse x 0.15 scaled by t; 40 px tall
+   (`_DAT_1011849c`), alpha 0 -> master over 37 px then cut over the last
+   3 px (`_DAT_10118490`); y = `frac(ms * _DAT_10118498 [= 1/3000]) *
+   (h + 40) - 40` -- the 3 s sweep. (The capture's row profile had
+   measured 38 px peaking at x0.145.)
+
+The caption font index is CITED too: the shared page-base ctor
+`FUN_100f1310` builds the caption member with `FUN_100ee1f0(elem+0x24, 2,
+0)` -- font 2, table `0x10162c60` row 2 = `fonts/ocrb_18pt`; the member's
+slot-0 draw (`0x100ee3d0`, a Ghidra hole read from raw bytes) hands that
+index to `FUN_100eb830`, style 1 = alpha 1.0.
 
 ### Does the starmap gate JUMP DESTINATION on a capsule drive?
 
