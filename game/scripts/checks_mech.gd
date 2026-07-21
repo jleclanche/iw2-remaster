@@ -109,6 +109,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_cutscene_staging_assert",
 	&"_ms_comms_overlay",
 	&"_ms_remote_link",
+	&"_ms_map_hide",
 	&"_ms_save_reload",
 	&"_ms_debug_base",
 	&"_ms_finish",
@@ -1714,6 +1715,42 @@ func _ms_cutscene_staging_assert(_delta: float) -> void:
 		_mech("stop-explosion", false, "burn target still alive")
 		_mech_next()
 
+
+func _ms_map_hide(_delta: float) -> void:
+	# The plot's entity toggles end to end (istartsystem.HideMapLocations
+	# drives these): imapentity.SetMapVisibility must stamp the live record
+	# AND main.entity_flags; a foreign-system call must land under the
+	# FOREIGN system's key (not alias the resident one); and a system reload
+	# -- which rebuilds every record from JSON -- must re-apply the flag.
+	var probe := "Military FTL Outpost"
+	var before := false          # ...proving the flag can be true first
+	for o: Dictionary in m.objects:
+		if str(o["name"]) == probe:
+			before = bool(o.get("map_visible", true))
+	var h = m.pog_world._s_find_in_system(null,
+			[probe, "map:/geog/badlands/hoffers_wake"])
+	m.pog_ents._m_map_visibility(null, [h, 0])
+	var fh = m.pog_world._s_find_in_system(null,
+			["Marauder Central HQ", "map:/geog/badlands/dante"])
+	m.pog_ents._m_map_visibility(null, [fh, 0])
+	var stored: bool = not bool(m.entity_flag(
+			"hoffers_wake", probe, "map_visible", true))
+	var foreign: bool = not bool(m.entity_flag(
+			"dante", "Marauder Central HQ", "map_visible", true))
+	m.start_in_system("hoffers_wake")   # rebuild the records from JSON
+	var after := true
+	for o: Dictionary in m.objects:
+		if str(o["name"]) == probe:
+			after = bool(o.get("map_visible", true))
+	_mech("map-hide", before and stored and foreign and not after,
+			"before=%s stored=%s foreign-keyed=%s survives-reload=%s"
+			% [before, stored, foreign, not after])
+	# leave no probe state behind for the later steps
+	m.entity_flags.clear()
+	for o: Dictionary in m.objects:
+		if str(o["name"]) == probe:
+			o["map_visible"] = true
+	_mech_next()
 
 func _ms_save_reload(_delta: float) -> void:
 	# the igame.SaveGame/LoadGame roundtrip with the world extras: hull,
