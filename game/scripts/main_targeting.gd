@@ -25,11 +25,13 @@ func contact_list() -> Array:
 						"targeted": e["idx"] == target_idx,
 						"category": o["category"],
 						"faction": str(o.get("faction",
-							"NAV" if o["category"] == "lpoint"
+							"NAV" if o["category"] in ["lpoint", "waypoint"]
 							else _station_faction(str(o["name"])))),
+						# type column strings: data/text/hud.csv
+						# hud_type_waypoint / hud_type_lpoint / hud_type_station
 						"type": str(o.get("type",
-							"LAGPT" if o["category"] == "lpoint"
-							else "STATN"))})
+							{"lpoint": "LAGPT", "waypoint": "WAYPT"}.get(
+								str(o["category"]), "STATN")))})
 		else:
 			var a: AiShip = e["ai"]
 			var hostile: bool = _is_hostile(a)
@@ -260,12 +262,14 @@ func _contacts_full() -> Array:
 			match o["category"]:
 				"station", "gunstar":
 					show = d < SENSOR_RANGE
-				"lpoint":
+				"lpoint", "waypoint":
+					# nav points pass the sensor gate within 100 km
+					# (FUN_1003ae90's type-5 window, DAT_10119d14)
 					show = d < LPOINT_LIST_RANGE
 		if show:
 			list.append({"kind": "obj", "idx": i, "dist": d,
 					"unknown": not forced and d > SENSOR_ID_RANGE
-						and o["category"] != "lpoint"})
+						and o["category"] not in ["lpoint", "waypoint"]})
 	for a in ai_ships:
 		if not _sensor_visible(a):
 			continue

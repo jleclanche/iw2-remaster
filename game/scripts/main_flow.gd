@@ -587,15 +587,20 @@ func _setup_act0_scene() -> void:
 				# don't render more copies of the rocks
 				o["avatar"] = ""
 	# sim.PlaceRelativeTo(hulk, player, 3000, 4000, 5000) -- in the PLAYER'S
-	# frame (the player now faces the Gap), 7071 m out
-	var hoff := Vector3(3000.0, 4000.0, -5000.0)
-	if ship != null:
-		hoff = ship.global_transform.basis * hoff
-	objects.append({"name": "Abandoned Hulk", "category": "station",
-		"x": px + hoff.x, "y": py + hoff.y, "z": pz + hoff.z, "radius": 120.0,
-		"avatar": "avatars/reactor/setup.gltf",
-		"faction": "", "type": "UTIL",
-		"jumps": [], "colors": [], "node": null, "prop_collide": true})
+	# frame (the player now faces the Gap), 7071 m out. Under the POG paths
+	# the mission itself creates the reactor sim (iact0mission10:441
+	# sim.Create("ini:/sims/stations/reactor", "a0_m10_name_abandoned") --
+	# stations.json carries its avatar and radius), so the hand-built
+	# stand-in must NOT also spawn: that was the doubled Abandoned Hulk.
+	if not (use_port or use_pog):
+		var hoff := Vector3(3000.0, 4000.0, -5000.0)
+		if ship != null:
+			hoff = ship.global_transform.basis * hoff
+		objects.append({"name": "Abandoned Hulk", "category": "station",
+			"x": px + hoff.x, "y": py + hoff.y, "z": pz + hoff.z, "radius": 120.0,
+			"avatar": "avatars/reactor/setup.gltf",
+			"faction": "", "type": "UTIL",
+			"jumps": [], "colors": [], "node": null, "prop_collide": true})
 	var scopo := _spawn_npc("Scopo", "INDPT", "UTIL",
 		"data/avatars/avatars/utilityvessel/setup.gltf",
 		Vector3(-600, 100, -3950),

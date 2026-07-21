@@ -400,6 +400,13 @@ func _load_ship_db() -> void:
 			ship_db[String(rec.get("path", ""))] = rec
 
 
+static func _has_dockport(db: Dictionary) -> bool:
+	for ss in db.get("subsims", []):
+		if "dockports" in String((ss as Dictionary).get("template", "")):
+			return true
+	return false
+
+
 ## "ini:/sims/ships/utility/flitter" -> "sims/ships/utility/flitter.ini"
 static func ini_key(p: String) -> String:
 	var s := p.trim_prefix("ini:").trim_prefix("/")
@@ -607,6 +614,24 @@ func _create_object(ini: String, name: String) -> PogSim:
 		"node": null, "prop_collide": true,
 	}
 	var stem := ini.trim_prefix("ini:/").trim_suffix(".ini")
+	if String(dprops.get("type", "")) == "T_Waypoint":
+		# sims/nav/waypoint.ini: [Class] iiSim, [Properties] type="T_Waypoint"
+		# -- the sensor's nav point (iutilities.CreateWaypoint*). The category
+		# is what the HUD keys everything on: chartreuse (FUN_100e8530), mark
+		# sprite 47, the NAV columns -- and a nav point has no hull to hit.
+		# Left as "prop" it rendered gold with a STATN type column.
+		rec["category"] = "waypoint"
+		rec["radius"] = 0.0
+		rec["prop_collide"] = false
+	elif String(db.get("class", "")) == "icStation" or _has_dockport(db):
+		# a scripted station: class icStation, or any sim carrying a dockport
+		# subsim -- the act-0 reactor is icInertSim + universal_port at null
+		# "dockport" (stations.json / reactor.ini [Subsims]). The category is
+		# what _try_dock and the sensor admission read; as "prop" the hulk
+		# was undockable and F8 latched whatever station was nearest instead.
+		rec["category"] = "station"
+		if String(dprops.get("type", "")) == "T_Utility":
+			rec["type"] = "UTIL"    # hud.csv hud_type_utility
 	if _FIELD_SPHERES.has(stem):
 		# an icFieldSphere is pure geography: no avatar, no hull, nothing on
 		# sensors -- fields.gd reads these records every frame and PlaceAt

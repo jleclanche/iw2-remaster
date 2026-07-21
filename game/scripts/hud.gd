@@ -1214,7 +1214,10 @@ func _draw_target_block(c: Vector2) -> void:
 		tname = str(main.target_ai.display_name).to_upper()
 		thull = clampf(main.target_ai.hull / main.target_ai.hull_max, 0.0, 1.0)
 	elif main.target_idx >= 0:
-		tname = str(main.objects[main.target_idx]["name"]).to_upper()
+		# a POG-created record's name may still be a localisation key
+		# (lazy-name law) -- resolve, never leak the raw key
+		tname = ShipSystems.display_name(
+				str(main.objects[main.target_idx]["name"])).to_upper()
 	if thull >= 0.0:
 		_vbar(Vector2(c.x + TEXT_X, top), lh0 + lh0 + lh1, thull,
 				_health_color(thull))
