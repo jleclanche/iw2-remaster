@@ -90,6 +90,33 @@ km out.
   out of the well ramps clean.
 - `entities.gd::nearest_ldsi(p)` (new) is the region query helper.
 
+## The render fold at LDS magnitudes (issue #51)
+
+The world fold is **post-integration**. `icClient::Tick @ 0x100b39c0` runs the
+sim Thinks first, then `FcClient::Tick` integrates the world and rebases the
+render focus — `FcWorld+0x38` is the focus position, and the per-frame rebase
+delta is `GraphicsDeltaFocus` (`FcWorld+0x50..0x58`, the same displacement
+`iiSimField::Think` tests and `icTeleportDynamics::Update` adds to every dust
+mote). So the original renders every frame with the focus at the origin.
+
+The remaster's fold (`main._fold_motion`) originally ran inside
+`main._physics_process`, **before** `ShipFlight` integrated — leaving the
+rendered ship a full tick's travel from the fold origin. At drive speeds that
+is metres; at the LDS ceiling (`lds_class1.ini max_speed = 3e10`, the authored
+"frigged" value) it is **5e8 m per 60 Hz tick**, where a float32 ULP is ~32 m:
+the ship/camera/world relation quantized per frame (the reported on-screen
+teleporting), every `px/py/pz`-anchored draw (grid, fence, impostors, streamed
+objects) sat 5e8 m astern of the hull, and dropping out collapsed that offset
+in one frame (the reported "snap back"). `px/py/pz` itself always advanced
+correctly — measured 1.48e11 m over an 18 s probe cruise, before and after.
+
+The fix moves `_fold_motion` + `_stream_objects` + the grid/fence updates into
+`main.late_physics` (the CameraTail hook, after integration, before the
+camera), matching the engine's order. `mechcheck` asserts it:
+`lds-render-origin` requires the folded ship at the origin during cruise, and
+FAILS at `off = v * dt` (measured 2e9 m at 4x time scale) under the old
+ordering.
+
 ## For original.md
 
 LDS inhibition (`icLDSIRegion`, `iRegion.CreateLDSI`) and LDS avoidance

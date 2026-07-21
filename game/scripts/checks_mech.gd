@@ -73,6 +73,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_field_spawn",
 	&"_ms_field_assert",
 	&"_ms_field_cull",
+	&"_ms_belt_enter",
+	&"_ms_belt_assert",
 	&"_ms_tri_weights",
 	&"_ms_tri_drive",
 	&"_ms_tow_dock",
@@ -217,6 +219,14 @@ func _ms_lds_speed(_delta: float) -> void:
 		_mech("lds-speed", m.lds_state == 2 and spd > 1.0e6,
 			"v=" + m._fmt_dist(spd) + "/s")
 		_mech("lds-travel", traveled > 1.0e8, m._fmt_dist(traveled))
+		# the world fold is post-integration (main.late_physics): at this point
+		# in the NEXT tick the rendered ship must sit at the fold origin. When
+		# the fold ran pre-integration this read velocity * delta -- 5e8 m at
+		# the 3e10 m/s LDS ceiling, where float32 jitter tore the view apart
+		# (issue #51; measured 5.0e8 by probe before the fix, 0.0 after).
+		_mech("lds-render-origin", m.ship.global_position.length() < 1.0,
+			"off=%.1f m at v=%s/s" % [m.ship.global_position.length(),
+			m._fmt_dist(spd)])
 		m._toggle_lds()
 		_mech_next()
 
@@ -589,6 +599,41 @@ func _ms_field_cull(_delta: float) -> void:
 			% [m.fields.asteroid.live.size()
 				+ m.fields.debris.live.size(), demo_t])
 		_mech_next()
+
+func _ms_belt_enter(_delta: float) -> void:
+	# issue #50: the REAL kind-4 belt record (Hoffer's Asteroid Belt), not the
+	# synthetic sphere above. Prove-it-can-fail: assert the zone is OFF out
+	# here first -- a spawn check that never saw an empty field is vacuous.
+	var f: Fields = m.fields
+	var outside := not f.belts.is_empty() \
+			and not f._in_belt(f.belts[0], m.px, m.py, m.pz)
+	_mech("belt-outside", outside and f.asteroid.live.is_empty(),
+		"belts=%d live=%d" % [f.belts.size(), f.asteroid.live.size()])
+	if f.belts.is_empty():
+		_mech_next()
+		return
+	# mid-annulus, on-plane: ParseAsteroidBeltInfo's degenerate disc contains
+	# in-plane radius R with |y| < w (fields.gd _in_belt)
+	var b: Dictionary = f.belts[0]
+	m.px = float(b["cx"]) + float(b["r"])
+	m.py = float(b["cy"])
+	m.pz = float(b["cz"])
+	m.ship.velocity = Vector3.ZERO
+	m.ship.set_speed = 0.0
+	_mech_next()
+
+func _ms_belt_assert(_delta: float) -> void:
+	var live: Array = m.fields.asteroid.live
+	if live.is_empty() and demo_t < 10.0:
+		return
+	var vis := 0
+	for rk in live:
+		if (rk["node"] as Node3D).is_visible_in_tree():
+			vis += 1
+	_mech("belt-spawn", not live.is_empty() and vis == live.size(),
+		"live=%d visible=%d after %.1f s" % [live.size(), vis, demo_t])
+	m.py += 1.0e8  # strand the rocks; the cull loop reaps them as we go
+	_mech_next()
 
 func _ms_tri_weights(_delta: float) -> void:
 	# --- the TRI (task #60) -------------------------------------------

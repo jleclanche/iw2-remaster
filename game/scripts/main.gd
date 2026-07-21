@@ -482,19 +482,31 @@ func _physics_process(delta: float) -> void:
 	player_collision = movie == null and docked_at == "" \
 			and (base_iface == null \
 			or (not base_iface.inside and base_iface.cut == 0))
-	_fold_motion()
-	_stream_objects()
 	_contact_sound_cd = maxf(0.0, _contact_sound_cd - delta)
 	_collisions()
+	# the field Thinks run PRE-integration on the last tick's focus, like the
+	# original (icClient::Tick @ 0x100b39c0 runs them before FcClient::Tick
+	# moves the world) -- the post-integration fold below is what strands
+	# LDS-speed respawns astern (docs/fields.md)
 	fields.tick(delta)
+
+
+## Placed by CameraTail, not from _physics_process above: everything here needs
+## the ship AFTER it integrates. See camera_tail.gd.
+func late_physics(delta: float) -> void:
+	# The world fold is POST-integration: FcClient::Tick integrates the world
+	# and THEN rebases the render focus (FcWorld+0x38; the per-frame rebase is
+	# GraphicsDeltaFocus, FcWorld+0x50..0x58), so the original renders the
+	# focus at the origin every frame. Folding before integration left the
+	# rendered ship a full tick's travel from the origin -- 5e8 m at the LDS
+	# ceiling (lds_class1.ini max_speed=3e10 / 60 Hz), where a float32 ULP is
+	# ~32 m: the ship/camera/world relation quantized per frame (the issue #51
+	# on-screen teleporting), and every px/py/pz-anchored draw sat one tick
+	# astern of the hull.
+	_fold_motion()
+	_stream_objects()
 	_update_grid()
 	_update_ldsi_fence()
-
-
-## Placed by CameraTail, not from _physics_process above: the camera has to be
-## positioned after the ship integrates, or it renders a tick behind the hull.
-## See camera_tail.gd.
-func late_physics(delta: float) -> void:
 	_chase_camera(delta)
 	if sky_anchor != null:
 		sky_anchor.global_position = cam.global_position

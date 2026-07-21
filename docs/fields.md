@@ -95,9 +95,12 @@ this+0x64 = 100.0 * max_radius        ; fmul [0x10119fa0]
    tick's focus (`world+0x38`, read pre-integration). At shell-per-frame
    speeds the respawned shell is already a full frame's travel astern of the
    render position, strands outside the 1.1x cull, and is reaped -- unseen --
-   on the next tick. The remaster reproduces the ordering (spawn origin =
-   `px/py/pz - vel * delta`, `fields.gd _field_tick` step 3) rather than
-   hard-hiding the field in LDS.
+   on the next tick. The remaster now reproduces the ordering LITERALLY:
+   `fields.tick` runs in `main._physics_process` (before `ShipFlight`
+   integrates), and the world fold runs post-integration in
+   `main.late_physics` (issue #51, docs/lds.md) -- so `px/py/pz` at Think
+   time IS the pre-integration focus and the stranding emerges with no
+   `- vel * delta` reconstruction.
 3. **Spawn** (`FUN_10049fe0 @ 0x10049fe0` -> `FUN_1004a030 @ 0x1004a030`),
    budget = `count` per frame, so an empty field fills in one tick:
    - stationary (speed < 1e-6): random unit vector, distance uniform in

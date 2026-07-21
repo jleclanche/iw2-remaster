@@ -264,19 +264,16 @@ func _field_tick(f: Field, on: bool, vel: Vector3, delta: float) -> void:
 			_recycle(f, f.live.size() - 1)
 		speed = 0.0
 	# 3. spawn from the pool (Think passes `count` as the per-frame budget, so
-	# an empty field fills completely in one tick). The original places rocks
-	# about the PRE-integration focus (world+0x38 as of the last tick -- the
-	# field Thinks run before FcClient::Tick moves the world, icClient::Tick @
-	# 0x100b39c0); our tick runs after _fold_motion, so that origin is one
-	# frame of travel behind px/py/pz. At shell-per-frame speeds this strands
-	# the respawned shell astern of the camera, which is exactly how the
-	# original shows nothing during LDS cruise.
-	var ox: float = main.px - vel.x * delta
-	var oy: float = main.py - vel.y * delta
-	var oz: float = main.pz - vel.z * delta
+	# an empty field fills completely in one tick). This tick runs where the
+	# original's Think does -- BEFORE the world integrates and folds
+	# (icClient::Tick @ 0x100b39c0 runs the Thinks before FcClient::Tick), so
+	# px/py/pz here IS the pre-integration focus (world+0x38). At
+	# shell-per-frame speeds the post-integration fold then strands the
+	# respawned shell a full frame's travel astern of the camera, which is
+	# exactly how the original shows nothing during LDS cruise.
 	var budget: int = int(f.spec["count"])
 	while budget > 0 and not f.pool.is_empty():
-		_spawn(f, vel, speed, ox, oy, oz)
+		_spawn(f, vel, speed)
 		budget -= 1
 	# the dust ticks itself: it is a scene node hanging off the solar system
 	# (AddParticleField), not something the field drives
@@ -314,10 +311,8 @@ func _build_pool(f: Field) -> void:
 
 
 # FUN_1004a030 @ 0x1004a030 (place) + FUN_10049d70 @ 0x10049d70 (kinematics).
-# The spawn origin (ox/oy/oz) is the last tick's focus, not the current
-# player position -- see the ordering note in _field_tick step 3.
-func _spawn(f: Field, vel: Vector3, speed: float,
-		ox: float, oy: float, oz: float) -> void:
+# px/py/pz is the pre-integration focus here -- see _field_tick step 3.
+func _spawn(f: Field, vel: Vector3, speed: float) -> void:
 	var rk: Dictionary = f.pool.pop_back()
 	var spawn_r: float = SPAWN_PER_RADIUS * float(rk["radius"])
 	var dir: Vector3
@@ -333,9 +328,9 @@ func _spawn(f: Field, vel: Vector3, speed: float,
 		# reading under which a traversed field refreshes (docs/fields.md).
 		var t := clampf((speed - 1.0) * CONE_RAMP, 0.0, 1.0)
 		dir = _cone_vector(vel / speed, t * CONE_MIN + (1.0 - t) * PI)
-	rk["ax"] = ox + dir.x * dist
-	rk["ay"] = oy + dir.y * dist
-	rk["az"] = oz + dir.z * dist
+	rk["ax"] = main.px + dir.x * dist
+	rk["ay"] = main.py + dir.y * dist
+	rk["az"] = main.pz + dir.z * dist
 	# rock kinematics: random orientation; spin scaled down for big rocks
 	var size_span: float = float(f.spec["max_radius"]) - float(f.spec["min_radius"])
 	var size_frac := 0.0
@@ -353,10 +348,7 @@ func _spawn(f: Field, vel: Vector3, speed: float,
 	rk["hp"] = float(f.spec["hit_points"])
 	var node: Node3D = rk["node"]
 	node.basis = Basis(Quaternion(_unit_vector(), randf() * TAU))
-	# fold against the CURRENT player position: a rock placed about the stale
-	# focus at shell-per-frame speeds must render astern, not around the ship
-	node.position = Vector3(float(rk["ax"]) - main.px,
-		float(rk["ay"]) - main.py, float(rk["az"]) - main.pz)
+	node.position = dir * dist
 	node.visible = true
 	f.live.append(rk)
 
