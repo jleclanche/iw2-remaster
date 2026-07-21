@@ -260,8 +260,13 @@ func _autopilot_tick(delta: float) -> void:
 	# like the original: approach/dock autopilots engage LDS for long
 	# transits once the nose is on target (LDS cruise already brakes and
 	# drops out near the destination)
+	# the engage gate must clear BOTH dropout causes _lds_process enforces --
+	# region inhibition AND the mass break-off shell -- or the drive spools to
+	# 100% and instantly drops, and the autopilot re-arms it in an endless
+	# charge/drop loop (reported: departing inside a body's 1.5x-radius shell)
 	if ap_mode in [1, 3] and lds_state == 0 and jump_state == 0 \
 			and dist > 8.0e4 and _lds_clearance() > 1000.0 \
+			and _lds_avoidance() > 1000.0 \
 			and (-ship.global_transform.basis.z).angle_to(p.normalized()) < 0.05:
 		_toggle_lds()
 	match ap_mode:
