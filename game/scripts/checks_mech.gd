@@ -135,7 +135,12 @@ func _mechcheck(delta: float) -> void:
 		_mech_next()
 		return
 	call(_mech_steps[demo_phase], delta)
-	if demo_t > 300.0:
+	# per-phase watchdog. Fast suite runs at 4x time (MECH_FAST_TIME_SCALE), so
+	# demo_t 180 = 45 s wall -- the ceiling a fast-suite failure may burn (#53).
+	# The --mechslow legs are real-time and a few legitimately need longer, so
+	# their watchdog stays generous.
+	var watchdog := 300.0 if m.mechslow else 180.0
+	if demo_t > watchdog:
 		print("MECHCHECK: phase %d timeout" % demo_phase)
 		get_tree().quit(1)
 
@@ -1098,33 +1103,28 @@ func _hull_probe_hit() -> bool:
 	return _hull_probe_pool() < 1.0e9 - 1.0 or m.hull < 1.0e9 - 1.0
 
 func _ms_hull_ghost(_delta: float) -> void:
-	if not _mech_hull_o.has("ghost"):
-		_mech_hull_o = _hull_probe_station(false)
-		if _mech_hull_o.get("node") == null:
-			_mech("hull-ghost", false, "probe model failed to load")
-			_hull_probe_cleanup(true)
-			_mech_next()
-			return
-		_mech_hull_o["ghost"] = true
-		# re-top the pools so "no damage" is assertable for THIS run
-		m.hull = 1.0e9
-		if m.sys != null:
-			m.sys.hull = 1.0e9
+	# DETERMINISTIC (#53): a colliderless twin of the probe station must answer
+	# NO contact even at MAXIMUM overlap. Put the hull dead on the station centre
+	# and drive the detector (_collide_hull is a static get_rest_info shape query
+	# at the ship's position, not a swept test) exactly once. The old check flew
+	# the ship in under physics and asserted "no damage while past the centre",
+	# which passed vacuously whenever the ram stalled short of the centre -- the
+	# "the detector can fail" caveat it printed on itself.
+	_mech_hull_o = _hull_probe_station(false)
+	var node: Variant = _mech_hull_o.get("node")
+	if node == null or not is_instance_valid(node):
+		_mech("hull-ghost", false, "probe model failed to load")
+		_hull_probe_cleanup(true)
+		_mech_next()
 		return
-	_hull_probe_ram()
+	m.hull = 1.0e9      # re-top so "no damage" is assertable for this run
+	if m.sys != null:
+		m.sys.hull = 1.0e9
+	m.ship.global_position = (node as Node3D).global_position   # max overlap
 	m._collide_hull(_mech_hull_o)
-	var s := _hull_probe_s()
-	if _hull_probe_hit():
-		_mech("hull-ghost", false,
-			"contact WITHOUT a collider: a stale body is answering the probe")
-	elif s > 0.0:
-		_mech("hull-ghost", true,
-			"no collider -> flew through undamaged (the detector can fail)")
-	elif demo_t > 30.0:
-		_mech("hull-ghost", false,
-			"never crossed the centre WITHOUT a collider: detector is blind")
-	else:
-		return
+	_mech("hull-ghost", not _hull_probe_hit(),
+		"no collider -> no contact at the station centre (a solid twin hits here)")
+	m.ship.global_position = Vector3.ZERO
 	_hull_probe_cleanup(true)
 	_mech_next()
 
@@ -1317,7 +1317,7 @@ func _ms_remote_fire(_delta: float) -> void:
 func _ms_remote_fire_assert(_delta: float) -> void:
 	if Turrets.instance == null \
 			or Turrets.instance._battery_for_ship(_rf_drone).is_empty():
-		if demo_t > 200.0:
+		if demo_t > 120.0:   # 30 s wall at 4x -- battery builds in a few frames
 			_mech("remote-fire", false, "no battery on the cutter")
 			_mech_next()
 		return
