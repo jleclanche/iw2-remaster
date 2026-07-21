@@ -22,6 +22,7 @@ var _ngt_stage := 0
 var _kprobe_t := -1  # kompira-drive probe throttle (#4 diagnosis)
 var _khop := 0       # story-resume hop: 0 not yet, 1 away, 2 done (#38)
 var _khop_t := 0.0
+var _bvisit := 1     # base-visit counter: the checker fires ONE element/visit
 
 ## A control on the PDA screen by the POG function it dispatches.
 func _ngt_button(fn: String) -> PogUi.PogWindow:
@@ -443,10 +444,46 @@ func _campcheck_port() -> void:
 			if bi != null and bi.open and s110 == 2 \
 					and not m.pog_rt.gameapi.in_conversation:
 				print("CAMPCHECK(port): base story element S1.10 ran off ",
-					"BaseMain (g_story_1.10 == 2) — advancing to act 2")
-				bi.leave()
-				m.pog_rt.native("igame.nextact", ["iActTwo"])
-				demo_phase = 4
+					"BaseMain (g_story_1.10 == 2) — revisiting for S1.30/20")
+				demo_phase = 33
+		33:
+			# the checker fires ONE element per visit (each dispatcher case
+			# jumps to the exit after starting one), so the character intros
+			# take three: S1.10, then S1.30, then S1.20 -- which is the one
+			# that raises g_act1_character_intro + enables JAFS
+			# (iactone.pog:200). Re-entry drives enter/_open_interior
+			# directly: the manual dock path needs the reveal stage the
+			# check's speed skipped, and BaseMain-per-open is what is being
+			# exercised.
+			m.pog_rt.current_seq = -1
+			var bj: BaseInterior = m.base_iface
+			if bj == null:
+				return
+			var want := "g_story_1.30" if _bvisit == 1 else "g_story_1.20"
+			if not bj.open and not bj.inside:
+				bj.enter()
+				bj._open_interior()
+			var sv := int(m.pog_rt.native("global.int", [want]))
+			if int(demo_t) % 20 == 0 and int(demo_t) != _kprobe_t:
+				_kprobe_t = int(demo_t)
+				print("CAMPCHECK probe: visit=", _bvisit + 1, " ", want,
+					"=", sv, " conv=", m.pog_rt.gameapi.in_conversation,
+					" intro=", m.pog_rt.native("global.bool",
+						["g_act1_character_intro"]))
+			if bj.open and sv == 2 and not m.pog_rt.gameapi.in_conversation:
+				bj.leave()
+				_bvisit += 1
+				if _bvisit >= 3:
+					var ci := PogVM._truthy(m.pog_rt.native("global.bool",
+							["g_act1_character_intro"]))
+					print("CAMPCHECK(port): character intros COMPLETE ",
+						"(S1.30+S1.20, intro=", ci, ") — advancing to act 2")
+					if not ci:
+						print("CAMPCHECK(port): FAIL — S1.20 ran but the ",
+							"intro flag is down")
+						get_tree().quit(1)
+					m.pog_rt.native("igame.nextact", ["iActTwo"])
+					demo_phase = 4
 		4:
 			# iActTwo.Main -> MasterScript -> (no SkipAct) -> chapter switch
 			# case 0 -> iact2mission01.Main: the cutscene stages the Haven
