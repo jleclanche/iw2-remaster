@@ -266,7 +266,7 @@ func mission_handler() -> Variant:
 	var _pc: int = 2582
 	while true:
 		if _pc == 2582:
-			v0 = state.find(self)
+			v0 = state.find(_pog_current())
 			v1 = imapentity.find_by_name_in_system("Fort Brooklyn", "map:/geog/badlands/firefrost")
 			v2 = imapentity.find_by_name_in_system("Sunflower L-Point", "map:/geog/badlands/firefrost")
 			v9 = iship.find_player_ship()
@@ -281,7 +281,7 @@ func mission_handler() -> Variant:
 				_pc = 2811
 				continue
 		elif _pc == 2778:
-			v0 = state.create(self, 0)
+			v0 = state.create(_pog_current(), 0)
 			_pc = 2811
 			continue
 		elif _pc == 2811:
@@ -300,7 +300,7 @@ func mission_handler() -> Variant:
 			_pc = 2869
 			continue
 		elif _pc == 2869:
-			await imissiontracker.add_mission(self, 2, 4)
+			await imissiontracker.add_mission(_pog_current(), 2, 4)
 			text.add("csv:/text/act_2/act2_mission04")
 			await iwingmen.initialise()
 			v3 = await iutilities.create_waypoint_relative_to(v1, object.float_property(v1, "radius") * 2.0, 0.0, 0.0)
@@ -392,7 +392,7 @@ func mission_handler() -> Variant:
 				_pc = 4233
 				continue
 		elif _pc == 4376:
-			_pog_detach(_pog_spawn(local_486.bind(self, v0, v3, v4, v5, v6, v7, v10, v11, v12, v13, v14, v15, v16, v17)))
+			_pog_detach(_pog_spawn(local_486.bind(_pog_current(), v0, v3, v4, v5, v6, v7, v10, v11, v12, v13, v14, v15, v16, v17)))
 			_pog_spawn(local_1010.bind(v13, v10, v12, v11, v16, v0))
 			_pog_spawn(local_2300.bind(iship.cast(group.leader(v10)), v0))
 			await ibacktobase.inhibit()
@@ -773,8 +773,8 @@ func mission_handler() -> Variant:
 			await local_8845(v15, 1)
 			await local_8845(v16, 1)
 			await ibacktobase.allow()
-			await imissiontracker.remove_mission(self)
-			state.destroy(self)
+			await imissiontracker.remove_mission(_pog_current())
+			state.destroy(_pog_current())
 			await iutilities.remove_mission_restart()
 			global.set_bool("g_act2_firefrost_high_noon_complete", 1)
 			_pog_detach(_pog_spawn(local_1936.bind(v15)))

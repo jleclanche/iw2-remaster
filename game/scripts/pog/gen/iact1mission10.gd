@@ -621,7 +621,7 @@ func mission_handler() -> Variant:
 	v3 = 0
 	v7 = imapentity.find_by_name("Hoffer's Heel Ship Park")
 	v8 = imapentity.find_by_name("Lucrecia's Base")
-	v11 = self
+	v11 = _pog_current()
 	text.add("csv:/text/act_1/act1_mission10")
 	text.add("csv:/text/act_1/act1_mission10_addendum")
 	text.add("csv:/text/act_1/act1_mission10_addendum_2")
@@ -688,12 +688,12 @@ func mission_handler() -> Variant:
 					iinventory.add_without_marking_new(171, 1)
 			global.set_int("g_ibacktobase_level", global.pog_int("g_ibacktobase_level") - 1)
 			global.destroy("g_num_hidden_turret_fighters")
-			state.destroy(self)
+			state.destroy(_pog_current())
 			text.remove("csv:/act_1/act1_mission10")
 			text.remove("csv:/act_1/act1_mission10_addendum")
 			text.remove("csv:/act_1/act1_mission10_addendum_2")
 			isim.set_sensor_visibility(isim.cast(v7), 0)
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			await _pog_wait(0.5)
 			global.set_bool("g_act1_retrieved_artefact", 1)
 			gui.set_screen("icSPPlayerBaseScreen")

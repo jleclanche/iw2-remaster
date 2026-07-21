@@ -124,7 +124,7 @@ func local_446(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14) 
 		await local_272()
 		state.destroy(v0)
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		return
 	return
@@ -160,13 +160,13 @@ func mission_handler() -> Variant:
 	var v26: Variant = 0
 	var v27: Variant = 0
 	v0 = iship.find_player_ship()
-	v24 = state.find(self)
+	v24 = state.find(_pog_current())
 	v27 = 0
 	if PogRuntime.TRACE:
 		debug.print_string("iAct1_Mission05: Mission Started\n")
 	if not (v24):
-		v24 = state.create(self, 1)
-	await imissiontracker.add_mission(self, 1, 5)
+		v24 = state.create(_pog_current(), 1)
+	await imissiontracker.add_mission(_pog_current(), 1, 5)
 	text.add("csv:/text/act_1/act1_mission05")
 	v25 = iemail.find("html:/text/act_1/act1_mission05_email")
 	if not (v25):
@@ -184,7 +184,7 @@ func mission_handler() -> Variant:
 			if _pog_is_null(object.property_exists(v24, "given_obj_1")):
 				object.add_int_property(v24, "given_obj_1", 1)
 				iobjectives.add("a1_m05_objectives_meet")
-			_pog_detach(_pog_spawn(local_446.bind(self, v24, v7, v8, v9, v10, v11, v12, v13, v16, v17, v18, v19, v21, v1)))
+			_pog_detach(_pog_spawn(local_446.bind(_pog_current(), v24, v7, v8, v9, v10, v11, v12, v13, v16, v17, v18, v19, v21, v1)))
 			v5 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
 			if PogRuntime.TRACE:
 				if _pog_is_null(v5):
@@ -275,8 +275,8 @@ func mission_handler() -> Variant:
 							await iconversation.say(0, "name_clay", "a1_m05_dialogue_clay_we_cant_help_him_now")
 							await iconversation.end()
 							text.remove("csv:/text/act_1/act1_mission05")
-							state.destroy(self)
-							await imissiontracker.remove_mission(self)
+							state.destroy(_pog_current())
+							await imissiontracker.remove_mission(_pog_current())
 							return
 						if sim.is_dead(v7) and _pog_is_null(v23):
 							v23 = 1
@@ -412,8 +412,8 @@ func mission_handler() -> Variant:
 					if global.exists("g_act1_destroyed_marauder_cache"):
 						global.set_bool("g_act1_destroyed_marauder_cache", 1)
 					break
-			state.destroy(self)
-			await imissiontracker.remove_mission(self)
+			state.destroy(_pog_current())
+			await imissiontracker.remove_mission(_pog_current())
 			await iutilities.remove_mission_restart()
 	return
 	return 0

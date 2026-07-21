@@ -560,7 +560,7 @@ func mission_handler() -> Variant:
 	v2 = iship.find_player_ship()
 	v3 = imapentity.find_by_name_in_system("Ozaki MAAS Cluster Central HQ", "map:/geog/gagarin/ishime")
 	v4 = imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault")
-	v8 = self
+	v8 = _pog_current()
 	text.add("csv:/text/act_3/act3_mission06")
 	v6 = state.find(v8)
 	if not (v6):
@@ -605,8 +605,8 @@ func mission_handler() -> Variant:
 			group.destroy(v5, 1)
 		isim.set_sensor_visibility(isim.cast(v3), 0)
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		group.destroy(v5, 0)
 		return
 	return

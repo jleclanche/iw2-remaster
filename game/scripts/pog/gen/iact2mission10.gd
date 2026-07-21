@@ -695,28 +695,28 @@ func mission_handler() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v0 = iship.find_player_ship()
-	v1 = state.find(self)
+	v1 = state.find(_pog_current())
 	if _pog_is_null(global.exists("g_grassy_knoll_going")) and _pog_is_null(v1):
 		global.create_bool("g_grassy_knoll_going", 1, 1)
-		v1 = state.create(self, 0)
+		v1 = state.create(_pog_current(), 0)
 		await add_state_properties(v1)
 	else:
 		if _pog_is_null(v1):
 			return
 	await local_222(v1)
-	await imissiontracker.add_mission(self, 2, 10)
+	await imissiontracker.add_mission(_pog_current(), 2, 10)
 	text.add("csv:/text/act_2/act2_mission10")
 	text.add("csv:/text/act_2/act2_mission10_addendum")
 	v2 = iemail.find("html:/text/act_2/act2_mission10_email")
 	if not (v2):
 		iemail.send_email("a2_m10_email_sender", "a2_m10_email_subject", "html:/text/act_2/act2_mission10_email", 1)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("Act 2 Mission 10 - Email sent\n")
 		return
 	else:
 		if not (iemail.read(v2)):
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			if PogRuntime.TRACE:
 				debug.print_string("Act 2 Mission 10 - Go read your email")
 			return
@@ -768,8 +768,8 @@ func mission_handler() -> Variant:
 	global.destroy("g_moe")
 	global.destroy("g_grassy_knoll_going")
 	await iutilities.remove_mission_restart()
-	state.destroy(self)
-	await imissiontracker.remove_mission(self)
+	state.destroy(_pog_current())
+	await imissiontracker.remove_mission(_pog_current())
 	itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 572, 1, 20, 1, 0))
 	itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 572, 1, 6, 1, 0))
 	itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("M.C.A."), 566, 1, 11, 4, 2))

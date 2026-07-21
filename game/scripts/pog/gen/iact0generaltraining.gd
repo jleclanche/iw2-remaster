@@ -29,7 +29,7 @@ func base_exploration_handler() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	v0 = ""
-	v3 = state.find(self)
+	v3 = state.find(_pog_current())
 	v4 = 0
 	if PogRuntime.TRACE:
 		debug.print_string("iPrelude.BaseExplorationHandler : Task has started\n")
@@ -154,7 +154,7 @@ func base_online_handler() -> Variant:
 	v0 = ""
 	v1 = 0
 	v3 = 0
-	v4 = state.find(self)
+	v4 = state.find(_pog_current())
 	if PogRuntime.TRACE:
 		debug.print_string("iPrelude.BaseOnlineHandler : Task has started\n")
 	while true:
@@ -213,7 +213,7 @@ func local_3238(v0) -> Variant:
 
 func h_u_d_traininer() -> Variant:
 	var v0: Variant = 0
-	v0 = state.find(self)
+	v0 = state.find(_pog_current())
 	if _pog_is_null(object.property_exists(v0, "number_completed_hud_nodes")) and not (global.exists("g_training_disabled")):
 		await iconversation.one_liner(0, "name_clay", "a0_m10_dialogue_clay_hud_menu2")
 		await local_3176("hud_menu_menu")
@@ -232,7 +232,7 @@ func h_u_d_traininer() -> Variant:
 		if global.exists("g_training_disabled"):
 			continue
 		if object.int_property(v0, "number_completed_hud_nodes") == 10:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			return
 		if _pog_eq(ihud.current_menu_node(), "hud_menu_eng") and _pog_is_null(object.property_exists(v0, "done_eng")):
 			object.add_int_property(v0, "done_eng", 1)

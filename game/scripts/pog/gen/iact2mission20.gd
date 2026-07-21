@@ -973,9 +973,9 @@ func mission_handler() -> Variant:
 	v10 = imapentity.find_by_name_in_system("Toad Skin L-Point", "map:/geog/badlands/mwari")
 	v11 = imapentity.find_by_name_in_system("Fort Hope", "map:/geog/badlands/mwari")
 	v12 = imapentity.find_by_name_in_system("The Ritz", "map:/geog/badlands/santa_romera")
-	v14 = state.find(self)
-	v16 = self
-	await imissiontracker.add_mission(self, 2, 20)
+	v14 = state.find(_pog_current())
+	v16 = _pog_current()
+	await imissiontracker.add_mission(_pog_current(), 2, 20)
 	text.add("csv:/text/act_2/act2_mission20")
 	text.add("csv:/text/act_2/act2_mission05")
 	text.add("csv:/text/act_2/act2_mission25")
@@ -984,11 +984,11 @@ func mission_handler() -> Variant:
 	v15 = iemail.find("html:/text/act_2/act2_mission20_email")
 	if not (v15):
 		iemail.send_email("a2_m20_email_sender", "a2_m20_email_subject", "html:/text/act_2/act2_mission20_email", 1)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	else:
 		if not (iemail.read(v15)):
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			return
 	if _pog_is_null(v11):
 		if PogRuntime.TRACE:
@@ -1019,8 +1019,8 @@ func mission_handler() -> Variant:
 				object.remove_property(iship.find_player_ship(), "wingmen_group")
 				sim.destroy(v7)
 				sim.destroy(v8)
-				state.destroy(self)
-				await imissiontracker.remove_mission(self)
+				state.destroy(_pog_current())
+				await imissiontracker.remove_mission(_pog_current())
 				return
 			if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera"):
 				continue
@@ -1090,8 +1090,8 @@ func mission_handler() -> Variant:
 		await iwingmen.purge()
 		sim.destroy(v7)
 		sim.destroy(v8)
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

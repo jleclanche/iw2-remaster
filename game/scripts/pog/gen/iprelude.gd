@@ -197,7 +197,7 @@ func local_2112() -> Variant:
 func master_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	if not (v1):
 		v1 = state.create(v0, 0)
@@ -215,7 +215,7 @@ func master_script() -> Variant:
 		global.create_bool("g_jafs_menu_option_enabled", 2, 1)
 		global.set_bool("g_base_lights_on", 1)
 		await local_471()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		await _pog_movie("/movies/midtro")
 		igame.next_act("iActOne")
 	else:
@@ -376,7 +376,7 @@ func master_script() -> Variant:
 							debug.print_string("iPrelude.MasterScript - Still waiting for player to finish Nemesis.\n")
 				await local_471()
 				iinventory.add_command_section()
-				state.destroy(self)
+				state.destroy(_pog_current())
 				await _pog_movie("/movies/midtro")
 				igame.next_act("iActOne")
 				break

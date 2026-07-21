@@ -153,7 +153,7 @@ func local_642(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, 
 		await local_411()
 		state.destroy(v0)
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		return
 	return
@@ -244,7 +244,7 @@ func mission_handler() -> Variant:
 			v45 = 1
 			v46 = 1
 			v47 = 0
-			v0 = state.find(self)
+			v0 = state.find(_pog_current())
 			if _pog_is_null(v0):
 				_pc = 1620
 				continue
@@ -252,12 +252,12 @@ func mission_handler() -> Variant:
 				_pc = 1653
 				continue
 		elif _pc == 1620:
-			v0 = state.create(self, 0)
+			v0 = state.create(_pog_current(), 0)
 			_pc = 1653
 			continue
 		elif _pc == 1653:
 			await local_254(v0)
-			await imissiontracker.add_mission(self, 2, 1)
+			await imissiontracker.add_mission(_pog_current(), 2, 1)
 			await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Haven Station", "map:/geog/badlands/hoffers_wake"))
 			await irangecheck.add_traffic_exception(imapentity.find_by_name_in_system("Haven Station Construction Yard", "map:/geog/badlands/hoffers_wake"))
 			object.add_int_property(v7, "reactive_exception", 1)
@@ -358,7 +358,7 @@ func mission_handler() -> Variant:
 			await _pog_wait(0.5)
 			igame.enable_blackout(0)
 			v33 = 4
-			v52 = _pog_spawn(local_642.bind(self, v0, v2, v3, v4, v5, v6, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27))
+			v52 = _pog_spawn(local_642.bind(_pog_current(), v0, v2, v3, v4, v5, v6, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27))
 			_pog_detach(v52)
 			_pc = 3309
 			continue
@@ -655,7 +655,7 @@ func mission_handler() -> Variant:
 			v50 = iship.cast(group.leader(v25))
 			v51 = iship.cast(group.nth_sim(v25, 1))
 			_pog_halt(v52)
-			v52 = _pog_spawn(local_642.bind(self, v0, v2, v3, v4, v5, v6, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27))
+			v52 = _pog_spawn(local_642.bind(_pog_current(), v0, v2, v3, v4, v5, v6, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27))
 			_pog_detach(v52)
 			object.add_handle_property(v50, "other_ship", v51)
 			object.add_handle_property(v50, "other_ship", v51)
@@ -1276,8 +1276,8 @@ func mission_handler() -> Variant:
 			iai.give_flee_order(v21, v12)
 			iai.give_flee_order(v23, v1)
 			sim.set_cullable(v2, 1)
-			state.destroy(self)
-			await imissiontracker.remove_mission(self)
+			state.destroy(_pog_current())
+			await imissiontracker.remove_mission(_pog_current())
 			await iutilities.remove_mission_restart()
 			await ibacktobase.allow()
 			_pc = 9982

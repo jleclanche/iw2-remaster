@@ -255,7 +255,7 @@ func mission_handler() -> Variant:
 	var _pc: int = 1659
 	while true:
 		if _pc == 1659:
-			v0 = self
+			v0 = _pog_current()
 			v3 = state.find(v0)
 			v4 = iship.find_player_ship()
 			v8 = group.create()
@@ -295,7 +295,7 @@ func mission_handler() -> Variant:
 				_pc = 2144
 				continue
 		elif _pc == 2111:
-			v3 = state.create(self, 0)
+			v3 = state.create(_pog_current(), 0)
 			_pc = 2144
 			continue
 		elif _pc == 2144:
@@ -310,7 +310,7 @@ func mission_handler() -> Variant:
 				_pc = 2256
 				continue
 		elif _pc == 2223:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			_pc = 12819
 			continue
 		elif _pc == 2256:
@@ -335,7 +335,7 @@ func mission_handler() -> Variant:
 			_pc = 2335
 			continue
 		elif _pc == 2335:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			_pc = 12819
 			continue
 		elif _pc == 2367:
@@ -359,7 +359,7 @@ func mission_handler() -> Variant:
 			_pc = 2429
 			continue
 		elif _pc == 2429:
-			await imissiontracker.add_mission(self, 2, 5)
+			await imissiontracker.add_mission(_pog_current(), 2, 5)
 			_pc = 2486
 			continue
 		elif _pc == 2465:
@@ -553,7 +553,7 @@ func mission_handler() -> Variant:
 				continue
 		elif _pc == 4135:
 			await local_339(v3)
-			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			v1 = _pog_spawn(local_657.bind(_pog_current(), v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
 			_pog_detach(v1)
 			_pc = 4264
 			continue
@@ -678,7 +678,7 @@ func mission_handler() -> Variant:
 			await abb_common.set_cullable_group(v7, 0)
 			await abb_common.materialise_group_near(v7, v14, 1500.0)
 			_pog_halt(v1)
-			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			v1 = _pog_spawn(local_657.bind(_pog_current(), v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
 			_pog_detach(v1)
 			_pc = 5225
 			continue
@@ -943,7 +943,7 @@ func mission_handler() -> Variant:
 			v50 = iregion.create_l_d_s_i(v15, 25000.0)
 			_pog_spawn(local_1375.bind(v15, v7, v9, 5.0))
 			_pog_halt(v1)
-			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			v1 = _pog_spawn(local_657.bind(_pog_current(), v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
 			_pog_detach(v1)
 			await local_339(v3)
 			isim.set_sensor_visibility(v14, 0)
@@ -1014,7 +1014,7 @@ func mission_handler() -> Variant:
 			group.add_group(v11, v5)
 			group.add_group(v11, v9)
 			_pog_halt(v1)
-			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			v1 = _pog_spawn(local_657.bind(_pog_current(), v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
 			_pog_detach(v1)
 			_pc = 8039
 			continue
@@ -1106,7 +1106,7 @@ func mission_handler() -> Variant:
 			v45 = 1
 			await irangecheck.add_traffic_exception(imapentity.cast(v17))
 			_pog_halt(v1)
-			v1 = _pog_spawn(local_657.bind(self, v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
+			v1 = _pog_spawn(local_657.bind(_pog_current(), v3, v5, v6, v7, v8, v9, v10, v11, v14, v16, v18, v19, v20))
 			_pog_detach(v1)
 			await local_339(v3)
 			await iconversation.one_liner(group.leader(v5), "", "a2_m05_dialogue_freighter_leader_escort_brief")
@@ -1673,7 +1673,7 @@ func mission_handler() -> Variant:
 				_pc = 12628
 				continue
 		elif _pc == 12701:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			global.destroy("g_blockade_runner_running")
 			global.set_bool(await local_14(), 1)
 			await iutilities.remove_mission_restart()
@@ -1819,7 +1819,7 @@ func local_12821() -> Variant:
 
 func local_15968(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = state.find(self)
+	v2 = state.find(_pog_current())
 	if v2:
 		if not (object.property_exists(v2, v0)):
 			object.add_int_property(v2, v0, v1)
@@ -1852,7 +1852,7 @@ func local_16287(v0, v1) -> Variant:
 
 func local_16402(v0, v1) -> Variant:
 	var v2: Variant = 0
-	v2 = state.find(self)
+	v2 = state.find(_pog_current())
 	if v2:
 		if not (object.property_exists(v2, v0)):
 			if PogRuntime.TRACE:
@@ -1874,7 +1874,7 @@ func local_16402(v0, v1) -> Variant:
 
 func local_16713(v0) -> Variant:
 	var v1: Variant = 0
-	v1 = state.find(self)
+	v1 = state.find(_pog_current())
 	if v1:
 		if object.property_exists(v1, v0):
 			return object.int_property(v1, v0)

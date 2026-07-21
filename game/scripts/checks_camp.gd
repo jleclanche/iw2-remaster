@@ -20,6 +20,8 @@ static var _ng_stage := 0
 ## start_campaign directly and so cannot see an input-timing bug.
 var _ngt_stage := 0
 var _kprobe_t := -1  # kompira-drive probe throttle (#4 diagnosis)
+var _khop := 0       # story-resume hop: 0 not yet, 1 away, 2 done (#38)
+var _khop_t := 0.0
 
 ## A control on the PDA screen by the POG function it dispatches.
 func _ngt_button(fn: String) -> PogUi.PogWindow:
@@ -436,6 +438,30 @@ func _campcheck_port() -> void:
 			# it; ap_mode is re-pinned each tick because arrival disengages
 			# it. Then the 100 km / 8 km gates and the DOCKED initiation Ask
 			# ("take the test"; fast answers yes) -> iact2mission02.Main().
+			#
+			# The story-RESUME assertion (#38) rides in the middle: once the
+			# tour has advanced the ladder (progress >= 1), leave the system
+			# and come back. The monitor halts the story on exit and
+			# state.Restore re-runs it from its record on re-entry
+			# (iacttwo.pog:3495); without that machinery the ladder never
+			# continues and this phase times out.
+			if _khop == 0:
+				m.pog_rt.current_seq = -1  # keep the breadcrumbs clean
+				var kst0: Variant = m.pog_rt.native("global.handle",
+						["g_kompira_state"])
+				if int(m.pog_rt.native("state.progress", [kst0])) >= 1:
+					print("CAMPCHECK(port): ladder advanced — leaving ",
+						"Kompira to prove the story resume (#38)")
+					m._load_system("hoffers_wake", "", m.system_stem)
+					_khop = 1
+					_khop_t = demo_t
+			elif _khop == 1 and demo_t - _khop_t > 5.0:
+				print("CAMPCHECK(port): re-entering Kompira — the monitor ",
+					"must state.Restore the ladder")
+				m._load_system("kompira", "", m.system_stem)
+				_khop = 2
+			if _khop == 1:
+				return
 			var daru := _object_index("Daru el-Salam")
 			if daru >= 0:
 				var od2: Dictionary = m.objects[daru]

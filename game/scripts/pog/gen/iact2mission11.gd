@@ -190,7 +190,7 @@ func mission_handler() -> Variant:
 	var _pc: int = 991
 	while true:
 		if _pc == 991:
-			v0 = state.find(self)
+			v0 = state.find(_pog_current())
 			v2 = ifaction.find("Player")
 			v3 = ifaction.find("Police")
 			v4 = ifaction.find("Carva Cartal")
@@ -210,7 +210,7 @@ func mission_handler() -> Variant:
 			v41 = 0
 			v42 = 0
 			v43 = 0
-			v44 = self
+			v44 = _pog_current()
 			v0 = state.find(v44)
 			if not (v0):
 				_pc = 1480
@@ -226,7 +226,7 @@ func mission_handler() -> Variant:
 			text.add("csv:/text/act_2/act2_mission11")
 			text.add("csv:/text/act_2/act2_mission24")
 			text.add("csv:/text/act_3/act3_mission09")
-			await imissiontracker.add_mission(self, 2, 11)
+			await imissiontracker.add_mission(_pog_current(), 2, 11)
 			v1 = iemail.find("html:/text/act_2/act2_mission11_email")
 			if not (v1):
 				_pc = 1636
@@ -348,7 +348,7 @@ func mission_handler() -> Variant:
 			_pc = 3454
 			continue
 		elif _pc == 3454:
-			_pog_detach(_pog_spawn(local_424.bind(self, v0, v10, v11, v12, v13, v14, v15, v16, v17, v20, v21, v24, v25, v29, v30, v34, v35)))
+			_pog_detach(_pog_spawn(local_424.bind(_pog_current(), v0, v10, v11, v12, v13, v14, v15, v16, v17, v20, v21, v24, v25, v29, v30, v34, v35)))
 			_pc = 3907
 			continue
 		elif _pc == 3584:
@@ -479,7 +479,7 @@ func mission_handler() -> Variant:
 			object.add_bool_property(v23, "destroy_sim", 0)
 			object.add_string_property(v23, "death_caption", "caption_failed_generic")
 			_pog_detach(_pog_spawn(ideathscript.player_death_script.bind(v23)))
-			state.destroy(self)
+			state.destroy(_pog_current())
 			_pc = 5578
 			continue
 		elif _pc == 4359:
@@ -615,7 +615,7 @@ func mission_handler() -> Variant:
 				_pc = 5572
 				continue
 		elif _pc == 5130:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			global.set_bool("g_act2_unification_complete", 1)
 			await local_12765(v10, 1)
 			await iconversation.begin()
@@ -627,7 +627,7 @@ func mission_handler() -> Variant:
 			iai.give_flee_order(v18, v23)
 			await iutilities.group_set_cullable(v10, 1)
 			iai.give_flee_order(v10, v23)
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			await iutilities.remove_mission_restart()
 			isim.set_standard_sensor_visibility(isim.cast(v31), 1)
 			await irangecheck.remove_traffic_exception(imapentity.cast(v31))

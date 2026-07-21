@@ -66,14 +66,22 @@ func _dead() -> bool:
 ## is running right now; it must be re-asserted on resume, because in between,
 ## other coroutines will have run and overwritten it. And a suspended task stays
 ## parked here until it is resumed, which is what task.SuspendAll means.
+## A task.Halt'd coroutine dies at its next yield -- the cooperative version
+## of the original's kill, and what lets Act2SystemMonitor halt a story
+## script on system exit without leaking a live second instance when
+## state.Restore respawns it on re-entry (#38).
 func _resume(seq: int) -> void:
 	if _dead():
+		await _halt
+		return
+	var h: Variant = rt.handles.get(seq)
+	if h != null and h.halted:
 		await _halt
 		return
 	rt.current_seq = seq
 	while rt.is_suspended(seq):
 		await get_tree().process_frame
-		if _dead():
+		if _dead() or (h != null and h.halted):
 			await _halt
 			return
 		rt.current_seq = seq
@@ -108,13 +116,30 @@ func _pog_spawn(c: Callable) -> PogTaskHandle:
 	var h := PogTaskHandle.new()
 	h.seq = rt.next_seq()
 	h.label = "%s.%s" % [name, c.get_method()]
+	rt.handles[h.seq] = h
 	_tasks.append(h)
+	# _run returns when the child parks at its first await; current_seq must
+	# come back to the SPAWNER immediately, or every await the spawner makes
+	# from here on is attributed to the child -- riding the child's suspend
+	# window, dodging the spawner's own task.Halt, and polluting the
+	# last_native breadcrumbs (#38: this is exactly how a halted story
+	# script kept running through the halt check).
+	var caller: int = rt.current_seq
 	_run(c, h)
+	rt.current_seq = caller
 	return h
 
 
+## `task.Current()`. The handle of the coroutine running right now -- the
+## identity state.Create keys story records by (#38). A function that was
+## CALLED (not started) runs under its caller's seq, so Current answers the
+## caller's task, exactly as the original's task.Call did. The boot chain
+## (seq 0) has no handle and falls back to the script, the old behaviour.
+func _pog_current() -> Variant:
+	return rt.handles.get(rt.current_seq, self)
+
+
 func _run(c: Callable, h: PogTaskHandle) -> void:
-	var caller: int = rt.current_seq
 	rt.current_seq = h.seq
 	if PogRuntime.TRACE:
 		print("[task] start %s.%s (#%d)" % [name, c.get_method(), h.seq])
@@ -122,7 +147,12 @@ func _run(c: Callable, h: PogTaskHandle) -> void:
 	h.done = true
 	if PogRuntime.TRACE:
 		print("[task] done  %s.%s (#%d)" % [name, c.get_method(), h.seq])
-	rt.current_seq = caller
+	# No current_seq restore here: this line runs when the child COMPLETES,
+	# inside whatever resume chain finished it -- a spawn-time snapshot
+	# written back at an arbitrary later moment would clobber the task
+	# actually running then. _pog_spawn restores the spawner's seq at the
+	# first-await handoff, and every other task re-asserts its own at its
+	# resumes.
 
 
 func _pog_halt(h) -> int:

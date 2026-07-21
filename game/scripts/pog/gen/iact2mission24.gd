@@ -172,7 +172,7 @@ func local_896(v0, v1, v2, v3, v4, v5, v6, v7, v8) -> Variant:
 		await local_596()
 		state.destroy(v0)
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		return
 	return
@@ -209,7 +209,7 @@ func mission_handler() -> Variant:
 	v0 = iship.find_player_ship()
 	v14 = ifaction.find("Player")
 	v15 = ifaction.find("Marauders")
-	v22 = state.find(self)
+	v22 = state.find(_pog_current())
 	v26 = group.create()
 	if PogRuntime.TRACE:
 		debug.print_string("iAct2Mission24.MissionHandler: STARTED\n")
@@ -219,12 +219,12 @@ func mission_handler() -> Variant:
 	if not (v22):
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2Mission24.MissionHandler: No state found. Initialising.\n")
-		v22 = state.create(self, 0)
+		v22 = state.create(_pog_current(), 0)
 		await add_state_properties(v22)
 	else:
 		await local_21000(v22)
 	await local_447(v22)
-	await imissiontracker.add_mission(self, 2, 24)
+	await imissiontracker.add_mission(_pog_current(), 2, 24)
 	v23 = iemail.find("html:/text/act_2/act2_mission24_email_b")
 	if not (v23):
 		iemail.send_email("a2_m24_email_sender", "a2_m24_email_subject", "html:/text/act_2/act2_mission24_email_b", 1)
@@ -338,7 +338,7 @@ func mission_handler() -> Variant:
 				sim.add_child_relative_to(v10, v0, 0.0, 0.0, 0.0)
 				await icutsceneutilities.disable_player_autopilot()
 				iship.set_free_without_pilot(v0, 0)
-				v21 = _pog_spawn(local_896.bind(self, v22, v8, v9, v10, v11, v12, v13, v26))
+				v21 = _pog_spawn(local_896.bind(_pog_current(), v22, v8, v9, v10, v11, v12, v13, v26))
 				_pog_detach(v21)
 				await local_447(v22)
 				idirector.fade_in(1.0, 0.0, 0.0, 0.0)
@@ -401,7 +401,7 @@ func mission_handler() -> Variant:
 				igame.enable_blackout(1)
 				iobjectives.set_state("a2_m24_objectices_leave_dante_system", 1)
 				ifaction.set_feeling(v15, v14, 0.0)
-				await imissiontracker.remove_mission(self)
+				await imissiontracker.remove_mission(_pog_current())
 				await iutilities.remove_mission_restart()
 				text.remove("csv:/text/act_2/act2_mission24")
 				text.remove("csv:/text/act_2/act2_mission24_addendum")
@@ -410,7 +410,7 @@ func mission_handler() -> Variant:
 				await ijafsscript.enable_jafs()
 				await ibacktobase.allow()
 				global.set_bool("g_act2_dante_system_scouted", 1)
-				state.destroy(self)
+				state.destroy(_pog_current())
 				igame.enable_blackout(1)
 				gui.set_screen("icSPPlayerBaseScreen")
 				if PogRuntime.TRACE:

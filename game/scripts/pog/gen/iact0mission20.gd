@@ -501,7 +501,7 @@ func local_9227(v0) -> Variant:
 	v1 = 0
 	v2 = await iutilities.create_waypoint_at(v0)
 	v4 = math.random(0.0, 3.0)
-	object.add_handle_property(v0, "move_handler", self)
+	object.add_handle_property(v0, "move_handler", _pog_current())
 	while true:
 		await _pog_wait(4)
 		sim.destroy(v3)
@@ -1137,7 +1137,7 @@ func mission_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v4 = self
+	v4 = _pog_current()
 	text.add("csv:/text/act_0/act0_mission20")
 	text.add("csv:/text/act_0/act0_mission20_addendum")
 	text.add("csv:/text/act_0/act0_mission20_addendum2")
@@ -1149,7 +1149,7 @@ func mission_handler() -> Variant:
 		object.add_float_property(v0, "best_time", 200.0)
 		object.add_bool_property(v0, "race_enabled", 0)
 		object.add_handle_property(v0, "drone_handle", 0)
-	await imissiontracker.add_mission(self, 0, 20)
+	await imissiontracker.add_mission(_pog_current(), 0, 20)
 	if state.progress(v0) != 8:
 		iobjectives.add("a0_m20_objectives_complete_course")
 	if _pog_is_null(state.progress(v0)):
@@ -1175,10 +1175,10 @@ func mission_handler() -> Variant:
 		await _pog_wait(2)
 		if global.pog_int("g_current_act") < 1:
 			continue
-		state.destroy(self)
+		state.destroy(_pog_current())
 		sim.destroy(v1)
 		sim.destroy(v2)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		text.remove("csv:/text/act_0/act0_mission20")
 		text.remove("csv:/text/act_0/act0_mission20_addendum")
 		text.remove("csv:/text/act_0/act0_mission20_addendum2")

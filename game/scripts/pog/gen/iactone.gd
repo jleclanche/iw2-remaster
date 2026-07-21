@@ -507,7 +507,7 @@ func stepson_member() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	v0 = 0
-	v1 = self
+	v1 = _pog_current()
 	v2 = state.find(v1)
 	if not (v2):
 		v2 = state.create(v1, 0)
@@ -579,7 +579,7 @@ func stepson_member() -> Variant:
 			state.set_progress(v2, 1)
 		if _arm1 <= 1:
 			global.set_bool("g_act1_stepsons_pleased", 1)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			return
 			break
 	return
@@ -600,7 +600,7 @@ func piracy_rating_handler() -> Variant:
 func piracy_rating_tracker() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	await piracy_generated_mission(1)
 	if not (v1):
@@ -652,7 +652,7 @@ func piracy_rating_tracker() -> Variant:
 						await igmtracker.add_g_m_enum(10)
 						await igmtracker.add_g_m_enum(11)
 						global.create_bool("g_added_gm_batch_5", 1, 1)
-					state.destroy(self)
+					state.destroy(_pog_current())
 					return
 				else:
 					await iact1piracyspecial.main()
@@ -812,7 +812,7 @@ func piracy_rating_tracker() -> Variant:
 				debug.print_string("iActOne.PiracyRatingTracker - Player has achieved piracy level 12\n")
 			object.set_int_property(v1, "next_piracy_level", object.int_property(v1, "next_piracy_level") + 20)
 			global.set_bool("g_act1_stepsons_intro", 1)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			break
 	return
 	return 0
@@ -820,7 +820,7 @@ func piracy_rating_tracker() -> Variant:
 func marauder_encounters() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	if not (v1):
 		v1 = state.create(v0, 0)
@@ -910,7 +910,7 @@ func marauder_encounters() -> Variant:
 				debug.print_string("iActOne.MarauderEncounter : Stopping marauder encounters while the player performs act 01 mission 06 - gunstar supermarket sweep...\n")
 			state.set_progress(v1, 4)
 		if _arm3 <= 4:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			break
 	return
 	return 0
@@ -956,7 +956,7 @@ func haven_station_introduction() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v2 = iship.find_player_ship()
 	v4 = 0
@@ -970,7 +970,7 @@ func haven_station_introduction() -> Variant:
 	if global.pog_int("g_current_act") != 1:
 		if PogRuntime.TRACE:
 			debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
-		state.destroy(self)
+		state.destroy(_pog_current())
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iActOne.HavenStationIntroduction : Starting haven station introduction task\n")
@@ -1010,7 +1010,7 @@ func haven_station_introduction() -> Variant:
 							if PogRuntime.TRACE:
 								debug.print_string("iActOne.HavenStationIntroduction : Not Act 1. Destroying state and terminating task.\n")
 							sim.destroy(v3)
-							state.destroy(self)
+							state.destroy(_pog_current())
 							return
 						if sim.distance_between(v2, v3) > 20000.0:
 							if PogRuntime.TRACE:
@@ -1157,7 +1157,7 @@ func master_script() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v2 = state.find(v0)
 	v4 = iship.find_player_ship()
 	if not (v2):
@@ -1184,7 +1184,7 @@ func master_script() -> Variant:
 		await iact1mission10.stub()
 		imapentity.set_hidden(imapentity.find_by_name("Haven Station"), 1)
 		await destry_act_one_globals()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		igame.next_act("iActTwo")
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("Independent"), 484, 1, 90, 3, 0))
 		itrade.offer_trade(itrade.create_trade_for_cargo_category(ifaction.find("Independent"), 483, 1, 39, 10, 0))
@@ -1577,7 +1577,7 @@ func master_script() -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string(" iActOone.MasterScript - Finished Act One\n")
 				await destry_act_one_globals()
-				state.destroy(self)
+				state.destroy(_pog_current())
 				igame.next_act("iActTwo")
 				break
 	return

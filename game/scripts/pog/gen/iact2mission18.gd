@@ -232,10 +232,10 @@ func mission_handler() -> Variant:
 	v0 = iship.find_player_ship()
 	v36 = ifaction.find("League")
 	v37 = ifaction.find("Player")
-	v48 = state.find(self)
+	v48 = state.find(_pog_current())
 	if not (v48):
-		v48 = state.create(self, 0)
-	await imissiontracker.add_mission(self, 2, 18)
+		v48 = state.create(_pog_current(), 0)
+	await imissiontracker.add_mission(_pog_current(), 2, 18)
 	v49 = iemail.find("html:/text/act_2/act2_mission18_email")
 	if not (v49):
 		iemail.send_email("a1_m06_email_sender", "a1_m06_email_subject", "html:/text/act_2/act2_mission18_email", 1)
@@ -279,7 +279,7 @@ func mission_handler() -> Variant:
 			await iutilities.sim_place_between_exact(v4, v1, v3, 500000000.0)
 			await local_138(v48)
 			iobjectives.add("a2_m18_objectives_fly_to_rendezvous")
-			v50 = _pog_spawn(local_587.bind(self, v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
 			_pog_detach(v50)
 			if PogRuntime.TRACE:
 				debug.print_string("iAct2Mission18.MissionHandler: Waiting for player to enter the hoffer's wake system.\n")
@@ -340,7 +340,7 @@ func mission_handler() -> Variant:
 			await iescort.cross(v10, 0.0, 10000.0, 1)
 			iai.give_formate_order(v14, v13, 0.0, 1000.0, -2000.0)
 			_pog_halt(v50)
-			v50 = _pog_spawn(local_587.bind(self, v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
 			_pog_detach(v50)
 			await local_138(v48)
 			if PogRuntime.TRACE:
@@ -443,7 +443,7 @@ func mission_handler() -> Variant:
 				await iwingmen.escort_ship(await iwingmen.group(), v0)
 			v38 = 0
 			_pog_halt(v50)
-			v50 = _pog_spawn(local_587.bind(self, v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
 			_pog_detach(v50)
 			object.set_string_property(v13, "death_script", "")
 			object.set_string_property(v14, "death_script", "")
@@ -526,7 +526,7 @@ func mission_handler() -> Variant:
 			v35 = iregion.create_l_d_s_i(v27, 500000.0)
 			v21 = await local_13893(v27, 2, 1000.0)
 			_pog_halt(v50)
-			v50 = _pog_spawn(local_587.bind(self, v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
+			v50 = _pog_spawn(local_587.bind(_pog_current(), v48, v1, v2, v3, v4, v5, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35))
 			_pog_detach(v50)
 			await local_138(v48)
 			await icutsceneutilities.handle_abort(_pog_spawn(local_15592.bind(v0, v27)))
@@ -861,7 +861,7 @@ func local_14627(v0, v1, v2, v3, v4) -> Variant:
 func local_15269(v0) -> Variant:
 	await iutilities.group_set_cullable(v0, 1)
 	group.destroy(v0, 0)
-	state.destroy(self)
+	state.destroy(_pog_current())
 	return 0
 	return 0
 

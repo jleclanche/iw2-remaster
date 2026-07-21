@@ -392,17 +392,17 @@ func main_task() -> Variant:
 	v0 = 0
 	v3 = iship.find_player_ship()
 	v5 = []
-	v6 = state.find(self)
+	v6 = state.find(_pog_current())
 	if global.exists("g_started_wingmen_training") and _pog_is_null(v6):
 		pass
 	else:
 		if global.exists("g_got_position"):
-			state.destroy(self)
+			state.destroy(_pog_current())
 			sim.destroy(v4)
 			global.destroy("g_started_wingmen_training")
 		else:
 			if _pog_is_null(v6) and not _pog_is_null(await iwingmen.t_fighter_count()):
-				v6 = state.create(self, 0)
+				v6 = state.create(_pog_current(), 0)
 				object.add_int_property(v6, "best_time", 60)
 				text.add("csv:/text/act_1/act1_wingmen_training")
 				await iconversation.one_liner(0, "name_clay", "a1_training_clay_just_fly")
@@ -419,7 +419,7 @@ func main_task() -> Variant:
 						v0 = 1
 						v1 = await local_1094(v4)
 				else:
-					state.destroy(self)
+					state.destroy(_pog_current())
 					sim.destroy(v4)
 					global.destroy("g_training_task_handle")
 					global.destroy("g_started_wingmen_training")

@@ -716,8 +716,8 @@ func haulage(v0, v1) -> Variant:
 							if PogRuntime.TRACE:
 								debug.print_string("iScriptedOrders: Unable to add cargo_origin property to vessel\n")
 						if ihabitat.has_spewer(ihabitat.cast(v1)):
-							_pog_detach(_pog_spawn(local_7217.bind(v0, v15, self)))
-							_pog_suspend(self)
+							_pog_detach(_pog_spawn(local_7217.bind(v0, v15, _pog_current())))
+							_pog_suspend(_pog_current())
 		else:
 			if PogRuntime.TRACE:
 				debug.print_string("iScriptesOrders.Haulage: Ship already has cargo of origin ")
@@ -1071,8 +1071,8 @@ func haulage(v0, v1) -> Variant:
 							debug.print_string(imapentity.pog_name(v15))
 							debug.print_string("\n")
 						if ihabitat.has_spewer(ihabitat.cast(v1)):
-							_pog_detach(_pog_spawn(local_7217.bind(v0, v15, self)))
-							_pog_suspend(self)
+							_pog_detach(_pog_spawn(local_7217.bind(v0, v15, _pog_current())))
+							_pog_suspend(_pog_current())
 						if _pog_eq(imapentity.pog_name(v15), v12):
 							v15 = ihabitat.random(ihabitat.filter_on_type(v17, ihabitat.cast_int_to_habitat_type(v4)))
 							if PogRuntime.TRACE:
@@ -1349,8 +1349,8 @@ func supply(v0) -> Variant:
 						_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
 						return
 					if ihabitat.has_spewer(ihabitat.cast(v13)):
-						_pog_detach(_pog_spawn(local_7217.bind(v0, v13, self)))
-						_pog_suspend(self)
+						_pog_detach(_pog_spawn(local_7217.bind(v0, v13, _pog_current())))
+						_pog_suspend(_pog_current())
 		if v7 == -2:
 			v1 = math.random_int(0, 1)
 			if PogRuntime.TRACE:
@@ -1365,8 +1365,8 @@ func supply(v0) -> Variant:
 						debug.print_string("iScriptedOrders: Supply Vessel (Using Military Gen) is arriving at local station\n")
 					v10 = imapentity.pog_name(v13)
 					if ihabitat.has_spewer(ihabitat.cast(v13)):
-						_pog_detach(_pog_spawn(local_7217.bind(v0, v13, self)))
-						_pog_suspend(self)
+						_pog_detach(_pog_spawn(local_7217.bind(v0, v13, _pog_current())))
+						_pog_suspend(_pog_current())
 		if _pog_eq(v10, ""):
 			if PogRuntime.TRACE:
 				debug.print_string("O DEAR, SOMETHING BOBBINS HAS HAPPENED\n")
@@ -1467,7 +1467,7 @@ func local_patrol(v0) -> Variant:
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
-		object.add_handle_property(v11, "traffic_handler_task", self)
+		object.add_handle_property(v11, "traffic_handler_task", _pog_current())
 		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
 		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
 		group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))
@@ -1598,7 +1598,7 @@ func system_patrol(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.syspatrol: Invalid Lead patroler!\n")
 	else:
-		object.add_handle_property(v7, "traffic_handler_task", self)
+		object.add_handle_property(v7, "traffic_handler_task", _pog_current())
 		v4 = list.from_set(v3)
 		if list.is_empty(v4):
 			if PogRuntime.TRACE:
@@ -1905,7 +1905,7 @@ func scout(v0) -> Variant:
 			debug.print_string("iScriptedOrders.Scount: Local habitat was none.. \n")
 		_pog_detach(_pog_spawn(lagrange_handler.bind(v0, _pog_clone("Random"))))
 	else:
-		object.add_handle_property(v8, "traffic_handler_task", self)
+		object.add_handle_property(v8, "traffic_handler_task", _pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Scout: Starting.... \n")
 		v10 = ifaction.cast(list.get_nth(v5, ihabitat.allegiance(v13)))
@@ -2446,7 +2446,7 @@ func speed_trap(v0) -> Variant:
 			debug.print_string("iScriptedOrders.Speedtrap: Invalid Lead speedtrapper!\n")
 	else:
 		list.remove_members(v8, await local_230(v0))
-		object.add_handle_property(v11, "traffic_handler_task", self)
+		object.add_handle_property(v11, "traffic_handler_task", _pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Speedtrap: Been passed SpeedTrap orders\n")
 		if PogRuntime.TRACE:
@@ -2671,7 +2671,7 @@ func wander(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Wander: Invalid Lead Wanderer!\n")
 	else:
-		object.add_handle_property(v8, "traffic_handler_task", self)
+		object.add_handle_property(v8, "traffic_handler_task", _pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Running Wander Orders (INCOMPLETE)\n")
 		v1 = math.random_int(0, 1)
@@ -2763,7 +2763,7 @@ func loiter(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.loiterer: Invalid Lead loiterer!\n")
 	else:
-		object.add_handle_property(v5, "traffic_handler_task", self)
+		object.add_handle_property(v5, "traffic_handler_task", _pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.loiterer: loiterer orders passed to \n")
 			debug.print_string(object.string_property(v5, "name"))
@@ -2850,7 +2850,7 @@ func aggressive_loiter(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.AgressiveLoiterer: Invalid Lead loiterer!\n")
 	else:
-		object.add_handle_property(v5, "traffic_handler_task", self)
+		object.add_handle_property(v5, "traffic_handler_task", _pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.AgressiveLoiterer: loiterer orders passed to \n")
 			debug.print_string(object.string_property(v5, "name"))
@@ -3093,7 +3093,7 @@ func maneuvre(v0) -> Variant:
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Maneuvre: Invalid Lead vessel!\n")
 	else:
-		object.add_handle_property(v7, "traffic_handler_task", self)
+		object.add_handle_property(v7, "traffic_handler_task", _pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders.Maneuvre: orders passed to \n")
 			debug.print_string(object.string_property(v7, "name"))

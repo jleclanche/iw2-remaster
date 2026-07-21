@@ -331,13 +331,13 @@ func mission_handler() -> Variant:
 	v0 = 0
 	v1 = imapentity.find_by_name("Junkyard")
 	v2 = iship.find_player_ship()
-	v6 = self
+	v6 = _pog_current()
 	text.add("csv:/text/act_0/act0_mission50")
 	v3 = state.find(v6)
 	if not (v3):
 		v3 = state.create(v6, 0)
 	await local_87(v3)
-	await imissiontracker.add_mission(self, 0, 50)
+	await imissiontracker.add_mission(_pog_current(), 0, 50)
 	await irangecheck.add_traffic_exception(imapentity.cast(v1))
 	await istation.add_reactive_exception(ihabitat.cast(v1))
 	if _pog_is_null(state.progress(v3)):
@@ -369,8 +369,8 @@ func mission_handler() -> Variant:
 			iscore.goto_restart_point()
 		isim.set_standard_sensor_visibility(isim.cast(v1), 1)
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		text.remove("csv:/text/act_0/act0_mission50")
 		await istation.remove_reactive_exception(ihabitat.cast(v1))
 		await irangecheck.remove_traffic_exception(imapentity.cast(v1))

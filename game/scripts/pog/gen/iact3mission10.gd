@@ -820,7 +820,7 @@ func mission_handler() -> Variant:
 	v6 = group.create()
 	text.add("csv:/text/act_3/act3_mission10")
 	text.add("csv:/text/ship_names")
-	v11 = self
+	v11 = _pog_current()
 	v8 = state.find(v11)
 	if not (v8):
 		v8 = state.create(v11, 0)
@@ -879,8 +879,8 @@ func mission_handler() -> Variant:
 			_pog_detach(_pog_spawn(local_224.bind()))
 			group.destroy(v6, 1)
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		group.destroy(v5, 1)
 		group.destroy(v7, 0)
 		return

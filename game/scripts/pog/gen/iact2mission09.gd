@@ -995,12 +995,12 @@ func mission_handler() -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	v0 = 0
-	v3 = self
+	v3 = _pog_current()
 	v2 = state.find(v3)
 	if not (v2):
 		v2 = state.create(v3, 0)
 	await local_30(v2)
-	await imissiontracker.add_mission(self, 2, 9)
+	await imissiontracker.add_mission(_pog_current(), 2, 9)
 	if global.exists("g_cleanup_stuff"):
 		global.destroy("g_cleanup_stuff")
 	global.create_handle("g_cleanup_stuff", 2, group.create())
@@ -1012,11 +1012,11 @@ func mission_handler() -> Variant:
 	v1 = iemail.find("html:/text/act_2/act2_mission09_email")
 	if not (v1):
 		iemail.send_email("a2_m09_email_sender", "a2_m09_email_subject", "html:/text/act_2/act2_mission09_email", 1)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	else:
 		if not (iemail.read(v1)):
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			if PogRuntime.TRACE:
 				debug.print_string("Go read your email\n")
 			return
@@ -1044,8 +1044,8 @@ func mission_handler() -> Variant:
 		global.destroy("g_a2_m9_running")
 		global.destroy("g_mca_force")
 		await iwingmen.purge()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

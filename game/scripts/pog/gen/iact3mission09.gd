@@ -537,8 +537,8 @@ func mission_handler() -> Variant:
 	v5 = await local_5622()
 	v8 = imapentity.find_by_name_in_system("Kraken L-Point", "map:/geog/gagarin/batatas")
 	v10 = imapentity.find_by_name_in_system("Kundar Government Defense Station", "map:/geog/gagarin/batatas")
-	v13 = self
-	await imissiontracker.add_mission(self, 3, 9)
+	v13 = _pog_current()
+	await imissiontracker.add_mission(_pog_current(), 3, 9)
 	text.add("csv:/text/act_3/act3_mission09")
 	v11 = state.find(v13)
 	if not (v11):
@@ -547,11 +547,11 @@ func mission_handler() -> Variant:
 	v12 = iemail.find("html:/text/act_3/act3_mission09_email")
 	if not (v12):
 		iemail.send_email("a3_m09_email_sender", "a3_m09_email_subject", "html:/text/act_3/act3_mission09_email", 1)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	else:
 		if not (iemail.read(v12)):
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			return
 	if _pog_is_null(v10):
 		if PogRuntime.TRACE:
@@ -620,8 +620,8 @@ func mission_handler() -> Variant:
 		sim.destroy(v6)
 		await iutilities.remove_mission_restart()
 		text.remove("csv:/text/act_3/act3_mission09")
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

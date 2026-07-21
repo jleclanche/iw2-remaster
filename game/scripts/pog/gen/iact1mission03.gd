@@ -452,7 +452,7 @@ func mission_handler() -> Variant:
 	v3 = imapentity.find_by_name_in_system("Greenback Agri-Orbital 1", "map:/geog/badlands/hoffers_wake")
 	v4 = await iutilities.create_waypoint_relative_to(v3, 0.0, 3000.0, 0.0)
 	v5 = await iutilities.create_waypoint_at(v2)
-	v9 = self
+	v9 = _pog_current()
 	text.add("csv:/text/act_1/act1_mission03")
 	v6 = state.find(v9)
 	if not (v6):
@@ -503,10 +503,10 @@ func mission_handler() -> Variant:
 			v8 = await iwingmen.purge_to_group()
 			await iutilities.group_set_cullable(v8, 1)
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		text.remove("csv:/act1_mission03")
 		sim.destroy(v4)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		await irangecheck.remove_traffic_exception(ihabitat.cast(v2))
 		return
 	return

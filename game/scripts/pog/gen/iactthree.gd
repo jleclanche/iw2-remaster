@@ -300,7 +300,7 @@ func local_3132(v0, v1) -> Variant:
 	v4 = group.create()
 	v9 = 3
 	v10 = group.create()
-	v15 = self
+	v15 = _pog_current()
 	v18 = await event3_20__first_infection()
 	v20 = iship.find_player_ship()
 	if PogRuntime.TRACE:
@@ -383,7 +383,7 @@ func event3_40__preparing_the_defences() -> Variant:
 	var v21: Variant = 0
 	var v22: Variant = 0
 	var v23: Variant = 0
-	v1 = self
+	v1 = _pog_current()
 	v2 = imapentity.find_by_name_in_system("Remek L-Point", "map:/geog/gagarin/formhault")
 	v3 = await event3_20__first_infection()
 	v6 = iship.find_player_ship()
@@ -576,7 +576,7 @@ func event3_50__here_come_the_aliens() -> Variant:
 			v1 = imapentity.find_by_name_in_system("Christmas L-Point", "map:/geog/gagarin/formhault")
 			v2 = imapentity.find_by_name_in_system("Stoymir L-Point", "map:/geog/gagarin/osprey")
 			v3 = iship.find_player_ship()
-			v4 = self
+			v4 = _pog_current()
 			v11 = group.create()
 			v12 = group.create()
 			v13 = ifaction.find("Aliens")
@@ -637,7 +637,7 @@ func event3_50__here_come_the_aliens() -> Variant:
 				_pc = 8052
 				continue
 		elif _pc == 8014:
-			v18 = state.create(self, 0)
+			v18 = state.create(_pog_current(), 0)
 			_pc = 8487
 			continue
 		elif _pc == 8052:
@@ -1374,7 +1374,7 @@ func event3_50__here_come_the_aliens() -> Variant:
 			_pc = 13267
 			continue
 		elif _pc == 12934:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			await icutsceneutilities.handle_abort(_pog_spawn(local_6701.bind(v0, v3)))
 			global.create_bool("g_got_to_end", 1, 1)
 			global.set_bool("g_act3_ready_for_mission_ten", 1)
@@ -1672,7 +1672,7 @@ func local_14420(v0) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v1 = self
+	v1 = _pog_current()
 	v2 = 0.10000000149011612
 	v3 = 200.0
 	v4 = 5.0
@@ -1693,7 +1693,7 @@ func local_14623(v0, v1) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	v2 = self
+	v2 = _pog_current()
 	v6 = ifaction.find("Aliens")
 	v7 = 800000000
 	v3 = iship.create(await ishipcreation.get_ship(1, 2), await ishipcreation.ship_name("General", -1))
@@ -2302,9 +2302,9 @@ func handle_refugees_to_jump() -> Variant:
 	v7 = 0
 	v9 = group.create()
 	v15 = 0
-	v16 = state.find(self)
+	v16 = state.find(_pog_current())
 	if _pog_is_null(v16):
-		v16 = state.create(self, 0)
+		v16 = state.create(_pog_current(), 0)
 	if PogRuntime.TRACE:
 		debug.print_string("iAct3.handle_refugees_to_jump: Starting.\n")
 	while true:
@@ -2573,7 +2573,7 @@ func coyote_security() -> Variant:
 	var _pc: int = 27039
 	while true:
 		if _pc == 27039:
-			v0 = self
+			v0 = _pog_current()
 			v2 = 0
 			v3 = state.find(v0)
 			if not (v3):
@@ -2660,7 +2660,7 @@ func coyote_security() -> Variant:
 				continue
 		elif _pc == 27487:
 			await iutilities.send_story_element("g_story_3.40", 3, 0)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			return
 		else:
 			return 0
@@ -2707,13 +2707,13 @@ func master_script() -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v3 = state.find(v0)
 	if not (v3):
 		v3 = state.create(v0, 0)
 	if await iutilities.skip_act("Act Three: The Edge of Chaos", 3):
 		await destroy_act_three_globals()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		await iutilities.release_error("THE END!")
 	else:
 		if PogRuntime.TRACE:
@@ -2954,7 +2954,7 @@ func master_script() -> Variant:
 					await _pog_wait(10.0)
 					if not (_pog_is_null(global.pog_bool("g_act3_the_end_complete"))):
 						break
-				state.destroy(self)
+				state.destroy(_pog_current())
 				await final_choice()
 				return
 				break
@@ -3044,11 +3044,11 @@ func forge_jumpgate_link() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = state.find(self)
+	v0 = state.find(_pog_current())
 	if not (v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iActThree.ForgeJumpgateLink: Initialising State and exiting.\n")
-		v0 = state.create(self, 0)
+		v0 = state.create(_pog_current(), 0)
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iActThree.ForgeJumpgateLink: Forging LPoint links between Santa Romera and formhault.\n")

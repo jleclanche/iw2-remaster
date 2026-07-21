@@ -35,6 +35,7 @@ class PogState extends RefCounted:
 	var name: String
 	var progress: int = 0
 	var task_id: int = 0
+	var task_handle: Variant = null  ## the running/restored owner task (#38)
 
 
 func register(v) -> void:
@@ -246,20 +247,43 @@ func _task_cast(_t, a: Array) -> Variant:
 # Named story-progress records: the campaign's spine. A mission calls
 # state.Create("act1_mission03"), then walks SetProgress(s, n) as it goes;
 # the save game is essentially the set of these.
+#
+# The story scripts pass task.Current() instead of a name, and the record
+# must survive the task: Act2SystemMonitor re-enters a system, finds the
+# state, and state.Restore RE-RUNS the owning function, whose
+# switch(state.Progress) resume-dispatch drops it back where it left off
+# (iacttwo.pog:3495). So a task-owned record is keyed by the task's LABEL
+# ("package.method") -- stable across respawns and save/load, and every
+# state-owning function in the corpus is zero-argument, so the label alone
+# reconstructs the task (#38).
+
+func _skey(v: Variant) -> String:
+	if v is String:
+		return v
+	if v is Object and "label" in v and str(v.label) != "":
+		return str(v.label)
+	return _s(v)
 
 # @native state.Create
 func _state_create(_t, a: Array) -> Variant:
-	var name := _s(a[0])
+	var name := _skey(a[0])
 	if states.has(name):
 		return states[name]
 	var s := PogState.new()
 	s.name = name
+	if a[0] is Object and "label" in a[0]:
+		s.task_handle = a[0]
 	states[name] = s
 	return s
 
 # @native state.Find
 func _state_find(_t, a: Array) -> Variant:
-	return states.get(_s(a[0]), null)
+	var s: Variant = states.get(_skey(a[0]), null)
+	# a respawned owner re-binds the record to the LIVE task, so state.Task
+	# keeps answering the task that owns it now
+	if s is PogState and a[0] is Object and "label" in a[0]:
+		s.task_handle = a[0]
+	return s
 
 # @native state.SetProgress
 func _state_set_progress(_t, a: Array) -> Variant:
@@ -288,11 +312,32 @@ func _state_destroy_all(_t, _a: Array) -> Variant:
 # @native state.Task
 func _state_task(_t, a: Array) -> Variant:
 	var s = a[0] if a.size() > 0 else null
-	return vm.find_task(s.task_id) if s is PogState else null
+	if not (s is PogState):
+		return null
+	if s.task_handle != null:
+		return s.task_handle
+	return vm.find_task(s.task_id) if vm.has_method("find_task") else null
 
 # @native state.Restore
-func _state_restore(_t, _a: Array) -> Variant:
-	return 0
+func _state_restore(_t, a: Array) -> Variant:
+	# Re-run the task that owns this record. The respawned function's own
+	# state.Find(task.Current()) resolves to the same label key and picks
+	# the record back up; its switch(state.Progress) resume-dispatch does
+	# the rest. This is the monitor's re-entry path (iacttwo.pog:3495).
+	var s = a[0] if a.size() > 0 else null
+	if not (s is PogState) or not (vm is PogRuntime):
+		return 0
+	var label: String = s.name
+	var dot := label.rfind(".")
+	if dot <= 0:
+		return 0
+	var sc: PogScript = (vm as PogRuntime).script(label.substr(0, dot))
+	var method := label.substr(dot + 1)
+	if sc == null or not sc.has_method(method):
+		push_warning("POG: state.Restore cannot rebuild task %s" % s.name)
+		return 0
+	s.task_handle = sc._pog_spawn(Callable(sc, method))
+	return 1
 
 # @native state.Cast
 func _state_cast(_t, a: Array) -> Variant:

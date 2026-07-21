@@ -1162,7 +1162,7 @@ func mission_handler() -> Variant:
 	var v4: Variant = 0
 	v0 = iship.find_player_ship()
 	v1 = imapentity.find_by_name_in_system("Daru el-Salam", "map:/geog/badlands/kompira")
-	v4 = self
+	v4 = _pog_current()
 	text.add("csv:/text/act_2/act2_mission02")
 	text.add("csv:/text/act_2/act2_mission02_addendum")
 	v3 = state.find(v4)
@@ -1206,11 +1206,11 @@ func mission_handler() -> Variant:
 			await local_218()
 			iscore.goto_restart_point()
 		sim.destroy(sim.find_by_name("a2_m02_name_training_grn"))
-		state.destroy(self)
+		state.destroy(_pog_current())
 		global.destroy("g_oman_escort")
 		text.remove("csv:/text/act_2/act2_mission02")
 		text.remove("csv:/text/act_2/act2_mission02_addendum")
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		await iutilities.remove_mission_restart()
 		return
 	return

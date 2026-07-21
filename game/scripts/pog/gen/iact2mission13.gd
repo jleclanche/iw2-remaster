@@ -201,7 +201,7 @@ func mission_handler() -> Variant:
 	var _pc: int = 1045
 	while true:
 		if _pc == 1045:
-			v1 = state.find(self)
+			v1 = state.find(_pog_current())
 			v2 = imapentity.find_by_name_in_system("Hoffers Port Orbital", "map:/geog/badlands/hoffers_wake")
 			v3 = imapentity.find_by_name_in_system("Alexander L-Point", "map:/geog/badlands/hoffers_wake")
 			v4 = imapentity.find_by_name_in_system("Hoffers Wake Police Headquarters", "map:/geog/badlands/hoffers_wake")
@@ -226,7 +226,7 @@ func mission_handler() -> Variant:
 				_pc = 1498
 				continue
 		elif _pc == 1465:
-			v1 = state.create(self, 0)
+			v1 = state.create(_pog_current(), 0)
 			_pc = 1498
 			continue
 		elif _pc == 1498:
@@ -269,7 +269,7 @@ func mission_handler() -> Variant:
 			v15 = await iwingmen.group()
 			text.add("csv:/text/act_2/act2_mission13")
 			text.add("csv:/text/act_2/act2_mission15")
-			await imissiontracker.add_mission(self, 2, 13)
+			await imissiontracker.add_mission(_pog_current(), 2, 13)
 			await istation.disable_reactive_in_area(ihabitat.cast(v7), 10000000.0)
 			await istation.disable_reactive_in_area(ihabitat.cast(v2), 10000000.0)
 			await istation.disable_reactive_in_area(ihabitat.cast(v8), 10000000.0)
@@ -394,7 +394,7 @@ func mission_handler() -> Variant:
 				_pc = 3218
 				continue
 		elif _pc == 3274:
-			v40 = _pog_spawn(local_483.bind(self, v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
+			v40 = _pog_spawn(local_483.bind(_pog_current(), v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
 			_pog_detach(v40)
 			_pc = 3384
 			continue
@@ -453,7 +453,7 @@ func mission_handler() -> Variant:
 			await ipilotsetup.generic_coward(v19)
 			sim.place_near(v19, v2, 3000.0)
 			_pog_halt(v40)
-			v40 = _pog_spawn(local_483.bind(self, v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
+			v40 = _pog_spawn(local_483.bind(_pog_current(), v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
 			_pog_detach(v40)
 			await iconversation.begin()
 			await iconversation.say(v2, "a2_m13_character_blake", "a2_m13_dialogue_blake_glad_you_are_here")
@@ -527,7 +527,7 @@ func mission_handler() -> Variant:
 			object.set_int_property(v27, "max_ammo", 6)
 			object.set_int_property(v27, "ammo", 6)
 			_pog_halt(v40)
-			v40 = _pog_spawn(local_483.bind(self, v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
+			v40 = _pog_spawn(local_483.bind(_pog_current(), v1, v12, v16, v13, v17, v19, v21, v22, v23, v24, v25, v14))
 			_pog_detach(v40)
 			await iconversation.begin()
 			await iconversation.say(v2, "a2_m13_character_blake", "a2_m13_dialogue_blake_special_officer_james_hewitt_earl")
@@ -1095,8 +1095,8 @@ func mission_handler() -> Variant:
 			await local_22891(v13, 1)
 			await local_22891(v12, 1)
 			await local_22891(v16, 1)
-			state.destroy(self)
-			await imissiontracker.remove_mission(self)
+			state.destroy(_pog_current())
+			await imissiontracker.remove_mission(_pog_current())
 			await iutilities.remove_mission_restart()
 			object.add_bool_property(v20, "destroy_sim", 0)
 			object.add_string_property(v20, "death_caption", "caption_failed_generic")
@@ -1114,10 +1114,10 @@ func mission_handler() -> Variant:
 			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v7), 1000000.0)
 			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v8), 1000000.0)
 			await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v5), 10000000.0)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			global.set_bool("g_act2_kong_fracture_complete", 1)
 			global.set_bool("g_act2_kong_fracture_success", 1)
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			await iutilities.remove_mission_restart()
 			_pc = 13985
 			continue

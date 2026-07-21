@@ -240,13 +240,13 @@ func mission_handler() -> Variant:
 	v47 = 1
 	v48 = 0
 	v49 = 1
-	v50 = state.find(self)
+	v50 = state.find(_pog_current())
 	v52 = []
 	if PogRuntime.TRACE:
 		debug.print_string("iAct1Mission07.MissionHandler: STARTED\n")
-	await imissiontracker.add_mission(self, 1, 7)
+	await imissiontracker.add_mission(_pog_current(), 1, 7)
 	if not (v50):
-		v50 = state.create(self, 1)
+		v50 = state.create(_pog_current(), 1)
 		await add_state_properties(v50)
 	text.add("csv:/text/act_1/act1_mission07")
 	text.add("csv:/text/act_1/act1_mission07_addendum")
@@ -306,7 +306,7 @@ func mission_handler() -> Variant:
 				if _pog_is_null(v10):
 					debug.print_string("iAct1Mission07.mission_handler: Can't find Hoffer's Gap\n")
 					return
-			_pog_detach(_pog_spawn(local_449.bind(self, v50, v1, v2, v3, v4, v5, v6, v7, v8, v9, v11, v12, v13, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32)))
+			_pog_detach(_pog_spawn(local_449.bind(_pog_current(), v50, v1, v2, v3, v4, v5, v6, v7, v8, v9, v11, v12, v13, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32)))
 			v15 = group.create()
 			iobjectives.add("a1_m07_objective_go_to_hoffers")
 			while true:
@@ -532,11 +532,11 @@ func mission_handler() -> Variant:
 				break
 			group.destroy(v15, 1)
 			text.remove("csv:/text/act_1/act1_mission07")
-			state.destroy(self)
+			state.destroy(_pog_current())
 			if global.exists("g_act1_saved_hoffers_wake"):
 				global.set_bool("g_act1_saved_hoffers_wake", 1)
 			await irangecheck.remove_traffic_exception(imapentity.find_by_name("Hoffer's Gap"))
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			await iutilities.remove_mission_restart()
 			object.remove_property(v10, "reactive_exception")
 			await ibacktobase.allow()

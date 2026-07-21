@@ -988,11 +988,11 @@ func skip_mission(v0) -> Variant:
 
 func g_m_delayed_disabler() -> Variant:
 	var v0: Variant = 0
-	v0 = state.find(self)
+	v0 = state.find(_pog_current())
 	if _pog_is_null(v0):
 		if PogRuntime.TRACE:
 			debug.print_string("iUtilities.GMDelayedDisable: entered the delayed disabler.\n")
-		state.create(self, 1)
+		state.create(_pog_current(), 1)
 		while true:
 			await _pog_wait(100.0)
 			if not (1):

@@ -155,7 +155,7 @@ func local_487(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, 
 		state.destroy(v0)
 		await iwingmen.purge()
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		return
 	return
@@ -209,14 +209,14 @@ func mission_handler() -> Variant:
 	var v44: Variant = 0
 	var v45: Variant = 0
 	v0 = iship.find_player_ship()
-	v36 = state.find(self)
+	v36 = state.find(_pog_current())
 	v38 = []
 	v39 = []
 	if not (v36):
 		if PogRuntime.TRACE:
 			debug.print_string("Act3 Mission 04 - State Initialised./n")
-		v36 = state.create(self, 0)
-	await imissiontracker.add_mission(self, 3, 4)
+		v36 = state.create(_pog_current(), 0)
+	await imissiontracker.add_mission(_pog_current(), 3, 4)
 	v37 = iemail.find("html:/text/act_3/act3_mission04_email")
 	if not (v37):
 		if PogRuntime.TRACE:
@@ -265,7 +265,7 @@ func mission_handler() -> Variant:
 			v1 = imapentity.find_by_name("Lucrecia's Base")
 			v5 = isim.cast(imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault"))
 			v6 = imapentity.find_by_name_in_system("Jump Accelerator", "map:/geog/badlands/santa_romera")
-			_pog_detach(_pog_spawn(local_487.bind(self, v36, v3, v4, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25)))
+			_pog_detach(_pog_spawn(local_487.bind(_pog_current(), v36, v3, v4, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25)))
 			if PogRuntime.TRACE:
 				if _pog_is_null(v1):
 					if PogRuntime.TRACE:
@@ -567,7 +567,7 @@ func mission_handler() -> Variant:
 				igame.enable_blackout(0)
 				if global.exists("g_act3_capture_accelerator_complete"):
 					global.set_bool("g_act3_capture_accelerator_complete", 1)
-				state.destroy(self)
+				state.destroy(_pog_current())
 				await iutilities.remove_mission_restart()
 				await irangecheck.remove_traffic_exceptions_in_area(imapentity.cast(v6), 1000000.0)
 				await irangecheck.remove_traffic_exception(imapentity.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera"))

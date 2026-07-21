@@ -686,8 +686,8 @@ func mission_handler() -> Variant:
 	v3 = imapentity.find_by_name_in_system("Fender Naval STL Transceiver", "map:/geog/gagarin/owens_star")
 	v4 = imapentity.find_by_name_in_system("Fender Naval STC System HQ", "map:/geog/gagarin/owens_star")
 	v5 = imapentity.find_by_name_in_system("Formhault Jump Accelerator", "map:/geog/gagarin/formhault")
-	v7 = state.find(self)
-	v9 = self
+	v7 = state.find(_pog_current())
+	v9 = _pog_current()
 	text.add("csv:/text/act_3/act3_mission05")
 	text.add("csv:/text/act_3/act3_mission05_addendum")
 	if not (v7):
@@ -743,8 +743,8 @@ func mission_handler() -> Variant:
 			sim.destroy(v6)
 			global.destroy("g_current_colour")
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

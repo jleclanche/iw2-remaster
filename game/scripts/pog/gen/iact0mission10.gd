@@ -439,7 +439,7 @@ func mission_handler() -> Variant:
 	v6 = imapentity.find_by_name("The Effrit")
 	v7 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
 	v8 = sim.create("ini:/sims/stations/reactor", "a0_m10_name_abandoned")
-	v11 = self
+	v11 = _pog_current()
 	text.add("csv:/text/act_0/act0_mission10")
 	text.add("csv:/text/act_0/act0_mission10_addendum")
 	text.add("csv:/text/act_0/act0_mission10_addendum2")
@@ -450,7 +450,7 @@ func mission_handler() -> Variant:
 		v9 = state.create(v11, 0)
 	await local_192(v9)
 	await istation.add_reactive_exception(ihabitat.cast(v4))
-	await imissiontracker.add_mission(self, 0, 10)
+	await imissiontracker.add_mission(_pog_current(), 0, 10)
 	isim.set_sensor_visibility(isim.cast(v4), 1)
 	v3 = iship.create("ini:/sims/ships/utility/flitter", await ishipcreation.ship_name("General", -1))
 	isim.set_faction(v3, ifaction.find("Independent"))
@@ -470,9 +470,9 @@ func mission_handler() -> Variant:
 			continue
 		if state.progress(v9) != 100:
 			global.set_bool("g_act0_found_base", 1)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			imapentity.set_map_visibility(imapentity.cast(v7), 1)
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			await istation.remove_reactive_exception(ihabitat.cast(v4))
 			await _pog_wait(3.0)
 			gui.set_screen("icSPPlayerBaseScreen")
@@ -488,9 +488,9 @@ func mission_handler() -> Variant:
 				global.destroy("g_next_waypoint")
 			await iutilities.remove_mission_restart()
 			await local_335()
-			state.destroy(self)
+			state.destroy(_pog_current())
 			imapentity.set_map_visibility(imapentity.cast(v7), 1)
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			await istation.remove_reactive_exception(ihabitat.cast(v4))
 	return
 	return 0

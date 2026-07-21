@@ -384,7 +384,7 @@ func mission_handler() -> Variant:
 	v0 = 0
 	v1 = imapentity.find_by_name("Hoffer's Gap")
 	v2 = iship.find_player_ship()
-	v5 = self
+	v5 = _pog_current()
 	text.add("csv:/text/act_0/act0_mission60")
 	text.add("csv:/text/act_0/act0_mission60_addendum")
 	v3 = state.find(v5)
@@ -392,7 +392,7 @@ func mission_handler() -> Variant:
 		v3 = state.create(v5, 0)
 	await ibacktobase.inhibit()
 	await local_17(v3)
-	await imissiontracker.add_mission(self, 0, 60)
+	await imissiontracker.add_mission(_pog_current(), 0, 60)
 	await iconversation.one_liner(0, "name_clay", "a0_m60_dialogue_clay_ok_kid")
 	iobjectives.add("a0_m60_objectives_recover")
 	_pog_spawn(local_831.bind(v2, v1, v3))
@@ -418,8 +418,8 @@ func mission_handler() -> Variant:
 			isim.set_sensor_visibility(isim.cast(v1), 0)
 			await ibacktobase.allow()
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		text.remove("csv:/text/act_0/act0_mission60")
 		text.remove("csv:/text/act_0/act0_mission60_addendum")
 		global.destroy("g_running_already")

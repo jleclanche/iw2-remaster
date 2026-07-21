@@ -457,7 +457,7 @@ func mission_handler() -> Variant:
 	v1 = iship.find_player_ship()
 	v2 = imapentity.find_by_name("Touchdown Orbital Transfer Station")
 	v3 = await iutilities.create_waypoint_relative_to(v2, 0.0, 2000.0, 4000.0)
-	v6 = self
+	v6 = _pog_current()
 	text.add("csv:/text/act_0/act0_mission35")
 	text.add("csv:/text/act_0/act0_mission35_addendum")
 	text.add("csv:/text/act_2/act2_mission25")
@@ -466,7 +466,7 @@ func mission_handler() -> Variant:
 	if not (v4):
 		v4 = state.create(v6, 0)
 	await local_42(v4)
-	await imissiontracker.add_mission(self, 0, 35)
+	await imissiontracker.add_mission(_pog_current(), 0, 35)
 	if _pog_is_null(state.progress(v4)):
 		await iconversation.one_liner(0, "name_clay", "a0_m35_dialogue_clay_right_well")
 	if state.progress(v4) < 2:
@@ -491,8 +491,8 @@ func mission_handler() -> Variant:
 			await local_185()
 		iship.disrupt_l_d_s_drive(v1, 0.10000000149011612)
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		text.remove("csv:/text/act_2/act2_mission25")
 		await istation.remove_reactive_exception(ihabitat.cast(imapentity.find_by_name("Touchdown Orbital Transfer Station")))
 		return

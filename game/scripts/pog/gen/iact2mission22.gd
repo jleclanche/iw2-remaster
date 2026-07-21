@@ -581,8 +581,8 @@ func mission_handler() -> Variant:
 	v4 = imapentity.find_by_name_in_system("Dainn II L-Point", "map:/geog/badlands/firefrost")
 	v5 = imapentity.find_by_name_in_system("Quail", "map:/geog/badlands/firefrost")
 	v6 = imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante")
-	v7 = state.find(self)
-	v9 = self
+	v7 = state.find(_pog_current())
+	v9 = _pog_current()
 	text.add("csv:/text/act_2/act2_mission22")
 	if not (v7):
 		v7 = state.create(v9, 0)
@@ -623,9 +623,9 @@ func mission_handler() -> Variant:
 			_pog_detach(_pog_spawn(local_326.bind()))
 			await local_218()
 			iscore.goto_restart_point()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		text.remove("csv:/text/act_2/act2_mission22")
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0
@@ -653,7 +653,7 @@ func local_9572(v0, v1) -> Variant:
 	v13 = 0.0
 	if PogRuntime.TRACE:
 		debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
-	object.add_handle_property(v10, "traffic_handler_task", self)
+	object.add_handle_property(v10, "traffic_handler_task", _pog_current())
 	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
 	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
 	group.add_sim(v5, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))

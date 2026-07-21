@@ -121,7 +121,7 @@ func local_427(v0, v1, v2, v3, v4, v5) -> Variant:
 		await local_211()
 		state.destroy(v0)
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		return
 	return
@@ -146,13 +146,13 @@ func mission_handler() -> Variant:
 	v4 = group.create()
 	v6 = ifaction.find("Marauders")
 	v7 = ifaction.find("Independent")
-	v9 = state.find(self)
+	v9 = state.find(_pog_current())
 	if PogRuntime.TRACE:
 		debug.print_string("iAct1Mission06.MissionHandler: STARTED\n")
 	sim.pog_preload("ini:/sims/ships/navy/gunstar")
 	if not (v9):
-		v9 = state.create(self, 0)
-	await imissiontracker.add_mission(self, 1, 6)
+		v9 = state.create(_pog_current(), 0)
+	await imissiontracker.add_mission(_pog_current(), 1, 6)
 	v10 = iemail.find("html:/text/act_1/act1_mission06_email")
 	if not (v10):
 		if PogRuntime.TRACE:
@@ -173,7 +173,7 @@ func mission_handler() -> Variant:
 				if _pog_is_null(v2):
 					debug.print_string("iAct1Mission06.MissionHandler: Can't find Outpost: EXITING\n")
 					return
-			_pog_detach(_pog_spawn(local_427.bind(self, v9, v1, v3, v4, v5)))
+			_pog_detach(_pog_spawn(local_427.bind(_pog_current(), v9, v1, v3, v4, v5)))
 			await irangecheck.add_traffic_exception(imapentity.cast(v2))
 			await igangsterincidentgen.set_active(0)
 			v3 = isim.cast(sim.create("ini:/sims/nav/waypoint", "a1_m06_waypoint"))
@@ -289,9 +289,9 @@ func mission_handler() -> Variant:
 			text.remove("csv:/text/act_1/act1_mission06")
 			text.remove("csv:/text/act_1/act1_mission06_addendum")
 			await igangsterincidentgen.set_active(1)
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			await iutilities.remove_mission_restart()
-			state.destroy(self)
+			state.destroy(_pog_current())
 			if PogRuntime.TRACE:
 				debug.print_string("iAct1Mission06: MISSION COMPLETE\n")
 	return

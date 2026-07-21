@@ -65,7 +65,7 @@ func main_task() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v2 = state.find(v0)
 	v5 = 0
 	v6 = iship.find_player_ship()
@@ -191,7 +191,7 @@ func main_task() -> Variant:
 				debug.print_string("iActOne.PiracySpecialMissionOne - finished what i need to do here\n")
 			while sim.distance_between(v3, v6) < 100000.0:
 				await _pog_wait(1.0)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			return
 			break
 	return
@@ -471,7 +471,7 @@ func piracy_mission_one_ship_generator(v0) -> Variant:
 	var v7: Variant = 0
 	v1 = 1
 	v5 = iship.find_player_ship()
-	v4 = self
+	v4 = _pog_current()
 	while true:
 		if sim.distance_between(v0, v5) > global.pog_float("g_player_sensor_range"):
 			if global.pog_bool("g_piracy_mission_one_ship_flag") == 1:

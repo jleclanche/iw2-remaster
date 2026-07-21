@@ -445,8 +445,8 @@ func mission_handler() -> Variant:
 	v0 = 0
 	v2 = imapentity.find_by_name_in_system("Pestur L-Point", "map:/geog/badlands/mwari")
 	v3 = imapentity.find_by_name_in_system("Dagda Alpha Prime L-Point", "map:/geog/badlands/dagda")
-	v4 = state.find(self)
-	v6 = self
+	v4 = state.find(_pog_current())
+	v6 = _pog_current()
 	text.add("csv:/text/act_2/act2_mission08")
 	text.add("csv:/text/act_2/act2_mission08_addendum")
 	v4 = state.find(v6)
@@ -480,8 +480,8 @@ func mission_handler() -> Variant:
 				group.destroy(group.cast(global.handle("g_storage_group")), 1)
 		global.destroy("g_storage_group")
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		global.destroy("g_running_corporate_holdings")
 		await ibacktobase.allow()
 		return

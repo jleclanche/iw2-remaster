@@ -834,8 +834,8 @@ func mission_handler() -> Variant:
 	v0 = 0
 	v1 = 0
 	v4 = imapentity.find_by_name("Greenback Agri-Orbital 1")
-	v8 = self
-	await imissiontracker.add_mission(self, 1, 4)
+	v8 = _pog_current()
+	await imissiontracker.add_mission(_pog_current(), 1, 4)
 	text.add("csv:/text/act_1/act1_mission04")
 	text.add("csv:/text/act_1/act1_mission04_addendum")
 	v6 = state.find(v8)
@@ -846,7 +846,7 @@ func mission_handler() -> Variant:
 	v7 = iemail.find("html:/text/act_1/act1_mission04_email")
 	if not (v7):
 		iemail.send_email("a1_m04_email_sender", "a1_m04_email_subject", "html:/text/act_1/act1_mission04_email", 1)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	else:
 		if not (iemail.read(v7)):
@@ -890,10 +890,10 @@ func mission_handler() -> Variant:
 		global.destroy("g_jafs_legging_it")
 		await ibacktobase.allow()
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		sim.destroy(v5)
 		await irangecheck.remove_traffic_exception(imapentity.find_by_name("MAAS Systems Security Station"))
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

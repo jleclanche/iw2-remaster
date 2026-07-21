@@ -466,11 +466,11 @@ func mission_handler() -> Variant:
 	v1 = isim.find_by_name_in_system("Liberty L-Point", "map:/geog/badlands/santa_romera")
 	v2 = iship.find_player_ship()
 	v3 = 0
-	v4 = state.find(self)
-	v5 = self
+	v4 = state.find(_pog_current())
+	v5 = _pog_current()
 	if PogRuntime.TRACE:
 		debug.print_string("Mission 2-07: Mission Handler started\n")
-	await imissiontracker.add_mission(self, 2, 7)
+	await imissiontracker.add_mission(_pog_current(), 2, 7)
 	text.add("csv:/text/act_2/act2_mission07")
 	text.add("csv:/text/act_2/act2_mission07_addendum")
 	v4 = state.find(v5)
@@ -503,10 +503,10 @@ func mission_handler() -> Variant:
 		await ibacktobase.allow()
 		await iwingmen.purge()
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		if PogRuntime.TRACE:
 			debug.print_string("Mission 2-07: ending mission handler. Mission concluded\n")
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

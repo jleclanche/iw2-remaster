@@ -95,14 +95,14 @@ func g_m_tracker() -> Variant:
 	v3 = -1
 	v8 = 0
 	input.bind_key("iGMTracker.RunGMission", "ScriptKeys.StartGMission")
-	v9 = state.find(self)
+	v9 = state.find(_pog_current())
 	if not _pog_is_null(v9):
 		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker.GMTracker: restarted\n")
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker.GMTracker: started\n")
-		state.create(self, 0)
+		state.create(_pog_current(), 0)
 	text.add("csv:/text/generated_missions/generatedmissions")
 	if PogRuntime.TRACE:
 		debug.print_string("iGMTracker.GMTracker: checking count of existing missions.\n")
@@ -160,14 +160,14 @@ func stepover_mission() -> Variant:
 	return 0
 	v2 = ""
 	input.bind_key("iGMTracker.RunGMission", "ScriptKeys.StartGMission")
-	v7 = state.find(self)
+	v7 = state.find(_pog_current())
 	if not _pog_is_null(v7):
 		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker.GMTracker: restarted\n")
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iGMTracker.GMTracker: started\n")
-		state.create(self, 0)
+		state.create(_pog_current(), 0)
 	text.add("csv:/text/generated_missions/generatedmissions")
 	if PogRuntime.TRACE:
 		debug.print_string("iGMTracker.GMTracker: checking count of existing missions.\n")

@@ -170,7 +170,7 @@ func end_tasker(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) -> Variant:
 			imapentity.set_destroyed(imapentity.find_by_name_in_system("Marauder Interstellar L-Point Defense Station", "map:/geog/badlands/dante"), 0)
 		state.destroy(v0)
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		return
 	return
@@ -215,10 +215,10 @@ func mission_handler() -> Variant:
 	v21 = ifaction.find("Marauders")
 	if PogRuntime.TRACE:
 		debug.print_string("iAct2Mission25.MissionHandler: STARTED\n")
-	await imissiontracker.add_mission(self, 2, 25)
-	v28 = state.find(self)
+	await imissiontracker.add_mission(_pog_current(), 2, 25)
+	v28 = state.find(_pog_current())
 	if not (v28):
-		v28 = state.create(self, 1)
+		v28 = state.create(_pog_current(), 1)
 		await add_state_properties(v28)
 	await local_624(v28)
 	text.add("csv:/text/act_2/act2_mission25")
@@ -249,7 +249,7 @@ func mission_handler() -> Variant:
 			isim.set_sensor_visibility(v2, 1)
 			if PogRuntime.TRACE:
 				debug.print_string("iAct2Mission25.MissionHandler: Progress = MS_Mission_Started. Waiting for player to enter Dante system.\n")
-			v27 = _pog_spawn(end_tasker.bind(self, v28, v1, v11, v12, v13, v14, v15, v16, v17, v18))
+			v27 = _pog_spawn(end_tasker.bind(_pog_current(), v28, v1, v11, v12, v13, v14, v15, v16, v17, v18))
 			_pog_detach(v27)
 			await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/hoffers_wake"))
 			await irangecheck.add_out_of_system_traffic_exception(imapentity.find_by_name_in_system("Dante Interstellar L-Point", "map:/geog/badlands/dante"))
@@ -320,8 +320,8 @@ func mission_handler() -> Variant:
 			await local_24920(v0, v3, v10, v28)
 			global.set_bool("g_act2_marauders_defeated", 1)
 			global.destroy("g_hoffer_disabled")
-			state.destroy(self)
-			await imissiontracker.remove_mission(self)
+			state.destroy(_pog_current())
+			await imissiontracker.remove_mission(_pog_current())
 			if PogRuntime.TRACE:
 				debug.print_string("iAct2Mission25.mission_handler: MISSION COMPLETE\n")
 	return
@@ -569,8 +569,8 @@ func monitor_hq(v0, v1) -> Variant:
 			if sim.distance_between(v2, v0) > 1100000.0:
 				if PogRuntime.TRACE:
 					debug.print_string("iAct2Mission26.monitor_hq: Player left Marauder HQ area, destroying custom scenery.\n")
-				state.destroy(self)
-				await imissiontracker.remove_mission(self)
+				state.destroy(_pog_current())
+				await imissiontracker.remove_mission(_pog_current())
 				await iconversation.begin()
 				await iconversation.say(0, "a2_m25_ship_league_ship", "a1_m05_dialogue_miner_arrrghhh")
 				await iconversation.say(0, "name_clay", "stock_clay_critical_ship_destroyed_1")

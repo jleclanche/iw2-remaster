@@ -587,7 +587,7 @@ func mission_handler() -> Variant:
 	v4 = imapentity.find_by_name_in_system("Bessus Laplace Security Station", "map:/geog/badlands/hoffers_wake")
 	v5 = imapentity.find_by_name_in_system("Greenback Agri-Orbital 1", "map:/geog/badlands/hoffers_wake")
 	v6 = iship.create("ini:/sims/ships/utility/drone", "a1_m09_name_droid")
-	v10 = self
+	v10 = _pog_current()
 	sim.set_cullable(v6, 0)
 	await iremotepilot.enable_remote_connection(v6, 1)
 	text.add("csv:/text/act_1/act1_mission09")
@@ -641,7 +641,7 @@ func mission_handler() -> Variant:
 			global.set_bool("g_skip_locked", 0)
 			_pog_detach(_pog_spawn(local_272.bind()))
 			await local_185()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		sim.destroy(v7)
 		sim.destroy(sim.find_by_name("a1_m09_name_lor_waypoint"))
 		global.destroy("g_lor_platform")

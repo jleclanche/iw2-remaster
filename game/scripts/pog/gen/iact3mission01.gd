@@ -104,7 +104,7 @@ func local_194() -> Variant:
 
 func local_302() -> Variant:
 	if not (await iutilities.skip_mission(await local_0())):
-		await imissiontracker.add_mission(self, 3, 1)
+		await imissiontracker.add_mission(_pog_current(), 3, 1)
 		_pog_detach(_pog_spawn(mission_handler.bind()))
 	else:
 		global.set_bool(await local_14(), 1)
@@ -237,7 +237,7 @@ func mission_handler() -> Variant:
 	var _pc: int = 1692
 	while true:
 		if _pc == 1692:
-			v0 = self
+			v0 = _pog_current()
 			v1 = state.find(v0)
 			v3 = 0
 			v4 = iship.find_player_ship()
@@ -273,7 +273,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 2110:
 			await local_45(v1)
-			v40 = _pog_spawn(local_789.bind(self, v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
+			v40 = _pog_spawn(local_789.bind(_pog_current(), v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
 			_pog_detach(v40)
 			await irangecheck.add_traffic_exception(imapentity.cast(v20))
 			object.add_int_property(v20, "reactive_exception", 1)
@@ -439,7 +439,7 @@ func mission_handler() -> Variant:
 			continue
 		elif _pc == 3545:
 			_pog_halt(v40)
-			v40 = _pog_spawn(local_789.bind(self, v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
+			v40 = _pog_spawn(local_789.bind(_pog_current(), v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
 			_pog_detach(v40)
 			iobjectives.add("a3_m01_objectives_security")
 			await iformation.goose(v14, 150.0, 0)
@@ -468,7 +468,7 @@ func mission_handler() -> Variant:
 			v8 = await local_12029(4)
 			await abb_common.set_cullable_group(v8, 0)
 			_pog_halt(v40)
-			v40 = _pog_spawn(local_789.bind(self, v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
+			v40 = _pog_spawn(local_789.bind(_pog_current(), v1, v21, v23, v24, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19))
 			_pog_detach(v40)
 			await abb_common.materialise_group_near(v8, v20, 10000.0)
 			iai.give_approach_order_advanced(group.leader(v15), v21, 25000.0, 2000.0, 1)
@@ -1013,7 +1013,7 @@ func local_8867(v0, v1, v2, v3, v4, v5) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	v10 = self
+	v10 = _pog_current()
 	while true:
 		v7 = group.sim_count(v2)
 		if v7 < v3 - 1:
@@ -1054,7 +1054,7 @@ func local_8867(v0, v1, v2, v3, v4, v5) -> Variant:
 	return 0
 
 func local_9709() -> Variant:
-	await imissiontracker.add_mission(self, 3, 1)
+	await imissiontracker.add_mission(_pog_current(), 3, 1)
 	text.add("csv:/text/act_3/act3_mission01")
 	text.add("csv:/text/act_3/act3_mission01_addendum")
 	sim.pog_preload("ini:/sims/ships/independent/cutter")
@@ -1078,7 +1078,7 @@ func local_10036(v0, v1) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	v2 = iship.find_player_ship()
-	v3 = self
+	v3 = _pog_current()
 	v5 = await icutsceneutilities.get_kill_group()
 	if PogRuntime.TRACE:
 		debug.print_string("Act3 Mission 1: starting najran base approach cutscene\n")
@@ -1107,7 +1107,7 @@ func local_10036(v0, v1) -> Variant:
 func local_10506(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
-	v2 = self
+	v2 = _pog_current()
 	v3 = await icutsceneutilities.get_kill_group()
 	if PogRuntime.TRACE:
 		debug.print_string("Act3 Mission 1: starting reinforcements cutscene\n")

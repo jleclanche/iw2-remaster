@@ -536,8 +536,8 @@ func mission_handler() -> Variant:
 	v7 = imapentity.find_by_name_in_system("Lucrecia's Base", global.string("g_player_base_system"))
 	v8 = ifaction.find("MAAS Corporation")
 	v9 = ifaction.find("Player")
-	v12 = self
-	await imissiontracker.add_mission(self, 3, 2)
+	v12 = _pog_current()
+	await imissiontracker.add_mission(_pog_current(), 3, 2)
 	text.add("csv:/text/act_3/act3_mission02")
 	text.add("csv:/text/act_3/act3_mission02_addendum")
 	text.add("csv:/text/act_2/act2_mission25")
@@ -551,7 +551,7 @@ func mission_handler() -> Variant:
 		return
 	else:
 		if not (iemail.read(v11)):
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			return
 	if _pog_is_null(v6):
 		if PogRuntime.TRACE:
@@ -609,9 +609,9 @@ func mission_handler() -> Variant:
 		text.remove("csv:/text/act_3/act3_mission02")
 		text.remove("csv:/text/act_3/act3_mission02_addendum")
 		text.remove("csv:/text/act_2/act2_mission25")
-		state.destroy(self)
+		state.destroy(_pog_current())
 		sim.destroy(v5)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0
@@ -1049,7 +1049,7 @@ func local_19559(v0) -> Variant:
 	else:
 		if PogRuntime.TRACE:
 			debug.print_string("iScriptedOrders: Starting Local Patrol Orders\n")
-		object.add_handle_property(v9, "traffic_handler_task", self)
+		object.add_handle_property(v9, "traffic_handler_task", _pog_current())
 		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 1"))
 		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 2"))
 		group.add_sim(v4, sim.create("ini:/sims/nav/waypoint", "Waypoint 3"))

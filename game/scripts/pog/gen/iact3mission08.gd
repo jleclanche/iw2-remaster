@@ -857,8 +857,8 @@ func mission_handler() -> Variant:
 	v4 = imapentity.find_by_name_in_system("Donauworth Military Police Outpost", "map:/geog/gagarin/new_bavaria")
 	v5 = ilagrangepoint.cast(imapentity.find_by_name_in_system("Pepin L-Point", "map:/geog/gagarin/new_bavaria"))
 	v6 = ilagrangepoint.cast(imapentity.find_by_name_in_system("Donauworth L-Point", "map:/geog/gagarin/new_bavaria"))
-	v8 = self
-	await imissiontracker.add_mission(self, 3, 8)
+	v8 = _pog_current()
+	await imissiontracker.add_mission(_pog_current(), 3, 8)
 	text.add("csv:/text/act_3/act3_mission08")
 	text.add("csv:/text/act_3/act3_mission08_addendum")
 	text.add("csv:/text/act_3/act3_mission08_addendum_2")
@@ -918,7 +918,7 @@ func mission_handler() -> Variant:
 			await istation.disable_reactive_in_area(ihabitat.cast(v4), 2000000.0)
 			_pog_spawn(local_7548.bind(v3, v7))
 		if state.progress(v7) == 7:
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			return
 		if state.progress(v7) == 4 and not (v0):
 			v0 = 1
@@ -943,9 +943,9 @@ func mission_handler() -> Variant:
 		sim.destroy(v3)
 		sim.destroy(isim.find_by_name_in_system("a3_m08_name_hostage", "map:/geog/gagarin/new_bavaria"))
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		sim.destroy(v3)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

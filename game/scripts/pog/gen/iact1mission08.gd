@@ -529,10 +529,10 @@ func mission_handler() -> Variant:
 	var v7: Variant = 0
 	v0 = 0
 	v2 = imapentity.find_by_name("Greenback Agri-Orbital 1")
-	v5 = self
+	v5 = _pog_current()
 	v6 = ifaction.find("Player")
 	v7 = ifaction.find("League")
-	await imissiontracker.add_mission(self, 1, 8)
+	await imissiontracker.add_mission(_pog_current(), 1, 8)
 	text.add("csv:/text/act_1/act1_mission08")
 	text.add("csv:/text/act_1/act1_mission08_addendum")
 	v3 = state.find(v5)
@@ -542,11 +542,11 @@ func mission_handler() -> Variant:
 	v4 = iemail.find("html:/text/act_1/act1_mission08_email")
 	if not (v4):
 		iemail.send_email("a1_m08_email_sender", "a1_m08_email_subject", "html:/text/act_1/act1_mission08_email", 1)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	else:
 		if not (iemail.read(v4)):
-			await imissiontracker.remove_mission(self)
+			await imissiontracker.remove_mission(_pog_current())
 			return
 	v1 = await iutilities.create_waypoint_relative_to(v2, math.random(3000.0, 5000.0), math.random(3000.0, 5000.0), math.random(3000.0, 5000.0))
 	object.set_string_property(v1, "name", "a1_m08_name_league_waypoint")
@@ -572,8 +572,8 @@ func mission_handler() -> Variant:
 			sim.destroy(sim.find_by_name("a1_m08_name_paint_droid"))
 		sim.destroy(v1)
 		isim.set_sensor_visibility(imapentity.find_by_name("Memnon Military System Defence Dock"), 0)
-		state.destroy(self)
-		await imissiontracker.remove_mission(self)
+		state.destroy(_pog_current())
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

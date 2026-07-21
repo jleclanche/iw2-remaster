@@ -48,6 +48,7 @@ var task_seq := 1
 var current_seq := 0        ## 0 is the boot chain
 var suspend_below := -1     ## tasks with seq <= this are frozen
 var suspend_exempt := -1
+var handles: Dictionary = {}  ## seq -> PogTaskHandle, for task.Current (#38)
 
 
 func next_seq() -> int:

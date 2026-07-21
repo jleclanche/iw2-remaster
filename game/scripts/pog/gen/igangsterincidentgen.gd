@@ -145,7 +145,7 @@ func gangster_war_generator() -> Variant:
 	var v10: Variant = 0
 	v4 = []
 	v5 = global.pog_float("g_player_sensor_range")
-	v9 = self
+	v9 = _pog_current()
 	await _pog_wait(math.random(0.10000000149011612, 0.8999999761581421))
 	v10 = state.find(v9)
 	if _pog_is_null(v10):

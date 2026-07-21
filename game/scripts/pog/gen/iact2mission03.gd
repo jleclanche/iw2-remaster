@@ -158,7 +158,7 @@ func local_1066(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) -> Variant:
 		await local_218()
 		state.destroy(v0)
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		iscore.goto_restart_point()
 		return
@@ -236,7 +236,7 @@ func mission_handler() -> Variant:
 			v16 = ifaction.find("Marauders")
 			v17 = ifaction.find("Underworld")
 			v20 = []
-			v24 = self
+			v24 = _pog_current()
 			_pc = 2140
 			continue
 		elif _pc == 2119:
@@ -302,7 +302,7 @@ func mission_handler() -> Variant:
 			text.add("csv:/text/act_2/act2_mission03")
 			text.add("csv:/text/act_2/act2_mission03_addendum")
 			text.add("csv:/text/act_2/act2_mission03_addendum2")
-			await imissiontracker.add_mission(self, 2, 3)
+			await imissiontracker.add_mission(_pog_current(), 2, 3)
 			await local_55(v0)
 			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
 			_pog_detach(v23)
@@ -816,8 +816,8 @@ func mission_handler() -> Variant:
 			text.remove("csv:/text/act2/act2_mission03")
 			text.remove("csv:/text/act_2/act2_mission03_addendum")
 			text.remove("csv:/text/act_2/act2_mission03_addendum2")
-			state.destroy(self)
-			await imissiontracker.remove_mission(self)
+			state.destroy(_pog_current())
+			await imissiontracker.remove_mission(_pog_current())
 			_pc = 9078
 			continue
 		elif _pc == 8849:

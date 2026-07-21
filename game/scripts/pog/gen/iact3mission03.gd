@@ -142,7 +142,7 @@ func local_424(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, 
 		await local_242()
 		state.destroy(v0)
 		await iutilities.remove_mission_restart()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		_pog_halt(v0)
 		return
 	return
@@ -200,12 +200,12 @@ func mission_handler() -> Variant:
 	v28 = 1
 	v29 = 0
 	v30 = 0
-	v34 = state.find(self)
+	v34 = state.find(_pog_current())
 	if PogRuntime.TRACE:
 		debug.print_string("iAct3Mission03.MissionHandler: STARTED\n")
-	await imissiontracker.add_mission(self, 3, 3)
+	await imissiontracker.add_mission(_pog_current(), 3, 3)
 	if not (v34):
-		v34 = state.create(self, 0)
+		v34 = state.create(_pog_current(), 0)
 	text.add("csv:/text/act_3/act3_mission03")
 	text.add("csv:/text/act_3/act3_mission03_addendum")
 	v35 = iemail.find("html:/text/act_3/act3_mission03_email")
@@ -229,7 +229,7 @@ func mission_handler() -> Variant:
 			if PogRuntime.TRACE:
 				if _pog_is_null(v4):
 					debug.print_string("iAct3Mission03.mission_handler: Can't find Maas Asteroid Base\n")
-			_pog_detach(_pog_spawn(local_424.bind(self, v34, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v1, v2, v3)))
+			_pog_detach(_pog_spawn(local_424.bind(_pog_current(), v34, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v1, v2, v3)))
 			while true:
 				var _sw1: Variant = state.progress(v34)
 				var _arm1: int = -1
@@ -475,9 +475,9 @@ func mission_handler() -> Variant:
 						global.set_bool("g_act3_scavenger_mission_complete", 1)
 					await iutilities.group_set_cullable(v11, 1)
 					group.destroy(v11, 0)
-					await imissiontracker.remove_mission(self)
+					await imissiontracker.remove_mission(_pog_current())
 					await iutilities.remove_mission_restart()
-					state.destroy(self)
+					state.destroy(_pog_current())
 					return
 					break
 	return

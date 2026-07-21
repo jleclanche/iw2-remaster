@@ -81,7 +81,7 @@ func handle_abort(v0) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v1 = self
+	v1 = _pog_current()
 	v2 = 0
 	v3 = await get_kill_group()
 	v4 = []

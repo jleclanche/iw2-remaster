@@ -418,7 +418,10 @@ class Port:
         f = fn.lower()
         a0 = args[0] if args else "null"
         if f == "current":
-            return "self"
+            # the running task's handle, NOT the script: state.Create keys
+            # story records by it, and the script is shared by every task in
+            # the package (iacttwo alone has 15 state-owning tasks)
+            return "_pog_current()"
         if f == "sleep":
             return "await _pog_wait(%s)" % (args[1] if len(args) > 1 else "0.0")
         if f == "ishalted":

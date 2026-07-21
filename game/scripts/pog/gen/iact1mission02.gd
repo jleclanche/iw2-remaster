@@ -524,8 +524,8 @@ func mission_handler() -> Variant:
 	v5 = imapentity.waypoint_for_entity(imapentity.find_by_name("Grimwald Collection Station I"))
 	v11 = ifaction.find("Player")
 	v12 = ifaction.find("Stepsons")
-	v13 = self
-	await imissiontracker.add_mission(self, 1, 2)
+	v13 = _pog_current()
+	await imissiontracker.add_mission(_pog_current(), 1, 2)
 	text.add("csv:/text/act_1/act1_mission02")
 	text.add("csv:/text/act_1/act1_mission02_addendum")
 	v9 = state.find(v13)
@@ -582,9 +582,9 @@ func mission_handler() -> Variant:
 		await irangecheck.remove_traffic_exception(imapentity.cast(v3))
 		global.destroy("g_maas_vessels")
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		sim.destroy(v2)
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		return
 	return
 	return 0

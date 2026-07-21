@@ -1519,7 +1519,7 @@ func new_mission_task() -> Variant:
 	while true:
 		if _pc == 26103:
 			v13 = ""
-			v12 = self
+			v12 = _pog_current()
 			_pc = 26206
 			continue
 		elif _pc == 26143:
@@ -1568,7 +1568,7 @@ func new_mission_task() -> Variant:
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_collect"), 2)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_deliver"), 2)
 			await local_35147(v11)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			_pc = 29113
 			continue
 		elif _pc == 26723:
@@ -1953,7 +1953,7 @@ func new_mission_task() -> Variant:
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_collect"), 1)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_deliver"), 1)
 			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			_pc = 29113
 			continue
 		elif _pc == 29113:

@@ -106,9 +106,9 @@ func exodus_traffic_generator() -> Variant:
 	v32 = 10000
 	if PogRuntime.TRACE:
 		debug.print_string("iActThree.Event3_30_SurvivorsRetreat : starting\n")
-	v19 = state.find(self)
+	v19 = state.find(_pog_current())
 	if _pog_is_null(v19):
-		v19 = state.create(self, 0)
+		v19 = state.create(_pog_current(), 0)
 	if not (global.exists("g_total_refugees_running")):
 		global.create_int("g_total_refugees_running", 2, 0)
 	if not (global.exists("g_refugees_waiting_at_fomalhaut")):
@@ -1569,9 +1569,9 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 	v9 = 0
 	v15 = ifaction.find("Police")
 	v16 = ifaction.find("Navy")
-	v2 = state.find(self)
+	v2 = state.find(_pog_current())
 	if _pog_is_null(v2):
-		v2 = state.create(self, 0)
+		v2 = state.create(_pog_current(), 0)
 	global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") + v5)
 	while true:
 		await _pog_wait(5)
@@ -1680,9 +1680,9 @@ func police_retreat_orders(v0, v1) -> Variant:
 	v16 = []
 	v17 = []
 	v18 = []
-	v13 = state.find(self)
+	v13 = state.find(_pog_current())
 	if _pog_is_null(v13):
-		v13 = state.create(self, 6)
+		v13 = state.create(_pog_current(), 6)
 	v15 = 0
 	while v15 < group.sim_count(v0):
 		object.set_int_property(group.nth_sim(v0, v15), "ignore_speed_limit", 1)

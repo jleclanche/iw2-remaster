@@ -736,7 +736,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v2 = iship.find_player_ship()
 	v3 = isim.cast(sim.find_by_name("Jump Accelerator"))
@@ -811,7 +811,7 @@ func accelerator_cut_scene_monitor() -> Variant:
 			break
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.AcceleratorCutSceneMonitor: Terminating and destroying State.\n")
-	state.destroy(self)
+	state.destroy(_pog_current())
 	return
 	return 0
 
@@ -822,7 +822,7 @@ func ritz_intro_monitor() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v2 = iship.find_player_ship()
 	v3 = imapentity.find_by_name_in_system("The Ritz", "map:/geog/badlands/santa_romera")
@@ -899,7 +899,7 @@ func ritz_intro_monitor() -> Variant:
 			await iconversation.end()
 			await _pog_wait(5.0)
 			global.set_bool("g_act2_ritz_introduced", 1)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			break
 	return
 	return 0
@@ -1042,7 +1042,7 @@ func jackson_encounter_setup() -> Variant:
 	var v7: Variant = 0
 	var v8: Variant = 0
 	var v9: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v3 = iship.find_player_ship()
 	v4 = imapentity.find_by_name_in_system("Jackson's Yard", "map:/geog/badlands/coyote")
@@ -1165,7 +1165,7 @@ func jackson_encounter_setup() -> Variant:
 		if _arm2 <= 2:
 			if PogRuntime.TRACE:
 				debug.print_string("iActTwo.JacksonencounterSetup : Closing down Frederick Jackson encounter script\n")
-			state.destroy(self)
+			state.destroy(_pog_current())
 			break
 	return
 	return 0
@@ -1357,7 +1357,7 @@ func eureka_story_script() -> Variant:
 	var _pc: int = 21998
 	while true:
 		if _pc == 21998:
-			v0 = self
+			v0 = _pog_current()
 			v2 = iship.find_player_ship()
 			v3 = imapentity.find_by_name("Belial L-Point STC HQ")
 			v4 = 0
@@ -1749,7 +1749,7 @@ func eureka_story_script() -> Variant:
 			_pc = 24432
 			continue
 		elif _pc == 24522:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			global.destroy("g_eureka_conversation_number")
 			global.set_bool("g_eureka_script_complete", 1)
 			_pc = 24649
@@ -1947,7 +1947,7 @@ func kompira_story_script() -> Variant:
 	var v14: Variant = 0
 	var v15: Variant = 0
 	var v16: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v3 = 0
 	v4 = iship.find_player_ship()
@@ -2267,7 +2267,7 @@ func firefrost_conversations() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v2 = 0
 	v3 = ihabitat.cast(imapentity.find_by_name_in_system("Blue Note Social", "map:/geog/badlands/firefrost"))
 	v4 = ihabitat.cast(imapentity.find_by_name_in_system("Firefrost System Administration", "map:/geog/badlands/firefrost"))
@@ -2444,7 +2444,7 @@ func firefrost_conversations() -> Variant:
 func firefrost_story_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/firefrost") and global.pog_bool("g_skip_to_specific") != 1:
 		if PogRuntime.TRACE:
@@ -2528,7 +2528,7 @@ func firefrost_story_script() -> Variant:
 					if not (_pog_is_null(global.exists("g_got_firefrost_pilots"))):
 						break
 				global.destroy("g_got_firefrost_pilots")
-				state.destroy(self)
+				state.destroy(_pog_current())
 				global.set_bool("g_firefrost_script_complete", 1)
 				return
 				break
@@ -2539,7 +2539,7 @@ func coyote_story_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/coyote"):
 		if PogRuntime.TRACE:
@@ -2650,7 +2650,7 @@ func coyote_story_script() -> Variant:
 					await igmtracker.add_g_m_enum(29)
 					await igmtracker.set_g_m_range(24, 29)
 					global.create_bool("g_added_gm_batch_9", 1, 1)
-				state.destroy(self)
+				state.destroy(_pog_current())
 				global.set_bool("g_coyote_script_complete", 1)
 				break
 	return
@@ -2716,7 +2716,7 @@ func dagda_story_script() -> Variant:
 	var v16: Variant = 0
 	var v17: Variant = 0
 	var v18: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v2 = 1
 	v3 = 1
@@ -2829,7 +2829,7 @@ func dagda_story_script() -> Variant:
 						if PogRuntime.TRACE:
 							debug.print_string("iActTwo.DagdaStoryScript : a maas patrol is already on the player tail, sleeping\n")
 						await _pog_wait(10.0)
-				state.destroy(self)
+				state.destroy(_pog_current())
 				global.set_bool("g_dagda_script_complete", 1)
 				break
 	return
@@ -2837,17 +2837,17 @@ func dagda_story_script() -> Variant:
 
 func santa_waiter() -> Variant:
 	var v0: Variant = 0
-	v0 = state.find(self)
+	v0 = state.find(_pog_current())
 	if not (v0):
-		v0 = state.create(self, 0)
+		v0 = state.create(_pog_current(), 0)
 	while true:
 		if PogRuntime.TRACE:
 			debug.print_string("iAct2SantaRomeraStoryScript : wating for the player to complete a blocakde run to Mwari. sleeping for 30 seconds\n")
 		await _pog_wait(1.0)
 		if not (_pog_is_null(global.pog_bool("g_act2_completed_blockade_run"))):
 			break
-	state.destroy(self)
-	state.destroy(self)
+	state.destroy(_pog_current())
+	state.destroy(_pog_current())
 	await iutilities.send_story_element("g_story_2.140b", 2, 0)
 	return
 	return 0
@@ -2855,7 +2855,7 @@ func santa_waiter() -> Variant:
 func santa_romera_story_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	if not _pog_eq(isim.active_world(), "map:/geog/badlands/santa_romera") and global.pog_bool("g_skip_to_specific") != 1:
 		if PogRuntime.TRACE:
@@ -2919,7 +2919,7 @@ func santa_romera_story_script() -> Variant:
 						break
 				state.set_progress(v1, 3)
 			if _arm7 <= 3:
-				state.destroy(self)
+				state.destroy(_pog_current())
 				global.set_bool("g_santaromera_script_complete", 1)
 				if _pog_is_null(iemail.find("html:/text/act_2/act2_mission10_email")):
 					await iact2mission10.main()
@@ -2934,7 +2934,7 @@ func santa_romera_story_script() -> Variant:
 func mwari_blockade_events() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	if not (v1):
 		v1 = state.create(v0, 0)
@@ -2975,7 +2975,7 @@ func mwari_blockade_events() -> Variant:
 					break
 			await iutilities.send_story_element("g_story_2.130", 2, 9)
 			await iact2mission09.main()
-			state.destroy(self)
+			state.destroy(_pog_current())
 			break
 	return
 	return 0
@@ -2988,7 +2988,7 @@ func mwari_story_script() -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v2 = imapentity.find_by_name_in_system("Longshot MCA Defence HQ", "map:/geog/badlands/mwari")
 	v3 = iship.find_player_ship()
@@ -3097,7 +3097,7 @@ func mwari_story_script() -> Variant:
 					await iutilities.send_story_element("g_story_2.140", 2, 0)
 				v6 = _pog_spawn(mwari_blockade_events.bind())
 				_pog_detach(v6)
-				state.destroy(self)
+				state.destroy(_pog_current())
 				global.set_bool("g_mwari_script_complete", 1)
 				break
 	return
@@ -3107,7 +3107,7 @@ func marauder_hunt_story_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
 	var v2: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v2 = state.find(v0)
 	if not (v2):
 		v2 = state.create(v0, 0)
@@ -3164,7 +3164,7 @@ func marauder_hunt_story_script() -> Variant:
 			await igangsterincidentgen.set_number_of_station_attackers_var(3)
 			await igangsterincidentgen.set_delay_check(30.0)
 			_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
-			state.destroy(self)
+			state.destroy(_pog_current())
 			break
 	return
 	return 0
@@ -3207,8 +3207,8 @@ func hoffer_creation_handler() -> Variant:
 	v3 = v2
 	v4 = iship.find_player_ship()
 	v5 = 1
-	if _pog_is_null(state.find(self)):
-		state.create(self, 0)
+	if _pog_is_null(state.find(_pog_current())):
+		state.create(_pog_current(), 0)
 	while true:
 		await _pog_wait(2)
 		v4 = iship.find_player_ship()
@@ -3238,8 +3238,8 @@ func hoffer_reveal_monitor() -> Variant:
 	v0 = iship.find_player_ship()
 	v1 = imapentity.find_by_name_in_system("Jackson's Yard", "map:/geog/badlands/coyote")
 	v2 = 0
-	if _pog_is_null(state.find(self)):
-		state.create(self, 0)
+	if _pog_is_null(state.find(_pog_current())):
+		state.create(_pog_current(), 0)
 	if global.exists("g_told_about_hoffer") == 1 and _pog_is_null(global.exists("g_revealed_hoffer")):
 		iobjectives.add("a2_master_objectives_leader")
 	while true:
@@ -3285,7 +3285,7 @@ func hoffer_reveal_monitor() -> Variant:
 func mwari_wars_story_script() -> Variant:
 	var v0: Variant = 0
 	var v1: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	if not (v1):
 		v1 = state.create(v0, 0)
@@ -3366,7 +3366,7 @@ func mwari_wars_story_script() -> Variant:
 					debug.print_string("iActTwo.MwariWarsStoryScript : Waititng for the player to complete the battle of Mwari, sleeping\n")
 				await _pog_wait(10.0)
 			await iutilities.send_story_element("g_story_2.300", 2, 0)
-			state.destroy(self)
+			state.destroy(_pog_current())
 			break
 	return
 	return 0
@@ -3576,7 +3576,7 @@ func allied_search_encounters() -> Variant:
 	var _pc: int = 53819
 	while true:
 		if _pc == 53819:
-			v0 = self
+			v0 = _pog_current()
 			v1 = state.find(v0)
 			v3 = 0
 			v4 = iship.find_player_ship()
@@ -3830,7 +3830,7 @@ func allied_search_encounters() -> Variant:
 				_pc = 53948
 				continue
 		elif _pc == 55483:
-			state.destroy(self)
+			state.destroy(_pog_current())
 			_pc = 55541
 			continue
 		elif _pc == 55515:
@@ -3854,7 +3854,7 @@ func master_script() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	v0 = self
+	v0 = _pog_current()
 	v1 = state.find(v0)
 	v3 = iship.find_player_ship()
 	v4 = imapentity.find_by_name_in_system(" Alexander Sentry Station ", "map:/geog/badlands/hoffers_wake")
@@ -3890,7 +3890,7 @@ func master_script() -> Variant:
 		await iact2mission22.stub()
 		await iact2mission24.stub()
 		await destry_act_two_globals()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		igame.next_act("iActThree")
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("League"), 475, 1, 377, 7, 0))
 		itrade.offer_trade(itrade.create_trade_for_cargo_type(ifaction.find("League"), 475, 1, 377, 7, 0))
@@ -4169,7 +4169,7 @@ func master_script() -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : player has finished act two, smartass, shutting down act\n")
 				await destry_act_two_globals()
-				state.destroy(self)
+				state.destroy(_pog_current())
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : Calling Act Three\n")
 				igame.next_act("iActThree")

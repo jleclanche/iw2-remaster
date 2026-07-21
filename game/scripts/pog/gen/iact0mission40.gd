@@ -556,7 +556,7 @@ func mission_handler() -> Variant:
 	v6 = imapentity.find_by_name("Junkyard")
 	v7 = imapentity.find_by_name("Maas Systems Processing Plant")
 	v11 = iship.find_player_ship()
-	v14 = self
+	v14 = _pog_current()
 	text.add("csv:/text/act_0/act0_mission40")
 	await istation.add_reactive_exception(ihabitat.cast(v4))
 	await istation.add_reactive_exception(ihabitat.cast(v6))
@@ -565,7 +565,7 @@ func mission_handler() -> Variant:
 		v12 = state.create(v14, 0)
 		await ibacktobase.inhibit()
 	await local_79(v12)
-	await imissiontracker.add_mission(self, 0, 40)
+	await imissiontracker.add_mission(_pog_current(), 0, 40)
 	if _pog_is_null(state.progress(v12)) or state.progress(v12) == 6:
 		iobjectives.add("a0_m40_objectives_visit")
 	if state.progress(v12) == 7:
@@ -611,9 +611,9 @@ func mission_handler() -> Variant:
 			await local_236()
 			iscore.goto_restart_point()
 		await iutilities.remove_mission_restart()
-		state.destroy(self)
+		state.destroy(_pog_current())
 		await ibacktobase.allow()
-		await imissiontracker.remove_mission(self)
+		await imissiontracker.remove_mission(_pog_current())
 		await istation.remove_reactive_exception(ihabitat.cast(v4))
 		await istation.remove_reactive_exception(ihabitat.cast(v6))
 		return
