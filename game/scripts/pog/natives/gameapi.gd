@@ -582,6 +582,25 @@ class PogDolly extends RefCounted:
 	var offset := Vector3.ZERO
 	var vel := Vector3.ZERO        ## iDirector.SetDirection's tracking motion
 
+## Director state dies with the session a load replaces: a load taken
+## mid-cutscene must hand the camera back and clear any fade/blackout, or the
+## loaded game comes up hijacked or black (igame.LoadGame teardown).
+func reset_director() -> void:
+	director_depth = 0
+	focus = null
+	focus2 = null
+	dolly = null
+	use_dolly = false
+	dolly_look_forward = false
+	director_fov = 0.0
+	fade = 0.0
+	fade_rate = 0.0
+	blackout = false
+	if game != null:
+		if game.jump_fade != null:
+			game.jump_fade.color = Color(0, 0, 0, 0)
+		game._apply_view()
+
 # @native idirector.Begin
 func _d_begin(_t, _a: Array) -> Variant:
 	if PogRuntime.TRACE:
@@ -1063,6 +1082,28 @@ func _g_load(_t, a: Array) -> Variant:
 	if game.mission != null:
 		game.mission.objectives = d.get("objectives", {})
 	game.restore_extras(d)
+	# The engine's load replaces the whole session, so nothing transient
+	# survives it. Our in-place swap must silence the old session by hand:
+	# the playing conversation (a line keeps talking over the loaded game
+	# otherwise), queued cinematics and their continuations, the director's
+	# camera/fade, HUD banners -- then restart the music monitor the way the
+	# session-entry list does (scripts.ini [Space] enter[]=iMusic.Initialise).
+	if "comms" in game and game.comms != null:
+		game.comms.reset()
+	if game.has_method("flush_movies"):
+		game.flush_movies()
+	# both runtimes keep their own director (dual-runtime design); the load
+	# binding may run on either instance, so reset each one explicitly
+	reset_director()
+	if "pog_rt" in game and game.pog_rt != null \
+			and game.pog_rt.gameapi != null and game.pog_rt.gameapi != self:
+		game.pog_rt.gameapi.reset_director()
+	if "pog_api" in game and game.pog_api != null and game.pog_api != self:
+		game.pog_api.reset_director()
+	if "hud" in game and game.hud != null:
+		game.hud.clear_transients()
+	if game.has_method("music_start"):
+		game.music_start()
 	# In the engine the load ends with the flight screen replacing the whole
 	# GUI stack (the reloaded session comes up on icSpaceFlightScreen); the POG
 	# load screen has just cleared and re-pushed the PDA stack under us

@@ -322,6 +322,25 @@ func speaking() -> bool:
 	return not current.is_empty() or not queue.is_empty() \
 		or not ask_options.is_empty()
 
+## Hard stop for a session swap (igame.LoadGame): the engine's load replaces
+## the whole session, so a line playing when the player loads must not keep
+## talking over the loaded game -- voice, queue, subtitle, portrait and any
+## pending Ask all die here.
+func reset() -> void:
+	queue.clear()
+	current = {}
+	subtitle = ""
+	speaker = ""
+	ask_options.clear()
+	ask_speaker = ""
+	ask_question = ""
+	chosen = -1
+	_gap = 0.0
+	if voice != null:
+		voice.stop()
+	if portrait != null:
+		portrait.visible = false
+
 func _start(entry: Dictionary) -> void:
 	current = entry
 	speaker = str(entry["speaker"])

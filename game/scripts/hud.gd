@@ -317,6 +317,13 @@ func log_msg(text: String, color := GREEN) -> void:
 	if log_lines.size() > 4:
 		log_lines.pop_front()
 
+## Session swap (igame.LoadGame): banners and log lines from the replaced
+## session must not linger over the loaded one.
+func clear_transients() -> void:
+	warning_text = ""
+	warning_until = 0.0
+	log_lines.clear()
+
 func _process(d: float) -> void:
 	_menushot_step(d)
 	_navshot_step(d)
