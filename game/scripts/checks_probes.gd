@@ -354,51 +354,12 @@ func _lds_corridor_clear(rel: Vector3) -> bool:
 			return false
 	return true
 
-## Where the demo pilot points the nose: straight at the target, unless the
-## direct route grazes a mass's LDS break-off shell (the same margins as
-## main._lds_avoidance: body/star 1.5x radius, station its bounds, +200 m).
-## Then aim abeam of the first blocker -- past the point on its shell nearest
-## the route, with sea room -- the way a player steers around a gas giant on a
-## long LDS leg. Without this the demo re-engages pointed into the mass and
-## the drive cycles: spool up, break off, spool up.
+## Where the demo pilot points the nose: the shared LDS route-around
+## (main._lds_avoid_waypoint, the CheckLDSAvoidance port) -- straight at the
+## target unless a mass's 1.6x-radius shell blocks the corridor, then abeam the
+## first blocker, the way a player steers around a gas giant on a long LDS leg.
 func _demo_aim() -> Vector3:
-	var t: Vector3 = m._target_pos()
-	if t == Vector3.INF:
-		return t
-	var tn := t.normalized()
-	var tlen := t.length()
-	var block_rel := Vector3.INF
-	var block_margin := 0.0
-	var best_along := INF
-	for o in m.objects:
-		var mult := 1.0
-		match o["category"]:
-			"body", "star":
-				mult = 1.5
-			"station", "gunstar":
-				mult = 1.0
-			_:
-				continue
-		var rel := Vector3(o["x"] - m.px, o["y"] - m.py, o["z"] - m.pz)
-		var along := rel.dot(tn)
-		if along <= 0.0 or along >= tlen - 1.0:
-			continue    # behind us, or beyond the destination
-		var margin := float(o["radius"]) * mult + 200.0
-		var off_route := (rel - tn * along).length()
-		if (off_route < margin * 1.2 or rel.length() < margin * 1.05) \
-				and along < best_along:
-			best_along = along
-			block_rel = rel
-			block_margin = margin
-	if block_rel == Vector3.INF:
-		return t
-	# tangent point: abeam the blocker, perpendicular to the route
-	var perp := tn * block_rel.dot(tn) - block_rel  # blocker -> nearest route point
-	if perp.length() < 1.0:                          # dead centre: pick a side
-		perp = tn.cross(Vector3.UP)
-		if perp.length() < 0.5:
-			perp = tn.cross(Vector3.RIGHT)
-	return block_rel + perp.normalized() * block_margin * 1.5
+	return m._lds_avoid_waypoint(m._target_pos())
 
 func _demo(_delta: float) -> void:
 	if demo_t > 500.0:

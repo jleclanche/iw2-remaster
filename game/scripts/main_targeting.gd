@@ -175,17 +175,12 @@ func _lds_clearance() -> float:
 	return INF if b.is_empty() else float(b["clear"])
 
 func _lds_avoidance() -> float:
-	# LDS AVOIDANCE -- NOT inhibition, NOT the fence, NOT the roundel: the mass
-	# break-off distance that keeps the drive from flying you into a planet or
-	# station. Modelled on icAIServices::InnerMarkerRadius (iwar2 @ 0x100560d0):
-	# a body/star stands off at 1.5x its radius (m_heat_radius_multiplier 0.5 +
-	# 1.0, 0x1011af58), everything else at its own bounds radius, plus ~200 m of
-	# clear space (0x10119470). Returns the signed clearance to the nearest
-	# shell the ship is CLOSING on. Only closing masses count: the marker is a
-	# break-off for flying INTO a mass, not a cage -- the drive itself has no
-	# mass gate at all (docs/lds.md), so a ship inside a gas giant's shell (any
-	# L-point is) engages fine and flies out; only pointing INTO the mass drops
-	# it out at the marker.
+	# A DIAGNOSTIC metric only (the demo autoplay logs/gates on it) -- NOT a drive
+	# gate. The drive has no mass dropout (docs/lds.md, icLDSDrive::Simulate @
+	# 0x10037040 breaks out on the inhibit counter alone); routing around masses
+	# is _lds_avoid_waypoint. Returns the signed clearance to the nearest mass
+	# shell the ship is CLOSING on, shell = 1.5x radius + 200 m (InnerMarkerRadius
+	# @ 0x100560d0, m_heat_radius_multiplier 0.5 @ 0x1011af58, 0x10119470).
 	var best := INF
 	var vel: Vector3 = ship.velocity
 	for o in objects:
@@ -203,6 +198,55 @@ func _lds_avoidance() -> float:
 		var margin := float(o["radius"]) * mult + 200.0
 		best = minf(best, rel.length() - margin)
 	return best
+
+## LDS_AVOID_SHELL: the route-around break-off shell, (m_heat_radius_multiplier +
+## 1.1) x radius = (0.5 + 1.1) x = 1.6x. m_heat_radius_multiplier 0.5 @
+## 0x1011af58, the 1.1 addend @ 0x10119e94 (icAITarget::CheckLDSAvoidance
+## @ 0x1005bd87, icPlanet::HeatDistanceAsRadiusMultiplier @ 0x10006ef0).
+const LDS_AVOID_SHELL := 1.6
+
+## Where an LDS transit should point its nose: straight at `dest`, unless a mass
+## blocks the direct corridor, then the point on that mass's avoidance shell
+## nearest the corridor (graze it and resume). Exact port of
+## icAITarget::CheckLDSAvoidance (iwar2 @ 0x1005bd87): the engine walks the
+## system's registered obstacle geographies (icSolarSystem::LDSObstacles @
+## 0x10006730 -- stars and planets, never stations), and for the nearest one
+## that is AHEAD (local_98 >= 0), NEARER than the target (local_98 - radius <=
+## target range), and whose shell the straight path enters (local_9c^2 +
+## local_a0^2 <= shell^2), inserts an auxiliary target that tangents the shell.
+## We aim at the nearest shell point instead of the engine's asin-tangent, an
+## equivalent grazing steer. `dest` and the return are player-relative (metres).
+func _lds_avoid_waypoint(dest: Vector3) -> Vector3:
+	if dest == Vector3.INF:
+		return dest
+	var dir := dest.normalized()
+	var dlen := dest.length()
+	var block_rel := Vector3.INF
+	var block_shell := 0.0
+	var best_ahead := INF
+	for o in objects:
+		if not (o["category"] in ["body", "star"]):
+			continue
+		var rel := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
+		var ahead := rel.dot(dir)
+		var radius := float(o["radius"])
+		if ahead <= 0.0 or ahead - radius > dlen:
+			continue    # behind us, or past the destination
+		var shell := radius * LDS_AVOID_SHELL
+		var off := (rel - dir * ahead).length()   # perp distance to the corridor
+		if off < shell and ahead < best_ahead:
+			best_ahead = ahead
+			block_rel = rel
+			block_shell = shell
+	if block_rel == Vector3.INF:
+		return dest
+	# graze: aim at the shell point nearest the corridor, on the ship's side
+	var perp := dir * block_rel.dot(dir) - block_rel   # blocker -> nearest route pt
+	if perp.length() < 1.0:                             # dead centre: pick a side
+		perp = dir.cross(Vector3.UP)
+		if perp.length() < 0.5:
+			perp = dir.cross(Vector3.RIGHT)
+	return block_rel + perp.normalized() * block_shell
 
 func inhibit_charge() -> float:
 	# 1 deep inside an inhibition zone, discharging to 0 at its boundary

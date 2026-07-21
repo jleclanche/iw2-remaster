@@ -56,6 +56,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_lds_engage",
 	&"_ms_lds_speed",
 	&"_ms_lds_drop",
+	&"_ms_lds_routearound",
 	&"_ms_ap_approach",
 	&"_ms_ap_dock",
 	&"_ms_missile_spawn",
@@ -269,6 +270,45 @@ func _ms_lds_drop(_delta: float) -> void:
 					m.target_ai = null
 			m._set_autopilot(1)
 		_mech_next()
+
+func _ms_lds_routearound(_delta: float) -> void:
+	# LDS route-around (icAITarget::CheckLDSAvoidance @ 0x1005bd87): a mass in the
+	# corridor must bend the transit heading so the path grazes its 1.6x-radius
+	# shell, never bores through it. Pure-function assert on _lds_avoid_waypoint
+	# with a synthetic blocker -- deterministic, no real-time flight. State is
+	# swapped in and fully restored in-frame so nothing leaks to later checks.
+	var saved_obj: Array = m.objects
+	var saved_p := Vector3(m.px, m.py, m.pz)
+	var body_r := 1.0e8
+	var shell := body_r * float(m.LDS_AVOID_SHELL)
+	var big := 4.0 * body_r          # blocker at -4Rb, destination beyond it
+	m.px = 0.0
+	m.py = 0.0
+	m.pz = 0.0
+	m.objects = [{"category": "star", "radius": body_r,
+			"x": 0.0, "y": 0.0, "z": -big}]
+	var dest := Vector3(0.0, 0.0, -2.0 * big)
+	# direct route (routing OFF) bores dead through the centre -- prove-can-fail
+	var direct_off := (Vector3(0.0, 0.0, -big)
+			- dest.normalized() * big).length()
+	var wp: Vector3 = m._lds_avoid_waypoint(dest)
+	# closest approach of the ship->waypoint corridor to the blocker centre
+	var c := Vector3(0.0, 0.0, -big)
+	var wd := wp.normalized()
+	var routed_off := (c - wd * c.dot(wd)).length()
+	# and with the blocker gone the waypoint is the raw destination
+	m.objects = []
+	var clear_wp: Vector3 = m._lds_avoid_waypoint(dest)
+	m.objects = saved_obj
+	m.px = saved_p.x
+	m.py = saved_p.y
+	m.pz = saved_p.z
+	_mech("lds-routearound",
+		direct_off < shell and routed_off >= shell * 0.7
+			and clear_wp == dest,
+		"direct=%.0f routed=%.0f shell=%.0f clear=%s"
+			% [direct_off, routed_off, shell, str(clear_wp == dest)])
+	_mech_next()
 
 func _ms_ap_approach(_delta: float) -> void:
 	# autopilot approach: arrive ON the marker sphere and stop

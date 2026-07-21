@@ -147,17 +147,22 @@ func _lds_process(delta: float) -> void:
 	# weight belongs in the exponent
 	lds_speed = minf(lds_speed * pow(LDS_RAMP, delta * wd), LDS_MAX)
 	var clear := _lds_clearance()     # LDS inhibition (icLDSIRegion), region-based
-	var avoid := _lds_avoidance()     # mass break-off (avoidance), distinct from above
 	var tdist := _target_distance()
-	# brake as we close on the target, or on a nearby mass (avoidance)
+	# brake as we close on the destination -- icLDSDrive::Simulate case 2
+	# (0x10037040) caps the cruise speed at the pilot target's break-off
+	# (this+0x90 = target_marker x max_speed @ 0x10037596), so the drive settles
+	# onto its destination rather than overshooting it
 	if tdist < lds_speed * 1.5 and tdist < INF:
 		lds_speed = maxf(tdist * 1.5, LDS_BASE)
-	if avoid < lds_speed * 1.5 and avoid < INF:
-		lds_speed = maxf(avoid * 1.5, LDS_BASE)
 	lds_speed = minf(lds_speed, LDS_MAX)
 	ship.velocity = -ship.global_transform.basis.z * lds_speed
-	# drop out: inhibited (inside a region), flown into a mass, or arrived
-	if clear < 0.0 or avoid < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
+	# drop out ONLY on inhibition or arrival. icLDSDrive::Simulate breaks the
+	# ship out at 0x100376xx solely when the inhibit counter iiThrusterSim+0x251
+	# is non-zero (docs/lds.md) -- there is NO mass gate in the drive. Flying
+	# near/into a mass is handled by AI route-around (autopilot) or the player
+	# (manual), never by a drive dropout; a mass dropout here wedged manual
+	# re-engage near a star into a spool/break loop (#56).
+	if clear < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
 		_drop_out_of_lds()
 
 func _drop_out_of_lds() -> void:

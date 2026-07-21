@@ -70,6 +70,35 @@ km out.
   thing it checks is the inhibit counter. Avoidance lives in the AI/autopilot and
   in the cruise brake, not in the drive's engage test.
 
+### The AI route-around — `icAITarget::CheckLDSAvoidance` (#56)
+
+The AI genuinely steers *around* masses on an LDS leg, and it is NOT in
+`DefaultApproach` (which only builds a target + a break-off radius). It lives in
+the target-following flight code:
+
+- The system keeps a per-`icSolarSystem` list of obstacle geographies:
+  `icSolarSystem::LDSObstacles` — `iwar2.dll @ 0x10006730` — a
+  `FcCompactArray<icGeography*>` at `this+0x640`, filled by
+  `AddLDSObstacle` — `0x10006770`. Only masses (stars/planets, `icGeography`)
+  register; stations are sims, not geography, and never appear.
+- `icAITarget::CheckLDSAvoidance` — `iwar2.dll @ 0x1005bd87` — each tick walks
+  that list and, for the **nearest** obstacle that is
+  - **ahead** (its forward component `local_98 >= 0`),
+  - **nearer than the target** (`local_98 - radius <= target range`, `this+0xc8`),
+  - and whose **shell the straight path enters**
+    (`local_9c² + local_a0² <= shell²`, the perpendicular offset to the corridor),
+
+  builds an auxiliary target (`operator_new(0x70)` cData, flags `0x400`/`8`/
+  `0x20000000`, `SetTargetSim(obstacle)`) that **tangents the shell** — an
+  asin-based rotation of the target bearing (`FUN_10061a90` = asin) placed to
+  graze the obstacle, then resumes to the real target once past. `IsLDSAvoiding`
+  — `0x100033b0` — reports this auxiliary-target state.
+- The shell is `(HeatDistanceAsRadiusMultiplier + 1.1) × radius`
+  (`icPlanet::HeatDistanceAsRadiusMultiplier @ 0x10006ef0` =
+  `m_heat_radius_multiplier` 0.5 @ `0x1011af58`; the 1.1 addend @ `0x10119e94`),
+  i.e. **1.6 × radius** — the same "graze a mass" break-off `icAIServices` uses,
+  a touch wider than `InnerMarkerRadius`'s 1.5×.
+
 ## What changed in the remaster
 
 - `main.gd::_nearest_inhibitor()` now returns the nearest **`icLDSIRegion`**
@@ -77,17 +106,25 @@ km out.
   feeds the LDSi **fence** (`_update_ldsi_fence`), the HUD **roundel**
   (`inhibit_charge`), and the LDS-engage inhibition test (`_lds_clearance`), so
   all three agree.
-- `main.gd::_lds_avoidance()` (new) is the mass break-off distance, used only in
-  `_lds_process` to brake/drop the drive near a mass. It is kept out of the fence
-  and the roundel. Near a planet you still cannot LDS straight in, but that is
-  avoidance, not an inhibition fence.
-- Avoidance counts only masses the ship is **closing on**. The marker is a
-  break-off for flying INTO a mass, not a cage: the drive has no mass gate on
-  engage at all, and every L-point sits inside its planet's 1.5x-radius shell
-  (Alexander's is 132,000 km deep), so treating "inside the shell" as a dropout
-  wedged the drive into a spool/breakout loop the moment bodies got their real
-  radii. Pointing into the mass still breaks you out at the marker; pointing
-  out of the well ramps clean.
+- `main.gd::_lds_avoidance()` is now a **diagnostic metric only** (the demo
+  autoplay logs and gates on it). It is NOT a drive gate: `_lds_process` no
+  longer brakes or drops the drive on a mass. The drive breaks out on the
+  inhibit region alone (`icLDSDrive::Simulate @ 0x10037040`), so manual LDS near
+  a star re-engages cleanly instead of spool/break-looping (#56, the reported
+  "can't restart near a star" bug). The prior mass dropout was our invention:
+  every L-point sits inside its planet's shell (Alexander's is 132,000 km deep),
+  so "inside the shell = dropout" wedged the drive into a spool/breakout loop
+  the moment bodies got their real radii.
+- `main.gd::_lds_avoid_waypoint(dest)` (new) is the route-around: the port of
+  `CheckLDSAvoidance`. It returns the nose heading for an LDS transit — straight
+  at `dest` unless a mass's 1.6×-radius shell blocks the corridor, then the
+  shell point nearest the corridor (a grazing steer, equivalent to the engine's
+  asin-tangent). The autopilot (`_autopilot_tick`) faces this, not the raw
+  destination, and keeps LDS engaged while curving around, matching
+  CheckLDSAvoidance being an LDS-cruise feature. Manual flight has no
+  auto-avoidance — the player steers, exactly as in the original. `mechcheck
+  lds-routearound` proves it: a mass in the corridor bends the heading so the
+  path grazes its shell (FAILS if routing returns the raw destination).
 - `entities.gd::nearest_ldsi(p)` (new) is the region query helper.
 
 ## The render fold at LDS magnitudes (issue #51)
