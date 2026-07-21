@@ -413,21 +413,36 @@ func _stream_stop(_t, a: Array) -> Variant:
 	var ch := int(a[0])
 	var url: String = channels.get(ch, "")
 	channels.erase(ch)
+	# Channel 0 IS the score channel, whoever started it: iMusic.Initialise's
+	# local_0 issues Stop(0, fade) to silence the FRONT END's music, which the
+	# engine put there from C++ -- no POG bookkeeping exists for it. Gating
+	# the stop on our channels[] map left the menu loop playing under the
+	# score (#45).
 	if game != null and game.audio != null and ch == 0 \
-			and "/music/" in url.replace("\\", "/"):
+			and (url.is_empty() or "/music/" in url.replace("\\", "/")):
 		game.audio.stop_track()
 	return 0
 
 # @native stream.IsPlaying
 func _stream_is_playing(_t, a: Array) -> Variant:
 	var ch := int(a[0])
+	if ch == 0 and game != null and game.audio != null:
+		# The score channel reports its REAL playback state, bookkeeping or
+		# not: the imusic monitor's first tick polls IsPlaying(0) while the
+		# front end's music (started outside stream.Play) is still fading
+		# from Initialise's Stop(0, fade) -- that fade tail is what lets the
+		# system-entry coin flip survive past the track-finished branch
+		# (imusic.pog:376-425, #45). Bookkeeping-only reporting answered 0
+		# and the flip was overwritten to ambient every boot.
+		var url0: String = channels.get(0, "")
+		if not url0.is_empty() and "/music/" in url0.replace("\\", "/"):
+			return 1 if game.audio.track_playing(url0.get_file()) else 0
+		return 1 if game.audio.score_playing() else 0
 	if not channels.has(ch):
 		return 0
 	var url: String = channels[ch]
 	if game != null and game.audio != null \
 			and "/music/" in url.replace("\\", "/"):
-		if ch == 0:
-			return 1 if game.audio.track_playing(url.get_file()) else 0
 		return 1 if game.audio.sting_playing() else 0
 	return 1
 

@@ -604,7 +604,12 @@ func _m_lpoints(_t, _a: Array) -> Variant:
 
 # @native imapentity.SystemName
 func _m_system_name(_t, _a: Array) -> Variant:
-	return game.system_name if game != null else ""
+	# The scripts compare this against MAP URLS, not display names --
+	# imusic.local_587 keys its suite table on
+	# "map:/geog/badlands/hoffers_wake" (imusic.pog:376) -- so the engine
+	# form is the URL, exactly like isim.ActiveWorld (issue #4). Returning
+	# the display name sent every system to the a4 default suite (#45).
+	return game.system_map_url if game != null else ""
 
 # @native imapentity.SystemCentre
 func _m_system_centre(_t, _a: Array) -> Variant:

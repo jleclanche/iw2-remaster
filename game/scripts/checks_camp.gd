@@ -294,6 +294,12 @@ func _campcheck_port() -> void:
 		0:
 			if demo_t > 1.0:
 				m.comms.fast = true
+				# the player reaches START NEW GAME with the front end's music
+				# on the score channel (_after_movies); the imusic monitor's
+				# first poll hearing that fading score is what preserves the
+				# system-entry coin flip (#45) -- seed the same state here,
+				# since the demo boot skips the front end
+				m.audio.music("ambient")
 				m.start_campaign()
 				print("CAMPCHECK(port): campaign booting")
 				demo_phase = 1
@@ -304,6 +310,19 @@ func _campcheck_port() -> void:
 			# "Clay's Waypoint" (a0_m10_name_waypoint) appears in m.objects
 			var idx := _object_index("Clay's Waypoint")
 			if idx >= 0:
+				# issue #45: the running monitor's system-entry pick
+				# (imusic.pog:376-383 -- on SystemName change, mood 0 or 2 on
+				# a coin flip). The old stand-in looped a1_ambient here, which
+				# is exactly the regression this guards against.
+				var track: String = m.audio.current_track
+				var mus_ok: bool = m.music_monitor_active() \
+						and track in ["a1_theme", "a1_discovery"]
+				print("CAMPCHECK(port): %s — start music is the entry pick (monitor=%s track=%s)"
+					% ["PASS" if mus_ok else "FAIL",
+						str(m.music_monitor_active()), track])
+				if not mus_ok:
+					get_tree().quit(1)
+					return
 				m.target_ai = null
 				m.target_idx = idx        # gate 1: CurrentTarget == waypoint
 				var o: Dictionary = m.objects[idx]

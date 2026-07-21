@@ -217,8 +217,12 @@ func restore_music() -> void:
 
 ## stream.Stop on the score channel stops the music outright -- imusic's
 ## local_0 stops channels 0/1/2 on Initialise/Terminate and nothing plays
-## until a new track is started. A short fade stands in for the engine's
-## stream fade-out flag.
+## until a new track is started. The engine's Stop takes a fade FLAG with an
+## engine-side fade duration (constant not recovered); the stand-in fade must
+## outlast the imusic monitor's first 1 s poll, because the fading front-end
+## score answering IsPlaying(0) is what lets the system-entry coin flip
+## survive (imusic.pog:376-425, #45) -- a fade that ends at exactly 1 s races
+## the poll.
 func stop_track() -> void:
 	current_track = ""
 	current_mood = ""
@@ -226,7 +230,7 @@ func stop_track() -> void:
 	if music_current != null and music_current.playing:
 		var fading := music_current
 		var tw := create_tween()
-		tw.tween_property(fading, "volume_db", -60.0, 1.0)
+		tw.tween_property(fading, "volume_db", -60.0, 2.0)
 		tw.tween_callback(fading.stop)
 
 ## End-of-track probe for stream.IsPlaying(0)/IsPlayingURL(0, ...): imusic's
@@ -235,6 +239,11 @@ func stop_track() -> void:
 func track_playing(stem: String) -> bool:
 	return current_track == stem \
 		and music_current != null and music_current.playing
+
+## The score channel's REAL state, bookkeeping or not -- the front end's menu
+## music and a mid-fade Stop both count (stream.IsPlaying(0), #45).
+func score_playing() -> bool:
+	return music_current != null and music_current.playing
 
 ## imusic.PlayEvent's stings (short/long_cymbal, soft/loud_timpani -- MP3s in
 ## the music dir) play on stream channel 1 ALONGSIDE the score; they must not
