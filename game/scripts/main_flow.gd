@@ -649,8 +649,16 @@ func _next_movie() -> void:
 	movie.stream = vs
 	movie.expand = true
 	movie.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# a fullscreen cinematic covers EVERYTHING, the PDA/pause screen included
+	# (menu.z_index is 10): the movies-screen rows played their audio behind
+	# the still-visible PDA without this
+	movie.z_index = 20
 	movie.finished.connect(func() -> void: _end_movie(then), CONNECT_ONE_SHOT)
 	hud.get_parent().add_child(movie)
+	# the cinematic owns the soundtrack: fade out whatever score is running
+	# (the PDA's front-end music played under the movies screen without this);
+	# _after_movies restores the ambient pick when the queue drains
+	audio.stop_track()
 	movie.play()
 
 func _end_movie(then: Callable) -> void:

@@ -272,6 +272,8 @@ var _drag_rect := Rect2()
 func _gui_input(e: InputEvent) -> void:
 	if not visible or ui == null:
 		return
+	if main != null and main.movie != null:
+		return  # a fullscreen cinematic is up; the screen under it sits inert
 	if e is InputEventMouseButton and e.pressed \
 			and e.button_index == MOUSE_BUTTON_LEFT:
 		# full-rect control at the origin: local coords == viewport coords
@@ -318,6 +320,10 @@ func _gui_input(e: InputEvent) -> void:
 
 func _unhandled_input(e: InputEvent) -> void:
 	if not visible or ui == null:
+		return
+	# a fullscreen cinematic is up: Escape/Space/Enter belong to main's
+	# movie-skip handler (same yield menu.gd makes), not to the screen below
+	if main != null and main.movie != null:
 		return
 	if not (e is InputEventKey and e.pressed):
 		return
