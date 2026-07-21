@@ -244,21 +244,47 @@ Beta (radius 1.81e8 m) the onset is 2.26e10 m = ~22.6 million km, and the
 `_DAT_1011b344` = 50000 radii, scale `_DAT_1011a198` = 0.05) -- a near-flat
 0.05 within any system.
 
-**OPEN -- the SIZE law per flare mode.** ParseSunInfo (`0x1004e5a0`) feeds
-`FiSim::SetRadius` the map record's `+0x138` float verbatim; Hoffer's Wake
-Alpha is authored at 1.75e11 m, so at the campaign spawn (3.7e11 m out,
-r = 2.1) even the ORIGINAL runs the pushed flare's envelope at 1.0 -- yet
-the original render is not glare-dominated there. Therefore the intensity
--> pixels mapping must differ per flare mode (mode 0 carries `size +0xe4 =
-radius`; the pushed flare rides 20 m from the eye), and the
-`atan(m_intensity_scale x intensity)` law read off the SKY flares cannot be
-what the sun's mode-0 flare uses. The answer is in FcLensFlareNode::Render
-(flux `0xe6100`)'s mode branches, still unread.
+**The SIZE law -- `FcLensFlareNode::Render` (flux `0xe6100`), now read.**
+The flare is a billboard quad whose WORLD half-extents are the camera right/up
+axes scaled by `local_64`, and whose vertex colour is `colour^2 * local_58`
+(`local_58 = node+0xe0`, the sphere-node size base above). `local_64` starts as
+the envelope value and is then sized by the `node+0xe8` flag byte:
 
-**NOT RECOVERED:** Ghidra leaves the sun avatar's draw (`0x100d2b30` /
-`0x100d2b80`) undisassembled -- same as the Lagrange icon -- so the corona's
-exact geometry, its blend mode and the flare sprite table are unread. What we
-have is the texture choice, the colours, and the 1.4x bound.
+- **bit `0x8` CLEAR (distance billboard):** `local_64 = envelope * viewdist`
+  (`viewdist` = `FUN_1004ca50`, the node's distance from the eye). World size
+  proportional to distance is **constant SCREEN angular size** -- the sprite
+  holds a fixed on-screen size and only its brightness/alpha rides the envelope.
+- **bit `0x8` SET (screen-relative):** `local_64 = param+0x108 (screen scale)
+  * node+0xe4 (= radius for mode 0) * envelope`, gated by `m_cull_detail`
+  (drop if too small) and `m_point_detail` (draw as a single point). Size then
+  scales with the sun's authored RADIUS -- so a big star's flare is genuinely
+  larger.
+- Common tail: `local_64 = m_intensity_scale * local_64`; the vertical extent
+  carries `m_global_anamorphic_distortion * node+0xcc`; a second pass draws the
+  anamorphic streak (`m_anamorphic_streak_width_ratio`) when `node+0xe8 & 2` or
+  the global distortion is high.
+
+Which bit the sun's pushed mode-0 flare sets is the remaining unknown, and it is
+the crux: distance mode -> constant screen size (brightness-only bloom); screen
+mode -> size proportional to radius, which would make Alpha (radius 1.75e11 m,
+~1000x Beta) render a vastly larger flare than Beta at the same envelope. That
+one bit, plus a check that Alpha's authored radius is read right, decides the
+Alpha-at-spawn look and needs an in-engine comparison against an original
+capture to settle.
+
+**The sun-avatar draw holes, now disassembled** (`disasm.py`, Ghidra dropped
+them):
+- `0x100d2b30` -- the avatar **Prepare**: accumulates a spin phase at `+0xe0`
+  (a double) by `game_delta * 0.010472` (`0x1011d248`, = 0.6 deg/s), then
+  `FUN_100cf3a0(this, this+0xbc, 1)` and `FiSceneNode::Prepare`.
+- `0x100d2b80` -- the avatar **draw**: `FcGraphicsEngine::Push`, a size/colour
+  from `this+0x5c * 1.3` (`0x1011d250`), `FindWorldOrientation`, then transforms
+  the orientation columns by the camera axes and takes `-atan2(...)` (`fpatan`)
+  to spin the billboard sprite to a screen angle -- this atan is the sprite
+  ROTATION, not a size law (correcting an earlier over-claim). This is the
+  corona/halo billboard that carries the star's surface texture, drawn oriented
+  and scaled by the sun radius -- so at ~1.5 radii (Beta from 270-300k km) it
+  subtends a large angle and its texture reads through, exactly as observed.
 
 ---
 
