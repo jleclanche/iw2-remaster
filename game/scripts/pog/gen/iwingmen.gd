@@ -350,27 +350,19 @@ func report_status() -> Variant:
 	else:
 		v6 = 0
 	await local_22684()
-	if _pog_is_null(v6):
-		await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_awaiting_orders")
-		return 0
-	if 1 == v6:
-		await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_attacking+ - +", v5))
-		return 0
-	if 2 == v6:
-		await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
-		return 0
-	if 6 == v6:
-		await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
-		return 0
-	if 3 == v6:
-		await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_approaching+ - +", v5))
-		return 0
-	if 4 == v6:
-		await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_docking_to+ - +", v5))
-		return 0
-	if 5 == v6:
-		await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_retreating")
-		return 0
+	match v6:
+		0:
+			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_awaiting_orders")
+		1:
+			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_attacking+ - +", v5))
+		2, 6:
+			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_defending+ - +", v5))
+		3:
+			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_approaching+ - +", v5))
+		4:
+			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", string.join("wingmen_docking_to+ - +", v5))
+		5:
+			await local_14393(p_group.nth_sim(v1, 1), "wingmen_status", "wingmen_retreating")
 	return 0
 	return 0
 

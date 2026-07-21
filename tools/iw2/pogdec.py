@@ -243,7 +243,10 @@ class Case(Stmt):
 
     def __init__(self, sel, arms):
         self.sel = sel
-        self.arms = arms   # [([value Expr], [Stmt], brk: bool)], source order
+        # [([value Expr], [Stmt], brk: bool)], source order. Empty vals is
+        # the `default :` arm; _switch only accepts one and only laid out
+        # after every case body, so it is always last here.
+        self.arms = arms
 
     def loops(self) -> bool:
         """One arm that can actually fall through makes the construct
@@ -252,6 +255,28 @@ class Case(Stmt):
         fall-through -- the compiler just had nothing to jump over."""
         return any(not brk and not _terminates(body)
                    for _, body, brk in self.arms)
+
+
+def _fold_tail_breaks(stmts, join: int) -> None:
+    """Drop tail-position jumps to a breaking arm's join.
+
+    Only sound along the LAST-statement spine of an arm whose brk is True:
+    there, falling through instead of jumping still exits the arm into the
+    same `break`. A Goto(join) anywhere off the spine has live code after it
+    and must stay (and trip the fallback) rather than reorder it.
+    """
+    if not stmts:
+        return
+    last = stmts[-1]
+    if isinstance(last, Goto) and last.target == join:
+        stmts.pop()
+        _fold_tail_breaks(stmts, join)
+        return
+    if isinstance(last, If):
+        _fold_tail_breaks(last.then, join)
+        _fold_tail_breaks(last.els, join)
+    elif isinstance(last, Debug):
+        _fold_tail_breaks(last.body, join)
 
 
 def _terminates(stmts) -> bool:
@@ -438,7 +463,9 @@ class Decompiler:
         self.at = {off: i for i, (off, _, _) in enumerate(self.instrs)}
         self.end = (self.instrs[-1][0] + 1) if self.instrs else 0
         self.labels: set[int] = set()
+        self.func_lo = 0
         self.func_hi = self.end
+        self._temp_n = 0
         self._tail_stack: list[Expr] = []
         self._inlining: set[int] = set()
         # Every instruction the structured form actually consumed. Skipping
@@ -474,6 +501,21 @@ class Decompiler:
             return None
         return self.instrs[i - 1][0]
 
+    def _goto_chain(self, addr: int) -> tuple[int, list[int]]:
+        """Follow consecutive unconditional Gotos from `addr`: the final
+        landing address, plus every Goto address traversed. If `addr` is not
+        a Goto the chain is empty and it lands on itself."""
+        hops: list[int] = []
+        seen: set[int] = set()
+        while addr not in seen:
+            t = self._target(addr)
+            if t is None:
+                break
+            seen.add(addr)
+            hops.append(addr)
+            addr = t
+        return addr, hops
+
     # -- function discovery
 
     def functions(self) -> list[Func]:
@@ -505,7 +547,9 @@ class Decompiler:
         out = []
         for k, e in enumerate(ordered):
             stop = ordered[k + 1] if k + 1 < len(ordered) else self.end
+            self.func_lo = e
             self.func_hi = stop
+            self._temp_n = 0
             self._find_loops(e, stop)
             f = Func(entries[e], e, argc.get(e, 0))
             self._covered = set()
@@ -541,8 +585,14 @@ class Decompiler:
 
     # -- structuring
 
-    def _block(self, lo: int, hi: int, ctx: tuple | None = None) -> list[Stmt]:
+    def _block(self, lo: int, hi: int, ctx: tuple | None = None,
+               join: int | None = None) -> list[Stmt]:
         """Structure [lo, hi). ctx = (break_to, header, latch) of the open loop.
+        `join` is the exit of the switch this region is an arm of, if any: a
+        jump there is the arm ending early, which the if/else carve below can
+        express -- and the only address past `hi` the cursor may silently
+        converge on. It does NOT propagate into nested loops or switches;
+        those have their own continuations.
 
         Leaves whatever expression the region ended mid-evaluation in
         `_tail_stack`: a do-while's condition is exactly that.
@@ -569,7 +619,8 @@ class Decompiler:
                 continue
 
             if mn == "DebugSkip":
-                out.append(Debug(self._block(self._next_addr(addr), args[0], ctx)))
+                out.append(Debug(self._block(self._next_addr(addr), args[0],
+                                             ctx, join)))
                 addr = args[0]
                 continue
 
@@ -614,15 +665,24 @@ class Decompiler:
                                 and not self._splits_loop(tgt, t2)
                                 and not self._is_exit_tail(t2)):
                             els_end = t2
+                        elif t2 is not None and t2 == join:
+                            # The then leaves for the enclosing switch's
+                            # exit: `if (a) { ...; break; } rest` is an
+                            # if/else whose else is the REST of the arm
+                            # (imusic.local_1866's radius ladder). Without
+                            # this the join sits past `hi` and the carve
+                            # above cannot see it.
+                            els_end = hi
                     if els_end is not None:
-                        then = self._block(body_lo, b, ctx)
+                        then = self._block(body_lo, b, ctx, join)
                         tail = list(self._tail_stack)
                         if not tail:
                             # the then-part's trailing Goto over the else
                             # became the if/else itself
                             self._covered.add(b)
                             out.append(If(cond, then,
-                                          self._block(tgt, els_end, ctx)))
+                                          self._block(tgt, els_end, ctx,
+                                                      join)))
                             addr = els_end
                             continue
                         # The then-part ends mid-expression: its Goto carries a
@@ -638,7 +698,8 @@ class Decompiler:
                             out.append(If(cond, then + [epi], []))
                             addr = tgt
                             continue
-                    out.append(If(cond, self._block(body_lo, tgt, ctx), []))
+                    out.append(If(cond, self._block(body_lo, tgt, ctx, join),
+                                  []))
                     addr = tgt
                     continue
 
@@ -669,6 +730,11 @@ class Decompiler:
                         out.append(self._pretested(h, tgt, latch))
                         addr = self._next_addr(latch)
                         continue
+                    if latch < tgt < hi:
+                        cont = self._guarded_loop(h, tgt, hi, ctx, stack, out)
+                        if cont is not None:
+                            addr = cont
+                            continue
 
                 if tgt == hi:
                     self._tail_stack = stack
@@ -694,11 +760,25 @@ class Decompiler:
                             out.append(sw[0])
                             addr = sw[1]
                             continue
-                        # Otherwise the jump simply moves the cursor: whatever
-                        # it skipped is reachable only through other jumps, and
-                        # those get inlined at their jump sites.
-                        addr = tgt
-                        continue
+                        if tgt <= hi:
+                            # The jump simply moves the cursor: whatever it
+                            # skipped is reachable only through other jumps,
+                            # and those get inlined at their jump sites.
+                            addr = tgt
+                            continue
+                        if tgt == join:
+                            # An escape to the enclosing switch's exit: emit
+                            # it and let _switch fold a trailing one into the
+                            # arm's `break`. Anything else past `hi` must NOT
+                            # silently converge -- ending this region early
+                            # would resume the OUTER structure's fall-through
+                            # path, which is not where the bytecode went
+                            # (imusic.local_1866's dropped radius-ladder
+                            # early exit). It stays a Goto and the function
+                            # falls back rather than miscompile.
+                            out.append(Goto(tgt))
+                            self._tail_stack = stack
+                            return out
                     inlined = self._inline(tgt, stack)
                     if inlined is not None:
                         out += inlined
@@ -1139,15 +1219,45 @@ class Decompiler:
                 val = Const(0) if m1 == "LoadZero" else Const(1)
             arms.append((val, self.instrs[k + 3][2][0]))
             k += 4
-        if len(arms) < 2:
-            return None            # one arm is an `if`, and already shapes
+        if not arms:
+            return None
 
         exit_at = self.instrs[k][0] if k < len(self.instrs) else self.end
+        # Several labels can select ONE body (`case 0 : case 2 : case 1 :` --
+        # imusic.local_1866 @0x8bb/0x8c4/0x8cc all take 0x7b4): the ladder
+        # repeats the target, and `by_tgt` below folds the labels onto the
+        # shared arm.
         tgts = [t for _, t in arms]
-        if len(set(tgts)) != len(tgts):
-            return None
         if not all(body_lo <= t < disp for t in tgts):
             return None
+
+        # Where does the ladder leave when nothing matched? Straight into the
+        # join (the common layout: the compare chain falls through into the
+        # code after the switch), through a trampoline of bare Gotos parked
+        # with the bodies (iaitestsuit @0x1796 -> 0x176d -> join), or into a
+        # DEFAULT arm laid out after the case bodies (imusic.local_2800
+        # @0xb44 -> 0xb1b; iact2mission05.local_17527 @0x450a -> 0x44c4).
+        # Anything else (a continue/break of an enclosing loop) keeps the old
+        # reading: the caller structures the ladder's trailing Goto itself.
+        default_at = None
+        hops: list[int] = []
+        if k < len(self.instrs) and self._target(exit_at) is not None:
+            fin, hops = self._goto_chain(exit_at)
+            if disp < fin <= hi:
+                exit_at = fin                  # the no-match exit IS the join
+            elif body_lo <= fin < disp and all(t < fin for t in tgts):
+                default_at = fin               # a default arm, laid out last
+                exit_at = self._next_addr(self.instrs[k][0])
+            else:
+                hops = []
+
+        # One compare and no default is an `if`, and already shapes; one
+        # compare WITH a default arm is if/else through the switch skeleton
+        # (iact3mission05.local_4788's rumbled/normal responses) and only
+        # this recogniser can read it.
+        if len(arms) < 2 and default_at is None:
+            return None
+
         if not body_lo <= exit_at <= hi:
             return None
 
@@ -1161,20 +1271,39 @@ class Decompiler:
 
         for n in range(c, k):
             self._covered.add(self.instrs[n][0])
+        for h in hops:
+            self._covered.add(h)            # the no-match exit's Goto chain
 
         by_tgt = {}
         for val, t in arms:
             by_tgt.setdefault(t, []).append(val)
         order = sorted(by_tgt)
+        if default_at is not None:
+            by_tgt[default_at] = []         # empty vals spell `default :`
+            order.append(default_at)
         out_arms = []
         for idx, t in enumerate(order):
             end = order[idx + 1] if idx + 1 < len(order) else disp
             b = self._last_before(end)
-            brk = b is not None and b >= t and self._target(b) == exit_at
+            brk = False
+            if b is not None and b >= t:
+                # an arm's `break` may bounce through the same trampolines
+                fin, bhops = self._goto_chain(b)
+                if bhops and fin == exit_at:
+                    brk = True
+                    for h in bhops:
+                        self._covered.add(h)    # the arm's `break` (+ hops)
+                    end = b
+            body = self._block(t, end, ctx, exit_at)
+            # A body-level jump to the join is the arm's `break` (possibly
+            # duplicated by a dead trampoline); in tail position it IS brk.
+            while body and isinstance(body[-1], Goto) \
+                    and body[-1].target == exit_at:
+                body.pop()
+                brk = True
             if brk:
-                self._covered.add(b)        # the arm's `break`
-                end = b
-            out_arms.append((by_tgt[t], self._block(t, end, ctx), brk))
+                _fold_tail_breaks(body, exit_at)
+            out_arms.append((by_tgt[t], body, brk))
         return Case(sel[0], out_arms), exit_at
 
     def _jump_stmt(self, tgt: int, ctx) -> Stmt | None:
@@ -1256,6 +1385,86 @@ class Decompiler:
         # The test has side effects, so it cannot be hoisted into the header.
         return While(Const(1),
                      body + stmts + [If(_not(cond), [Break()], [])])
+
+    def _guarded_loop(self, h: int, g: int, hi: int, ctx: tuple | None,
+                      stack: list[Expr], out: list[Stmt]) -> int | None:
+        """`Goto G ; H: <body, back edge> <exit> ; G: <test> GoTrue H ; X:`
+        -- a loop whose FIRST-ENTRY test the compiler parked past the body
+        (iactthree.CoyoteSecurity @0x6a14: the do-while polls one condition
+        at its latch, the guard tests another -- state.Progress(v3) == 0 --
+        and a Copy of the tested value rides the stack out to the
+        function's `Return`). Reads back as `if (test) { <loop> }`
+        continuing at X, with anything the test leaves on the stack
+        spilled to a fresh local so it is evaluated exactly once.
+
+        Returns the continuation address X, or None if this is not one.
+        """
+        j = self.at.get(g)
+        if j is None:
+            return None
+        while j < len(self.instrs):
+            off, mn, _ = self.instrs[j]
+            if off >= hi or mn in ("DebugSkip", "TimedJump"):
+                return None
+            if mn in _JUMPS:
+                break
+            j += 1
+        else:
+            return None
+        joff, jmn, jargs = self.instrs[j]
+        if jmn not in ("GoTrue", "GoFalse") or jargs[0] != h:
+            return None
+        # A `Copy` right after the jump means this is the FIRST quad of a
+        # compare ladder, not a lone guard: a resume dispatch into a
+        # fall-through sequence (iacttwo.RitzIntroMonitor's progress
+        # ladder @0x36df). Decline and the switch recogniser reads the
+        # whole ladder, as it always did.
+        nxt_i = self.at.get(self._next_addr(joff))
+        if nxt_i is not None and self.instrs[nxt_i][1] == "Copy":
+            return None
+
+        def sim_guard():
+            sim: list[Expr] = []
+            side: list[Stmt] = []
+            for i2 in range(self.at[g], j):
+                self._step(i2, sim, side)
+            return None if (side or not sim) else sim
+
+        sim = self._speculate(sim_guard)    # the test: one pure expression
+        if sim is None:
+            return None
+        self._covered.add(joff)
+        cond = sim.pop()
+        if jmn == "GoFalse":
+            cond = _not(cond)
+        x = self._next_addr(joff)
+
+        body = self._block(h, g, ctx, x)
+        while body and isinstance(body[-1], Goto) and body[-1].target == x:
+            body.pop()                      # loop exit converges on X
+        for e in sim:                       # leftovers, bottom-up
+            tv = Var(self._temp_base() + self._temp_n)
+            self._temp_n += 1
+            out.append(Assign(tv, e))
+            # pogverify CANNOT police this substitution: a broken spill
+            # re-emits the call and the census tolerates it as an "expected
+            # dup" (proven by disabling this line: iactthree verifies clean
+            # with state.Progress counted twice). The guards are the
+            # structural nets, not the verifier.
+            cond = _subst(cond, e, tv)
+            stack.append(tv)
+        out.append(If(cond, body, []))
+        return x
+
+    def _temp_base(self) -> int:
+        """First local slot past everything the function really uses --
+        where structurer-invented spill temps are numbered from."""
+        top = 0
+        for off, mn, args in self.instrs:
+            if (self.func_lo <= off < self.func_hi
+                    and mn in ("Load", "Store", "StoreObject")):
+                top = max(top, args[0] + 1)
+        return top
 
     def _eval(self, lo: int, hi: int):
         """Straight-line symbolic execution of [lo, hi): (statements, stack)."""
@@ -1486,7 +1695,8 @@ class PogBackend:
         if isinstance(s, Case):
             out = ["%sswitch ( %s )" % (i, s.sel), i + "{"]
             for vals, body, brk in s.arms:
-                out += ["%s\tcase %s :" % (i, v) for v in vals]
+                out += (["%s\tcase %s :" % (i, v) for v in vals]
+                        or ["%s\tdefault :" % i])
                 out += self.body(body, d + 2)
                 # A `break;` only where the bytecode has the Goto exit; a
                 # fall-through arm runs on into the next, and off the last
@@ -1556,7 +1766,8 @@ class GdBackend:
                 out = ["%smatch %s:" % (i, _gx(s.sel))]
                 for vals, body, _brk in s.arms:
                     out += ["%s%s:" % (_ind(d + 1),
-                                       ", ".join(_gx(v) for v in vals))]
+                                       ", ".join(_gx(v) for v in vals)
+                                       if vals else "_")]
                     out += self.body(body, d + 2)
                 return out
             # fall-through switch = resume-dispatch loop (see Case): enter
@@ -1566,13 +1777,20 @@ class GdBackend:
             out = ["%swhile true:" % i,
                    "%svar %s = %s" % (_ind(d + 1), sw, _gx(s.sel)),
                    "%svar %s := -1" % (_ind(d + 1), arm)]
+            first = True
+            default_k = None
             for k, (vals, _body, _brk) in enumerate(s.arms):
+                if not vals:            # the default arm has no compare
+                    default_k = k
+                    continue
                 cond = " or ".join("%s == %s" % (sw, _gx(v)) for v in vals)
                 out.append("%s%s %s:" % (_ind(d + 1),
-                                         "if" if k == 0 else "elif", cond))
+                                         "if" if first else "elif", cond))
                 out.append("%s%s = %d" % (_ind(d + 2), arm, k))
+                first = False
             out += ["%sif %s == -1:" % (_ind(d + 1), arm),
-                    "%sbreak" % _ind(d + 2)]
+                    "%sbreak" % _ind(d + 2) if default_k is None
+                    else "%s%s = %d" % (_ind(d + 2), arm, default_k)]
             for k, (_vals, body, brk) in enumerate(s.arms):
                 out.append("%sif %s <= %d:" % (_ind(d + 1), arm, k))
                 out += self.body(body, d + 2)

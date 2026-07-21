@@ -86,14 +86,13 @@ func set_faction(v0) -> Variant:
 	match v0:
 		17:
 			global.set_int("g_gangster_faction", 1)
-			return 0
 		0:
 			global.set_int("g_gangster_faction", 2)
-			return 0
 		5:
 			global.set_int("g_gangster_faction", 3)
+		_:
+			global.set_int("g_gangster_faction", 4)
 			return 0
-	global.set_int("g_gangster_faction", 4)
 	return 0
 	return 0
 

@@ -39,8 +39,8 @@ godot --headless --path game --script res://scripts/pog/portcheck.gd
     114/114 packages compile
     2878/2878 functions provably agree with their bytecode (pogverify: 100%,
                MISSING 0, INVENTED 0)
-    2829/2878 ported as structured code (98.3%)
-    49 fall back to the basic-block dispatch form (irreducible, but exact)
+    2868/2878 ported as structured code (99.7%)
+    10 fall back to the basic-block dispatch form (irreducible, but exact)
 
 Run it (START NEW GAME on the front end boots the campaign; the old
 `--pogplay` skip-the-menu flag is gone -- it hijacked every in-session scene
@@ -215,6 +215,56 @@ Two earlier readings of this were wrong and are recorded in issue #21 so they
 are not re-derived: "multi-level exits out of nested loops" (nothing here exits
 a loop) and "mostly forward branches" (an artifact of comparing targets against
 the function entry instead of the branch address).
+
+### The switch tail: defaults, trampolines, shared labels (#39)
+
+The 42 functions still in dispatch form after the fall-through work were
+almost all ONE more idiom family: what the compare ladder does when nothing
+matches. Its trailing `Goto` is not always the join --
+
+- it can bounce through a TRAMPOLINE of bare `Goto join` slots parked with
+  the bodies (iaitestsuit.local_5749 @0x1796 -> 0x176d -> 0x179b);
+- it can enter a `default :` arm laid out after the case bodies, with the
+  real join right after the ladder (imusic.local_2800 @0xb44 -> 0xb1b;
+  iact2mission05.local_17527's default is a debug block);
+- several labels can select ONE body (`case 0 : case 2 : case 1 :`,
+  imusic.local_1866), which the old distinct-target check refused;
+- one compare plus a default arm is if/else spelled through the switch
+  skeleton (iact3mission05.local_4788) -- only single-compare-NO-default
+  stays with the plain-if reading;
+- a lone guard `Goto G; H: <body/latch>; G: <test> GoTrue H; X:` is a loop
+  whose first-entry test sits PAST the body (iactthree.CoyoteSecurity),
+  read back as `if (test) { <loop> }` with anything the test leaves on the
+  stack -- its Copy'd selector rides out to the function's `Return` --
+  spilled to a fresh local. A `Copy` right after that guard's jump means it
+  is the first quad of a resume dispatch (iacttwo.RitzIntroMonitor's
+  progress ladder), which is the fall-through switch's job, not this one's.
+
+Arm `break` detection resolves through the same trampolines, and a
+tail-position jump to the join folds into the arm's `break` -- but ONLY
+along the last-statement spine of an arm that already breaks; anywhere else
+it has live code after it and must stay (and trip the fallback).
+
+Recognising the family took the corpus from 42 dispatch functions to 10
+(2868/2878 structured, 99.7%) -- including ishipcreation.GetShip at 1971
+blocks, which was never targeted at all.
+
+**It also caught two functions that were being silently MIS-structured.**
+The cursor-move rule ("an unshapeable forward jump just moves the cursor")
+silently ENDED a nested region when the jump escaped past its bound, so the
+emitted code resumed the outer fall-through path where the bytecode had
+left: imusic.local_1866 ran both radius tests where the original runs one
+or the other (hostiles inside 20 km scored 3 instead of 4). The rule now
+converges only inside the region or on the enclosing switch's join;
+anything else stays a `goto` and falls back rather than miscompile. That
+honesty moved iact3mission05.local_6517 and iact3mission06.local_3427 --
+previously "structured", actually wrong -- into the exact dispatch form.
+
+A verifier caveat measured while proving this: pogverify's call census
+TOLERATES duplicated calls (they are usually legitimate arm/exit inlining),
+so a broken spill that re-emits `state.Progress` twice still verifies
+100%. The protections against that class are the structural nets
+(residual-goto / lost-code -> fallback), not the census.
 
 ### Cross-block stack values: the spill discipline (#22)
 

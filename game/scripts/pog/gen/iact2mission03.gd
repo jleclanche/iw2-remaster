@@ -223,747 +223,372 @@ func mission_handler() -> Variant:
 	var v23: Variant = 0
 	var v24: Variant = 0
 	var v25: Variant = 0
-	var v26: Variant = 0
-	var _pc: int = 1878
-	while true:
-		if _pc == 1878:
-			v2 = imapentity.find_by_name_in_system("Lucifuge", "map:/geog/badlands/eureka")
-			v9 = 0
-			v11 = imapentity.find_by_name_in_system("Hastur", "map:/geog/badlands/eureka")
-			v12 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
-			v14 = ifaction.find("The Third Way")
-			v15 = ifaction.find("Player")
-			v16 = ifaction.find("Marauders")
-			v17 = ifaction.find("Underworld")
-			v20 = []
-			v24 = _pog_current()
-			_pc = 2140
-			continue
-		elif _pc == 2119:
-			debug.print_string("iAc2Mission03.MissionHandler: Started\n")
-			_pc = 2140
-			continue
-		elif _pc == 2140:
-			v3 = iship.find_player_ship()
-			_pc = 2203
-			continue
-		elif _pc == 2164:
-			if _pog_is_null(v3):
-				_pc = 2177
-				continue
-			else:
-				_pc = 2203
-				continue
-		elif _pc == 2177:
-			_pc = 2203
-			continue
-		elif _pc == 2182:
-			debug.print_string("A2M03.MissionHandler: Cannot find player!")
-			_pc = 2203
-			continue
-		elif _pc == 2203:
-			if _pog_is_null(v2):
-				_pc = 2216
-				continue
-			else:
-				_pc = 2279
-				continue
-		elif _pc == 2216:
-			_pc = 2242
-			continue
-		elif _pc == 2221:
+	v2 = imapentity.find_by_name_in_system("Lucifuge", "map:/geog/badlands/eureka")
+	v9 = 0
+	v11 = imapentity.find_by_name_in_system("Hastur", "map:/geog/badlands/eureka")
+	v12 = imapentity.find_by_name_in_system("Lucrecia's Base", "map:/geog/badlands/hoffers_wake")
+	v14 = ifaction.find("The Third Way")
+	v15 = ifaction.find("Player")
+	v16 = ifaction.find("Marauders")
+	v17 = ifaction.find("Underworld")
+	v20 = []
+	v24 = _pog_current()
+	if PogRuntime.TRACE:
+		debug.print_string("iAc2Mission03.MissionHandler: Started\n")
+	v3 = iship.find_player_ship()
+	if PogRuntime.TRACE:
+		if _pog_is_null(v3):
+			if PogRuntime.TRACE:
+				debug.print_string("A2M03.MissionHandler: Cannot find player!")
+	if _pog_is_null(v2):
+		if PogRuntime.TRACE:
 			debug.print_string("A2M03.MissionHandler: Can't find lucifuge l-point. Will wait and re-try\n")
-			_pc = 2242
-			continue
-		elif _pc == 2242:
-			await _pog_wait(5.0)
-			_pc = 2305
-			continue
-		elif _pc == 2279:
-			_pc = 2305
-			continue
-		elif _pc == 2284:
+		await _pog_wait(5.0)
+	else:
+		if PogRuntime.TRACE:
 			debug.print_string("A2M03.MissionHandler: found Lucifuge ok, proceeding to next state.\n")
-			_pc = 2305
-			continue
-		elif _pc == 2305:
-			v0 = state.find(v24)
-			if not (v0):
-				_pc = 2340
-				continue
-			else:
-				_pc = 2365
-				continue
-		elif _pc == 2340:
-			v0 = state.create(v24, 1)
-			_pc = 2365
-			continue
-		elif _pc == 2365:
-			text.add("csv:/text/act_2/act2_mission03")
-			text.add("csv:/text/act_2/act2_mission03_addendum")
-			text.add("csv:/text/act_2/act2_mission03_addendum2")
-			await imissiontracker.add_mission(_pog_current(), 2, 3)
-			await local_55(v0)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			_pc = 2565
-			continue
-		elif _pc == 2565:
-			_pc = 8880
-			continue
-		elif _pc == 2570:
-			state.set_progress(v0, 2)
-			_pc = 9046
-			continue
-		elif _pc == 2596:
-			state.set_progress(v0, 3)
-			_pc = 9046
-			continue
-		elif _pc == 2622:
-			await local_55(v0)
-			_pc = 2641
-			continue
-		elif _pc == 2641:
-			await _pog_wait(1.0)
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
-				_pc = 2701
-				continue
-			else:
-				_pc = 2641
-				continue
-		elif _pc == 2701:
-			await local_55(v0)
-			_pc = 2746
-			continue
-		elif _pc == 2725:
-			debug.print_string("A2M03.MissionHandler: Player entered Entered, progressing........\n")
-			_pc = 2746
-			continue
-		elif _pc == 2746:
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
-				_pc = 2773
-				continue
-			else:
-				_pc = 2903
-				continue
-		elif _pc == 2773:
-			_pc = 2799
-			continue
-		elif _pc == 2778:
-			debug.print_string("A2M03.MissionHandler: waiting for player to get to Lucifuge........\n")
-			_pc = 2799
-			continue
-		elif _pc == 2799:
-			await _pog_wait(1.0)
-			if global.exists("g_had_lucifuge_hint"):
-				_pc = 2856
-				continue
-			else:
-				_pc = 2898
-				continue
-		elif _pc == 2856:
-			global.destroy("g_had_lucifuge_hint")
-			iobjectives.add("a2_m03_objectives_investigate")
-			_pc = 2898
-			continue
-		elif _pc == 2898:
-			_pc = 2935
-			continue
-		elif _pc == 2903:
-			await _pog_wait(2.0)
-			_pc = 2935
-			continue
-		elif _pc == 2935:
-			if sim.distance_between(v3, v2) <= 25000.0:
-				_pc = 2969
-				continue
-			else:
-				_pc = 2746
-				continue
-		elif _pc == 2969:
-			await local_55(v0)
-			_pc = 3014
-			continue
-		elif _pc == 2993:
-			debug.print_string("A2M03.MissionHandler: Player reached Lucifuge, progressing........\n")
-			_pc = 3014
-			continue
-		elif _pc == 3014:
-			await iconversation.begin()
-			await iconversation.say(0, "name_3rdway", "a2_m03_dialogue_c1_3rdway_challenge")
-			await iconversation.say(0, "name_cal", "a2_m03_dialogue_c1_cal_need_volunteers")
-			await iconversation.say(0, "name_3rdway", "a2_m03_dialogue_c1_3rdway_no1")
-			await iconversation.say(0, "name_cal", "a2_m03_dialogue_c1_cal_war_coming")
-			await iconversation.say(0, "name_3rdway", "a2_m03_dialogue_c1_3rdway_no2")
-			await iconversation.end()
-			state.set_progress(v0, 4)
-			iobjectives.set_state("a2_m03_objectives_investigate", 1)
-			_pc = 9046
-			continue
-		elif _pc == 3230:
-			await local_55(v0)
-			_pc = 3249
-			continue
-		elif _pc == 3249:
-			await _pog_wait(0.5)
-			if sim.distance_between(v3, v2) >= 40000.0:
-				_pc = 3315
-				continue
-			else:
-				_pc = 3249
-				continue
-		elif _pc == 3315:
-			v4 = await ishipcreation.create_character_group(1, "GenericFreight", 3, v14, "Random")
-			await iutilities.group_set_cullable(v4, 1)
-			v22 = 0
-			_pc = 3383
-			continue
-		elif _pc == 3383:
-			if v22 < 3:
-				_pc = 3396
-				continue
-			else:
-				_pc = 3471
-				continue
-		elif _pc == 3396:
-			await ishipcreation.create_trade_cargo(iship.cast(group.nth_sim(v4, v22)), "Medium")
-			v22 = v22 + 1
-			_pc = 3383
-			continue
-		elif _pc == 3471:
-			await local_9087(v4, v14)
-			v7 = iship.cast(group.leader(v4))
-			sim.place_near(v7, v3, 45000.0)
-			sim.point_at(v7, v2)
-			isim.set_indestructable(isim.cast(v7), 1)
-			await iformation.line_ahead(v4, 1500.0, 1)
-			v5 = await ishipcreation.create_character_group(6, "GenericAggressive", 3, v16, "Random")
-			await iutilities.group_set_cullable(v5, 1)
-			await local_9087(v5, v16)
-			v8 = iship.cast(group.leader(v5))
-			sim.place_near(v8, v7, 10000.0)
-			await iformation.goose(v5, 100.0, 1)
-			iai.give_attack_order(v5, v4)
-			await local_55(v0)
-			_pog_halt(v23)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			await icutsceneutilities.handle_abort(_pog_spawn(local_501.bind(v2, v5, v8, v16, v4, v7)))
-			await iconversation.one_liner(v7, "", "a2_m03_dialogue_c4_freighter_mayday")
-			_pc = 4058
-			continue
-		elif _pc == 4058:
-			await _pog_wait(0.9800000190734863)
-			if not (group.sim_count(v4) > 1 and group.sim_count(v5) > 0 and sim.distance_between(v8, v7) < 250000.0):
-				_pc = 4166
-				continue
-			else:
-				_pc = 4058
-				continue
-		elif _pc == 4166:
-			await local_55(v0)
-			await iutilities.group_set_cullable(v5, 1)
-			iai.give_flee_order(v5, v2)
-			await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c5_smith_theyre_doomed")
-			isim.set_indestructable(isim.cast(v7), 0)
-			isim.kill(isim.cast(v7))
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_c5_cal_expletive")
-			await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c5_smith_who_cares")
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_still_i")
-			await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_smith_suppose")
-			iobjectives.add("a2_m03_objectives_revisit")
-			state.set_progress(v0, 5)
-			_pc = 4476
-			continue
-		elif _pc == 4476:
-			state.set_progress(v0, 6)
-			_pc = 4497
-			continue
-		elif _pc == 4497:
-			await _pog_wait(1.0)
-			if sim.distance_between(v3, v2) <= 24000.0:
-				_pc = 4563
-				continue
-			else:
-				_pc = 4497
-				continue
-		elif _pc == 4563:
-			await local_55(v0)
-			iobjectives.set_state("a2_m03_objectives_revisit", 1)
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c2_3rdway_go_away")
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_we_couldnt")
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c2_3rdway_so_what")
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_we_were_just")
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c2_3rdway_ha")
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_leave_it_to")
-			await iconversation.one_liner(0, "name_clay", "a2_m03_dialogue_clay_hmmm")
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_i_ve")
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_jafs_come_in")
-			await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_jafs_jafs_here")
-			await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_smith_nice")
-			await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c6_jafs_shrug")
-			iobjectives.add("a2_m03_objectives_get_mines")
-			await irangecheck.add_traffic_exception(imapentity.cast(v11))
-			state.set_progress(v0, 7)
-			_pc = 9046
-			continue
-		elif _pc == 5019:
-			await irangecheck.add_traffic_exception(imapentity.cast(v11))
-			await _pog_wait(0.10000000149011612)
-			if sim.distance_between(v3, v11) <= 350000.0:
-				_pc = 5117
-				continue
-			else:
-				_pc = 5019
-				continue
-		elif _pc == 5117:
-			await local_55(v0)
-			v18 = await local_9204(v11)
-			_pog_halt(v23)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			await iconversation.one_liner(0, "name_middeon", "a2_m03_dialogue_c7_middeon_come_on_in")
-			v25 = _pog_spawn(local_9703.bind(iship.find_player_ship(), v18, 0.5))
-			_pc = 5338
-			continue
-		elif _pc == 5338:
-			await _pog_wait(1.0)
-			if isim.is_docked_to(v3, v11):
-				_pc = 5399
-				continue
-			else:
-				_pc = 5338
-				continue
-		elif _pc == 5399:
-			_pog_halt(v25)
-			iai.purge_orders(v18)
-			await local_55(v0)
-			state.set_progress(v0, 8)
-			_pc = 9046
-			continue
-		elif _pc == 5482:
-			await iconversation.begin()
-			await iconversation.add_response("a2_m03_text_c8_cal_option_ask", "a2_m03_dialogue_c8_cal_ask")
-			await iconversation.add_response("a2_m03_text_c8_cal_option_demand", "a2_m03_dialogue_c8_cal_demand")
-			v1 = await iconversation.ask(0, "name_middeon", "a2_m03_dialogue_c8_middeon_whatdya_want")
-			if v1 == 1:
-				_pc = 5595
-				continue
-			else:
-				_pc = 5914
-				continue
-		elif _pc == 5595:
-			await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_boast1")
-			await iconversation.say(0, "name_cal", "a2_m03_dialogue_c8_cal_flatter1")
-			await iconversation.add_response("a2_m03_text_c8_cal_option_really", "a2_m03_dialogue_c8_cal_really")
-			await iconversation.add_response("a2_m03_text_c8_cal_option_no_time", "a2_m03_dialogue_c8_cal_no_time")
-			v1 = await iconversation.ask(0, "name_middeon", "a2_m03_dialogue_c8_middeon_my_folks_are_great")
-			if v1 == 1:
-				_pc = 5750
-				continue
-			else:
-				_pc = 5860
-				continue
-		elif _pc == 5750:
-			await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_morgan_blackheart")
-			await iconversation.say(0, "name_cal", "a2_m03_dialogue_c8_cal_gimmie_blueprints")
-			await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_ok_then")
-			state.set_progress(v0, 10)
-			_pc = 5909
-			continue
-		elif _pc == 5860:
-			await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_get_him")
-			state.set_progress(v0, 9)
-			_pc = 5909
-			continue
-		elif _pc == 5909:
-			_pc = 6019
-			continue
-		elif _pc == 5914:
-			await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_angry")
-			await iconversation.say(0, "name_smith", "a2_m03_dialogue_c8_smith_haha")
-			await iconversation.say(0, "name_clay", "a2_m03_dialogue_c8_clay_you_gotta_big_mouth")
-			state.set_progress(v0, 9)
-			_pc = 6019
-			continue
-		elif _pc == 6019:
-			await iconversation.end()
-			await local_55(v0)
-			_pc = 9046
-			continue
-		elif _pc == 6057:
-			v13 = await ishipcreation.create_character_group(9, "GenericAggressive", 4, v17, "Random")
-			await local_9087(v13, v17)
-			sim.place_near(group.leader(v13), v11, 1000.0)
-			await iformation.random_sphere(v13, 500.0, 1)
-			iai.give_attack_order(v13, v3)
-			iship.undock(v3, v11)
-			v9 = iship.create("ini:/sims/ships/utility/cargo_pod", "a2_m03_name_cargopod")
-			object.set_int_property(v9, "cargo", 164)
-			sim.set_cullable(v9, 0)
-			isim.set_sensor_visibility(v9, 0)
-			sim.place_near(v9, v11, 3000.0)
-			isim.set_mission_critical(v9, 1)
-			await local_55(v0)
-			_pog_halt(v23)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			_pc = 6512
-			continue
-		elif _pc == 6512:
-			if group.sim_count(v13) > 0:
-				_pc = 6537
-				continue
-			else:
-				_pc = 6574
-				continue
-		elif _pc == 6537:
-			await _pog_wait(5.0)
-			_pc = 6512
-			continue
-		elif _pc == 6574:
-			await local_55(v0)
-			_pog_halt(v23)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c9_smith_that_pod")
-			isim.set_sensor_visibility(v9, 1)
-			state.set_progress(v0, 11)
-			_pc = 9046
-			continue
-		elif _pc == 6773:
-			await local_55(v0)
-			_pog_halt(v23)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			v9 = iship.create("ini:/sims/ships/utility/cargo_pod", "a2_m03_name_cargopod")
-			object.set_int_property(v9, "cargo", 164)
-			sim.set_cullable(v9, 0)
-			sim.place_near(v9, v11, 3000.0)
-			isim.set_mission_critical(v9, 1)
-			state.set_progress(v0, 11)
-			_pc = 9046
-			continue
-		elif _pc == 7054:
-			iobjectives.add("a2_m03_objectives_get_mines")
-			_pc = 7075
-			continue
-		elif _pc == 7075:
-			if _pog_is_null(v9) or sim.is_dead(v9):
-				_pc = 7107
-				continue
-			else:
-				_pc = 7237
-				continue
-		elif _pc == 7107:
-			v9 = iship.create("ini:/sims/ships/utility/cargo_pod", "a2_m03_name_cargopod")
-			object.set_int_property(v9, "cargo", 164)
-			sim.set_cullable(v9, 0)
-			sim.place_near(v9, v11, 3000.0)
-			isim.set_mission_critical(v9, 1)
-			_pc = 7237
-			continue
-		elif _pc == 7237:
-			if iinventory.number_of_cargo_type(164) >= 1:
-				_pc = 7260
-				continue
-			else:
-				_pc = 7075
-				continue
-		elif _pc == 7260:
-			await local_55(v0)
-			_pog_halt(v23)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			await irangecheck.remove_traffic_exception(imapentity.cast(v11))
-			iobjectives.set_state("a2_m03_objectives_get_mines", 1)
-			_pc = 7439
-			continue
-		elif _pc == 7439:
-			iobjectives.add("a2_m03_objectives_manufacture")
-			_pc = 7460
-			continue
-		elif _pc == 7460:
-			if _pog_is_null(global.exists("g_flagged_made_all_mines")):
-				_pc = 7487
-				continue
-			else:
-				_pc = 7524
-				continue
-		elif _pc == 7487:
-			await _pog_wait(15.0)
-			_pc = 7460
-			continue
-		elif _pc == 7524:
-			state.set_progress(v0, 15)
-			await local_55(v0)
-			iobjectives.set_state("a2_m03_objectives_manufacture", 1)
-			_pc = 7586
-			continue
-		elif _pc == 7586:
-			iobjectives.add("a2_m03_objectives_deliver")
-			_pc = 7607
-			continue
-		elif _pc == 7607:
-			await _pog_wait(2.0)
-			if sim.distance_between(v3, v2) <= 350000.0:
-				_pc = 7673
-				continue
-			else:
-				_pc = 7607
-				continue
-		elif _pc == 7673:
-			_pc = 7699
-			continue
-		elif _pc == 7678:
-			debug.print_string("iAct2Mission03: Player in range of Lucifuge\n")
-			_pc = 7699
-			continue
-		elif _pc == 7699:
-			await local_55(v0)
-			state.set_progress(v0, 16)
-			_pc = 9046
-			continue
-		elif _pc == 7744:
-			v9 = await local_1472(v3)
-			v6 = await ishipcreation.create_character_group(6, "GenericAggressive", 3, v16, "Random")
-			await local_9087(v6, v16)
-			sim.place_near(group.leader(v6), v3, 100000.0)
-			await iformation.goose(v6, 100.0, 1)
-			iai.give_attack_order(v6, v3)
-			await local_55(v0)
-			_pog_halt(v23)
-			v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
-			_pog_detach(v23)
-			await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c12_smith_lots_of_ships")
-			_pc = 8077
-			continue
-		elif _pc == 8077:
-			if group.sim_count(v6) > 0:
-				_pc = 8102
-				continue
-			else:
-				_pc = 8206
-				continue
-		elif _pc == 8102:
-			await _pog_wait(2.0)
-			if sim.is_dead(v9) and not _pog_is_null(v9):
-				_pc = 8166
-				continue
-			else:
-				_pc = 8201
-				continue
-		elif _pc == 8166:
-			await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c13_smith_lost_pod")
-			v9 = 0
-			_pc = 8201
-			continue
-		elif _pc == 8201:
-			_pc = 8077
-			continue
-		elif _pc == 8206:
-			iobjectives.add("a2_m03_objectives_deliver")
-			_pc = 8227
-			continue
-		elif _pc == 8227:
-			if sim.distance_between(v3, v2) > 8000.0:
-				_pc = 8261
-				continue
-			else:
-				_pc = 8298
-				continue
-		elif _pc == 8261:
-			await _pog_wait(2.0)
-			_pc = 8227
-			continue
-		elif _pc == 8298:
-			await local_55(v0)
-			if sim.is_dead(v9):
-				_pc = 8340
-				continue
-			else:
-				_pc = 8394
-				continue
-		elif _pc == 8340:
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c14_3rdway")
-			state.set_progress(v0, 13)
-			_pc = 8482
-			continue
-		elif _pc == 8394:
-			state.set_progress(v0, 17)
-			iobjectives.set_state("a2_m03_objectives_deliver", 1)
-			iship.undock(v9, v3)
-			await local_1694(v9)
-			_pc = 8482
-			continue
-		elif _pc == 8482:
-			await local_55(v0)
-			_pc = 9046
-			continue
-		elif _pc == 8506:
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_thankyou")
-			await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_c16_cal_what_about_me")
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_who_cares")
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_there_will_be_pilots")
-			await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_go_home_happy")
-			iinventory.remove(534, 9)
-			state.set_progress(v0, 18)
-			_pc = 9046
-			continue
-		elif _pc == 8691:
-			await iutilities.remove_mission_restart()
-			global.set_bool("g_act2_badlands_food_sorted", 1)
-			text.remove("csv:/text/act2/act2_mission03")
-			text.remove("csv:/text/act_2/act2_mission03_addendum")
-			text.remove("csv:/text/act_2/act2_mission03_addendum2")
-			state.destroy(_pog_current())
-			await imissiontracker.remove_mission(_pog_current())
-			_pc = 9078
-			continue
-		elif _pc == 8849:
-			_pc = 8875
-			continue
-		elif _pc == 8854:
-			debug.error("Act2Mission03.MissionHandler - task has incorrect progress setting in state\n#")
-			_pc = 8875
-			continue
-		elif _pc == 8875:
-			_pc = 9046
-			continue
-		elif _pc == 8880:
-			v26 = state.progress(v0)
-			if 1 != v26:
-				_pc = 8906
-				continue
-			else:
-				_pc = 2570
-				continue
-		elif _pc == 8906:
-			if 2 != v26:
-				_pc = 8915
-				continue
-			else:
-				_pc = 2596
-				continue
-		elif _pc == 8915:
-			if 3 != v26:
-				_pc = 8924
-				continue
-			else:
-				_pc = 2622
-				continue
-		elif _pc == 8924:
-			if 4 != v26:
-				_pc = 8933
-				continue
-			else:
-				_pc = 3230
-				continue
-		elif _pc == 8933:
-			if 5 != v26:
-				_pc = 8942
-				continue
-			else:
-				_pc = 4476
-				continue
-		elif _pc == 8942:
-			if 6 != v26:
-				_pc = 8951
-				continue
-			else:
-				_pc = 4497
-				continue
-		elif _pc == 8951:
-			if 7 != v26:
-				_pc = 8960
-				continue
-			else:
-				_pc = 5019
-				continue
-		elif _pc == 8960:
-			if 8 != v26:
-				_pc = 8969
-				continue
-			else:
-				_pc = 5482
-				continue
-		elif _pc == 8969:
-			if 9 != v26:
-				_pc = 8978
-				continue
-			else:
-				_pc = 6057
-				continue
-		elif _pc == 8978:
-			if 10 != v26:
-				_pc = 8987
-				continue
-			else:
-				_pc = 6773
-				continue
-		elif _pc == 8987:
-			if 11 != v26:
-				_pc = 8996
-				continue
-			else:
-				_pc = 7054
-				continue
-		elif _pc == 8996:
-			if 13 != v26:
-				_pc = 9005
-				continue
-			else:
-				_pc = 7439
-				continue
-		elif _pc == 9005:
-			if 15 != v26:
-				_pc = 9014
-				continue
-			else:
-				_pc = 7586
-				continue
-		elif _pc == 9014:
-			if 16 != v26:
-				_pc = 9023
-				continue
-			else:
-				_pc = 7744
-				continue
-		elif _pc == 9023:
-			if 17 != v26:
-				_pc = 9032
-				continue
-			else:
-				_pc = 8506
-				continue
-		elif _pc == 9032:
-			if 18 != v26:
-				_pc = 9041
-				continue
-			else:
-				_pc = 8691
-				continue
-		elif _pc == 9041:
-			_pc = 8849
-			continue
-		elif _pc == 9046:
-			if not (1):
-				_pc = 9052
-				continue
-			else:
-				_pc = 2565
-				continue
-		elif _pc == 9052:
-			_pc = 9078
-			continue
-		elif _pc == 9057:
-			debug.print_string("iAc2Mission03.MissionHandler: Terminated.\n")
-			_pc = 9078
-			continue
-		elif _pc == 9078:
-			return
-		else:
-			return 0
+	v0 = state.find(v24)
+	if not (v0):
+		v0 = state.create(v24, 1)
+	text.add("csv:/text/act_2/act2_mission03")
+	text.add("csv:/text/act_2/act2_mission03_addendum")
+	text.add("csv:/text/act_2/act2_mission03_addendum2")
+	await imissiontracker.add_mission(_pog_current(), 2, 3)
+	await local_55(v0)
+	v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+	_pog_detach(v23)
+	while true:
+		while true:
+			var _sw1: Variant = state.progress(v0)
+			var _arm1: int = -1
+			if _pog_eq(_sw1, 1):
+				_arm1 = 0
+			elif _pog_eq(_sw1, 2):
+				_arm1 = 1
+			elif _pog_eq(_sw1, 3):
+				_arm1 = 2
+			elif _pog_eq(_sw1, 4):
+				_arm1 = 3
+			elif _pog_eq(_sw1, 5):
+				_arm1 = 4
+			elif _pog_eq(_sw1, 6):
+				_arm1 = 5
+			elif _pog_eq(_sw1, 7):
+				_arm1 = 6
+			elif _pog_eq(_sw1, 8):
+				_arm1 = 7
+			elif _pog_eq(_sw1, 9):
+				_arm1 = 8
+			elif _pog_eq(_sw1, 10):
+				_arm1 = 9
+			elif _pog_eq(_sw1, 11):
+				_arm1 = 10
+			elif _pog_eq(_sw1, 13):
+				_arm1 = 11
+			elif _pog_eq(_sw1, 15):
+				_arm1 = 12
+			elif _pog_eq(_sw1, 16):
+				_arm1 = 13
+			elif _pog_eq(_sw1, 17):
+				_arm1 = 14
+			elif _pog_eq(_sw1, 18):
+				_arm1 = 15
+			if _arm1 == -1:
+				_arm1 = 16
+			if _arm1 <= 0:
+				state.set_progress(v0, 2)
+				break
+			if _arm1 <= 1:
+				state.set_progress(v0, 3)
+				break
+			if _arm1 <= 2:
+				await local_55(v0)
+				while true:
+					await _pog_wait(1.0)
+					if not (not _pog_eq(isim.active_world(), "map:/geog/badlands/eureka")):
+						break
+				await local_55(v0)
+				if PogRuntime.TRACE:
+					debug.print_string("A2M03.MissionHandler: Player entered Entered, progressing........\n")
+				while true:
+					if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
+						if PogRuntime.TRACE:
+							debug.print_string("A2M03.MissionHandler: waiting for player to get to Lucifuge........\n")
+						await _pog_wait(1.0)
+						if global.exists("g_had_lucifuge_hint"):
+							global.destroy("g_had_lucifuge_hint")
+							iobjectives.add("a2_m03_objectives_investigate")
+					else:
+						await _pog_wait(2.0)
+					if not (sim.distance_between(v3, v2) > 25000.0):
+						break
+				await local_55(v0)
+				if PogRuntime.TRACE:
+					debug.print_string("A2M03.MissionHandler: Player reached Lucifuge, progressing........\n")
+				await iconversation.begin()
+				await iconversation.say(0, "name_3rdway", "a2_m03_dialogue_c1_3rdway_challenge")
+				await iconversation.say(0, "name_cal", "a2_m03_dialogue_c1_cal_need_volunteers")
+				await iconversation.say(0, "name_3rdway", "a2_m03_dialogue_c1_3rdway_no1")
+				await iconversation.say(0, "name_cal", "a2_m03_dialogue_c1_cal_war_coming")
+				await iconversation.say(0, "name_3rdway", "a2_m03_dialogue_c1_3rdway_no2")
+				await iconversation.end()
+				state.set_progress(v0, 4)
+				iobjectives.set_state("a2_m03_objectives_investigate", 1)
+				break
+			if _arm1 <= 3:
+				await local_55(v0)
+				while true:
+					await _pog_wait(0.5)
+					if not (sim.distance_between(v3, v2) < 40000.0):
+						break
+				v4 = await ishipcreation.create_character_group(1, "GenericFreight", 3, v14, "Random")
+				await iutilities.group_set_cullable(v4, 1)
+				v22 = 0
+				while v22 < 3:
+					await ishipcreation.create_trade_cargo(iship.cast(group.nth_sim(v4, v22)), "Medium")
+					v22 = v22 + 1
+				await local_9087(v4, v14)
+				v7 = iship.cast(group.leader(v4))
+				sim.place_near(v7, v3, 45000.0)
+				sim.point_at(v7, v2)
+				isim.set_indestructable(isim.cast(v7), 1)
+				await iformation.line_ahead(v4, 1500.0, 1)
+				v5 = await ishipcreation.create_character_group(6, "GenericAggressive", 3, v16, "Random")
+				await iutilities.group_set_cullable(v5, 1)
+				await local_9087(v5, v16)
+				v8 = iship.cast(group.leader(v5))
+				sim.place_near(v8, v7, 10000.0)
+				await iformation.goose(v5, 100.0, 1)
+				iai.give_attack_order(v5, v4)
+				await local_55(v0)
+				_pog_halt(v23)
+				v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+				_pog_detach(v23)
+				await icutsceneutilities.handle_abort(_pog_spawn(local_501.bind(v2, v5, v8, v16, v4, v7)))
+				await iconversation.one_liner(v7, "", "a2_m03_dialogue_c4_freighter_mayday")
+				while true:
+					await _pog_wait(0.9800000190734863)
+					if not (group.sim_count(v4) > 1 and group.sim_count(v5) > 0 and sim.distance_between(v8, v7) < 250000.0):
+						break
+				await local_55(v0)
+				await iutilities.group_set_cullable(v5, 1)
+				iai.give_flee_order(v5, v2)
+				await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c5_smith_theyre_doomed")
+				isim.set_indestructable(isim.cast(v7), 0)
+				isim.kill(isim.cast(v7))
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_c5_cal_expletive")
+				await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c5_smith_who_cares")
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_still_i")
+				await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_smith_suppose")
+				iobjectives.add("a2_m03_objectives_revisit")
+				state.set_progress(v0, 5)
+			if _arm1 <= 4:
+				state.set_progress(v0, 6)
+			if _arm1 <= 5:
+				while true:
+					await _pog_wait(1.0)
+					if not (sim.distance_between(v3, v2) > 24000.0):
+						break
+				await local_55(v0)
+				iobjectives.set_state("a2_m03_objectives_revisit", 1)
+				await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c2_3rdway_go_away")
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_we_couldnt")
+				await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c2_3rdway_so_what")
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_we_were_just")
+				await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c2_3rdway_ha")
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_leave_it_to")
+				await iconversation.one_liner(0, "name_clay", "a2_m03_dialogue_clay_hmmm")
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_i_ve")
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_cal_jafs_come_in")
+				await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_jafs_jafs_here")
+				await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_smith_nice")
+				await iconversation.one_liner(0, "name_jafs", "a2_m03_dialogue_c6_jafs_shrug")
+				iobjectives.add("a2_m03_objectives_get_mines")
+				await irangecheck.add_traffic_exception(imapentity.cast(v11))
+				state.set_progress(v0, 7)
+				break
+			if _arm1 <= 6:
+				while true:
+					await irangecheck.add_traffic_exception(imapentity.cast(v11))
+					await _pog_wait(0.10000000149011612)
+					if not (sim.distance_between(v3, v11) > 350000.0):
+						break
+				await local_55(v0)
+				v18 = await local_9204(v11)
+				_pog_halt(v23)
+				v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+				_pog_detach(v23)
+				await iconversation.one_liner(0, "name_middeon", "a2_m03_dialogue_c7_middeon_come_on_in")
+				v25 = _pog_spawn(local_9703.bind(iship.find_player_ship(), v18, 0.5))
+				while true:
+					await _pog_wait(1.0)
+					if not (not (isim.is_docked_to(v3, v11))):
+						break
+				_pog_halt(v25)
+				iai.purge_orders(v18)
+				await local_55(v0)
+				state.set_progress(v0, 8)
+				break
+			if _arm1 <= 7:
+				await iconversation.begin()
+				await iconversation.add_response("a2_m03_text_c8_cal_option_ask", "a2_m03_dialogue_c8_cal_ask")
+				await iconversation.add_response("a2_m03_text_c8_cal_option_demand", "a2_m03_dialogue_c8_cal_demand")
+				v1 = await iconversation.ask(0, "name_middeon", "a2_m03_dialogue_c8_middeon_whatdya_want")
+				if v1 == 1:
+					await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_boast1")
+					await iconversation.say(0, "name_cal", "a2_m03_dialogue_c8_cal_flatter1")
+					await iconversation.add_response("a2_m03_text_c8_cal_option_really", "a2_m03_dialogue_c8_cal_really")
+					await iconversation.add_response("a2_m03_text_c8_cal_option_no_time", "a2_m03_dialogue_c8_cal_no_time")
+					v1 = await iconversation.ask(0, "name_middeon", "a2_m03_dialogue_c8_middeon_my_folks_are_great")
+					if v1 == 1:
+						await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_morgan_blackheart")
+						await iconversation.say(0, "name_cal", "a2_m03_dialogue_c8_cal_gimmie_blueprints")
+						await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_ok_then")
+						state.set_progress(v0, 10)
+					else:
+						await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_get_him")
+						state.set_progress(v0, 9)
+				else:
+					await iconversation.say(0, "name_middeon", "a2_m03_dialogue_c8_middeon_angry")
+					await iconversation.say(0, "name_smith", "a2_m03_dialogue_c8_smith_haha")
+					await iconversation.say(0, "name_clay", "a2_m03_dialogue_c8_clay_you_gotta_big_mouth")
+					state.set_progress(v0, 9)
+				await iconversation.end()
+				await local_55(v0)
+				break
+			if _arm1 <= 8:
+				v13 = await ishipcreation.create_character_group(9, "GenericAggressive", 4, v17, "Random")
+				await local_9087(v13, v17)
+				sim.place_near(group.leader(v13), v11, 1000.0)
+				await iformation.random_sphere(v13, 500.0, 1)
+				iai.give_attack_order(v13, v3)
+				iship.undock(v3, v11)
+				v9 = iship.create("ini:/sims/ships/utility/cargo_pod", "a2_m03_name_cargopod")
+				object.set_int_property(v9, "cargo", 164)
+				sim.set_cullable(v9, 0)
+				isim.set_sensor_visibility(v9, 0)
+				sim.place_near(v9, v11, 3000.0)
+				isim.set_mission_critical(v9, 1)
+				await local_55(v0)
+				_pog_halt(v23)
+				v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+				_pog_detach(v23)
+				while group.sim_count(v13) > 0:
+					await _pog_wait(5.0)
+				await local_55(v0)
+				_pog_halt(v23)
+				v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+				_pog_detach(v23)
+				await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c9_smith_that_pod")
+				isim.set_sensor_visibility(v9, 1)
+				state.set_progress(v0, 11)
+				break
+			if _arm1 <= 9:
+				await local_55(v0)
+				_pog_halt(v23)
+				v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+				_pog_detach(v23)
+				v9 = iship.create("ini:/sims/ships/utility/cargo_pod", "a2_m03_name_cargopod")
+				object.set_int_property(v9, "cargo", 164)
+				sim.set_cullable(v9, 0)
+				sim.place_near(v9, v11, 3000.0)
+				isim.set_mission_critical(v9, 1)
+				state.set_progress(v0, 11)
+				break
+			if _arm1 <= 10:
+				iobjectives.add("a2_m03_objectives_get_mines")
+				while true:
+					if _pog_is_null(v9) or sim.is_dead(v9):
+						v9 = iship.create("ini:/sims/ships/utility/cargo_pod", "a2_m03_name_cargopod")
+						object.set_int_property(v9, "cargo", 164)
+						sim.set_cullable(v9, 0)
+						sim.place_near(v9, v11, 3000.0)
+						isim.set_mission_critical(v9, 1)
+					if not (iinventory.number_of_cargo_type(164) < 1):
+						break
+				await local_55(v0)
+				_pog_halt(v23)
+				v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+				_pog_detach(v23)
+				await irangecheck.remove_traffic_exception(imapentity.cast(v11))
+				iobjectives.set_state("a2_m03_objectives_get_mines", 1)
+			if _arm1 <= 11:
+				iobjectives.add("a2_m03_objectives_manufacture")
+				while _pog_is_null(global.exists("g_flagged_made_all_mines")):
+					await _pog_wait(15.0)
+				state.set_progress(v0, 15)
+				await local_55(v0)
+				iobjectives.set_state("a2_m03_objectives_manufacture", 1)
+			if _arm1 <= 12:
+				iobjectives.add("a2_m03_objectives_deliver")
+				while true:
+					await _pog_wait(2.0)
+					if not (sim.distance_between(v3, v2) > 350000.0):
+						break
+				if PogRuntime.TRACE:
+					debug.print_string("iAct2Mission03: Player in range of Lucifuge\n")
+				await local_55(v0)
+				state.set_progress(v0, 16)
+				break
+			if _arm1 <= 13:
+				v9 = await local_1472(v3)
+				v6 = await ishipcreation.create_character_group(6, "GenericAggressive", 3, v16, "Random")
+				await local_9087(v6, v16)
+				sim.place_near(group.leader(v6), v3, 100000.0)
+				await iformation.goose(v6, 100.0, 1)
+				iai.give_attack_order(v6, v3)
+				await local_55(v0)
+				_pog_halt(v23)
+				v23 = _pog_spawn(local_1066.bind(v24, v0, v4, v5, v6, v13, v7, v8, v9, v19, v18))
+				_pog_detach(v23)
+				await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c12_smith_lots_of_ships")
+				while group.sim_count(v6) > 0:
+					await _pog_wait(2.0)
+					if not (sim.is_dead(v9) and not _pog_is_null(v9)):
+						continue
+					await iconversation.one_liner(0, "name_smith", "a2_m03_dialogue_c13_smith_lost_pod")
+					v9 = 0
+				iobjectives.add("a2_m03_objectives_deliver")
+				while sim.distance_between(v3, v2) > 8000.0:
+					await _pog_wait(2.0)
+				await local_55(v0)
+				if sim.is_dead(v9):
+					await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c14_3rdway")
+					state.set_progress(v0, 13)
+				else:
+					state.set_progress(v0, 17)
+					iobjectives.set_state("a2_m03_objectives_deliver", 1)
+					iship.undock(v9, v3)
+					await local_1694(v9)
+				await local_55(v0)
+				break
+			if _arm1 <= 14:
+				await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_thankyou")
+				await iconversation.one_liner(0, "name_cal", "a2_m03_dialogue_c16_cal_what_about_me")
+				await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_who_cares")
+				await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_there_will_be_pilots")
+				await iconversation.one_liner(0, "name_3rdway", "a2_m03_dialogue_c16_3rdway_go_home_happy")
+				iinventory.remove(534, 9)
+				state.set_progress(v0, 18)
+				break
+			if _arm1 <= 15:
+				await iutilities.remove_mission_restart()
+				global.set_bool("g_act2_badlands_food_sorted", 1)
+				text.remove("csv:/text/act2/act2_mission03")
+				text.remove("csv:/text/act_2/act2_mission03_addendum")
+				text.remove("csv:/text/act_2/act2_mission03_addendum2")
+				state.destroy(_pog_current())
+				await imissiontracker.remove_mission(_pog_current())
+				return
+			if _arm1 <= 16:
+				if PogRuntime.TRACE:
+					debug.error("Act2Mission03.MissionHandler - task has incorrect progress setting in state\n#")
+				break
+		if not (1):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("iAc2Mission03.MissionHandler: Terminated.\n")
+	return
 	return 0
 
 func local_9087(v0, v1) -> Variant:

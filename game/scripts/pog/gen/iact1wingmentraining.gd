@@ -273,89 +273,34 @@ func local_2775(v0, v1, v2) -> Variant:
 func local_3705(v0, v1, v2) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var v5: Variant = 0
-	var _pc: int = 3705
-	while true:
-		if _pc == 3705:
-			v3 = group.nth_group(v0, 0)
-			await iconversation.begin()
-			await iconversation.add_response("a1_training_text_cal_about", "a1_training_dialogue_cal_about")
-			await iconversation.add_response("a1_training_text_cal_fastest", "a1_training_dialogue_cal_fastest")
-			await iconversation.add_response("a1_training_text_cal_start", "a1_training_dialogue_cal_start")
-			await iconversation.add_response("a1_training_text_cal_nothing", "a1_training_dialogue_cal_nothing")
-			v4 = await iconversation.ask(0, "name_clay", "a1_training_dialogue_clay_at_course")
-			_pc = 4297
-			continue
-		elif _pc == 3895:
+	v3 = group.nth_group(v0, 0)
+	await iconversation.begin()
+	await iconversation.add_response("a1_training_text_cal_about", "a1_training_dialogue_cal_about")
+	await iconversation.add_response("a1_training_text_cal_fastest", "a1_training_dialogue_cal_fastest")
+	await iconversation.add_response("a1_training_text_cal_start", "a1_training_dialogue_cal_start")
+	await iconversation.add_response("a1_training_text_cal_nothing", "a1_training_dialogue_cal_nothing")
+	v4 = await iconversation.ask(0, "name_clay", "a1_training_dialogue_clay_at_course")
+	match v4:
+		1:
 			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_about_tfighters")
-			_pc = 4333
-			continue
-		elif _pc == 3928:
+		2:
 			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_the_fastest")
 			ihud.set_prompt(await iutilities.convert_seconds_to_time(object.int_property(v2, "best_time")), "")
-			_pc = 4333
-			continue
-		elif _pc == 4020:
+		3:
 			if state.progress(v2) != 3:
-				_pc = 4046
-				continue
+				await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_ok")
+				state.set_progress(v2, 1)
+				await _pog_wait(2.0)
+				await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_go")
+				await local_145(v3, 1)
+				await iconversation.end()
+				await local_2775(v0, v1, v2)
 			else:
-				_pc = 4222
-				continue
-		elif _pc == 4046:
-			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_ok")
-			state.set_progress(v2, 1)
-			await _pog_wait(2.0)
-			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_go")
-			await local_145(v3, 1)
-			await iconversation.end()
-			await local_2775(v0, v1, v2)
-			_pc = 4250
-			continue
-		elif _pc == 4222:
-			await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_wait")
-			_pc = 4250
-			continue
-		elif _pc == 4250:
-			_pc = 4333
-			continue
-		elif _pc == 4255:
+				await iconversation.say(0, "name_clay", "a1_training_dialogue_clay_wait")
+		_:
 			await _pog_wait(40.0)
-			_pc = 4333
-			continue
-		elif _pc == 4292:
-			_pc = 4333
-			continue
-		elif _pc == 4297:
-			v5 = v4
-			if 1 != v5:
-				_pc = 4310
-				continue
-			else:
-				_pc = 3895
-				continue
-		elif _pc == 4310:
-			if 2 != v5:
-				_pc = 4319
-				continue
-			else:
-				_pc = 3928
-				continue
-		elif _pc == 4319:
-			if 3 != v5:
-				_pc = 4328
-				continue
-			else:
-				_pc = 4020
-				continue
-		elif _pc == 4328:
-			_pc = 4255
-			continue
-		elif _pc == 4333:
-			await iconversation.end()
-			return
-		else:
-			return 0
+	await iconversation.end()
+	return
 	return 0
 
 func local_4349(v0, v1, v2) -> Variant:

@@ -168,6 +168,7 @@ func local_608(v0, v1, v2) -> Variant:
 				await iconversation.one_liner(0, "name_clay", "a2_m10_dialogue_clay_fit_the_weapon")
 				iobjectives.add("a2_m10_objectives_equip")
 				v3 = 0
+				continue
 			2:
 				await iconversation.one_liner(v6, "", "a2_m10_dialogue_thirdman_c1_response_2_keep_quiet")
 				iai.give_flee_order(v6, v8)
@@ -175,6 +176,7 @@ func local_608(v0, v1, v2) -> Variant:
 				sim.set_cullable(v7, 1)
 				state.set_progress(v1, 1)
 				v3 = 0
+				continue
 	sim.destroy(v2)
 	return
 	return 0

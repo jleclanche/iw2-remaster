@@ -275,132 +275,42 @@ func create_fomalhaut_refugees(v0) -> Variant:
 	var v12: Variant = 0
 	var v13: Variant = 0
 	var v14: Variant = 0
-	var v15: Variant = 0
-	var _pc: int = 2921
-	while true:
-		if _pc == 2921:
-			v1 = group.create()
-			v5 = []
-			v6 = []
-			_pc = 2993
-			continue
-		elif _pc == 2972:
-			debug.print_string("iExodustraffic.CreateFomalhautRegugees: kludge creating only one allegiance - should be ALL - non relevant (see code)\n")
-			_pc = 2993
-			continue
-		elif _pc == 2993:
-			v5 = p_set.from_list(ifaction.all())
-			p_set.remove(v5, ifaction.find("Marauders"))
-			p_set.remove(v5, ifaction.find("Police"))
-			p_set.remove(v5, ifaction.find("Military"))
-			p_set.remove(v5, ifaction.find("Player"))
-			p_set.remove(v5, ifaction.find("MAAS Corporation"))
-			p_set.remove(v5, ifaction.find("The Third Way"))
-			p_set.remove(v5, ifaction.find("Aliens"))
-			v6 = list.from_set(v5)
-			v9 = math.random_int(9, 20)
-			v8 = 0
-			_pc = 3357
-			continue
-		elif _pc == 3357:
-			if v8 < v9:
-				_pc = 3373
-				continue
-			else:
-				_pc = 3774
-				continue
-		elif _pc == 3373:
-			v7 = ifaction.cast(list.get_nth(v6, math.random_int(0, list.item_count(v6) - 1)))
-			_pc = 3519
-			continue
-		elif _pc == 3449:
-			v14 = 6
-			_pc = 3597
-			continue
-		elif _pc == 3462:
-			v14 = 4
-			_pc = 3597
-			continue
-		elif _pc == 3475:
-			v14 = 12
-			_pc = 3597
-			continue
-		elif _pc == 3488:
-			v14 = 13
-			_pc = 3597
-			continue
-		elif _pc == 3501:
-			v14 = 21
-			_pc = 3597
-			continue
-		elif _pc == 3514:
-			_pc = 3597
-			continue
-		elif _pc == 3519:
-			v15 = math.random_int(1, 7)
-			if 1 != v15:
-				_pc = 3543
-				continue
-			else:
-				_pc = 3449
-				continue
-		elif _pc == 3543:
-			if 2 != v15:
-				_pc = 3552
-				continue
-			else:
-				_pc = 3462
-				continue
-		elif _pc == 3552:
-			if 3 != v15:
-				_pc = 3561
-				continue
-			else:
-				_pc = 3475
-				continue
-		elif _pc == 3561:
-			if 4 != v15:
-				_pc = 3570
-				continue
-			else:
-				_pc = 3475
-				continue
-		elif _pc == 3570:
-			if 5 != v15:
-				_pc = 3579
-				continue
-			else:
-				_pc = 3488
-				continue
-		elif _pc == 3579:
-			if 6 != v15:
-				_pc = 3588
-				continue
-			else:
-				_pc = 3501
-				continue
-		elif _pc == 3588:
-			if 7 != v15:
-				_pc = 3597
-				continue
-			else:
-				_pc = 3501
-				continue
-		elif _pc == 3597:
-			v2 = iship.create(await ishipcreation.get_ship(ifaction.allegiance(v7), v14), await ishipcreation.ship_name(ifaction.pog_name(v7), -1))
-			isim.set_faction(v2, v7)
-			await ipilotsetup.generic_coward(v2)
-			group.add_sim(v1, v2)
-			v8 = v8 + 1
-			_pc = 3357
-			continue
-		elif _pc == 3774:
-			await iutilities.group_set_cullable(v1, 0)
-			return v1
-		elif _pc == 3804:
-			return
-		else:
-			return 0
+	v1 = group.create()
+	v5 = []
+	v6 = []
+	if PogRuntime.TRACE:
+		debug.print_string("iExodustraffic.CreateFomalhautRegugees: kludge creating only one allegiance - should be ALL - non relevant (see code)\n")
+	v5 = p_set.from_list(ifaction.all())
+	p_set.remove(v5, ifaction.find("Marauders"))
+	p_set.remove(v5, ifaction.find("Police"))
+	p_set.remove(v5, ifaction.find("Military"))
+	p_set.remove(v5, ifaction.find("Player"))
+	p_set.remove(v5, ifaction.find("MAAS Corporation"))
+	p_set.remove(v5, ifaction.find("The Third Way"))
+	p_set.remove(v5, ifaction.find("Aliens"))
+	v6 = list.from_set(v5)
+	v9 = math.random_int(9, 20)
+	v8 = 0
+	while v8 < v9:
+		v7 = ifaction.cast(list.get_nth(v6, math.random_int(0, list.item_count(v6) - 1)))
+		match math.random_int(1, 7):
+			1:
+				v14 = 6
+			2:
+				v14 = 4
+			3, 4:
+				v14 = 12
+			5:
+				v14 = 13
+			6, 7:
+				v14 = 21
+		v2 = iship.create(await ishipcreation.get_ship(ifaction.allegiance(v7), v14), await ishipcreation.ship_name(ifaction.pog_name(v7), -1))
+		isim.set_faction(v2, v7)
+		await ipilotsetup.generic_coward(v2)
+		group.add_sim(v1, v2)
+		v8 = v8 + 1
+	await iutilities.group_set_cullable(v1, 0)
+	return v1
 	return 0
 
 func disable_all_traffic_in_system(v0) -> Variant:
@@ -483,696 +393,176 @@ func local_4713(v0, v1, v2) -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var v14: Variant = 0
-	var _pc: int = 4713
-	while true:
-		if _pc == 4713:
-			v4 = await local_8094(isim.world_name(v0))
-			v9 = ifaction.find("Underworld")
-			v10 = ifaction.find("Police")
-			if v4 == -100:
-				_pc = 4820
-				continue
-			else:
-				_pc = 4854
-				continue
-		elif _pc == 4820:
-			_pc = 4846
-			continue
-		elif _pc == 4825:
+	v4 = await local_8094(isim.world_name(v0))
+	v9 = ifaction.find("Underworld")
+	v10 = ifaction.find("Police")
+	if v4 == -100:
+		if PogRuntime.TRACE:
 			debug.error("iAct3.create_retreat_at_location: Called outside Gagarin cluster")
-			_pc = 4846
-			continue
-		elif _pc == 4846:
-			return 255
-		elif _pc == 4854:
-			v12 = _pog_eq(isim.active_world(), isim.world_name(v0))
-			if ihabitat.cast(v0):
-				_pc = 4918
-				continue
-			else:
-				_pc = 4994
-				continue
-		elif _pc == 4918:
-			v11 = ihabitat.allegiance(ihabitat.cast(v0))
-			v8 = ifaction.find(await iutilities.from_allegiance_enum(v11))
-			_pc = 4994
-			continue
-		elif _pc == 4994:
-			_pc = 8002
-			continue
-		elif _pc == 4999:
+		return 255
+	v12 = _pog_eq(isim.active_world(), isim.world_name(v0))
+	if ihabitat.cast(v0):
+		v11 = ihabitat.allegiance(ihabitat.cast(v0))
+		v8 = ifaction.find(await iutilities.from_allegiance_enum(v11))
+	match v1:
+		0:
 			if v2 == 999:
-				_pc = 5013
-				continue
+				v3 = math.random_int(1, 2)
 			else:
-				_pc = 5040
-				continue
-		elif _pc == 5013:
-			v3 = math.random_int(1, 2)
-			_pc = 5104
-			continue
-		elif _pc == 5040:
-			if v2 == 5000:
-				_pc = 5054
-				continue
-			else:
-				_pc = 5081
-				continue
-		elif _pc == 5054:
-			v3 = math.random_int(1, 3)
-			_pc = 5104
-			continue
-		elif _pc == 5081:
-			v3 = math.random_int(2, 4)
-			_pc = 5104
-			continue
-		elif _pc == 5104:
+				if v2 == 5000:
+					v3 = math.random_int(1, 3)
+				else:
+					v3 = math.random_int(2, 4)
 			v5 = await ishipcreation.create_character_group(9, "GenericAggressive", v3, v8, "Random")
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				_pc = 5178
-				continue
+				await local_8691(group.leader(v5), v0)
 			else:
-				_pc = 5220
-				continue
-		elif _pc == 5178:
-			await local_8691(group.leader(v5), v0)
-			_pc = 5253
-			continue
-		elif _pc == 5220:
-			sim.place_at(group.leader(v5), 0)
-			_pc = 5253
-			continue
-		elif _pc == 5253:
+				sim.place_at(group.leader(v5), 0)
 			await iformation.goose(v5, 100.0, 1)
 			if not (v12):
-				_pc = 5289
-				continue
-			else:
-				_pc = 5313
-				continue
-		elif _pc == 5289:
-			await local_8506(v5, v0)
-			_pc = 5313
-			continue
-		elif _pc == 5313:
+				await local_8506(v5, v0)
 			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 5355:
+		1:
 			if v2 == 999:
-				_pc = 5369
-				continue
+				v3 = 1
 			else:
-				_pc = 5381
-				continue
-		elif _pc == 5369:
-			v3 = 1
-			_pc = 5403
-			continue
-		elif _pc == 5381:
-			v3 = math.random_int(1, 3)
-			_pc = 5403
-			continue
-		elif _pc == 5403:
+				v3 = math.random_int(1, 3)
 			v5 = group.create()
 			v13 = 0
-			_pc = 5429
-			continue
-		elif _pc == 5429:
-			if v13 < v3:
-				_pc = 5445
-				continue
-			else:
-				_pc = 5831
-				continue
-		elif _pc == 5445:
-			_pc = 5566
-			continue
-		elif _pc == 5450:
-			v7 = 6
-			_pc = 5667
-			continue
-		elif _pc == 5463:
-			v7 = 0
-			_pc = 5667
-			continue
-		elif _pc == 5475:
-			v7 = 4
-			_pc = 5667
-			continue
-		elif _pc == 5488:
-			v7 = 12
-			_pc = 5667
-			continue
-		elif _pc == 5501:
-			v7 = 13
-			_pc = 5667
-			continue
-		elif _pc == 5514:
-			v7 = 21
-			_pc = 5667
-			continue
-		elif _pc == 5527:
-			_pc = 5553
-			continue
-		elif _pc == 5532:
-			debug.error("iAct.create_retreat: POG's random number generator is faulty!\n")
-			_pc = 5553
-			continue
-		elif _pc == 5553:
-			v7 = 12
-			_pc = 5667
-			continue
-		elif _pc == 5566:
-			v14 = math.random_int(1, 9)
-			if 1 != v14:
-				_pc = 5590
-				continue
-			else:
-				_pc = 5450
-				continue
-		elif _pc == 5590:
-			if 2 != v14:
-				_pc = 5599
-				continue
-			else:
-				_pc = 5463
-				continue
-		elif _pc == 5599:
-			if 3 != v14:
-				_pc = 5608
-				continue
-			else:
-				_pc = 5463
-				continue
-		elif _pc == 5608:
-			if 4 != v14:
-				_pc = 5617
-				continue
-			else:
-				_pc = 5475
-				continue
-		elif _pc == 5617:
-			if 5 != v14:
-				_pc = 5626
-				continue
-			else:
-				_pc = 5488
-				continue
-		elif _pc == 5626:
-			if 6 != v14:
-				_pc = 5635
-				continue
-			else:
-				_pc = 5488
-				continue
-		elif _pc == 5635:
-			if 7 != v14:
-				_pc = 5644
-				continue
-			else:
-				_pc = 5501
-				continue
-		elif _pc == 5644:
-			if 8 != v14:
-				_pc = 5653
-				continue
-			else:
-				_pc = 5514
-				continue
-		elif _pc == 5653:
-			if 9 != v14:
-				_pc = 5662
-				continue
-			else:
-				_pc = 5514
-				continue
-		elif _pc == 5662:
-			_pc = 5527
-			continue
-		elif _pc == 5667:
-			v6 = iship.create(await ishipcreation.get_ship(v11, v7), await ishipcreation.ship_name(await iutilities.from_allegiance_enum(v11), -1))
-			await ipilotsetup.generic_coward(v6)
-			isim.set_faction(v6, v8)
-			group.add_sim(v5, v6)
-			v13 = v13 + 1
-			_pc = 5429
-			continue
-		elif _pc == 5831:
+			while v13 < v3:
+				match math.random_int(1, 9):
+					1:
+						v7 = 6
+					2, 3:
+						v7 = 0
+					4:
+						v7 = 4
+					5, 6:
+						v7 = 12
+					7:
+						v7 = 13
+					8, 9:
+						v7 = 21
+					_:
+						if PogRuntime.TRACE:
+							debug.error("iAct.create_retreat: POG's random number generator is faulty!\n")
+						v7 = 12
+				v6 = iship.create(await ishipcreation.get_ship(v11, v7), await ishipcreation.ship_name(await iutilities.from_allegiance_enum(v11), -1))
+				await ipilotsetup.generic_coward(v6)
+				isim.set_faction(v6, v8)
+				group.add_sim(v5, v6)
+				v13 = v13 + 1
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				_pc = 5861
-				continue
+				await local_8691(group.leader(v5), v0)
 			else:
-				_pc = 5903
-				continue
-		elif _pc == 5861:
-			await local_8691(group.leader(v5), v0)
-			_pc = 5936
-			continue
-		elif _pc == 5903:
-			sim.place_at(group.leader(v5), 0)
-			_pc = 5936
-			continue
-		elif _pc == 5936:
+				sim.place_at(group.leader(v5), 0)
 			await iformation.random_sphere(v5, 1000.0, 1)
 			if not (v12):
-				_pc = 5972
-				continue
-			else:
-				_pc = 5996
-				continue
-		elif _pc == 5972:
-			await local_8506(v5, v0)
-			_pc = 5996
-			continue
-		elif _pc == 5996:
+				await local_8506(v5, v0)
 			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 6038:
+		2:
 			if v2 == 999:
-				_pc = 6052
-				continue
+				v3 = math.random_int(1, 2)
 			else:
-				_pc = 6079
-				continue
-		elif _pc == 6052:
-			v3 = math.random_int(1, 2)
-			_pc = 6101
-			continue
-		elif _pc == 6079:
-			v3 = math.random_int(1, 3)
-			_pc = 6101
-			continue
-		elif _pc == 6101:
+				v3 = math.random_int(1, 3)
 			v5 = await ishipcreation.create_character_group(17, "Generic", v3, v8, "Random")
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				_pc = 6175
-				continue
+				await local_8691(group.leader(v5), v0)
 			else:
-				_pc = 6217
-				continue
-		elif _pc == 6175:
-			await local_8691(group.leader(v5), v0)
-			_pc = 6250
-			continue
-		elif _pc == 6217:
-			sim.place_at(group.leader(v5), 0)
-			_pc = 6250
-			continue
-		elif _pc == 6250:
+				sim.place_at(group.leader(v5), 0)
 			await iformation.goose(v5, 120.0, 1)
 			if not (v12):
-				_pc = 6286
-				continue
-			else:
-				_pc = 6310
-				continue
-		elif _pc == 6286:
-			await local_8506(v5, v0)
-			_pc = 6310
-			continue
-		elif _pc == 6310:
+				await local_8506(v5, v0)
 			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 6352:
+		3:
 			v3 = math.random_int(1, 2) + math.random_int(1, 2)
 			v5 = await ishipcreation.create_character_group(9, "Generic", v3, v9, "Random")
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				_pc = 6465
-				continue
+				await local_8691(group.leader(v5), v0)
 			else:
-				_pc = 6507
-				continue
-		elif _pc == 6465:
-			await local_8691(group.leader(v5), v0)
-			_pc = 6540
-			continue
-		elif _pc == 6507:
-			sim.place_at(group.leader(v5), 0)
-			_pc = 6540
-			continue
-		elif _pc == 6540:
+				sim.place_at(group.leader(v5), 0)
 			await iformation.line_abreast(v5, 100.0, 1)
 			if not (v12):
-				_pc = 6576
-				continue
-			else:
-				_pc = 6600
-				continue
-		elif _pc == 6576:
-			await local_8506(v5, v0)
-			_pc = 6600
-			continue
-		elif _pc == 6600:
+				await local_8506(v5, v0)
 			_pog_detach(_pog_spawn(pillager_retreat_orders.bind(v5, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 6642:
+		4:
 			v3 = math.random_int(2, 4)
 			v5 = await ishipcreation.create_character_group(9, "Generic", v3, v10, "Random")
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				_pc = 6739
-				continue
+				await local_8691(group.leader(v5), v0)
 			else:
-				_pc = 6781
-				continue
-		elif _pc == 6739:
-			await local_8691(group.leader(v5), v0)
-			_pc = 6814
-			continue
-		elif _pc == 6781:
-			sim.place_at(group.leader(v5), 0)
-			_pc = 6814
-			continue
-		elif _pc == 6814:
+				sim.place_at(group.leader(v5), 0)
 			await iformation.goose(v5, 150.0, 1)
 			if not (v12):
-				_pc = 6850
-				continue
-			else:
-				_pc = 6874
-				continue
-		elif _pc == 6850:
-			await local_8506(v5, v0)
-			_pc = 6874
-			continue
-		elif _pc == 6874:
+				await local_8506(v5, v0)
 			_pog_detach(_pog_spawn(police_retreat_orders.bind(v5, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 6916:
+		5:
 			if v2 == 999:
-				_pc = 6930
-				continue
+				v3 = 1
 			else:
-				_pc = 6942
-				continue
-		elif _pc == 6930:
-			v3 = 1
-			_pc = 6964
-			continue
-		elif _pc == 6942:
-			v3 = math.random_int(1, 2)
-			_pc = 6964
-			continue
-		elif _pc == 6964:
+				v3 = math.random_int(1, 2)
 			v5 = await ishipcreation.create_character_group(20, "GenericSupply", v3, v8, "Random")
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				_pc = 7038
-				continue
+				await local_8691(group.leader(v5), v0)
 			else:
-				_pc = 7080
-				continue
-		elif _pc == 7038:
-			await local_8691(group.leader(v5), v0)
-			_pc = 7113
-			continue
-		elif _pc == 7080:
-			sim.place_at(group.leader(v5), 0)
-			_pc = 7113
-			continue
-		elif _pc == 7113:
+				sim.place_at(group.leader(v5), 0)
 			await iformation.random_sphere(v5, 1000.0, 1)
 			if not (v12):
-				_pc = 7149
-				continue
-			else:
-				_pc = 7173
-				continue
-		elif _pc == 7149:
-			await local_8506(v5, v0)
-			_pc = 7173
-			continue
-		elif _pc == 7173:
+				await local_8506(v5, v0)
 			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 7215:
+		6:
 			if v2 == 999:
-				_pc = 7229
-				continue
+				v3 = 1
 			else:
-				_pc = 7241
-				continue
-		elif _pc == 7229:
-			v3 = 1
-			_pc = 7305
-			continue
-		elif _pc == 7241:
-			if v2 == 5000:
-				_pc = 7255
-				continue
-			else:
-				_pc = 7282
-				continue
-		elif _pc == 7255:
-			v3 = math.random_int(1, 2)
-			_pc = 7305
-			continue
-		elif _pc == 7282:
-			v3 = math.random_int(2, 4)
-			_pc = 7305
-			continue
-		elif _pc == 7305:
+				if v2 == 5000:
+					v3 = math.random_int(1, 2)
+				else:
+					v3 = math.random_int(2, 4)
 			v5 = await ishipcreation.create_character_group(2, "GenericTrade", v3, v8, "Random")
 			await iutilities.group_set_cullable(v5, 0)
 			if v12:
-				_pc = 7379
-				continue
+				await local_8691(group.leader(v5), v0)
 			else:
-				_pc = 7421
-				continue
-		elif _pc == 7379:
-			await local_8691(group.leader(v5), v0)
-			_pc = 7454
-			continue
-		elif _pc == 7421:
-			sim.place_at(group.leader(v5), 0)
-			_pc = 7454
-			continue
-		elif _pc == 7454:
+				sim.place_at(group.leader(v5), 0)
 			await iformation.random_sphere(v5, 1750.0, 1)
 			if not (v12):
-				_pc = 7490
-				continue
-			else:
-				_pc = 7514
-				continue
-		elif _pc == 7490:
-			await local_8506(v5, v0)
-			_pc = 7514
-			continue
-		elif _pc == 7514:
+				await local_8506(v5, v0)
 			_pog_detach(_pog_spawn(local_9230.bind(v5, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 7556:
+		7:
 			if not (v12):
-				_pc = 7567
-				continue
-			else:
-				_pc = 7573
-				continue
-		elif _pc == 7567:
-			return 0
-		elif _pc == 7573:
-			_pc = 7694
-			continue
-		elif _pc == 7578:
-			v7 = 6
-			_pc = 7795
-			continue
-		elif _pc == 7591:
-			v7 = 0
-			_pc = 7795
-			continue
-		elif _pc == 7603:
-			v7 = 4
-			_pc = 7795
-			continue
-		elif _pc == 7616:
-			v7 = 12
-			_pc = 7795
-			continue
-		elif _pc == 7629:
-			v7 = 13
-			_pc = 7795
-			continue
-		elif _pc == 7642:
-			v7 = 21
-			_pc = 7795
-			continue
-		elif _pc == 7655:
-			_pc = 7681
-			continue
-		elif _pc == 7660:
-			debug.error("iAct.create_retreat: POG's random number generator is faulty!\n")
-			_pc = 7681
-			continue
-		elif _pc == 7681:
-			v7 = 12
-			_pc = 7795
-			continue
-		elif _pc == 7694:
-			v14 = math.random_int(1, 9)
-			if 1 != v14:
-				_pc = 7718
-				continue
-			else:
-				_pc = 7578
-				continue
-		elif _pc == 7718:
-			if 2 != v14:
-				_pc = 7727
-				continue
-			else:
-				_pc = 7591
-				continue
-		elif _pc == 7727:
-			if 3 != v14:
-				_pc = 7736
-				continue
-			else:
-				_pc = 7591
-				continue
-		elif _pc == 7736:
-			if 4 != v14:
-				_pc = 7745
-				continue
-			else:
-				_pc = 7603
-				continue
-		elif _pc == 7745:
-			if 5 != v14:
-				_pc = 7754
-				continue
-			else:
-				_pc = 7616
-				continue
-		elif _pc == 7754:
-			if 6 != v14:
-				_pc = 7763
-				continue
-			else:
-				_pc = 7616
-				continue
-		elif _pc == 7763:
-			if 7 != v14:
-				_pc = 7772
-				continue
-			else:
-				_pc = 7629
-				continue
-		elif _pc == 7772:
-			if 8 != v14:
-				_pc = 7781
-				continue
-			else:
-				_pc = 7642
-				continue
-		elif _pc == 7781:
-			if 9 != v14:
-				_pc = 7790
-				continue
-			else:
-				_pc = 7642
-				continue
-		elif _pc == 7790:
-			_pc = 7655
-			continue
-		elif _pc == 7795:
+				return 0
+			match math.random_int(1, 9):
+				1:
+					v7 = 6
+				2, 3:
+					v7 = 0
+				4:
+					v7 = 4
+				5, 6:
+					v7 = 12
+				7:
+					v7 = 13
+				8, 9:
+					v7 = 21
+				_:
+					if PogRuntime.TRACE:
+						debug.error("iAct.create_retreat: POG's random number generator is faulty!\n")
+					v7 = 12
 			v6 = iship.create(await ishipcreation.get_ship(v11, v7), await ishipcreation.ship_name(await iutilities.from_allegiance_enum(v11), -1))
 			isim.set_faction(v6, v8)
 			await local_8691(v6, v0)
 			_pog_detach(_pog_spawn(local_11658.bind(v6, v0)))
-			_pc = 8082
-			continue
-		elif _pc == 7964:
-			_pc = 7990
-			continue
-		elif _pc == 7969:
-			debug.error("iAct3.create_retreat_at_location: Bad retreat type passed!")
-			_pc = 7990
-			continue
-		elif _pc == 7990:
+		_:
+			if PogRuntime.TRACE:
+				debug.error("iAct3.create_retreat_at_location: Bad retreat type passed!")
 			v3 = 1
-			_pc = 8082
-			continue
-		elif _pc == 8002:
-			v14 = v1
-			if not _pog_is_null(v14):
-				_pc = 8015
-				continue
-			else:
-				_pc = 4999
-				continue
-		elif _pc == 8015:
-			if 1 != v14:
-				_pc = 8023
-				continue
-			else:
-				_pc = 5355
-				continue
-		elif _pc == 8023:
-			if 2 != v14:
-				_pc = 8032
-				continue
-			else:
-				_pc = 6038
-				continue
-		elif _pc == 8032:
-			if 3 != v14:
-				_pc = 8041
-				continue
-			else:
-				_pc = 6352
-				continue
-		elif _pc == 8041:
-			if 4 != v14:
-				_pc = 8050
-				continue
-			else:
-				_pc = 6642
-				continue
-		elif _pc == 8050:
-			if 5 != v14:
-				_pc = 8059
-				continue
-			else:
-				_pc = 6916
-				continue
-		elif _pc == 8059:
-			if 6 != v14:
-				_pc = 8068
-				continue
-			else:
-				_pc = 7215
-				continue
-		elif _pc == 8068:
-			if 7 != v14:
-				_pc = 8077
-				continue
-			else:
-				_pc = 7556
-				continue
-		elif _pc == 8077:
-			_pc = 7964
-			continue
-		elif _pc == 8082:
-			return v3
-		elif _pc == 8092:
-			return
-		else:
-			return 0
+	return v3
 	return 0
 
 func local_8094(v0) -> Variant:
@@ -1607,6 +997,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 							v4 = v4 + 1
 						iai.give_attack_order(v0, v10)
 						state.set_progress(v2, 2)
+				continue
 			1:
 				if _pog_is_null(v9):
 					v8 = list.from_set(isim.non_planetary_in_radius(isim.cast(group.leader(v0)), 49999998976.0))
@@ -1623,6 +1014,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 				if sim.distance_between(group.leader(v0), v9) < 50000.0:
 					v9 = 0
 					state.set_progress(v2, 0)
+				continue
 			2:
 				if sim.is_dead(v10):
 					state.set_progress(v2, 0)
@@ -1633,6 +1025,7 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 							iai.give_attack_order(v0, iship.last_attacker(iship.cast(group.nth_sim(v0, v4))))
 							state.set_progress(v2, 3)
 						v4 = v4 + 1
+				continue
 			3:
 				if sim.is_dead(v11):
 					state.set_progress(v2, 0)
@@ -1643,9 +1036,11 @@ func pillager_retreat_orders(v0, v1) -> Variant:
 							iai.give_flee_order(v0, v11)
 							state.set_progress(v2, 4)
 						v4 = v4 + 1
+				continue
 			4:
 				if sim.distance_between(group.leader(v0), v11) > 500000.0:
 					state.set_progress(v2, 0)
+				continue
 			5:
 				group.destroy(v0, 1)
 				global.set_int("g_total_refugees_running", global.pog_int("g_total_refugees_running") - v5)
@@ -1797,485 +1192,118 @@ func local_20008(v0, v1) -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var v6: Variant = 0
-	var _pc: int = 20008
-	while true:
-		if _pc == 20008:
-			v2 = iship.find_player_ship()
-			v3 = iship.cast(group.leader(v0))
-			v4 = 0
-			await iconversation.begin()
-			await iconversation.add_response("a3_master_text_cal_police_1_im_cal", "a3_master_dialogue_cal_police_1_im_cal")
-			await iconversation.add_response("a3_master_text_cal_police_1_im_moonspike", "a3_master_dialogue_cal_police_1_im_moonspike")
-			await iconversation.add_response("a3_master_text_cal_police_1_just_passing_through", "a3_master_dialogue_cal_police_1_just_passing_through")
-			if global.pog_bool("g_evacuate_through_accelerator"):
-				_pc = 20196
-				continue
-			else:
-				_pc = 20223
-				continue
-		elif _pc == 20196:
-			await iconversation.add_response("a3_master_text_cal_police_1_errand_for_hoffer", "a3_master_dialogue_cal_police_1_errand_for_hoffer")
-			_pc = 20223
-			continue
-		elif _pc == 20223:
-			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_state_your_name_and_business")
-			_pc = 22489
-			continue
-		elif _pc == 20265:
-			_pc = 20834
-			continue
-		elif _pc == 20270:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_sorry_sir")
-			state.set_progress(v1, 6)
-			_pc = 20885
-			continue
-		elif _pc == 20328:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_sure_i_have_pirate")
-			iai.give_attack_order(v0, v2)
-			state.set_progress(v1, 8)
-			_pc = 20885
-			continue
-		elif _pc == 20410:
-			await iconversation.add_response("a3_master_text_cal_police_1_yes", "a3_master_dialogue_cal_police_1_yes")
-			await iconversation.add_response("a3_master_text_cal_police_1_doesnt_matter_im_harmless", "a3_master_dialogue_cal_police_1_doesnt_matter_im_harmless")
-			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_no_i_havent")
-			_pc = 20802
-			continue
-		elif _pc == 20506:
-			await iconversation.add_response("a3_master_text_cal_police_1_ok", "a3_master_dialogue_cal_police_1_ok")
-			await iconversation.add_response("a3_master_text_cal_police_1_screw_you", "a3_master_dialogue_cal_police_1_screw_you")
-			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_dont_take_that_tone")
-			_pc = 20733
-			continue
-		elif _pc == 20602:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_smart_choice")
-			v4 = 1
-			state.set_progress(v1, 10)
-			_pc = 20755
-			continue
-		elif _pc == 20667:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_as_you_please_punk")
-			iai.give_attack_order(v0, v2)
-			_pc = 20755
-			continue
-		elif _pc == 20728:
-			_pc = 20755
-			continue
-		elif _pc == 20733:
-			v6 = v5
-			if 1 != v6:
-				_pc = 20746
-				continue
-			else:
-				_pc = 20602
-				continue
-		elif _pc == 20746:
-			if 2 != v6:
-				_pc = 20755
-				continue
-			else:
-				_pc = 20667
-				continue
-		elif _pc == 20755:
-			_pc = 20824
-			continue
-		elif _pc == 20760:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_hmm_alright")
-			_pc = 20824
-			continue
-		elif _pc == 20797:
-			_pc = 20824
-			continue
-		elif _pc == 20802:
-			v6 = v5
-			if 1 != v6:
-				_pc = 20815
-				continue
-			else:
-				_pc = 20506
-				continue
-		elif _pc == 20815:
-			if 2 != v6:
-				_pc = 20824
-				continue
-			else:
-				_pc = 20760
-				continue
-		elif _pc == 20824:
-			_pc = 20885
-			continue
-		elif _pc == 20829:
-			_pc = 20885
-			continue
-		elif _pc == 20834:
-			v6 = math.random_int(1, 4)
-			if 1 != v6:
-				_pc = 20858
-				continue
-			else:
-				_pc = 20270
-				continue
-		elif _pc == 20858:
-			if 2 != v6:
-				_pc = 20867
-				continue
-			else:
-				_pc = 20328
-				continue
-		elif _pc == 20867:
-			if 3 != v6:
-				_pc = 20876
-				continue
-			else:
-				_pc = 20410
-				continue
-		elif _pc == 20876:
-			if 4 != v6:
-				_pc = 20885
-				continue
-			else:
-				_pc = 20410
-				continue
-		elif _pc == 20885:
-			_pc = 22529
-			continue
-		elif _pc == 20890:
-			_pc = 21853
-			continue
-		elif _pc == 20895:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_wow_my_sons_a_fan")
-			state.set_progress(v1, 6)
-			_pc = 21904
-			continue
-		elif _pc == 20953:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_my_wifes_a_fan_but")
-			state.set_progress(v1, 6)
-			_pc = 21904
-			continue
-		elif _pc == 21011:
-			await iconversation.add_response("a3_master_text_cal_police_1_its_cal", "a3_master_dialogue_cal_police_1_its_cal")
-			await iconversation.add_response("a3_master_text_cal_police_1_im_miguel", "a3_master_dialogue_cal_police_1_im_miguel")
-			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_nice_try_punk")
-			_pc = 21821
-			continue
-		elif _pc == 21107:
-			_pc = 21711
-			continue
-		elif _pc == 21112:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_the_cal_johnston")
-			state.set_progress(v1, 6)
-			_pc = 21753
-			continue
-		elif _pc == 21170:
-			await iconversation.add_response("a3_master_text_cal_police_1_i_am_cal", "a3_master_dialogue_cal_police_1_i_am_cal")
-			await iconversation.add_response("a3_master_text_cal_police_1_im_better_than_you_too", "a3_master_dialogue_cal_police_1_im_better_than_you_too")
-			await iconversation.add_response("a3_master_text_cal_police_1_im_miguel", "a3_master_dialogue_cal_police_1_im_miguel")
-			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_cal_johnston_never")
-			_pc = 21612
-			continue
-		elif _pc == 21293:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_gave_you_a_chance")
-			iai.give_attack_order(v0, v2)
-			state.set_progress(v1, 8)
-			_pc = 21643
-			continue
-		elif _pc == 21375:
-			if math.random(0.0, 1.0) < 0.4000000059604645:
-				_pc = 21409
-				continue
-			else:
-				_pc = 21467
-				continue
-		elif _pc == 21409:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_you_really_are_cal")
-			state.set_progress(v1, 10)
-			_pc = 21544
-			continue
-		elif _pc == 21467:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_really_lets_test_that")
-			iai.give_attack_order(v0, v2)
-			state.set_progress(v1, 8)
-			_pc = 21544
-			continue
-		elif _pc == 21544:
-			_pc = 21643
-			continue
-		elif _pc == 21549:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
-			state.set_progress(v1, 6)
-			_pc = 21643
-			continue
-		elif _pc == 21607:
-			_pc = 21643
-			continue
-		elif _pc == 21612:
-			v6 = v5
-			if 1 != v6:
-				_pc = 21625
-				continue
-			else:
-				_pc = 21293
-				continue
-		elif _pc == 21625:
-			if 2 != v6:
-				_pc = 21634
-				continue
-			else:
-				_pc = 21375
-				continue
-		elif _pc == 21634:
-			if 3 != v6:
-				_pc = 21643
-				continue
-			else:
-				_pc = 21549
-				continue
-		elif _pc == 21643:
-			_pc = 21753
-			continue
-		elif _pc == 21648:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
-			state.set_progress(v1, 6)
-			_pc = 21753
-			continue
-		elif _pc == 21706:
-			_pc = 21753
-			continue
-		elif _pc == 21711:
-			v6 = math.random_int(1, 3)
-			if 1 != v6:
-				_pc = 21735
-				continue
-			else:
-				_pc = 21112
-				continue
-		elif _pc == 21735:
-			if 2 != v6:
-				_pc = 21744
-				continue
-			else:
-				_pc = 21170
-				continue
-		elif _pc == 21744:
-			if 3 != v6:
-				_pc = 21753
-				continue
-			else:
-				_pc = 21648
-				continue
-		elif _pc == 21753:
-			_pc = 21843
-			continue
-		elif _pc == 21758:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
-			state.set_progress(v1, 6)
-			_pc = 21843
-			continue
-		elif _pc == 21816:
-			_pc = 21843
-			continue
-		elif _pc == 21821:
-			v6 = v5
-			if 1 != v6:
-				_pc = 21834
-				continue
-			else:
-				_pc = 21107
-				continue
-		elif _pc == 21834:
-			if 2 != v6:
-				_pc = 21843
-				continue
-			else:
-				_pc = 21758
-				continue
-		elif _pc == 21843:
-			_pc = 21904
-			continue
-		elif _pc == 21848:
-			_pc = 21904
-			continue
-		elif _pc == 21853:
-			v6 = math.random_int(1, 4)
-			if 1 != v6:
-				_pc = 21877
-				continue
-			else:
-				_pc = 20895
-				continue
-		elif _pc == 21877:
-			if 2 != v6:
-				_pc = 21886
-				continue
-			else:
-				_pc = 20953
-				continue
-		elif _pc == 21886:
-			if 3 != v6:
-				_pc = 21895
-				continue
-			else:
-				_pc = 21011
-				continue
-		elif _pc == 21895:
-			if 4 != v6:
-				_pc = 21904
-				continue
-			else:
-				_pc = 21011
-				continue
-		elif _pc == 21904:
-			_pc = 22529
-			continue
-		elif _pc == 21909:
+	v2 = iship.find_player_ship()
+	v3 = iship.cast(group.leader(v0))
+	v4 = 0
+	await iconversation.begin()
+	await iconversation.add_response("a3_master_text_cal_police_1_im_cal", "a3_master_dialogue_cal_police_1_im_cal")
+	await iconversation.add_response("a3_master_text_cal_police_1_im_moonspike", "a3_master_dialogue_cal_police_1_im_moonspike")
+	await iconversation.add_response("a3_master_text_cal_police_1_just_passing_through", "a3_master_dialogue_cal_police_1_just_passing_through")
+	if global.pog_bool("g_evacuate_through_accelerator"):
+		await iconversation.add_response("a3_master_text_cal_police_1_errand_for_hoffer", "a3_master_dialogue_cal_police_1_errand_for_hoffer")
+	v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_state_your_name_and_business")
+	match v5:
+		1:
+			match math.random_int(1, 4):
+				1:
+					await iconversation.say(v3, "", "a3_master_dialogue_police_1_sorry_sir")
+					state.set_progress(v1, 6)
+				2:
+					await iconversation.say(v3, "", "a3_master_dialogue_police_1_sure_i_have_pirate")
+					iai.give_attack_order(v0, v2)
+					state.set_progress(v1, 8)
+				3, 4:
+					await iconversation.add_response("a3_master_text_cal_police_1_yes", "a3_master_dialogue_cal_police_1_yes")
+					await iconversation.add_response("a3_master_text_cal_police_1_doesnt_matter_im_harmless", "a3_master_dialogue_cal_police_1_doesnt_matter_im_harmless")
+					v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_no_i_havent")
+					match v5:
+						1:
+							await iconversation.add_response("a3_master_text_cal_police_1_ok", "a3_master_dialogue_cal_police_1_ok")
+							await iconversation.add_response("a3_master_text_cal_police_1_screw_you", "a3_master_dialogue_cal_police_1_screw_you")
+							v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_dont_take_that_tone")
+							match v5:
+								1:
+									await iconversation.say(v3, "", "a3_master_dialogue_police_1_smart_choice")
+									v4 = 1
+									state.set_progress(v1, 10)
+								2:
+									await iconversation.say(v3, "", "a3_master_dialogue_police_1_as_you_please_punk")
+									iai.give_attack_order(v0, v2)
+						2:
+							await iconversation.say(v3, "", "a3_master_dialogue_police_1_hmm_alright")
+		2:
+			match math.random_int(1, 4):
+				1:
+					await iconversation.say(v3, "", "a3_master_dialogue_police_1_wow_my_sons_a_fan")
+					state.set_progress(v1, 6)
+				2:
+					await iconversation.say(v3, "", "a3_master_dialogue_police_1_my_wifes_a_fan_but")
+					state.set_progress(v1, 6)
+				3, 4:
+					await iconversation.add_response("a3_master_text_cal_police_1_its_cal", "a3_master_dialogue_cal_police_1_its_cal")
+					await iconversation.add_response("a3_master_text_cal_police_1_im_miguel", "a3_master_dialogue_cal_police_1_im_miguel")
+					v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_nice_try_punk")
+					match v5:
+						1:
+							match math.random_int(1, 3):
+								1:
+									await iconversation.say(v3, "", "a3_master_dialogue_police_1_the_cal_johnston")
+									state.set_progress(v1, 6)
+								2:
+									await iconversation.add_response("a3_master_text_cal_police_1_i_am_cal", "a3_master_dialogue_cal_police_1_i_am_cal")
+									await iconversation.add_response("a3_master_text_cal_police_1_im_better_than_you_too", "a3_master_dialogue_cal_police_1_im_better_than_you_too")
+									await iconversation.add_response("a3_master_text_cal_police_1_im_miguel", "a3_master_dialogue_cal_police_1_im_miguel")
+									v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_cal_johnston_never")
+									match v5:
+										1:
+											await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_gave_you_a_chance")
+											iai.give_attack_order(v0, v2)
+											state.set_progress(v1, 8)
+										2:
+											if math.random(0.0, 1.0) < 0.4000000059604645:
+												await iconversation.say(v3, "", "a3_master_dialogue_police_1_you_really_are_cal")
+												state.set_progress(v1, 10)
+											else:
+												await iconversation.say(v3, "", "a3_master_dialogue_police_1_really_lets_test_that")
+												iai.give_attack_order(v0, v2)
+												state.set_progress(v1, 8)
+										3:
+											await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
+											state.set_progress(v1, 6)
+								3:
+									await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
+									state.set_progress(v1, 6)
+						2:
+							await iconversation.say(v3, "", "a3_master_dialogue_police_1_at_last_a_little_sense")
+							state.set_progress(v1, 6)
+		3:
 			await iconversation.add_response("a3_master_text_cal_police_1_maybe_but_its_no_crime", "a3_master_dialogue_cal_police_1_maybe_but_its_no_crime")
 			await iconversation.add_response("a3_master_text_cal_police_1_no_ive_just_got_business", "a3_master_dialogue_cal_police_1_no_ive_just_got_business")
 			v5 = await iconversation.ask(v3, "", "a3_master_dialogue_police_1_just_passing_through_in_this")
-			_pc = 22328
-			continue
-		elif _pc == 22005:
+			match v5:
+				1:
+					if math.random(0.0, 1.0) < 0.5:
+						await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
+					else:
+						await iconversation.say(v3, "", "a3_master_dialogue_police_1_true_enough")
+					state.set_progress(v1, 6)
+				2:
+					match math.random_int(1, 3):
+						1:
+							await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
+						2:
+							await iconversation.say(v3, "", "a3_master_dialogue_police_1_as_i_said_crazy")
+						3:
+							await iconversation.say(v3, "", "a3_master_dialogue_police_1_i_wish_i_could")
+					state.set_progress(v1, 6)
+		4:
 			if math.random(0.0, 1.0) < 0.5:
-				_pc = 22039
-				continue
+				await iconversation.say(v3, "", "a3_master_dialogue_police_1_good_luck_mate")
 			else:
-				_pc = 22076
-				continue
-		elif _pc == 22039:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
-			_pc = 22108
-			continue
-		elif _pc == 22076:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_true_enough")
-			_pc = 22108
-			continue
-		elif _pc == 22108:
+				await iconversation.say(v3, "", "a3_master_dialogue_police_1_you_are_welcome_here")
 			state.set_progress(v1, 6)
-			_pc = 22350
-			continue
-		elif _pc == 22134:
-			_pc = 22255
-			continue
-		elif _pc == 22139:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_well_i_suppose_youre_not_causing_any_trouble")
-			_pc = 22297
-			continue
-		elif _pc == 22176:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_as_i_said_crazy")
-			_pc = 22297
-			continue
-		elif _pc == 22213:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_i_wish_i_could")
-			_pc = 22297
-			continue
-		elif _pc == 22250:
-			_pc = 22297
-			continue
-		elif _pc == 22255:
-			v6 = math.random_int(1, 3)
-			if 1 != v6:
-				_pc = 22279
-				continue
-			else:
-				_pc = 22139
-				continue
-		elif _pc == 22279:
-			if 2 != v6:
-				_pc = 22288
-				continue
-			else:
-				_pc = 22176
-				continue
-		elif _pc == 22288:
-			if 3 != v6:
-				_pc = 22297
-				continue
-			else:
-				_pc = 22213
-				continue
-		elif _pc == 22297:
-			state.set_progress(v1, 6)
-			_pc = 22350
-			continue
-		elif _pc == 22323:
-			_pc = 22350
-			continue
-		elif _pc == 22328:
-			v6 = v5
-			if 1 != v6:
-				_pc = 22341
-				continue
-			else:
-				_pc = 22005
-				continue
-		elif _pc == 22341:
-			if 2 != v6:
-				_pc = 22350
-				continue
-			else:
-				_pc = 22134
-				continue
-		elif _pc == 22350:
-			_pc = 22529
-			continue
-		elif _pc == 22355:
-			if math.random(0.0, 1.0) < 0.5:
-				_pc = 22389
-				continue
-			else:
-				_pc = 22426
-				continue
-		elif _pc == 22389:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_good_luck_mate")
-			_pc = 22458
-			continue
-		elif _pc == 22426:
-			await iconversation.say(v3, "", "a3_master_dialogue_police_1_you_are_welcome_here")
-			_pc = 22458
-			continue
-		elif _pc == 22458:
-			state.set_progress(v1, 6)
-			_pc = 22529
-			continue
-		elif _pc == 22484:
-			_pc = 22529
-			continue
-		elif _pc == 22489:
-			v6 = v5
-			if 1 != v6:
-				_pc = 22502
-				continue
-			else:
-				_pc = 20265
-				continue
-		elif _pc == 22502:
-			if 2 != v6:
-				_pc = 22511
-				continue
-			else:
-				_pc = 20890
-				continue
-		elif _pc == 22511:
-			if 3 != v6:
-				_pc = 22520
-				continue
-			else:
-				_pc = 21909
-				continue
-		elif _pc == 22520:
-			if 4 != v6:
-				_pc = 22529
-				continue
-			else:
-				_pc = 22355
-				continue
-		elif _pc == 22529:
-			await iconversation.end()
-			return v4
-		elif _pc == 22553:
-			return
-		else:
-			return 0
+	await iconversation.end()
+	return v4
 	return 0
 
 func local_22555(v0) -> Variant:

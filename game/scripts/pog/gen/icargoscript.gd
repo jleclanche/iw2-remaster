@@ -91,46 +91,27 @@ func local_865() -> Variant:
 			return 412
 		3:
 			return await needed_type()
-	return 413
+		_:
+			return 413
+	return 0
 	return 0
 
 func local_1030() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 445
-	if 1 == math.random_int(0, 25):
-		return 446
-	if 2 == math.random_int(0, 25):
-		return 446
-	if 3 == math.random_int(0, 25):
-		return 446
-	if 4 == math.random_int(0, 25):
-		return 447
-	if 5 == math.random_int(0, 25):
-		return 447
-	if 6 == math.random_int(0, 25):
-		return 447
-	if 7 == math.random_int(0, 25):
-		return 448
-	if 8 == math.random_int(0, 25):
-		return 415
-	if 9 == math.random_int(0, 25):
-		return 415
-	if 10 == math.random_int(0, 25):
-		return 415
-	if 11 == math.random_int(0, 25):
-		return 414
-	if 12 == math.random_int(0, 25):
-		return 414
-	if 13 == math.random_int(0, 25):
-		return 414
-	if 14 == math.random_int(0, 25):
-		return 414
-	if 15 == math.random_int(0, 25):
-		return 414
-	if 16 == math.random_int(0, 25):
-		return 414
+	match math.random_int(0, 25):
+		0:
+			return 445
+		1, 2, 3:
+			return 446
+		4, 5, 6:
+			return 447
+		7:
+			return 448
+		8, 9, 10:
+			return 415
+		11, 12, 13, 14, 15, 16:
+			return 414
 	return 414
 	return 0
 
@@ -154,16 +135,15 @@ func local_1310() -> Variant:
 func local_1469() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 4)):
-		return 82
-	if 1 == math.random_int(0, 4):
-		return 82
-	if 2 == math.random_int(0, 4):
-		return 89
-	if 3 == math.random_int(0, 4):
-		return 95
-	if 4 == math.random_int(0, 4):
-		return 87
+	match math.random_int(0, 4):
+		0, 1:
+			return 82
+		2:
+			return 89
+		3:
+			return 95
+		4:
+			return 87
 	return 0
 	return 0
 
@@ -177,75 +157,49 @@ func local_1616() -> Variant:
 			return 398
 		2:
 			return 399
-	return 403
+		_:
+			return 403
+	return 0
 	return 0
 
 func local_1754() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 35)):
-		return 400
-	if 1 == math.random_int(0, 35):
-		return 398
-	if 2 == math.random_int(0, 35):
-		return 399
-	if 3 == math.random_int(0, 35):
-		return 403
-	if 4 == math.random_int(0, 35):
-		return 403
-	if 5 == math.random_int(0, 35):
-		return 403
-	if 6 == math.random_int(0, 35):
-		return 403
-	if 7 == math.random_int(0, 35):
-		return 403
-	if 8 == math.random_int(0, 35):
-		return 402
-	if 9 == math.random_int(0, 35):
-		return 402
-	if 10 == math.random_int(0, 35):
-		return 402
-	if 11 == math.random_int(0, 35):
-		return 402
-	if 12 == math.random_int(0, 35):
-		return 405
-	if 13 == math.random_int(0, 35):
-		return 405
-	if 14 == math.random_int(0, 35):
-		return 405
-	if 15 == math.random_int(0, 35):
-		return 405
-	if 16 == math.random_int(0, 35):
-		return 404
-	if 17 == math.random_int(0, 35):
-		return 404
-	if 18 == math.random_int(0, 35):
-		return 404
-	if 19 == math.random_int(0, 35):
-		return 404
-	return 444
+	match math.random_int(0, 35):
+		0:
+			return 400
+		1:
+			return 398
+		2:
+			return 399
+		3, 4, 5, 6, 7:
+			return 403
+		8, 9, 10, 11:
+			return 402
+		12, 13, 14, 15:
+			return 405
+		16, 17, 18, 19:
+			return 404
+		_:
+			return 444
+	return 0
 	return 0
 
 func local_2077() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 400
-	if 1 == math.random_int(0, 25):
-		return 398
-	if 2 == math.random_int(0, 25):
-		return 399
-	if 3 == math.random_int(0, 25):
-		return 403
-	if 4 == math.random_int(0, 25):
-		return 403
-	if 5 == math.random_int(0, 25):
-		return 403
-	if 6 == math.random_int(0, 25):
-		return 403
-	if 7 == math.random_int(0, 25):
-		return 403
-	return 443
+	match math.random_int(0, 25):
+		0:
+			return 400
+		1:
+			return 398
+		2:
+			return 399
+		3, 4, 5, 6, 7:
+			return 403
+		_:
+			return 443
+	return 0
 	return 0
 
 func local_2268() -> Variant:
@@ -258,61 +212,37 @@ func local_2268() -> Variant:
 			return 398
 		2:
 			return 399
-	return 406
+		_:
+			return 406
+	return 0
 	return 0
 
 func local_2406() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 446
-	if 1 == math.random_int(0, 25):
-		return 446
-	if 2 == math.random_int(0, 25):
-		return 407
-	if 3 == math.random_int(0, 25):
-		return 407
-	if 4 == math.random_int(0, 25):
-		return 407
-	if 5 == math.random_int(0, 25):
-		return 407
-	if 6 == math.random_int(0, 25):
-		return 407
-	if 7 == math.random_int(0, 25):
-		return 407
-	return 409
+	match math.random_int(0, 25):
+		0, 1:
+			return 446
+		2, 3, 4, 5, 6, 7:
+			return 407
+		_:
+			return 409
+	return 0
 	return 0
 
 func local_2581() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 410
-	if 1 == math.random_int(0, 25):
-		return 410
-	if 2 == math.random_int(0, 25):
-		return 410
-	if 3 == math.random_int(0, 25):
-		return 411
-	if 4 == math.random_int(0, 25):
-		return 413
-	if 5 == math.random_int(0, 25):
-		return 413
-	if 6 == math.random_int(0, 25):
-		return 413
-	if 7 == math.random_int(0, 25):
-		return 413
-	if 8 == math.random_int(0, 25):
-		return 413
-	if 9 == math.random_int(0, 25):
-		return 413
-	if 10 == math.random_int(0, 25):
-		return 413
-	if 11 == math.random_int(0, 25):
-		return 413
-	if 12 == math.random_int(0, 25):
-		return 413
-	return 26
+	match math.random_int(0, 25):
+		0, 1, 2:
+			return 410
+		3:
+			return 411
+		4, 5, 6, 7, 8, 9, 10, 11, 12:
+			return 413
+		_:
+			return 26
+	return 0
 	return 0
 
 func local_2808() -> Variant:
@@ -358,38 +288,19 @@ func local_3017() -> Variant:
 func local_3422() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 15)):
-		return 428
-	if 1 == math.random_int(0, 15):
-		return 433
-	if 2 == math.random_int(0, 15):
-		return 433
-	if 3 == math.random_int(0, 15):
-		return 433
-	if 4 == math.random_int(0, 15):
-		return 433
-	if 5 == math.random_int(0, 15):
-		return 434
-	if 6 == math.random_int(0, 15):
-		return 434
-	if 7 == math.random_int(0, 15):
-		return 434
-	if 8 == math.random_int(0, 15):
-		return 434
-	if 9 == math.random_int(0, 15):
-		return 435
-	if 10 == math.random_int(0, 15):
-		return 435
-	if 11 == math.random_int(0, 15):
-		return 435
-	if 12 == math.random_int(0, 15):
-		return 435
-	if 13 == math.random_int(0, 15):
-		return 436
-	if 14 == math.random_int(0, 15):
-		return 436
-	if 15 == math.random_int(0, 15):
-		return 437
+	match math.random_int(0, 15):
+		0:
+			return 428
+		1, 2, 3, 4:
+			return 433
+		5, 6, 7, 8:
+			return 434
+		9, 10, 11, 12:
+			return 435
+		13, 14:
+			return 436
+		15:
+			return 437
 	return 0
 	return 0
 
@@ -403,69 +314,47 @@ func local_3688() -> Variant:
 			return 430
 		2:
 			return 432
-	return 444
+		_:
+			return 444
+	return 0
 	return 0
 
 func local_3826() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 15)):
-		return 464
-	if 1 == math.random_int(0, 15):
-		return 463
-	if 2 == math.random_int(0, 15):
-		return 463
-	if 3 == math.random_int(0, 15):
-		return 463
-	if 4 == math.random_int(0, 15):
-		return 463
-	if 5 == math.random_int(0, 15):
-		return 462
-	if 6 == math.random_int(0, 15):
-		return 465
-	if 7 == math.random_int(0, 15):
-		return 465
-	if 8 == math.random_int(0, 15):
-		return 465
-	if 9 == math.random_int(0, 15):
-		return 465
-	return 443
+	match math.random_int(0, 15):
+		0:
+			return 464
+		1, 2, 3, 4:
+			return 463
+		5:
+			return 462
+		6, 7, 8, 9:
+			return 465
+		_:
+			return 443
+	return 0
 	return 0
 
 func local_4035() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 20)):
-		return 439
-	if 1 == math.random_int(0, 20):
-		return 439
-	if 2 == math.random_int(0, 20):
-		return 439
-	if 3 == math.random_int(0, 20):
-		return 439
-	if 4 == math.random_int(0, 20):
-		return 439
-	if 5 == math.random_int(0, 20):
-		return 439
-	if 6 == math.random_int(0, 20):
-		return 440
-	if 7 == math.random_int(0, 20):
-		return 440
-	if 8 == math.random_int(0, 20):
-		return 438
-	if 9 == math.random_int(0, 20):
-		return 441
-	if 10 == math.random_int(0, 20):
-		return 456
-	if 11 == math.random_int(0, 20):
-		return 457
-	if 12 == math.random_int(0, 20):
-		return 457
-	if 13 == math.random_int(0, 20):
-		return 457
-	if 14 == math.random_int(0, 20):
-		return 457
-	return 458
+	match math.random_int(0, 20):
+		0, 1, 2, 3, 4, 5:
+			return 439
+		6, 7:
+			return 440
+		8:
+			return 438
+		9:
+			return 441
+		10:
+			return 456
+		11, 12, 13, 14:
+			return 457
+		_:
+			return 458
+	return 0
 	return 0
 
 func local_4305() -> Variant:
@@ -478,504 +367,155 @@ func local_4305() -> Variant:
 			return 454
 		2:
 			return 455
-	return 409
+		_:
+			return 409
+	return 0
 	return 0
 
 func local_4443() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 347
-	return 442
+	match math.random_int(0, 5):
+		0:
+			return 347
+		_:
+			return 442
+	return 0
 	return 0
 
 func local_4548() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 20)):
-		return 413
-	if 1 == math.random_int(0, 20):
-		return 236
-	if 2 == math.random_int(0, 20):
-		return 236
-	if 3 == math.random_int(0, 20):
-		return 236
-	if 4 == math.random_int(0, 20):
-		return 237
-	if 5 == math.random_int(0, 20):
-		return 240
-	if 6 == math.random_int(0, 20):
-		return 241
-	if 7 == math.random_int(0, 20):
-		return 242
-	if 8 == math.random_int(0, 20):
-		return 429
-	if 9 == math.random_int(0, 20):
-		return 429
-	if 10 == math.random_int(0, 20):
-		return 429
-	if 11 == math.random_int(0, 20):
-		return 386
-	if 12 == math.random_int(0, 20):
-		return 386
-	if 13 == math.random_int(0, 20):
-		return 386
-	return 385
+	match math.random_int(0, 20):
+		0:
+			return 413
+		1, 2:
+			return 236
+		3:
+			return 236
+		4:
+			return 237
+		5:
+			return 240
+		6:
+			return 241
+		7:
+			return 242
+		8, 9, 10:
+			return 429
+		11, 12, 13:
+			return 386
+		_:
+			return 385
+	return 0
 	return 0
 
 func local_4833() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 224)):
-		return 344
-	if 1 == math.random_int(0, 224):
-		return 345
-	if 2 == math.random_int(0, 224):
-		return 345
-	if 3 == math.random_int(0, 224):
-		return 345
-	if 4 == math.random_int(0, 224):
-		return 345
-	if 5 == math.random_int(0, 224):
-		return 346
-	if 6 == math.random_int(0, 224):
-		return 346
-	if 7 == math.random_int(0, 224):
-		return 346
-	if 8 == math.random_int(0, 224):
-		return 346
-	if 9 == math.random_int(0, 224):
-		return 346
-	if 10 == math.random_int(0, 224):
-		return 346
-	if 11 == math.random_int(0, 224):
-		return 346
-	if 12 == math.random_int(0, 224):
-		return 347
-	if 13 == math.random_int(0, 224):
-		return 347
-	if 14 == math.random_int(0, 224):
-		return 348
-	if 15 == math.random_int(0, 224):
-		return 348
-	if 16 == math.random_int(0, 224):
-		return 348
-	if 17 == math.random_int(0, 224):
-		return 348
-	if 18 == math.random_int(0, 224):
-		return 349
-	if 19 == math.random_int(0, 224):
-		return 349
-	if 20 == math.random_int(0, 224):
-		return 579
-	if 21 == math.random_int(0, 224):
-		return 579
-	if 22 == math.random_int(0, 224):
-		return 579
-	if 23 == math.random_int(0, 224):
-		return 579
-	if 24 == math.random_int(0, 224):
-		return 350
-	if 25 == math.random_int(0, 224):
-		return 350
-	if 26 == math.random_int(0, 224):
-		return 350
-	if 27 == math.random_int(0, 224):
-		return 350
-	if 28 == math.random_int(0, 224):
-		return 350
-	if 29 == math.random_int(0, 224):
-		return 350
-	if 30 == math.random_int(0, 224):
-		return 350
-	if 31 == math.random_int(0, 224):
-		return 350
-	if 32 == math.random_int(0, 224):
-		return 350
-	if 33 == math.random_int(0, 224):
-		return 351
-	if 34 == math.random_int(0, 224):
-		return 351
-	if 35 == math.random_int(0, 224):
-		return 351
-	if 36 == math.random_int(0, 224):
-		return 351
-	if 37 == math.random_int(0, 224):
-		return 351
-	if 38 == math.random_int(0, 224):
-		return 351
-	if 39 == math.random_int(0, 224):
-		return 351
-	if 40 == math.random_int(0, 224):
-		return 351
-	if 41 == math.random_int(0, 224):
-		return 351
-	if 42 == math.random_int(0, 224):
-		return 351
-	if 43 == math.random_int(0, 224):
-		return 352
-	if 44 == math.random_int(0, 224):
-		return 352
-	if 45 == math.random_int(0, 224):
-		return 353
-	if 46 == math.random_int(0, 224):
-		return 354
-	if 47 == math.random_int(0, 224):
-		return 355
-	if 48 == math.random_int(0, 224):
-		return 356
-	if 49 == math.random_int(0, 224):
-		return 356
-	if 50 == math.random_int(0, 224):
-		return 356
-	if 51 == math.random_int(0, 224):
-		return 356
-	if 52 == math.random_int(0, 224):
-		return 356
-	if 53 == math.random_int(0, 224):
-		return 356
-	if 54 == math.random_int(0, 224):
-		return 356
-	if 55 == math.random_int(0, 224):
-		return 356
-	if 56 == math.random_int(0, 224):
-		return 357
-	if 57 == math.random_int(0, 224):
-		return 357
-	if 58 == math.random_int(0, 224):
-		return 357
-	if 59 == math.random_int(0, 224):
-		return 357
-	if 60 == math.random_int(0, 224):
-		return 357
-	if 61 == math.random_int(0, 224):
-		return 357
-	if 62 == math.random_int(0, 224):
-		return 358
-	if 63 == math.random_int(0, 224):
-		return 359
-	if 64 == math.random_int(0, 224):
-		return 359
-	if 65 == math.random_int(0, 224):
-		return 359
-	if 66 == math.random_int(0, 224):
-		return 359
-	if 67 == math.random_int(0, 224):
-		return 359
-	if 68 == math.random_int(0, 224):
-		return 359
-	if 69 == math.random_int(0, 224):
-		return 359
-	if 70 == math.random_int(0, 224):
-		return 359
-	if 71 == math.random_int(0, 224):
-		return 360
-	if 72 == math.random_int(0, 224):
-		return 360
-	if 73 == math.random_int(0, 224):
-		return 360
-	if 74 == math.random_int(0, 224):
-		return 360
-	if 75 == math.random_int(0, 224):
-		return 360
-	if 76 == math.random_int(0, 224):
-		return 360
-	if 77 == math.random_int(0, 224):
-		return 360
-	if 78 == math.random_int(0, 224):
-		return 360
-	if 79 == math.random_int(0, 224):
-		return 360
-	if 80 == math.random_int(0, 224):
-		return 361
-	if 81 == math.random_int(0, 224):
-		return 362
-	if 82 == math.random_int(0, 224):
-		return 362
-	if 83 == math.random_int(0, 224):
-		return 362
-	if 84 == math.random_int(0, 224):
-		return 362
-	if 85 == math.random_int(0, 224):
-		return 362
-	if 86 == math.random_int(0, 224):
-		return 362
-	if 87 == math.random_int(0, 224):
-		return 362
-	if 88 == math.random_int(0, 224):
-		return 363
-	if 89 == math.random_int(0, 224):
-		return 363
-	if 90 == math.random_int(0, 224):
-		return 363
-	if 91 == math.random_int(0, 224):
-		return 364
-	if 92 == math.random_int(0, 224):
-		return 364
-	if 93 == math.random_int(0, 224):
-		return 364
-	if 94 == math.random_int(0, 224):
-		return 364
-	if 95 == math.random_int(0, 224):
-		return 364
-	if 96 == math.random_int(0, 224):
-		return 364
-	if 97 == math.random_int(0, 224):
-		return 364
-	if 98 == math.random_int(0, 224):
-		return 364
-	if 99 == math.random_int(0, 224):
-		return 364
-	if 100 == math.random_int(0, 224):
-		return 364
-	if 101 == math.random_int(0, 224):
-		return 365
-	if 102 == math.random_int(0, 224):
-		return 365
-	if 103 == math.random_int(0, 224):
-		return 365
-	if 104 == math.random_int(0, 224):
-		return 365
-	if 105 == math.random_int(0, 224):
-		return 366
-	if 106 == math.random_int(0, 224):
-		return 367
-	if 107 == math.random_int(0, 224):
-		return 368
-	if 108 == math.random_int(0, 224):
-		return 369
-	if 109 == math.random_int(0, 224):
-		return 369
-	if 110 == math.random_int(0, 224):
-		return 369
-	if 111 == math.random_int(0, 224):
-		return 369
-	if 112 == math.random_int(0, 224):
-		return 369
-	if 113 == math.random_int(0, 224):
-		return 369
-	if 114 == math.random_int(0, 224):
-		return 370
-	if 115 == math.random_int(0, 224):
-		return 371
-	if 116 == math.random_int(0, 224):
-		return 372
-	if 117 == math.random_int(0, 224):
-		return 373
-	if 118 == math.random_int(0, 224):
-		return 374
-	if 119 == math.random_int(0, 224):
-		return 375
-	if 120 == math.random_int(0, 224):
-		return 375
-	if 121 == math.random_int(0, 224):
-		return 375
-	if 122 == math.random_int(0, 224):
-		return 375
-	if 123 == math.random_int(0, 224):
-		return 375
-	if 124 == math.random_int(0, 224):
-		return 375
-	if 125 == math.random_int(0, 224):
-		return 375
-	if 126 == math.random_int(0, 224):
-		return 380
-	if 127 == math.random_int(0, 224):
-		return 380
-	if 128 == math.random_int(0, 224):
-		return 380
-	if 129 == math.random_int(0, 224):
-		return 380
-	if 130 == math.random_int(0, 224):
-		return 380
-	if 131 == math.random_int(0, 224):
-		return 381
-	if 132 == math.random_int(0, 224):
-		return 382
-	if 133 == math.random_int(0, 224):
-		return 383
-	if 134 == math.random_int(0, 224):
-		return 383
-	if 135 == math.random_int(0, 224):
-		return 383
-	if 136 == math.random_int(0, 224):
-		return 383
-	if 137 == math.random_int(0, 224):
-		return 383
-	if 138 == math.random_int(0, 224):
-		return 383
-	if 139 == math.random_int(0, 224):
-		return 383
-	if 140 == math.random_int(0, 224):
-		return 383
-	if 141 == math.random_int(0, 224):
-		return 384
-	if 142 == math.random_int(0, 224):
-		return 384
-	if 143 == math.random_int(0, 224):
-		return 384
-	if 144 == math.random_int(0, 224):
-		return 384
-	if 145 == math.random_int(0, 224):
-		return 384
-	if 146 == math.random_int(0, 224):
-		return 384
-	if 147 == math.random_int(0, 224):
-		return 384
-	if 148 == math.random_int(0, 224):
-		return 384
-	if 149 == math.random_int(0, 224):
-		return 384
-	if 150 == math.random_int(0, 224):
-		return 385
-	if 151 == math.random_int(0, 224):
-		return 385
-	if 152 == math.random_int(0, 224):
-		return 385
-	if 153 == math.random_int(0, 224):
-		return 385
-	if 154 == math.random_int(0, 224):
-		return 385
-	if 155 == math.random_int(0, 224):
-		return 385
-	if 156 == math.random_int(0, 224):
-		return 385
-	if 157 == math.random_int(0, 224):
-		return 385
-	if 158 == math.random_int(0, 224):
-		return 385
-	if 159 == math.random_int(0, 224):
-		return 386
-	if 160 == math.random_int(0, 224):
-		return 386
-	if 161 == math.random_int(0, 224):
-		return 386
-	if 162 == math.random_int(0, 224):
-		return 386
-	if 163 == math.random_int(0, 224):
-		return 386
-	if 164 == math.random_int(0, 224):
-		return 387
-	if 165 == math.random_int(0, 224):
-		return 387
-	if 166 == math.random_int(0, 224):
-		return 387
-	if 167 == math.random_int(0, 224):
-		return 387
-	if 168 == math.random_int(0, 224):
-		return 387
-	if 169 == math.random_int(0, 224):
-		return 387
-	if 170 == math.random_int(0, 224):
-		return 387
-	if 171 == math.random_int(0, 224):
-		return 387
-	if 172 == math.random_int(0, 224):
-		return 387
-	if 173 == math.random_int(0, 224):
-		return 388
-	if 174 == math.random_int(0, 224):
-		return 388
-	if 175 == math.random_int(0, 224):
-		return 388
-	if 176 == math.random_int(0, 224):
-		return 388
-	if 177 == math.random_int(0, 224):
-		return 388
-	if 178 == math.random_int(0, 224):
-		return 389
-	if 179 == math.random_int(0, 224):
-		return 389
-	if 180 == math.random_int(0, 224):
-		return 389
-	if 181 == math.random_int(0, 224):
-		return 389
-	if 182 == math.random_int(0, 224):
-		return 389
-	if 183 == math.random_int(0, 224):
-		return 390
-	if 184 == math.random_int(0, 224):
-		return 390
-	if 185 == math.random_int(0, 224):
-		return 390
-	if 186 == math.random_int(0, 224):
-		return 390
-	if 187 == math.random_int(0, 224):
-		return 390
-	if 188 == math.random_int(0, 224):
-		return 391
-	if 189 == math.random_int(0, 224):
-		return 392
-	if 190 == math.random_int(0, 224):
-		return 392
-	if 191 == math.random_int(0, 224):
-		return 392
-	if 192 == math.random_int(0, 224):
-		return 392
-	if 193 == math.random_int(0, 224):
-		return 392
-	if 194 == math.random_int(0, 224):
-		return 392
-	if 195 == math.random_int(0, 224):
-		return 393
-	if 196 == math.random_int(0, 224):
-		return 393
-	if 197 == math.random_int(0, 224):
-		return 393
-	if 198 == math.random_int(0, 224):
-		return 393
-	if 199 == math.random_int(0, 224):
-		return 393
-	if 200 == math.random_int(0, 224):
-		return 393
-	if 201 == math.random_int(0, 224):
-		return 394
-	if 202 == math.random_int(0, 224):
-		return 394
-	if 203 == math.random_int(0, 224):
-		return 394
-	if 204 == math.random_int(0, 224):
-		return 394
-	if 205 == math.random_int(0, 224):
-		return 394
-	if 206 == math.random_int(0, 224):
-		return 394
-	if 207 == math.random_int(0, 224):
-		return 498
-	if 208 == math.random_int(0, 224):
-		return 498
-	if 209 == math.random_int(0, 224):
-		return 498
-	if 210 == math.random_int(0, 224):
-		return 498
-	if 211 == math.random_int(0, 224):
-		return 498
-	if 212 == math.random_int(0, 224):
-		return 498
-	if 213 == math.random_int(0, 224):
-		return 395
-	if 214 == math.random_int(0, 224):
-		return 395
-	if 215 == math.random_int(0, 224):
-		return 395
-	if 216 == math.random_int(0, 224):
-		return 395
-	if 217 == math.random_int(0, 224):
-		return 395
-	if 218 == math.random_int(0, 224):
-		return 395
-	if 219 == math.random_int(0, 224):
-		return 396
-	if 220 == math.random_int(0, 224):
-		return 396
-	if 221 == math.random_int(0, 224):
-		return 396
-	if 222 == math.random_int(0, 224):
-		return 396
-	if 223 == math.random_int(0, 224):
-		return 396
-	if 224 == math.random_int(0, 224):
-		return 396
+	match math.random_int(0, 224):
+		0:
+			return 344
+		1, 2, 3, 4:
+			return 345
+		5, 6, 7, 8, 9, 10, 11:
+			return 346
+		12, 13:
+			return 347
+		14, 15, 16, 17:
+			return 348
+		18, 19:
+			return 349
+		20, 21, 22, 23:
+			return 579
+		24, 25, 26, 27, 28, 29, 30, 31, 32:
+			return 350
+		33, 34, 35, 36, 37, 38, 39, 40, 41, 42:
+			return 351
+		43, 44:
+			return 352
+		45:
+			return 353
+		46:
+			return 354
+		47:
+			return 355
+		48, 49, 50, 51, 52, 53, 54, 55:
+			return 356
+		56, 57, 58, 59, 60, 61:
+			return 357
+		62:
+			return 358
+		63, 64, 65, 66, 67, 68, 69, 70:
+			return 359
+		71, 72, 73, 74, 75, 76, 77, 78, 79:
+			return 360
+		80:
+			return 361
+		81, 82, 83, 84, 85, 86, 87:
+			return 362
+		88, 89, 90:
+			return 363
+		91, 92, 93, 94, 95, 96, 97, 98, 99, 100:
+			return 364
+		101, 102, 103, 104:
+			return 365
+		105:
+			return 366
+		106:
+			return 367
+		107:
+			return 368
+		108, 109, 110, 111, 112, 113:
+			return 369
+		114:
+			return 370
+		115:
+			return 371
+		116:
+			return 372
+		117:
+			return 373
+		118:
+			return 374
+		119, 120, 121, 122, 123, 124, 125:
+			return 375
+		126, 127, 128, 129, 130:
+			return 380
+		131:
+			return 381
+		132:
+			return 382
+		133, 134, 135, 136, 137, 138, 139, 140:
+			return 383
+		141, 142, 143, 144, 145, 146, 147, 148, 149:
+			return 384
+		150, 151, 152, 153, 154, 155, 156, 157, 158:
+			return 385
+		159, 160, 161, 162, 163:
+			return 386
+		164, 165, 166, 167, 168, 169, 170, 171, 172:
+			return 387
+		173, 174, 175, 176, 177:
+			return 388
+		178, 179, 180, 181, 182:
+			return 389
+		183, 184, 185, 186, 187:
+			return 390
+		188:
+			return 391
+		189, 190, 191, 192, 193, 194:
+			return 392
+		195, 196, 197, 198, 199, 200:
+			return 393
+		201, 202, 203, 204, 205, 206:
+			return 394
+		207, 208, 209, 210, 211, 212:
+			return 498
+		213, 214, 215, 216, 217, 218:
+			return 395
+		219, 220, 221, 222, 223, 224:
+			return 396
 	return 0
 	return 0
 
@@ -1070,648 +610,335 @@ func local_7640() -> Variant:
 func local_8181() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 39)):
-		return 104
-	if 1 == math.random_int(0, 39):
-		return 259
-	if 2 == math.random_int(0, 39):
-		return 144
-	if 3 == math.random_int(0, 39):
-		return 207
-	if 4 == math.random_int(0, 39):
-		return 236
-	if 5 == math.random_int(0, 39):
-		return 236
-	if 6 == math.random_int(0, 39):
-		return 237
-	if 7 == math.random_int(0, 39):
-		return 238
-	if 8 == math.random_int(0, 39):
-		return 238
-	if 9 == math.random_int(0, 39):
-		return 239
-	if 10 == math.random_int(0, 39):
-		return 240
-	if 11 == math.random_int(0, 39):
-		return 241
-	if 12 == math.random_int(0, 39):
-		return 242
-	if 13 == math.random_int(0, 39):
-		return 265
-	if 14 == math.random_int(0, 39):
-		return 266
-	if 15 == math.random_int(0, 39):
-		return 267
-	if 16 == math.random_int(0, 39):
-		return 268
-	if 17 == math.random_int(0, 39):
-		return 273
-	if 18 == math.random_int(0, 39):
-		return 276
-	if 19 == math.random_int(0, 39):
-		return 277
-	if 20 == math.random_int(0, 39):
-		return 278
-	if 21 == math.random_int(0, 39):
-		return 282
-	if 22 == math.random_int(0, 39):
-		return 284
-	if 23 == math.random_int(0, 39):
-		return 285
-	if 24 == math.random_int(0, 39):
-		return 286
-	if 25 == math.random_int(0, 39):
-		return 287
-	if 26 == math.random_int(0, 39):
-		return 288
-	if 27 == math.random_int(0, 39):
-		return 289
-	if 28 == math.random_int(0, 39):
-		return 290
-	if 29 == math.random_int(0, 39):
-		return 291
-	if 30 == math.random_int(0, 39):
-		return 292
-	if 31 == math.random_int(0, 39):
-		return 293
-	if 32 == math.random_int(0, 39):
-		return 294
-	if 33 == math.random_int(0, 39):
-		return 352
-	if 34 == math.random_int(0, 39):
-		return 353
-	if 35 == math.random_int(0, 39):
-		return 354
-	if 36 == math.random_int(0, 39):
-		return 355
-	if 37 == math.random_int(0, 39):
-		return 356
-	if 38 == math.random_int(0, 39):
-		return 337
-	return 338
+	match math.random_int(0, 39):
+		0:
+			return 104
+		1:
+			return 259
+		2:
+			return 144
+		3:
+			return 207
+		4:
+			return 236
+		5:
+			return 236
+		6:
+			return 237
+		7, 8:
+			return 238
+		9:
+			return 239
+		10:
+			return 240
+		11:
+			return 241
+		12:
+			return 242
+		13:
+			return 265
+		14:
+			return 266
+		15:
+			return 267
+		16:
+			return 268
+		17:
+			return 273
+		18:
+			return 276
+		19:
+			return 277
+		20:
+			return 278
+		21:
+			return 282
+		22:
+			return 284
+		23:
+			return 285
+		24:
+			return 286
+		25:
+			return 287
+		26:
+			return 288
+		27:
+			return 289
+		28:
+			return 290
+		29:
+			return 291
+		30:
+			return 292
+		31:
+			return 293
+		32:
+			return 294
+		33:
+			return 352
+		34:
+			return 353
+		35:
+			return 354
+		36:
+			return 355
+		37:
+			return 356
+		38:
+			return 337
+		_:
+			return 338
+	return 0
 	return 0
 
 func local_8922() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 36)):
-		return 243
-	if 1 == math.random_int(0, 36):
-		return 244
-	if 2 == math.random_int(0, 36):
-		return 252
-	if 3 == math.random_int(0, 36):
-		return 253
-	if 4 == math.random_int(0, 36):
-		return 254
-	if 5 == math.random_int(0, 36):
-		return 255
-	if 6 == math.random_int(0, 36):
-		return 256
-	if 7 == math.random_int(0, 36):
-		return 257
-	if 8 == math.random_int(0, 36):
-		return 258
-	if 9 == math.random_int(0, 36):
-		return 260
-	if 10 == math.random_int(0, 36):
-		return 261
-	if 11 == math.random_int(0, 36):
-		return 261
-	if 12 == math.random_int(0, 36):
-		return 261
-	if 13 == math.random_int(0, 36):
-		return 261
-	if 14 == math.random_int(0, 36):
-		return 261
-	if 15 == math.random_int(0, 36):
-		return 261
-	if 16 == math.random_int(0, 36):
-		return 262
-	if 17 == math.random_int(0, 36):
-		return 262
-	if 18 == math.random_int(0, 36):
-		return 262
-	if 19 == math.random_int(0, 36):
-		return 262
-	if 20 == math.random_int(0, 36):
-		return 262
-	if 21 == math.random_int(0, 36):
-		return 262
-	if 22 == math.random_int(0, 36):
-		return 263
-	if 23 == math.random_int(0, 36):
-		return 263
-	if 24 == math.random_int(0, 36):
-		return 263
-	if 25 == math.random_int(0, 36):
-		return 263
-	if 26 == math.random_int(0, 36):
-		return 263
-	if 27 == math.random_int(0, 36):
-		return 263
-	if 28 == math.random_int(0, 36):
-		return 263
-	if 29 == math.random_int(0, 36):
-		return 264
-	if 30 == math.random_int(0, 36):
-		return 264
-	if 31 == math.random_int(0, 36):
-		return 264
-	if 32 == math.random_int(0, 36):
-		return 264
-	if 33 == math.random_int(0, 36):
-		return 264
-	if 34 == math.random_int(0, 36):
-		return 264
-	if 35 == math.random_int(0, 36):
-		return 264
-	if 36 == math.random_int(0, 36):
-		return 267
+	match math.random_int(0, 36):
+		0:
+			return 243
+		1:
+			return 244
+		2:
+			return 252
+		3:
+			return 253
+		4:
+			return 254
+		5:
+			return 255
+		6:
+			return 256
+		7:
+			return 257
+		8:
+			return 258
+		9:
+			return 260
+		10, 11, 12, 13, 14, 15:
+			return 261
+		16, 17, 18, 19, 20, 21:
+			return 262
+		22, 23, 24, 25, 26, 27, 28:
+			return 263
+		29, 30, 31, 32, 33, 34, 35:
+			return 264
+		36:
+			return 267
 	return 267
 	return 0
 
 func local_9454() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 85)):
-		return 473
-	if 1 == math.random_int(0, 85):
-		return 476
-	if 2 == math.random_int(0, 85):
-		return 477
-	if 3 == math.random_int(0, 85):
-		return 478
-	if 4 == math.random_int(0, 85):
-		return 479
-	if 5 == math.random_int(0, 85):
-		return 480
-	if 6 == math.random_int(0, 85):
-		return 481
-	if 7 == math.random_int(0, 85):
-		return 482
-	if 8 == math.random_int(0, 85):
-		return 536
-	if 9 == math.random_int(0, 85):
-		return 537
-	if 10 == math.random_int(0, 85):
-		return 538
-	if 11 == math.random_int(0, 85):
-		return 539
-	if 12 == math.random_int(0, 85):
-		return 488
-	if 13 == math.random_int(0, 85):
-		return 486
-	if 14 == math.random_int(0, 85):
-		return 486
-	if 15 == math.random_int(0, 85):
-		return 486
-	if 16 == math.random_int(0, 85):
-		return 486
-	if 17 == math.random_int(0, 85):
-		return 486
-	if 18 == math.random_int(0, 85):
-		return 486
-	if 19 == math.random_int(0, 85):
-		return 486
-	if 20 == math.random_int(0, 85):
-		return 486
-	if 21 == math.random_int(0, 85):
-		return 486
-	if 22 == math.random_int(0, 85):
-		return 486
-	if 23 == math.random_int(0, 85):
-		return 486
-	if 24 == math.random_int(0, 85):
-		return 486
-	if 25 == math.random_int(0, 85):
-		return 486
-	if 26 == math.random_int(0, 85):
-		return 492
-	if 27 == math.random_int(0, 85):
-		return 492
-	if 28 == math.random_int(0, 85):
-		return 492
-	if 29 == math.random_int(0, 85):
-		return 492
-	if 30 == math.random_int(0, 85):
-		return 492
-	if 31 == math.random_int(0, 85):
-		return 492
-	if 32 == math.random_int(0, 85):
-		return 494
-	if 33 == math.random_int(0, 85):
-		return 494
-	if 34 == math.random_int(0, 85):
-		return 494
-	if 35 == math.random_int(0, 85):
-		return 494
-	if 36 == math.random_int(0, 85):
-		return 490
-	if 37 == math.random_int(0, 85):
-		return 490
-	if 38 == math.random_int(0, 85):
-		return 490
-	if 39 == math.random_int(0, 85):
-		return 490
-	if 40 == math.random_int(0, 85):
-		return 505
-	if 41 == math.random_int(0, 85):
-		return 540
-	if 42 == math.random_int(0, 85):
-		return 541
-	if 43 == math.random_int(0, 85):
-		return 541
-	if 44 == math.random_int(0, 85):
-		return 541
-	if 45 == math.random_int(0, 85):
-		return 541
-	if 46 == math.random_int(0, 85):
-		return 541
-	if 47 == math.random_int(0, 85):
-		return 541
-	if 48 == math.random_int(0, 85):
-		return 541
-	if 49 == math.random_int(0, 85):
-		return 541
-	if 50 == math.random_int(0, 85):
-		return 541
-	if 51 == math.random_int(0, 85):
-		return 542
-	if 53 == math.random_int(0, 85):
-		return 543
-	if 54 == math.random_int(0, 85):
-		return 543
-	if 55 == math.random_int(0, 85):
-		return 543
-	if 56 == math.random_int(0, 85):
-		return 543
-	if 57 == math.random_int(0, 85):
-		return 543
-	if 58 == math.random_int(0, 85):
-		return 544
-	if 59 == math.random_int(0, 85):
-		return 544
-	if 60 == math.random_int(0, 85):
-		return 544
-	if 61 == math.random_int(0, 85):
-		return 544
-	if 62 == math.random_int(0, 85):
-		return 544
-	if 63 == math.random_int(0, 85):
-		return 545
-	if 64 == math.random_int(0, 85):
-		return 545
-	if 65 == math.random_int(0, 85):
-		return 545
-	if 66 == math.random_int(0, 85):
-		return 545
-	if 67 == math.random_int(0, 85):
-		return 545
-	if 68 == math.random_int(0, 85):
-		return 545
-	if 69 == math.random_int(0, 85):
-		return 545
-	if 70 == math.random_int(0, 85):
-		return 546
-	if 71 == math.random_int(0, 85):
-		return 553
-	if 72 == math.random_int(0, 85):
-		return 581
-	if 73 == math.random_int(0, 85):
-		return 582
-	if 74 == math.random_int(0, 85):
-		return 583
-	if 75 == math.random_int(0, 85):
-		return 563
-	if 76 == math.random_int(0, 85):
-		return 563
-	if 77 == math.random_int(0, 85):
-		return 563
-	if 78 == math.random_int(0, 85):
-		return 563
-	return 558
+	match math.random_int(0, 85):
+		0:
+			return 473
+		1:
+			return 476
+		2:
+			return 477
+		3:
+			return 478
+		4:
+			return 479
+		5:
+			return 480
+		6:
+			return 481
+		7:
+			return 482
+		8:
+			return 536
+		9:
+			return 537
+		10:
+			return 538
+		11:
+			return 539
+		12:
+			return 488
+		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25:
+			return 486
+		26, 27, 28, 29, 30, 31:
+			return 492
+		32, 33, 34, 35:
+			return 494
+		36, 37, 38, 39:
+			return 490
+		40:
+			return 505
+		41:
+			return 540
+		42, 43, 44, 45, 46, 47, 48, 49, 50:
+			return 541
+		51:
+			return 542
+		53, 54, 55, 56, 57:
+			return 543
+		58, 59, 60, 61, 62:
+			return 544
+		63, 64, 65, 66, 67, 68, 69:
+			return 545
+		70:
+			return 546
+		71:
+			return 553
+		72:
+			return 581
+		73:
+			return 582
+		74:
+			return 583
+		75, 76, 77, 78:
+			return 563
+		_:
+			return 558
+	return 0
 	return 0
 
 func local_10483() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 70)):
-		return 327
-	if 1 == math.random_int(0, 70):
-		return 327
-	if 2 == math.random_int(0, 70):
-		return 327
-	if 3 == math.random_int(0, 70):
-		return 328
-	if 4 == math.random_int(0, 70):
-		return 328
-	if 5 == math.random_int(0, 70):
-		return 328
-	if 6 == math.random_int(0, 70):
-		return 328
-	if 7 == math.random_int(0, 70):
-		return 329
-	if 8 == math.random_int(0, 70):
-		return 329
-	if 9 == math.random_int(0, 70):
-		return 329
-	if 10 == math.random_int(0, 70):
-		return 329
-	if 11 == math.random_int(0, 70):
-		return 330
-	if 12 == math.random_int(0, 70):
-		return 330
-	if 13 == math.random_int(0, 70):
-		return 330
-	if 14 == math.random_int(0, 70):
-		return 331
-	if 15 == math.random_int(0, 70):
-		return 331
-	if 16 == math.random_int(0, 70):
-		return 331
-	if 17 == math.random_int(0, 70):
-		return 331
-	if 18 == math.random_int(0, 70):
-		return 331
-	if 19 == math.random_int(0, 70):
-		return 331
-	if 20 == math.random_int(0, 70):
-		return 332
-	if 21 == math.random_int(0, 70):
-		return 332
-	if 22 == math.random_int(0, 70):
-		return 332
-	if 23 == math.random_int(0, 70):
-		return 332
-	if 24 == math.random_int(0, 70):
-		return 332
-	if 25 == math.random_int(0, 70):
-		return 332
-	if 26 == math.random_int(0, 70):
-		return 332
-	if 27 == math.random_int(0, 70):
-		return 332
-	if 28 == math.random_int(0, 70):
-		return 333
-	if 29 == math.random_int(0, 70):
-		return 334
-	if 30 == math.random_int(0, 70):
-		return 335
-	if 31 == math.random_int(0, 70):
-		return 335
-	if 32 == math.random_int(0, 70):
-		return 335
-	if 33 == math.random_int(0, 70):
-		return 335
-	if 34 == math.random_int(0, 70):
-		return 335
-	if 35 == math.random_int(0, 70):
-		return 122
-	if 36 == math.random_int(0, 70):
-		return 122
-	if 37 == math.random_int(0, 70):
-		return 122
-	if 38 == math.random_int(0, 70):
-		return 122
-	if 39 == math.random_int(0, 70):
-		return 123
-	if 40 == math.random_int(0, 70):
-		return 124
-	if 41 == math.random_int(0, 70):
-		return 124
-	if 42 == math.random_int(0, 70):
-		return 124
-	if 43 == math.random_int(0, 70):
-		return 126
-	if 44 == math.random_int(0, 70):
-		return 126
-	if 45 == math.random_int(0, 70):
-		return 126
-	if 46 == math.random_int(0, 70):
-		return 126
-	if 47 == math.random_int(0, 70):
-		return 126
-	if 48 == math.random_int(0, 70):
-		return 126
-	if 49 == math.random_int(0, 70):
-		return 126
-	if 50 == math.random_int(0, 70):
-		return 127
-	if 51 == math.random_int(0, 70):
-		return 127
-	if 52 == math.random_int(0, 70):
-		return 127
-	if 53 == math.random_int(0, 70):
-		return 128
-	if 54 == math.random_int(0, 70):
-		return 129
-	if 55 == math.random_int(0, 70):
-		return 129
-	if 56 == math.random_int(0, 70):
-		return 129
-	if 57 == math.random_int(0, 70):
-		return 129
-	if 58 == math.random_int(0, 70):
-		return 129
-	if 59 == math.random_int(0, 70):
-		return 129
-	if 60 == math.random_int(0, 70):
-		return 130
-	return 131
+	match math.random_int(0, 70):
+		0, 1, 2:
+			return 327
+		3, 4, 5, 6:
+			return 328
+		7, 8, 9, 10:
+			return 329
+		11, 12, 13:
+			return 330
+		14, 15, 16, 17, 18, 19:
+			return 331
+		20, 21, 22, 23, 24, 25, 26, 27:
+			return 332
+		28:
+			return 333
+		29:
+			return 334
+		30, 31, 32, 33, 34:
+			return 335
+		35, 36, 37, 38:
+			return 122
+		39:
+			return 123
+		40, 41, 42:
+			return 124
+		43, 44, 45, 46, 47, 48, 49:
+			return 126
+		50, 51, 52:
+			return 127
+		53:
+			return 128
+		54, 55, 56, 57, 58, 59:
+			return 129
+		60:
+			return 130
+		_:
+			return 131
+	return 0
 	return 0
 
 func local_11250() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 47)):
-		return 151
-	if 1 == math.random_int(0, 47):
-		return 151
-	if 2 == math.random_int(0, 47):
-		return 151
-	if 3 == math.random_int(0, 47):
-		return 151
-	if 4 == math.random_int(0, 47):
-		return 315
-	if 5 == math.random_int(0, 47):
-		return 315
-	if 6 == math.random_int(0, 47):
-		return 315
-	if 7 == math.random_int(0, 47):
-		return 315
-	if 8 == math.random_int(0, 47):
-		return 339
-	if 9 == math.random_int(0, 47):
-		return 339
-	if 10 == math.random_int(0, 47):
-		return 340
-	if 11 == math.random_int(0, 47):
-		return 341
-	if 12 == math.random_int(0, 47):
-		return 342
-	if 13 == math.random_int(0, 47):
-		return 318
-	if 14 == math.random_int(0, 47):
-		return 318
-	if 15 == math.random_int(0, 47):
-		return 318
-	if 16 == math.random_int(0, 47):
-		return 318
-	if 17 == math.random_int(0, 47):
-		return 318
-	if 18 == math.random_int(0, 47):
-		return 319
-	if 19 == math.random_int(0, 47):
-		return 319
-	if 20 == math.random_int(0, 47):
-		return 319
-	if 21 == math.random_int(0, 47):
-		return 319
-	if 22 == math.random_int(0, 47):
-		return 319
-	if 23 == math.random_int(0, 47):
-		return 319
-	if 24 == math.random_int(0, 47):
-		return 356
-	if 25 == math.random_int(0, 47):
-		return 143
-	if 26 == math.random_int(0, 47):
-		return 461
-	if 27 == math.random_int(0, 47):
-		return 459
-	if 28 == math.random_int(0, 47):
-		return 380
-	if 29 == math.random_int(0, 47):
-		return 381
-	if 30 == math.random_int(0, 47):
-		return 382
-	if 31 == math.random_int(0, 47):
-		return 320
-	if 32 == math.random_int(0, 47):
-		return 320
-	if 33 == math.random_int(0, 47):
-		return 320
-	if 34 == math.random_int(0, 47):
-		return 321
-	if 35 == math.random_int(0, 47):
-		return 321
-	if 36 == math.random_int(0, 47):
-		return 322
-	if 37 == math.random_int(0, 47):
-		return 322
-	if 38 == math.random_int(0, 47):
-		return 322
-	if 39 == math.random_int(0, 47):
-		return 322
-	if 40 == math.random_int(0, 47):
-		return 322
-	if 41 == math.random_int(0, 47):
-		return 96
-	if 42 == math.random_int(0, 47):
-		return 97
-	if 43 == math.random_int(0, 47):
-		return 98
-	if 44 == math.random_int(0, 47):
-		return 99
-	if 45 == math.random_int(0, 47):
-		return 100
-	if 46 == math.random_int(0, 47):
-		return 101
-	if 47 == math.random_int(0, 47):
-		return 103
+	match math.random_int(0, 47):
+		0:
+			return 151
+		1, 2, 3:
+			return 151
+		4, 5, 6, 7:
+			return 315
+		8, 9:
+			return 339
+		10:
+			return 340
+		11:
+			return 341
+		12:
+			return 342
+		13, 14, 15, 16, 17:
+			return 318
+		18, 19, 20, 21, 22, 23:
+			return 319
+		24:
+			return 356
+		25:
+			return 143
+		26:
+			return 461
+		27:
+			return 459
+		28:
+			return 380
+		29:
+			return 381
+		30:
+			return 382
+		31, 32, 33:
+			return 320
+		34, 35:
+			return 321
+		36, 37, 38, 39, 40:
+			return 322
+		41:
+			return 96
+		42:
+			return 97
+		43:
+			return 98
+		44:
+			return 99
+		45:
+			return 100
+		46:
+			return 101
+		47:
+			return 103
 	return 103
 	return 0
 
 func local_11962() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 50)):
-		return 470
-	if 1 == math.random_int(0, 50):
-		return 471
-	if 2 == math.random_int(0, 50):
-		return 472
-	if 3 == math.random_int(0, 50):
-		return 549
-	if 4 == math.random_int(0, 50):
-		return 550
-	if 5 == math.random_int(0, 50):
-		return 348
-	if 6 == math.random_int(0, 50):
-		return 348
-	if 7 == math.random_int(0, 50):
-		return 348
-	if 8 == math.random_int(0, 50):
-		return 348
-	if 9 == math.random_int(0, 50):
-		return 348
-	if 10 == math.random_int(0, 50):
-		return 348
-	if 11 == math.random_int(0, 50):
-		return 348
-	if 12 == math.random_int(0, 50):
-		return 349
-	if 13 == math.random_int(0, 50):
-		return 349
-	if 14 == math.random_int(0, 50):
-		return 349
-	if 15 == math.random_int(0, 50):
-		return 349
-	if 16 == math.random_int(0, 50):
-		return 349
-	if 17 == math.random_int(0, 50):
-		return 349
-	if 18 == math.random_int(0, 50):
-		return 349
-	if 19 == math.random_int(0, 50):
-		return 349
-	if 20 == math.random_int(0, 50):
-		return 345
-	if 21 == math.random_int(0, 50):
-		return 345
-	if 22 == math.random_int(0, 50):
-		return 345
-	if 23 == math.random_int(0, 50):
-		return 345
-	if 24 == math.random_int(0, 50):
-		return 345
-	if 25 == math.random_int(0, 50):
-		return 345
-	if 26 == math.random_int(0, 50):
-		return 345
-	if 27 == math.random_int(0, 50):
-		return 345
-	if 28 == math.random_int(0, 50):
-		return 345
-	if 29 == math.random_int(0, 50):
-		return 345
-	if 30 == math.random_int(0, 50):
-		return 345
-	if 31 == math.random_int(0, 50):
-		return 345
-	if 32 == math.random_int(0, 50):
-		return 345
-	return 346
+	match math.random_int(0, 50):
+		0:
+			return 470
+		1:
+			return 471
+		2:
+			return 472
+		3:
+			return 549
+		4:
+			return 550
+		5, 6, 7, 8, 9, 10, 11:
+			return 348
+		12, 13, 14, 15, 16, 17, 18, 19:
+			return 349
+		20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32:
+			return 345
+		_:
+			return 346
+	return 0
 	return 0
 
 func local_12410() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 6)):
-		return 350
-	if 1 == math.random_int(0, 6):
-		return 350
-	if 2 == math.random_int(0, 6):
-		return 350
-	if 3 == math.random_int(0, 6):
-		return 579
-	if 4 == math.random_int(0, 6):
-		return 344
-	if 5 == math.random_int(0, 6):
-		return 343
-	if 6 == math.random_int(0, 6):
-		return 354
+	match math.random_int(0, 6):
+		0, 1, 2:
+			return 350
+		3:
+			return 579
+		4:
+			return 344
+		5:
+			return 343
+		6:
+			return 354
 	return 0
 	return 0
 
@@ -1798,48 +1025,46 @@ func local_12899() -> Variant:
 func local_13295() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 8)):
-		return 352
-	if 1 == math.random_int(0, 8):
-		return 353
-	if 2 == math.random_int(0, 8):
-		return 89
-	if 3 == math.random_int(0, 8):
-		return 90
-	if 4 == math.random_int(0, 8):
-		return 354
-	if 5 == math.random_int(0, 8):
-		return 355
-	if 6 == math.random_int(0, 8):
-		return 88
-	if 7 == math.random_int(0, 8):
-		return 271
-	if 8 == math.random_int(0, 8):
-		return 271
+	match math.random_int(0, 8):
+		0:
+			return 352
+		1:
+			return 353
+		2:
+			return 89
+		3:
+			return 90
+		4:
+			return 354
+		5:
+			return 355
+		6:
+			return 88
+		7, 8:
+			return 271
 	return 0
 	return 0
 
 func local_13511() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 8)):
-		return 352
-	if 1 == math.random_int(0, 8):
-		return 353
-	if 2 == math.random_int(0, 8):
-		return 89
-	if 3 == math.random_int(0, 8):
-		return 90
-	if 4 == math.random_int(0, 8):
-		return 354
-	if 5 == math.random_int(0, 8):
-		return 355
-	if 6 == math.random_int(0, 8):
-		return 88
-	if 7 == math.random_int(0, 8):
-		return 271
-	if 8 == math.random_int(0, 8):
-		return 271
+	match math.random_int(0, 8):
+		0:
+			return 352
+		1:
+			return 353
+		2:
+			return 89
+		3:
+			return 90
+		4:
+			return 354
+		5:
+			return 355
+		6:
+			return 88
+		7, 8:
+			return 271
 	return 0
 	return 0
 
@@ -1855,53 +1080,56 @@ func local_13727() -> Variant:
 			return 19
 		3:
 			return 386
-	return 242
+		_:
+			return 242
+	return 0
 	return 0
 
 func local_13880() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 459
-	if 1 == math.random_int(0, 25):
-		return 460
-	if 2 == math.random_int(0, 25):
-		return 461
-	if 3 == math.random_int(0, 25):
-		return 426
-	if 4 == math.random_int(0, 25):
-		return 427
-	if 5 == math.random_int(0, 25):
-		return 428
-	if 6 == math.random_int(0, 25):
-		return 429
-	if 7 == math.random_int(0, 25):
-		return 345
-	if 8 == math.random_int(0, 25):
-		return 346
-	if 9 == math.random_int(0, 25):
-		return 383
-	if 10 == math.random_int(0, 25):
-		return 384
-	if 11 == math.random_int(0, 25):
-		return 386
-	if 12 == math.random_int(0, 25):
-		return 386
-	if 13 == math.random_int(0, 25):
-		return 241
-	if 14 == math.random_int(0, 25):
-		return 242
-	if 15 == math.random_int(0, 25):
-		return 387
-	if 16 == math.random_int(0, 25):
-		return 388
-	if 17 == math.random_int(0, 25):
-		return 389
-	if 18 == math.random_int(0, 25):
-		return 390
-	if 19 == math.random_int(0, 25):
-		return 376
-	return 385
+	match math.random_int(0, 25):
+		0:
+			return 459
+		1:
+			return 460
+		2:
+			return 461
+		3:
+			return 426
+		4:
+			return 427
+		5:
+			return 428
+		6:
+			return 429
+		7:
+			return 345
+		8:
+			return 346
+		9:
+			return 383
+		10:
+			return 384
+		11, 12:
+			return 386
+		13:
+			return 241
+		14:
+			return 242
+		15:
+			return 387
+		16:
+			return 388
+		17:
+			return 389
+		18:
+			return 390
+		19:
+			return 376
+		_:
+			return 385
+	return 0
 	return 0
 
 func local_14299() -> Variant:
@@ -1926,7 +1154,9 @@ func local_14299() -> Variant:
 			return 405
 		8:
 			return 406
-	return 403
+		_:
+			return 403
+	return 0
 	return 0
 
 func local_14539() -> Variant:
@@ -2008,128 +1238,127 @@ func local_14851() -> Variant:
 func local_15211() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if 1 == math.random_int(0, 61):
-		return 327
-	if 2 == math.random_int(0, 61):
-		return 328
-	if 3 == math.random_int(0, 61):
-		return 329
-	if 4 == math.random_int(0, 61):
-		return 330
-	if 5 == math.random_int(0, 61):
-		return 331
-	if 6 == math.random_int(0, 61):
-		return 332
-	if 7 == math.random_int(0, 61):
-		return 332
-	if 8 == math.random_int(0, 61):
-		return 333
-	if 9 == math.random_int(0, 61):
-		return 334
-	if 10 == math.random_int(0, 61):
-		return 335
-	if 11 == math.random_int(0, 61):
-		return 264
-	if 12 == math.random_int(0, 61):
-		return 265
-	if 13 == math.random_int(0, 61):
-		return 266
-	if 14 == math.random_int(0, 61):
-		return 267
-	if 15 == math.random_int(0, 61):
-		return 268
-	if 16 == math.random_int(0, 61):
-		return 269
-	if 17 == math.random_int(0, 61):
-		return 270
-	if 18 == math.random_int(0, 61):
-		return 271
-	if 19 == math.random_int(0, 61):
-		return 272
-	if 20 == math.random_int(0, 61):
-		return 273
-	if 21 == math.random_int(0, 61):
-		return 274
-	if 22 == math.random_int(0, 61):
-		return 275
-	if 23 == math.random_int(0, 61):
-		return 276
-	if 24 == math.random_int(0, 61):
-		return 277
-	if 25 == math.random_int(0, 61):
-		return 278
-	if 26 == math.random_int(0, 61):
-		return 273
-	if 27 == math.random_int(0, 61):
-		return 279
-	if 28 == math.random_int(0, 61):
-		return 280
-	if 29 == math.random_int(0, 61):
-		return 281
-	if 30 == math.random_int(0, 61):
-		return 282
-	if 31 == math.random_int(0, 61):
-		return 283
-	if 32 == math.random_int(0, 61):
-		return 284
-	if 33 == math.random_int(0, 61):
-		return 285
-	if 34 == math.random_int(0, 61):
-		return 286
-	if 35 == math.random_int(0, 61):
-		return 287
-	if 36 == math.random_int(0, 61):
-		return 51
-	if 37 == math.random_int(0, 61):
-		return 52
-	if 38 == math.random_int(0, 61):
-		return 53
-	if 39 == math.random_int(0, 61):
-		return 54
-	if 40 == math.random_int(0, 61):
-		return 55
-	if 41 == math.random_int(0, 61):
-		return 56
-	if 42 == math.random_int(0, 61):
-		return 57
-	if 43 == math.random_int(0, 61):
-		return 58
-	if 44 == math.random_int(0, 61):
-		return 59
-	if 45 == math.random_int(0, 61):
-		return 60
-	if 46 == math.random_int(0, 61):
-		return 61
-	if 47 == math.random_int(0, 61):
-		return 62
-	if 48 == math.random_int(0, 61):
-		return 63
-	if 49 == math.random_int(0, 61):
-		return 64
-	if 50 == math.random_int(0, 61):
-		return 65
-	if 51 == math.random_int(0, 61):
-		return 66
-	if 52 == math.random_int(0, 61):
-		return 68
-	if 53 == math.random_int(0, 61):
-		return 69
-	if 54 == math.random_int(0, 61):
-		return 70
-	if 55 == math.random_int(0, 61):
-		return 71
-	if 56 == math.random_int(0, 61):
-		return 72
-	if 57 == math.random_int(0, 61):
-		return 73
-	if 58 == math.random_int(0, 61):
-		return 74
-	if 59 == math.random_int(0, 61):
-		return 75
-	if 60 == math.random_int(0, 61):
-		return 76
-	if 61 == math.random_int(0, 61):
-		return 77
+	match math.random_int(0, 61):
+		1:
+			return 327
+		2:
+			return 328
+		3:
+			return 329
+		4:
+			return 330
+		5:
+			return 331
+		6, 7:
+			return 332
+		8:
+			return 333
+		9:
+			return 334
+		10:
+			return 335
+		11:
+			return 264
+		12:
+			return 265
+		13:
+			return 266
+		14:
+			return 267
+		15:
+			return 268
+		16:
+			return 269
+		17:
+			return 270
+		18:
+			return 271
+		19:
+			return 272
+		20:
+			return 273
+		21:
+			return 274
+		22:
+			return 275
+		23:
+			return 276
+		24:
+			return 277
+		25:
+			return 278
+		26:
+			return 273
+		27:
+			return 279
+		28:
+			return 280
+		29:
+			return 281
+		30:
+			return 282
+		31:
+			return 283
+		32:
+			return 284
+		33:
+			return 285
+		34:
+			return 286
+		35:
+			return 287
+		36:
+			return 51
+		37:
+			return 52
+		38:
+			return 53
+		39:
+			return 54
+		40:
+			return 55
+		41:
+			return 56
+		42:
+			return 57
+		43:
+			return 58
+		44:
+			return 59
+		45:
+			return 60
+		46:
+			return 61
+		47:
+			return 62
+		48:
+			return 63
+		49:
+			return 64
+		50:
+			return 65
+		51:
+			return 66
+		52:
+			return 68
+		53:
+			return 69
+		54:
+			return 70
+		55:
+			return 71
+		56:
+			return 72
+		57:
+			return 73
+		58:
+			return 74
+		59:
+			return 75
+		60:
+			return 76
+		61:
+			return 77
 	return 0
 	return 0
 
@@ -2242,186 +1471,61 @@ func local_17152() -> Variant:
 func local_17258() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 89)):
-		return 3
-	if 1 == math.random_int(0, 89):
-		return 3
-	if 2 == math.random_int(0, 89):
-		return 3
-	if 3 == math.random_int(0, 89):
-		return 3
-	if 4 == math.random_int(0, 89):
-		return 3
-	if 5 == math.random_int(0, 89):
-		return 3
-	if 6 == math.random_int(0, 89):
-		return 3
-	if 7 == math.random_int(0, 89):
-		return 8
-	if 8 == math.random_int(0, 89):
-		return 8
-	if 9 == math.random_int(0, 89):
-		return 8
-	if 10 == math.random_int(0, 89):
-		return 9
-	if 11 == math.random_int(0, 89):
-		return 9
-	if 12 == math.random_int(0, 89):
-		return 9
-	if 13 == math.random_int(0, 89):
-		return 10
-	if 14 == math.random_int(0, 89):
-		return 10
-	if 15 == math.random_int(0, 89):
-		return 10
-	if 16 == math.random_int(0, 89):
-		return 11
-	if 17 == math.random_int(0, 89):
-		return 11
-	if 18 == math.random_int(0, 89):
-		return 11
-	if 19 == math.random_int(0, 89):
-		return 11
-	if 20 == math.random_int(0, 89):
-		return 11
-	if 21 == math.random_int(0, 89):
-		return 12
-	if 22 == math.random_int(0, 89):
-		return 12
-	if 23 == math.random_int(0, 89):
-		return 12
-	if 24 == math.random_int(0, 89):
-		return 12
-	if 25 == math.random_int(0, 89):
-		return 13
-	if 26 == math.random_int(0, 89):
-		return 13
-	if 27 == math.random_int(0, 89):
-		return 14
-	if 28 == math.random_int(0, 89):
-		return 14
-	if 29 == math.random_int(0, 89):
-		return 14
-	if 30 == math.random_int(0, 89):
-		return 14
-	if 31 == math.random_int(0, 89):
-		return 14
-	if 32 == math.random_int(0, 89):
-		return 15
-	if 33 == math.random_int(0, 89):
-		return 15
-	if 34 == math.random_int(0, 89):
-		return 15
-	if 35 == math.random_int(0, 89):
-		return 15
-	if 36 == math.random_int(0, 89):
-		return 15
-	if 37 == math.random_int(0, 89):
-		return 15
-	if 38 == math.random_int(0, 89):
-		return 16
-	if 39 == math.random_int(0, 89):
-		return 16
-	if 40 == math.random_int(0, 89):
-		return 16
-	if 41 == math.random_int(0, 89):
-		return 17
-	if 42 == math.random_int(0, 89):
-		return 17
-	if 43 == math.random_int(0, 89):
-		return 17
-	if 44 == math.random_int(0, 89):
-		return 17
-	if 45 == math.random_int(0, 89):
-		return 17
-	if 46 == math.random_int(0, 89):
-		return 50
-	if 47 == math.random_int(0, 89):
-		return 50
-	if 48 == math.random_int(0, 89):
-		return 50
-	if 49 == math.random_int(0, 89):
-		return 50
-	if 50 == math.random_int(0, 89):
-		return 50
-	if 51 == math.random_int(0, 89):
-		return 41
-	if 52 == math.random_int(0, 89):
-		return 42
-	if 53 == math.random_int(0, 89):
-		return 47
-	if 54 == math.random_int(0, 89):
-		return 92
-	if 55 == math.random_int(0, 89):
-		return 92
-	if 56 == math.random_int(0, 89):
-		return 92
-	if 57 == math.random_int(0, 89):
-		return 93
-	if 58 == math.random_int(0, 89):
-		return 93
-	if 59 == math.random_int(0, 89):
-		return 93
-	if 60 == math.random_int(0, 89):
-		return 93
-	if 61 == math.random_int(0, 89):
-		return 93
-	if 62 == math.random_int(0, 89):
-		return 94
-	if 63 == math.random_int(0, 89):
-		return 94
-	if 64 == math.random_int(0, 89):
-		return 94
-	if 65 == math.random_int(0, 89):
-		return 94
-	if 66 == math.random_int(0, 89):
-		return 86
-	if 67 == math.random_int(0, 89):
-		return 86
-	if 68 == math.random_int(0, 89):
-		return 86
-	if 69 == math.random_int(0, 89):
-		return 86
-	if 70 == math.random_int(0, 89):
-		return 87
-	if 71 == math.random_int(0, 89):
-		return 87
-	if 72 == math.random_int(0, 89):
-		return 87
-	if 73 == math.random_int(0, 89):
-		return 87
-	if 74 == math.random_int(0, 89):
-		return 87
-	if 75 == math.random_int(0, 89):
-		return 87
-	if 76 == math.random_int(0, 89):
-		return 80
-	if 77 == math.random_int(0, 89):
-		return 80
-	if 78 == math.random_int(0, 89):
-		return 80
-	if 79 == math.random_int(0, 89):
-		return 80
-	if 80 == math.random_int(0, 89):
-		return 81
-	if 81 == math.random_int(0, 89):
-		return 81
-	if 82 == math.random_int(0, 89):
-		return 81
-	if 83 == math.random_int(0, 89):
-		return 82
-	if 84 == math.random_int(0, 89):
-		return 82
-	if 85 == math.random_int(0, 89):
-		return 82
-	if 86 == math.random_int(0, 89):
-		return 116
-	if 87 == math.random_int(0, 89):
-		return 117
-	if 88 == math.random_int(0, 89):
-		return 113
-	if 89 == math.random_int(0, 89):
-		return 121
+	match math.random_int(0, 89):
+		0, 1, 2, 3, 4, 5, 6:
+			return 3
+		7, 8, 9:
+			return 8
+		10, 11, 12:
+			return 9
+		13, 14, 15:
+			return 10
+		16, 17, 18, 19, 20:
+			return 11
+		21, 22, 23, 24:
+			return 12
+		25, 26:
+			return 13
+		27, 28, 29, 30, 31:
+			return 14
+		32, 33, 34, 35, 36, 37:
+			return 15
+		38, 39, 40:
+			return 16
+		41, 42, 43, 44, 45:
+			return 17
+		46, 47, 48, 49, 50:
+			return 50
+		51:
+			return 41
+		52:
+			return 42
+		53:
+			return 47
+		54, 55, 56:
+			return 92
+		57, 58, 59, 60, 61:
+			return 93
+		62, 63, 64, 65:
+			return 94
+		66, 67, 68, 69:
+			return 86
+		70, 71, 72, 73, 74, 75:
+			return 87
+		76, 77, 78, 79:
+			return 80
+		80, 81, 82:
+			return 81
+		83, 84, 85:
+			return 82
+		86:
+			return 116
+		87:
+			return 117
+		88:
+			return 113
+		89:
+			return 121
 	return 0
 	return 0
 
@@ -2441,148 +1545,82 @@ func local_18331() -> Variant:
 func local_18453() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 14)):
-		return 2
-	if 1 == math.random_int(0, 14):
-		return 2
-	if 2 == math.random_int(0, 14):
-		return 2
-	if 3 == math.random_int(0, 14):
-		return 2
-	if 4 == math.random_int(0, 14):
-		return 7
-	if 5 == math.random_int(0, 14):
-		return 7
-	if 6 == math.random_int(0, 14):
-		return 7
-	if 7 == math.random_int(0, 14):
-		return 7
-	if 8 == math.random_int(0, 14):
-		return 4
-	if 9 == math.random_int(0, 14):
-		return 4
-	if 10 == math.random_int(0, 14):
-		return 4
-	if 11 == math.random_int(0, 14):
-		return 4
-	if 12 == math.random_int(0, 14):
-		return 106
-	if 13 == math.random_int(0, 14):
-		return 126
-	if 14 == math.random_int(0, 14):
-		return 148
+	match math.random_int(0, 14):
+		0, 1, 2, 3:
+			return 2
+		4, 5, 6, 7:
+			return 7
+		8, 9, 10, 11:
+			return 4
+		12:
+			return 106
+		13:
+			return 126
+		14:
+			return 148
 	return 0
 	return 0
 
 func local_18705() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 25)):
-		return 2
-	if 1 == math.random_int(0, 25):
-		return 2
-	if 2 == math.random_int(0, 25):
-		return 2
-	if 3 == math.random_int(0, 25):
-		return 2
-	if 4 == math.random_int(0, 25):
-		return 7
-	if 5 == math.random_int(0, 25):
-		return 7
-	if 6 == math.random_int(0, 25):
-		return 7
-	if 7 == math.random_int(0, 25):
-		return 7
-	if 8 == math.random_int(0, 25):
-		return 4
-	if 9 == math.random_int(0, 25):
-		return 4
-	if 10 == math.random_int(0, 25):
-		return 4
-	if 11 == math.random_int(0, 25):
-		return 4
-	if 12 == math.random_int(0, 25):
-		return 5
-	if 13 == math.random_int(0, 25):
-		return 331
-	if 14 == math.random_int(0, 25):
-		return 331
-	if 15 == math.random_int(0, 25):
-		return 331
-	if 16 == math.random_int(0, 25):
-		return 331
-	if 17 == math.random_int(0, 25):
-		return 3
-	if 18 == math.random_int(0, 25):
-		return 332
-	if 19 == math.random_int(0, 25):
-		return 76
-	if 20 == math.random_int(0, 25):
-		return 75
-	if 21 == math.random_int(0, 25):
-		return 70
-	if 22 == math.random_int(0, 25):
-		return 72
-	if 23 == math.random_int(0, 25):
-		return 72
-	if 24 == math.random_int(0, 25):
-		return 77
-	if 25 == math.random_int(0, 25):
-		return 71
+	match math.random_int(0, 25):
+		0, 1, 2, 3:
+			return 2
+		4, 5, 6, 7:
+			return 7
+		8, 9, 10, 11:
+			return 4
+		12:
+			return 5
+		13, 14, 15, 16:
+			return 331
+		17:
+			return 3
+		18:
+			return 332
+		19:
+			return 76
+		20:
+			return 75
+		21:
+			return 70
+		22, 23:
+			return 72
+		24:
+			return 77
+		25:
+			return 71
 	return 0
 	return 0
 
 func local_19106() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 14)):
-		return 2
-	if 1 == math.random_int(0, 14):
-		return 2
-	if 2 == math.random_int(0, 14):
-		return 2
-	if 3 == math.random_int(0, 14):
-		return 2
-	if 4 == math.random_int(0, 14):
-		return 7
-	if 5 == math.random_int(0, 14):
-		return 7
-	if 6 == math.random_int(0, 14):
-		return 7
-	if 7 == math.random_int(0, 14):
-		return 7
-	if 8 == math.random_int(0, 14):
-		return 4
-	if 9 == math.random_int(0, 14):
-		return 4
-	if 10 == math.random_int(0, 14):
-		return 4
-	if 11 == math.random_int(0, 14):
-		return 4
-	if 12 == math.random_int(0, 14):
-		return 131
-	if 13 == math.random_int(0, 14):
-		return 126
-	if 14 == math.random_int(0, 14):
-		return 103
+	match math.random_int(0, 14):
+		0, 1, 2, 3:
+			return 2
+		4, 5, 6, 7:
+			return 7
+		8, 9, 10, 11:
+			return 4
+		12:
+			return 131
+		13:
+			return 126
+		14:
+			return 103
 	return 0
 	return 0
 
 func local_19358() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 5)):
-		return 401
-	if 1 == math.random_int(0, 5):
-		return 401
-	if 2 == math.random_int(0, 5):
-		return 401
-	if 3 == math.random_int(0, 5):
-		return 401
-	if 4 == math.random_int(0, 5):
-		return 401
-	if 5 == math.random_int(0, 5):
-		return 6
+	match math.random_int(0, 5):
+		0, 1, 2, 3, 4:
+			return 401
+		5:
+			return 6
 	return 0
 	return 0
 
@@ -2654,7 +1692,9 @@ func local_19905() -> Variant:
 			return 398
 		7:
 			return 399
-	return 403
+		_:
+			return 403
+	return 0
 	return 0
 
 func local_20124() -> Variant:
@@ -2696,134 +1736,131 @@ func local_20279() -> Variant:
 func local_20453() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if 1 == math.random_int(0, 64):
-		return 18
-	if 2 == math.random_int(0, 64):
-		return 19
-	if 3 == math.random_int(0, 64):
-		return 105
-	if 4 == math.random_int(0, 64):
-		return 103
-	if 5 == math.random_int(0, 64):
-		return 112
-	if 6 == math.random_int(0, 64):
-		return 110
-	if 7 == math.random_int(0, 64):
-		return 119
-	if 8 == math.random_int(0, 64):
-		return 120
-	if 9 == math.random_int(0, 64):
-		return 121
-	if 10 == math.random_int(0, 64):
-		return 125
-	if 11 == math.random_int(0, 64):
-		return 126
-	if 12 == math.random_int(0, 64):
-		return 137
-	if 13 == math.random_int(0, 64):
-		return 138
-	if 14 == math.random_int(0, 64):
-		return 145
-	if 15 == math.random_int(0, 64):
-		return 146
-	if 16 == math.random_int(0, 64):
-		return 147
-	if 17 == math.random_int(0, 64):
-		return 148
-	if 18 == math.random_int(0, 64):
-		return 149
-	if 19 == math.random_int(0, 64):
-		return 150
-	if 20 == math.random_int(0, 64):
-		return 151
-	if 21 == math.random_int(0, 64):
-		return 151
-	if 22 == math.random_int(0, 64):
-		return 254
-	if 23 == math.random_int(0, 64):
-		return 255
-	if 24 == math.random_int(0, 64):
-		return 258
-	if 25 == math.random_int(0, 64):
-		return 315
-	if 26 == math.random_int(0, 64):
-		return 316
-	if 27 == math.random_int(0, 64):
-		return 316
-	if 28 == math.random_int(0, 64):
-		return 317
-	if 29 == math.random_int(0, 64):
-		return 318
-	if 30 == math.random_int(0, 64):
-		return 319
-	if 31 == math.random_int(0, 64):
-		return 320
-	if 32 == math.random_int(0, 64):
-		return 321
-	if 33 == math.random_int(0, 64):
-		return 322
-	if 34 == math.random_int(0, 64):
-		return 323
-	if 35 == math.random_int(0, 64):
-		return 324
-	if 36 == math.random_int(0, 64):
-		return 331
-	if 37 == math.random_int(0, 64):
-		return 336
-	if 38 == math.random_int(0, 64):
-		return 336
-	if 39 == math.random_int(0, 64):
-		return 337
-	if 40 == math.random_int(0, 64):
-		return 338
-	if 41 == math.random_int(0, 64):
-		return 339
-	if 42 == math.random_int(0, 64):
-		return 340
-	if 43 == math.random_int(0, 64):
-		return 350
-	if 44 == math.random_int(0, 64):
-		return 351
-	if 45 == math.random_int(0, 64):
-		return 345
-	if 46 == math.random_int(0, 64):
-		return 383
-	if 47 == math.random_int(0, 64):
-		return 384
-	if 48 == math.random_int(0, 64):
-		return 385
-	if 49 == math.random_int(0, 64):
-		return 386
-	if 50 == math.random_int(0, 64):
-		return 488
-	if 51 == math.random_int(0, 64):
-		return 486
-	if 52 == math.random_int(0, 64):
-		return 492
-	if 53 == math.random_int(0, 64):
-		return 494
-	if 54 == math.random_int(0, 64):
-		return 490
-	if 55 == math.random_int(0, 64):
-		return 541
-	if 56 == math.random_int(0, 64):
-		return 542
-	if 57 == math.random_int(0, 64):
-		return 543
-	if 58 == math.random_int(0, 64):
-		return 544
-	if 59 == math.random_int(0, 64):
-		return 545
-	if 60 == math.random_int(0, 64):
-		return 546
-	if 61 == math.random_int(0, 64):
-		return 292
-	if 62 == math.random_int(0, 64):
-		return 274
-	if 63 == math.random_int(0, 64):
-		return 244
-	if 64 == math.random_int(0, 64):
-		return 143
+	match math.random_int(0, 64):
+		1:
+			return 18
+		2:
+			return 19
+		3:
+			return 105
+		4:
+			return 103
+		5:
+			return 112
+		6:
+			return 110
+		7:
+			return 119
+		8:
+			return 120
+		9:
+			return 121
+		10:
+			return 125
+		11:
+			return 126
+		12:
+			return 137
+		13:
+			return 138
+		14:
+			return 145
+		15:
+			return 146
+		16:
+			return 147
+		17:
+			return 148
+		18:
+			return 149
+		19:
+			return 150
+		20:
+			return 151
+		21:
+			return 151
+		22:
+			return 254
+		23:
+			return 255
+		24:
+			return 258
+		25:
+			return 315
+		26, 27:
+			return 316
+		28:
+			return 317
+		29:
+			return 318
+		30:
+			return 319
+		31:
+			return 320
+		32:
+			return 321
+		33:
+			return 322
+		34:
+			return 323
+		35:
+			return 324
+		36:
+			return 331
+		37, 38:
+			return 336
+		39:
+			return 337
+		40:
+			return 338
+		41:
+			return 339
+		42:
+			return 340
+		43:
+			return 350
+		44:
+			return 351
+		45:
+			return 345
+		46:
+			return 383
+		47:
+			return 384
+		48:
+			return 385
+		49:
+			return 386
+		50:
+			return 488
+		51:
+			return 486
+		52:
+			return 492
+		53:
+			return 494
+		54:
+			return 490
+		55:
+			return 541
+		56:
+			return 542
+		57:
+			return 543
+		58:
+			return 544
+		59:
+			return 545
+		60:
+			return 546
+		61:
+			return 292
+		62:
+			return 274
+		63:
+			return 244
+		64:
+			return 143
 	return 0
 	return 0
 
@@ -2834,364 +1871,363 @@ func local_21589() -> Variant:
 func local_21609() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 179)):
-		return 51
-	if 1 == math.random_int(0, 179):
-		return 52
-	if 2 == math.random_int(0, 179):
-		return 53
-	if 3 == math.random_int(0, 179):
-		return 54
-	if 4 == math.random_int(0, 179):
-		return 55
-	if 5 == math.random_int(0, 179):
-		return 56
-	if 6 == math.random_int(0, 179):
-		return 57
-	if 7 == math.random_int(0, 179):
-		return 58
-	if 8 == math.random_int(0, 179):
-		return 59
-	if 9 == math.random_int(0, 179):
-		return 60
-	if 10 == math.random_int(0, 179):
-		return 61
-	if 11 == math.random_int(0, 179):
-		return 62
-	if 12 == math.random_int(0, 179):
-		return 63
-	if 13 == math.random_int(0, 179):
-		return 64
-	if 14 == math.random_int(0, 179):
-		return 295
-	if 15 == math.random_int(0, 179):
-		return 313
-	if 16 == math.random_int(0, 179):
-		return 314
-	if 17 == math.random_int(0, 179):
-		return 327
-	if 18 == math.random_int(0, 179):
-		return 328
-	if 19 == math.random_int(0, 179):
-		return 329
-	if 20 == math.random_int(0, 179):
-		return 330
-	if 21 == math.random_int(0, 179):
-		return 331
-	if 22 == math.random_int(0, 179):
-		return 332
-	if 23 == math.random_int(0, 179):
-		return 332
-	if 24 == math.random_int(0, 179):
-		return 333
-	if 25 == math.random_int(0, 179):
-		return 345
-	if 26 == math.random_int(0, 179):
-		return 346
-	if 27 == math.random_int(0, 179):
-		return 347
-	if 28 == math.random_int(0, 179):
-		return 348
-	if 29 == math.random_int(0, 179):
-		return 349
-	if 30 == math.random_int(0, 179):
-		return 579
-	if 31 == math.random_int(0, 179):
-		return 350
-	if 32 == math.random_int(0, 179):
-		return 351
-	if 33 == math.random_int(0, 179):
-		return 352
-	if 34 == math.random_int(0, 179):
-		return 353
-	if 35 == math.random_int(0, 179):
-		return 354
-	if 36 == math.random_int(0, 179):
-		return 355
-	if 37 == math.random_int(0, 179):
-		return 359
-	if 38 == math.random_int(0, 179):
-		return 360
-	if 39 == math.random_int(0, 179):
-		return 361
-	if 40 == math.random_int(0, 179):
-		return 362
-	if 41 == math.random_int(0, 179):
-		return 363
-	if 42 == math.random_int(0, 179):
-		return 364
-	if 43 == math.random_int(0, 179):
-		return 365
-	if 44 == math.random_int(0, 179):
-		return 366
-	if 45 == math.random_int(0, 179):
-		return 367
-	if 46 == math.random_int(0, 179):
-		return 368
-	if 47 == math.random_int(0, 179):
-		return 391
-	if 48 == math.random_int(0, 179):
-		return 392
-	if 49 == math.random_int(0, 179):
-		return 393
-	if 50 == math.random_int(0, 179):
-		return 394
-	if 51 == math.random_int(0, 179):
-		return 498
-	if 52 == math.random_int(0, 179):
-		return 395
-	if 53 == math.random_int(0, 179):
-		return 396
-	if 54 == math.random_int(0, 179):
-		return 430
-	if 55 == math.random_int(0, 179):
-		return 431
-	if 56 == math.random_int(0, 179):
-		return 432
-	if 57 == math.random_int(0, 179):
-		return 442
-	if 58 == math.random_int(0, 179):
-		return 443
-	if 59 == math.random_int(0, 179):
-		return 467
-	if 60 == math.random_int(0, 179):
-		return 468
-	if 61 == math.random_int(0, 179):
-		return 469
-	if 62 == math.random_int(0, 179):
-		return 470
-	if 64 == math.random_int(0, 179):
-		return 471
-	if 65 == math.random_int(0, 179):
-		return 472
-	if 66 == math.random_int(0, 179):
-		return 473
-	if 67 == math.random_int(0, 179):
-		return 476
-	if 68 == math.random_int(0, 179):
-		return 477
-	if 69 == math.random_int(0, 179):
-		return 478
-	if 70 == math.random_int(0, 179):
-		return 479
-	if 71 == math.random_int(0, 179):
-		return 480
-	if 72 == math.random_int(0, 179):
-		return 481
-	if 73 == math.random_int(0, 179):
-		return 482
-	if 74 == math.random_int(0, 179):
-		return 536
-	if 75 == math.random_int(0, 179):
-		return 537
-	if 76 == math.random_int(0, 179):
-		return 538
-	if 77 == math.random_int(0, 179):
-		return 539
-	if 78 == math.random_int(0, 179):
-		return 488
-	if 79 == math.random_int(0, 179):
-		return 486
-	if 80 == math.random_int(0, 179):
-		return 492
-	if 81 == math.random_int(0, 179):
-		return 494
-	if 82 == math.random_int(0, 179):
-		return 490
-	if 83 == math.random_int(0, 179):
-		return 505
-	if 84 == math.random_int(0, 179):
-		return 540
-	if 85 == math.random_int(0, 179):
-		return 541
-	if 86 == math.random_int(0, 179):
-		return 542
-	if 87 == math.random_int(0, 179):
-		return 543
-	if 88 == math.random_int(0, 179):
-		return 544
-	if 89 == math.random_int(0, 179):
-		return 545
-	if 90 == math.random_int(0, 179):
-		return 546
-	if 91 == math.random_int(0, 179):
-		return 547
-	if 92 == math.random_int(0, 179):
-		return 548
-	if 93 == math.random_int(0, 179):
-		return 549
-	if 94 == math.random_int(0, 179):
-		return 550
-	if 95 == math.random_int(0, 179):
-		return 551
-	if 96 == math.random_int(0, 179):
-		return 552
-	if 97 == math.random_int(0, 179):
-		return 553
-	if 98 == math.random_int(0, 179):
-		return 581
-	if 99 == math.random_int(0, 179):
-		return 582
-	if 100 == math.random_int(0, 179):
-		return 583
-	if 101 == math.random_int(0, 179):
-		return 560
-	if 102 == math.random_int(0, 179):
-		return 571
-	if 103 == math.random_int(0, 179):
-		return 563
-	if 104 == math.random_int(0, 179):
-		return 558
-	if 105 == math.random_int(0, 179):
-		return 334
-	if 106 == math.random_int(0, 179):
-		return 335
-	if 107 == math.random_int(0, 179):
-		return 65
-	if 108 == math.random_int(0, 179):
-		return 66
-	if 109 == math.random_int(0, 179):
-		return 68
-	if 110 == math.random_int(0, 179):
-		return 69
-	if 111 == math.random_int(0, 179):
-		return 70
-	if 112 == math.random_int(0, 179):
-		return 71
-	if 113 == math.random_int(0, 179):
-		return 72
-	if 114 == math.random_int(0, 179):
-		return 73
-	if 115 == math.random_int(0, 179):
-		return 74
-	if 116 == math.random_int(0, 179):
-		return 75
-	if 117 == math.random_int(0, 179):
-		return 76
-	if 118 == math.random_int(0, 179):
-		return 77
-	if 119 == math.random_int(0, 179):
-		return 106
-	if 120 == math.random_int(0, 179):
-		return 107
-	if 121 == math.random_int(0, 179):
-		return 108
-	if 122 == math.random_int(0, 179):
-		return 109
-	if 123 == math.random_int(0, 179):
-		return 110
-	if 124 == math.random_int(0, 179):
-		return 111
-	if 125 == math.random_int(0, 179):
-		return 112
-	if 126 == math.random_int(0, 179):
-		return 113
-	if 127 == math.random_int(0, 179):
-		return 114
-	if 128 == math.random_int(0, 179):
-		return 115
-	if 129 == math.random_int(0, 179):
-		return 116
-	if 130 == math.random_int(0, 179):
-		return 117
-	if 131 == math.random_int(0, 179):
-		return 118
-	if 132 == math.random_int(0, 179):
-		return 119
-	if 133 == math.random_int(0, 179):
-		return 120
-	if 134 == math.random_int(0, 179):
-		return 121
-	if 135 == math.random_int(0, 179):
-		return 122
-	if 136 == math.random_int(0, 179):
-		return 123
-	if 137 == math.random_int(0, 179):
-		return 124
-	if 138 == math.random_int(0, 179):
-		return 125
-	if 139 == math.random_int(0, 179):
-		return 126
-	if 140 == math.random_int(0, 179):
-		return 127
-	if 141 == math.random_int(0, 179):
-		return 128
-	if 142 == math.random_int(0, 179):
-		return 129
-	if 143 == math.random_int(0, 179):
-		return 130
-	if 144 == math.random_int(0, 179):
-		return 131
-	if 145 == math.random_int(0, 179):
-		return 132
-	if 146 == math.random_int(0, 179):
-		return 133
-	if 147 == math.random_int(0, 179):
-		return 134
-	if 148 == math.random_int(0, 179):
-		return 135
-	if 149 == math.random_int(0, 179):
-		return 136
-	if 150 == math.random_int(0, 179):
-		return 137
-	if 151 == math.random_int(0, 179):
-		return 138
-	if 152 == math.random_int(0, 179):
-		return 139
-	if 153 == math.random_int(0, 179):
-		return 140
-	if 154 == math.random_int(0, 179):
-		return 141
-	if 155 == math.random_int(0, 179):
-		return 259
-	if 156 == math.random_int(0, 179):
-		return 142
-	if 157 == math.random_int(0, 179):
-		return 143
-	if 158 == math.random_int(0, 179):
-		return 144
-	if 159 == math.random_int(0, 179):
-		return 145
-	if 160 == math.random_int(0, 179):
-		return 146
-	if 161 == math.random_int(0, 179):
-		return 147
-	if 162 == math.random_int(0, 179):
-		return 148
-	if 163 == math.random_int(0, 179):
-		return 149
-	if 164 == math.random_int(0, 179):
-		return 150
-	if 165 == math.random_int(0, 179):
-		return 151
-	if 166 == math.random_int(0, 179):
-		return 151
-	if 167 == math.random_int(0, 179):
-		return 152
-	if 168 == math.random_int(0, 179):
-		return 153
-	if 169 == math.random_int(0, 179):
-		return 241
-	if 170 == math.random_int(0, 179):
-		return 242
-	if 171 == math.random_int(0, 179):
-		return 243
-	if 172 == math.random_int(0, 179):
-		return 244
-	if 173 == math.random_int(0, 179):
-		return 252
-	if 174 == math.random_int(0, 179):
-		return 253
-	if 175 == math.random_int(0, 179):
-		return 254
-	if 176 == math.random_int(0, 179):
-		return 255
-	if 177 == math.random_int(0, 179):
-		return 256
-	if 178 == math.random_int(0, 179):
-		return 257
-	if 179 == math.random_int(0, 179):
-		return 258
+	match math.random_int(0, 179):
+		0:
+			return 51
+		1:
+			return 52
+		2:
+			return 53
+		3:
+			return 54
+		4:
+			return 55
+		5:
+			return 56
+		6:
+			return 57
+		7:
+			return 58
+		8:
+			return 59
+		9:
+			return 60
+		10:
+			return 61
+		11:
+			return 62
+		12:
+			return 63
+		13:
+			return 64
+		14:
+			return 295
+		15:
+			return 313
+		16:
+			return 314
+		17:
+			return 327
+		18:
+			return 328
+		19:
+			return 329
+		20:
+			return 330
+		21:
+			return 331
+		22, 23:
+			return 332
+		24:
+			return 333
+		25:
+			return 345
+		26:
+			return 346
+		27:
+			return 347
+		28:
+			return 348
+		29:
+			return 349
+		30:
+			return 579
+		31:
+			return 350
+		32:
+			return 351
+		33:
+			return 352
+		34:
+			return 353
+		35:
+			return 354
+		36:
+			return 355
+		37:
+			return 359
+		38:
+			return 360
+		39:
+			return 361
+		40:
+			return 362
+		41:
+			return 363
+		42:
+			return 364
+		43:
+			return 365
+		44:
+			return 366
+		45:
+			return 367
+		46:
+			return 368
+		47:
+			return 391
+		48:
+			return 392
+		49:
+			return 393
+		50:
+			return 394
+		51:
+			return 498
+		52:
+			return 395
+		53:
+			return 396
+		54:
+			return 430
+		55:
+			return 431
+		56:
+			return 432
+		57:
+			return 442
+		58:
+			return 443
+		59:
+			return 467
+		60:
+			return 468
+		61:
+			return 469
+		62:
+			return 470
+		64:
+			return 471
+		65:
+			return 472
+		66:
+			return 473
+		67:
+			return 476
+		68:
+			return 477
+		69:
+			return 478
+		70:
+			return 479
+		71:
+			return 480
+		72:
+			return 481
+		73:
+			return 482
+		74:
+			return 536
+		75:
+			return 537
+		76:
+			return 538
+		77:
+			return 539
+		78:
+			return 488
+		79:
+			return 486
+		80:
+			return 492
+		81:
+			return 494
+		82:
+			return 490
+		83:
+			return 505
+		84:
+			return 540
+		85:
+			return 541
+		86:
+			return 542
+		87:
+			return 543
+		88:
+			return 544
+		89:
+			return 545
+		90:
+			return 546
+		91:
+			return 547
+		92:
+			return 548
+		93:
+			return 549
+		94:
+			return 550
+		95:
+			return 551
+		96:
+			return 552
+		97:
+			return 553
+		98:
+			return 581
+		99:
+			return 582
+		100:
+			return 583
+		101:
+			return 560
+		102:
+			return 571
+		103:
+			return 563
+		104:
+			return 558
+		105:
+			return 334
+		106:
+			return 335
+		107:
+			return 65
+		108:
+			return 66
+		109:
+			return 68
+		110:
+			return 69
+		111:
+			return 70
+		112:
+			return 71
+		113:
+			return 72
+		114:
+			return 73
+		115:
+			return 74
+		116:
+			return 75
+		117:
+			return 76
+		118:
+			return 77
+		119:
+			return 106
+		120:
+			return 107
+		121:
+			return 108
+		122:
+			return 109
+		123:
+			return 110
+		124:
+			return 111
+		125:
+			return 112
+		126:
+			return 113
+		127:
+			return 114
+		128:
+			return 115
+		129:
+			return 116
+		130:
+			return 117
+		131:
+			return 118
+		132:
+			return 119
+		133:
+			return 120
+		134:
+			return 121
+		135:
+			return 122
+		136:
+			return 123
+		137:
+			return 124
+		138:
+			return 125
+		139:
+			return 126
+		140:
+			return 127
+		141:
+			return 128
+		142:
+			return 129
+		143:
+			return 130
+		144:
+			return 131
+		145:
+			return 132
+		146:
+			return 133
+		147:
+			return 134
+		148:
+			return 135
+		149:
+			return 136
+		150:
+			return 137
+		151:
+			return 138
+		152:
+			return 139
+		153:
+			return 140
+		154:
+			return 141
+		155:
+			return 259
+		156:
+			return 142
+		157:
+			return 143
+		158:
+			return 144
+		159:
+			return 145
+		160:
+			return 146
+		161:
+			return 147
+		162:
+			return 148
+		163:
+			return 149
+		164:
+			return 150
+		165:
+			return 151
+		166:
+			return 151
+		167:
+			return 152
+		168:
+			return 153
+		169:
+			return 241
+		170:
+			return 242
+		171:
+			return 243
+		172:
+			return 244
+		173:
+			return 252
+		174:
+			return 253
+		175:
+			return 254
+		176:
+			return 255
+		177:
+			return 256
+		178:
+			return 257
+		179:
+			return 258
 	return 0
 	return 0
 
@@ -3230,128 +2266,91 @@ func local_24915() -> Variant:
 func local_25021() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 60)):
-		return 41
-	if 1 == math.random_int(0, 60):
-		return 42
-	if 2 == math.random_int(0, 60):
-		return 43
-	if 3 == math.random_int(0, 60):
-		return 44
-	if 4 == math.random_int(0, 60):
-		return 45
-	if 5 == math.random_int(0, 60):
-		return 46
-	if 6 == math.random_int(0, 60):
-		return 47
-	if 7 == math.random_int(0, 60):
-		return 48
-	if 8 == math.random_int(0, 60):
-		return 50
-	if 9 == math.random_int(0, 60):
-		return 50
-	if 10 == math.random_int(0, 60):
-		return 50
-	if 11 == math.random_int(0, 60):
-		return 50
-	if 12 == math.random_int(0, 60):
-		return 8
-	if 13 == math.random_int(0, 60):
-		return 9
-	if 14 == math.random_int(0, 60):
-		return 10
-	if 15 == math.random_int(0, 60):
-		return 11
-	if 16 == math.random_int(0, 60):
-		return 11
-	if 17 == math.random_int(0, 60):
-		return 11
-	if 18 == math.random_int(0, 60):
-		return 12
-	if 19 == math.random_int(0, 60):
-		return 13
-	if 20 == math.random_int(0, 60):
-		return 14
-	if 21 == math.random_int(0, 60):
-		return 14
-	if 22 == math.random_int(0, 60):
-		return 14
-	if 23 == math.random_int(0, 60):
-		return 15
-	if 24 == math.random_int(0, 60):
-		return 15
-	if 25 == math.random_int(0, 60):
-		return 15
-	if 26 == math.random_int(0, 60):
-		return 15
-	if 27 == math.random_int(0, 60):
-		return 15
-	if 28 == math.random_int(0, 60):
-		return 16
-	if 29 == math.random_int(0, 60):
-		return 17
-	if 30 == math.random_int(0, 60):
-		return 17
-	if 31 == math.random_int(0, 60):
-		return 38
-	if 32 == math.random_int(0, 60):
-		return 78
-	if 33 == math.random_int(0, 60):
-		return 79
-	if 34 == math.random_int(0, 60):
-		return 80
-	if 35 == math.random_int(0, 60):
-		return 81
-	if 36 == math.random_int(0, 60):
-		return 81
-	if 37 == math.random_int(0, 60):
-		return 81
-	if 38 == math.random_int(0, 60):
-		return 82
-	if 39 == math.random_int(0, 60):
-		return 82
-	if 40 == math.random_int(0, 60):
-		return 82
-	if 41 == math.random_int(0, 60):
-		return 83
-	if 42 == math.random_int(0, 60):
-		return 84
-	if 43 == math.random_int(0, 60):
-		return 85
-	if 44 == math.random_int(0, 60):
-		return 86
-	if 45 == math.random_int(0, 60):
-		return 87
-	if 46 == math.random_int(0, 60):
-		return 87
-	if 47 == math.random_int(0, 60):
-		return 87
-	if 48 == math.random_int(0, 60):
-		return 87
-	if 49 == math.random_int(0, 60):
-		return 88
-	if 50 == math.random_int(0, 60):
-		return 89
-	if 51 == math.random_int(0, 60):
-		return 93
-	if 52 == math.random_int(0, 60):
-		return 94
-	if 53 == math.random_int(0, 60):
-		return 95
-	if 54 == math.random_int(0, 60):
-		return 139
-	if 55 == math.random_int(0, 60):
-		return 121
-	if 56 == math.random_int(0, 60):
-		return 114
-	if 57 == math.random_int(0, 60):
-		return 115
-	if 58 == math.random_int(0, 60):
-		return 116
-	if 59 == math.random_int(0, 60):
-		return 117
-	if 60 == math.random_int(0, 60):
-		return 118
+	match math.random_int(0, 60):
+		0:
+			return 41
+		1:
+			return 42
+		2:
+			return 43
+		3:
+			return 44
+		4:
+			return 45
+		5:
+			return 46
+		6:
+			return 47
+		7:
+			return 48
+		8, 9, 10, 11:
+			return 50
+		12:
+			return 8
+		13:
+			return 9
+		14:
+			return 10
+		15, 16, 17:
+			return 11
+		18:
+			return 12
+		19:
+			return 13
+		20, 21, 22:
+			return 14
+		23, 24, 25, 26, 27:
+			return 15
+		28:
+			return 16
+		29, 30:
+			return 17
+		31:
+			return 38
+		32:
+			return 78
+		33:
+			return 79
+		34:
+			return 80
+		35, 36, 37:
+			return 81
+		38, 39, 40:
+			return 82
+		41:
+			return 83
+		42:
+			return 84
+		43:
+			return 85
+		44:
+			return 86
+		45, 46, 47, 48:
+			return 87
+		49:
+			return 88
+		50:
+			return 89
+		51:
+			return 93
+		52:
+			return 94
+		53:
+			return 95
+		54:
+			return 139
+		55:
+			return 121
+		56:
+			return 114
+		57:
+			return 115
+		58:
+			return 116
+		59:
+			return 117
+		60:
+			return 118
 	return 0
 	return 0
 
@@ -3595,130 +2594,99 @@ func local_27715() -> Variant:
 func local_28095() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 61)):
-		return 426
-	if 1 == math.random_int(0, 61):
-		return 426
-	if 2 == math.random_int(0, 61):
-		return 426
-	if 3 == math.random_int(0, 61):
-		return 426
-	if 4 == math.random_int(0, 61):
-		return 426
-	if 5 == math.random_int(0, 61):
-		return 427
-	if 6 == math.random_int(0, 61):
-		return 427
-	if 7 == math.random_int(0, 61):
-		return 427
-	if 8 == math.random_int(0, 61):
-		return 427
-	if 9 == math.random_int(0, 61):
-		return 427
-	if 10 == math.random_int(0, 61):
-		return 428
-	if 11 == math.random_int(0, 61):
-		return 428
-	if 12 == math.random_int(0, 61):
-		return 428
-	if 13 == math.random_int(0, 61):
-		return 428
-	if 14 == math.random_int(0, 61):
-		return 428
-	if 15 == math.random_int(0, 61):
-		return 429
-	if 16 == math.random_int(0, 61):
-		return 429
-	if 17 == math.random_int(0, 61):
-		return 429
-	if 18 == math.random_int(0, 61):
-		return 429
-	if 19 == math.random_int(0, 61):
-		return 429
-	if 20 == math.random_int(0, 61):
-		return 542
-	if 21 == math.random_int(0, 61):
-		return 543
-	if 22 == math.random_int(0, 61):
-		return 544
-	if 23 == math.random_int(0, 61):
-		return 545
-	if 24 == math.random_int(0, 61):
-		return 546
-	if 25 == math.random_int(0, 61):
-		return 547
-	if 26 == math.random_int(0, 61):
-		return 548
-	if 27 == math.random_int(0, 61):
-		return 549
-	if 28 == math.random_int(0, 61):
-		return 550
-	if 29 == math.random_int(0, 61):
-		return 551
-	if 30 == math.random_int(0, 61):
-		return 552
-	if 31 == math.random_int(0, 61):
-		return 553
-	if 32 == math.random_int(0, 61):
-		return 581
-	if 33 == math.random_int(0, 61):
-		return 582
-	if 34 == math.random_int(0, 61):
-		return 583
-	if 35 == math.random_int(0, 61):
-		return 560
-	if 36 == math.random_int(0, 61):
-		return 571
-	if 37 == math.random_int(0, 61):
-		return 563
-	if 38 == math.random_int(0, 61):
-		return 558
-	if 39 == math.random_int(0, 61):
-		return 471
-	if 40 == math.random_int(0, 61):
-		return 472
-	if 41 == math.random_int(0, 61):
-		return 478
-	if 42 == math.random_int(0, 61):
-		return 479
-	if 43 == math.random_int(0, 61):
-		return 540
-	if 44 == math.random_int(0, 61):
-		return 243
-	if 45 == math.random_int(0, 61):
-		return 244
-	if 46 == math.random_int(0, 61):
-		return 252
-	if 47 == math.random_int(0, 61):
-		return 253
-	if 48 == math.random_int(0, 61):
-		return 37
-	if 49 == math.random_int(0, 61):
-		return 207
-	if 50 == math.random_int(0, 61):
-		return 236
-	if 51 == math.random_int(0, 61):
-		return 236
-	if 52 == math.random_int(0, 61):
-		return 237
-	if 53 == math.random_int(0, 61):
-		return 237
-	if 54 == math.random_int(0, 61):
-		return 237
-	if 55 == math.random_int(0, 61):
-		return 238
-	if 56 == math.random_int(0, 61):
-		return 238
-	if 57 == math.random_int(0, 61):
-		return 239
-	if 58 == math.random_int(0, 61):
-		return 240
-	if 59 == math.random_int(0, 61):
-		return 241
-	if 60 == math.random_int(0, 61):
-		return 242
-	if 61 == math.random_int(0, 61):
-		return 294
+	match math.random_int(0, 61):
+		0, 1, 2, 3, 4:
+			return 426
+		5, 6, 7, 8, 9:
+			return 427
+		10, 11, 12, 13, 14:
+			return 428
+		15, 16, 17, 18, 19:
+			return 429
+		20:
+			return 542
+		21:
+			return 543
+		22:
+			return 544
+		23:
+			return 545
+		24:
+			return 546
+		25:
+			return 547
+		26:
+			return 548
+		27:
+			return 549
+		28:
+			return 550
+		29:
+			return 551
+		30:
+			return 552
+		31:
+			return 553
+		32:
+			return 581
+		33:
+			return 582
+		34:
+			return 583
+		35:
+			return 560
+		36:
+			return 571
+		37:
+			return 563
+		38:
+			return 558
+		39:
+			return 471
+		40:
+			return 472
+		41:
+			return 478
+		42:
+			return 479
+		43:
+			return 540
+		44:
+			return 243
+		45:
+			return 244
+		46:
+			return 252
+		47:
+			return 253
+		48:
+			return 37
+		49:
+			return 207
+		50:
+			return 236
+		51:
+			return 236
+		52:
+			return 237
+		53:
+			return 237
+		54:
+			return 237
+		55:
+			return 238
+		56:
+			return 238
+		57:
+			return 239
+		58:
+			return 240
+		59:
+			return 241
+		60:
+			return 242
+		61:
+			return 294
 	return 0
 	return 0
 
@@ -3731,180 +2699,104 @@ func local_29094() -> Variant:
 func local_29146() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 68)):
-		return 476
-	if 1 == math.random_int(0, 68):
-		return 477
-	if 2 == math.random_int(0, 68):
-		return 478
-	if 3 == math.random_int(0, 68):
-		return 479
-	if 4 == math.random_int(0, 68):
-		return 480
-	if 5 == math.random_int(0, 68):
-		return 481
-	if 6 == math.random_int(0, 68):
-		return 481
-	if 7 == math.random_int(0, 68):
-		return 481
-	if 8 == math.random_int(0, 68):
-		return 481
-	if 9 == math.random_int(0, 68):
-		return 482
-	if 10 == math.random_int(0, 68):
-		return 536
-	if 11 == math.random_int(0, 68):
-		return 537
-	if 12 == math.random_int(0, 68):
-		return 537
-	if 13 == math.random_int(0, 68):
-		return 537
-	if 14 == math.random_int(0, 68):
-		return 537
-	if 15 == math.random_int(0, 68):
-		return 537
-	if 16 == math.random_int(0, 68):
-		return 537
-	if 17 == math.random_int(0, 68):
-		return 538
-	if 18 == math.random_int(0, 68):
-		return 538
-	if 19 == math.random_int(0, 68):
-		return 538
-	if 20 == math.random_int(0, 68):
-		return 539
-	if 21 == math.random_int(0, 68):
-		return 539
-	if 22 == math.random_int(0, 68):
-		return 539
-	if 23 == math.random_int(0, 68):
-		return 539
-	if 24 == math.random_int(0, 68):
-		return 488
-	if 25 == math.random_int(0, 68):
-		return 486
-	if 26 == math.random_int(0, 68):
-		return 486
-	if 27 == math.random_int(0, 68):
-		return 486
-	if 28 == math.random_int(0, 68):
-		return 486
-	if 29 == math.random_int(0, 68):
-		return 492
-	if 30 == math.random_int(0, 68):
-		return 494
-	if 31 == math.random_int(0, 68):
-		return 490
-	if 32 == math.random_int(0, 68):
-		return 505
-	if 33 == math.random_int(0, 68):
-		return 540
-	if 34 == math.random_int(0, 68):
-		return 541
-	if 35 == math.random_int(0, 68):
-		return 541
-	if 36 == math.random_int(0, 68):
-		return 541
-	if 37 == math.random_int(0, 68):
-		return 541
-	if 38 == math.random_int(0, 68):
-		return 541
-	if 39 == math.random_int(0, 68):
-		return 542
-	if 40 == math.random_int(0, 68):
-		return 543
-	if 41 == math.random_int(0, 68):
-		return 543
-	if 42 == math.random_int(0, 68):
-		return 543
-	if 43 == math.random_int(0, 68):
-		return 543
-	if 44 == math.random_int(0, 68):
-		return 544
-	if 45 == math.random_int(0, 68):
-		return 544
-	if 46 == math.random_int(0, 68):
-		return 544
-	if 47 == math.random_int(0, 68):
-		return 545
-	if 48 == math.random_int(0, 68):
-		return 545
-	if 49 == math.random_int(0, 68):
-		return 545
-	if 50 == math.random_int(0, 68):
-		return 545
-	if 51 == math.random_int(0, 68):
-		return 545
-	if 52 == math.random_int(0, 68):
-		return 545
-	if 53 == math.random_int(0, 68):
-		return 546
-	if 54 == math.random_int(0, 68):
-		return 546
-	if 55 == math.random_int(0, 68):
-		return 547
-	if 56 == math.random_int(0, 68):
-		return 548
-	if 57 == math.random_int(0, 68):
-		return 549
-	if 58 == math.random_int(0, 68):
-		return 550
-	if 59 == math.random_int(0, 68):
-		return 551
-	if 60 == math.random_int(0, 68):
-		return 552
-	if 61 == math.random_int(0, 68):
-		return 553
-	if 62 == math.random_int(0, 68):
-		return 581
-	if 63 == math.random_int(0, 68):
-		return 582
-	if 64 == math.random_int(0, 68):
-		return 583
-	if 65 == math.random_int(0, 68):
-		return 560
-	if 66 == math.random_int(0, 68):
-		return 571
-	if 67 == math.random_int(0, 68):
-		return 563
-	if 68 == math.random_int(0, 68):
-		return 558
+	match math.random_int(0, 68):
+		0:
+			return 476
+		1:
+			return 477
+		2:
+			return 478
+		3:
+			return 479
+		4:
+			return 480
+		5, 6, 7, 8:
+			return 481
+		9:
+			return 482
+		10:
+			return 536
+		11, 12, 13, 14, 15, 16:
+			return 537
+		17, 18, 19:
+			return 538
+		20, 21, 22, 23:
+			return 539
+		24:
+			return 488
+		25, 26, 27, 28:
+			return 486
+		29:
+			return 492
+		30:
+			return 494
+		31:
+			return 490
+		32:
+			return 505
+		33:
+			return 540
+		34, 35, 36, 37, 38:
+			return 541
+		39:
+			return 542
+		40, 41, 42, 43:
+			return 543
+		44, 45, 46:
+			return 544
+		47, 48, 49, 50, 51, 52:
+			return 545
+		53, 54:
+			return 546
+		55:
+			return 547
+		56:
+			return 548
+		57:
+			return 549
+		58:
+			return 550
+		59:
+			return 551
+		60:
+			return 552
+		61:
+			return 553
+		62:
+			return 581
+		63:
+			return 582
+		64:
+			return 583
+		65:
+			return 560
+		66:
+			return 571
+		67:
+			return 563
+		68:
+			return 558
 	return 0
 	return 0
 
 func local_30145() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if 1 == math.random_int(0, 15):
-		return 538
-	if 2 == math.random_int(0, 15):
-		return 538
-	if 3 == math.random_int(0, 15):
-		return 538
-	if 4 == math.random_int(0, 15):
-		return 539
-	if 5 == math.random_int(0, 15):
-		return 539
-	if 6 == math.random_int(0, 15):
-		return 539
-	if 7 == math.random_int(0, 15):
-		return 539
-	if 8 == math.random_int(0, 15):
-		return 488
-	if 9 == math.random_int(0, 15):
-		return 486
-	if 10 == math.random_int(0, 15):
-		return 486
-	if 11 == math.random_int(0, 15):
-		return 486
-	if 12 == math.random_int(0, 15):
-		return 486
-	if 13 == math.random_int(0, 15):
-		return 492
-	if 14 == math.random_int(0, 15):
-		return 494
-	if 15 == math.random_int(0, 15):
-		return 490
+	match math.random_int(0, 15):
+		1, 2, 3:
+			return 538
+		4, 5, 6, 7:
+			return 539
+		8:
+			return 488
+		9, 10, 11, 12:
+			return 486
+		13:
+			return 492
+		14:
+			return 494
+		15:
+			return 490
 	return 0
 	return 0
 
@@ -4019,66 +2911,33 @@ func local_31331() -> Variant:
 func local_31437() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 29)):
-		return 316
-	if 1 == math.random_int(0, 29):
-		return 316
-	if 2 == math.random_int(0, 29):
-		return 316
-	if 3 == math.random_int(0, 29):
-		return 316
-	if 4 == math.random_int(0, 29):
-		return 316
-	if 5 == math.random_int(0, 29):
-		return 316
-	if 6 == math.random_int(0, 29):
-		return 316
-	if 7 == math.random_int(0, 29):
-		return 7
-	if 8 == math.random_int(0, 29):
-		return 7
-	if 9 == math.random_int(0, 29):
-		return 7
-	if 10 == math.random_int(0, 29):
-		return 7
-	if 11 == math.random_int(0, 29):
-		return 7
-	if 12 == math.random_int(0, 29):
-		return 4
-	if 13 == math.random_int(0, 29):
-		return 4
-	if 14 == math.random_int(0, 29):
-		return 4
-	if 15 == math.random_int(0, 29):
-		return 4
-	if 16 == math.random_int(0, 29):
-		return 3
-	if 17 == math.random_int(0, 29):
-		return 3
-	if 18 == math.random_int(0, 29):
-		return 3
-	if 19 == math.random_int(0, 29):
-		return 3
-	if 20 == math.random_int(0, 29):
-		return 3
-	if 21 == math.random_int(0, 29):
-		return 243
-	if 22 == math.random_int(0, 29):
-		return 244
-	if 23 == math.random_int(0, 29):
-		return 252
-	if 24 == math.random_int(0, 29):
-		return 253
-	if 25 == math.random_int(0, 29):
-		return 254
-	if 26 == math.random_int(0, 29):
-		return 260
-	if 27 == math.random_int(0, 29):
-		return 288
-	if 28 == math.random_int(0, 29):
-		return 289
-	if 29 == math.random_int(0, 29):
-		return 290
+	match math.random_int(0, 29):
+		0, 1, 2, 3, 4, 5, 6:
+			return 316
+		7, 8, 9, 10, 11:
+			return 7
+		12, 13, 14, 15:
+			return 4
+		16, 17, 18, 19, 20:
+			return 3
+		21:
+			return 243
+		22:
+			return 244
+		23:
+			return 252
+		24:
+			return 253
+		25:
+			return 254
+		26:
+			return 260
+		27:
+			return 288
+		28:
+			return 289
+		29:
+			return 290
 	return 0
 	return 0
 
@@ -4150,66 +3009,65 @@ func local_31882() -> Variant:
 func local_32420() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 29)):
-		return 3
-	if 1 == math.random_int(0, 29):
-		return 8
-	if 2 == math.random_int(0, 29):
-		return 10
-	if 3 == math.random_int(0, 29):
-		return 11
-	if 4 == math.random_int(0, 29):
-		return 12
-	if 5 == math.random_int(0, 29):
-		return 13
-	if 6 == math.random_int(0, 29):
-		return 14
-	if 7 == math.random_int(0, 29):
-		return 15
-	if 8 == math.random_int(0, 29):
-		return 16
-	if 9 == math.random_int(0, 29):
-		return 17
-	if 10 == math.random_int(0, 29):
-		return 78
-	if 11 == math.random_int(0, 29):
-		return 79
-	if 12 == math.random_int(0, 29):
-		return 80
-	if 13 == math.random_int(0, 29):
-		return 81
-	if 14 == math.random_int(0, 29):
-		return 82
-	if 15 == math.random_int(0, 29):
-		return 83
-	if 16 == math.random_int(0, 29):
-		return 84
-	if 17 == math.random_int(0, 29):
-		return 85
-	if 18 == math.random_int(0, 29):
-		return 86
-	if 19 == math.random_int(0, 29):
-		return 87
-	if 20 == math.random_int(0, 29):
-		return 88
-	if 21 == math.random_int(0, 29):
-		return 89
-	if 22 == math.random_int(0, 29):
-		return 90
-	if 23 == math.random_int(0, 29):
-		return 91
-	if 24 == math.random_int(0, 29):
-		return 92
-	if 25 == math.random_int(0, 29):
-		return 93
-	if 26 == math.random_int(0, 29):
-		return 94
-	if 27 == math.random_int(0, 29):
-		return 95
-	if 28 == math.random_int(0, 29):
-		return 95
-	if 29 == math.random_int(0, 29):
-		return 38
+	match math.random_int(0, 29):
+		0:
+			return 3
+		1:
+			return 8
+		2:
+			return 10
+		3:
+			return 11
+		4:
+			return 12
+		5:
+			return 13
+		6:
+			return 14
+		7:
+			return 15
+		8:
+			return 16
+		9:
+			return 17
+		10:
+			return 78
+		11:
+			return 79
+		12:
+			return 80
+		13:
+			return 81
+		14:
+			return 82
+		15:
+			return 83
+		16:
+			return 84
+		17:
+			return 85
+		18:
+			return 86
+		19:
+			return 87
+		20:
+			return 88
+		21:
+			return 89
+		22:
+			return 90
+		23:
+			return 91
+		24:
+			return 92
+		25:
+			return 93
+		26:
+			return 94
+		27, 28:
+			return 95
+		29:
+			return 38
 	return 0
 	return 0
 
@@ -4423,388 +3281,135 @@ func local_34714() -> Variant:
 func local_34765() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 89)):
-		return 3
-	if 1 == math.random_int(0, 89):
-		return 3
-	if 2 == math.random_int(0, 89):
-		return 3
-	if 3 == math.random_int(0, 89):
-		return 3
-	if 4 == math.random_int(0, 89):
-		return 3
-	if 5 == math.random_int(0, 89):
-		return 3
-	if 6 == math.random_int(0, 89):
-		return 3
-	if 7 == math.random_int(0, 89):
-		return 8
-	if 8 == math.random_int(0, 89):
-		return 8
-	if 9 == math.random_int(0, 89):
-		return 8
-	if 10 == math.random_int(0, 89):
-		return 9
-	if 11 == math.random_int(0, 89):
-		return 9
-	if 12 == math.random_int(0, 89):
-		return 9
-	if 13 == math.random_int(0, 89):
-		return 10
-	if 14 == math.random_int(0, 89):
-		return 10
-	if 15 == math.random_int(0, 89):
-		return 10
-	if 16 == math.random_int(0, 89):
-		return 11
-	if 17 == math.random_int(0, 89):
-		return 11
-	if 18 == math.random_int(0, 89):
-		return 11
-	if 19 == math.random_int(0, 89):
-		return 11
-	if 20 == math.random_int(0, 89):
-		return 11
-	if 21 == math.random_int(0, 89):
-		return 12
-	if 22 == math.random_int(0, 89):
-		return 12
-	if 23 == math.random_int(0, 89):
-		return 12
-	if 24 == math.random_int(0, 89):
-		return 12
-	if 25 == math.random_int(0, 89):
-		return 13
-	if 26 == math.random_int(0, 89):
-		return 13
-	if 27 == math.random_int(0, 89):
-		return 14
-	if 28 == math.random_int(0, 89):
-		return 14
-	if 29 == math.random_int(0, 89):
-		return 14
-	if 30 == math.random_int(0, 89):
-		return 14
-	if 31 == math.random_int(0, 89):
-		return 14
-	if 32 == math.random_int(0, 89):
-		return 15
-	if 33 == math.random_int(0, 89):
-		return 15
-	if 34 == math.random_int(0, 89):
-		return 15
-	if 35 == math.random_int(0, 89):
-		return 15
-	if 36 == math.random_int(0, 89):
-		return 15
-	if 37 == math.random_int(0, 89):
-		return 15
-	if 38 == math.random_int(0, 89):
-		return 16
-	if 39 == math.random_int(0, 89):
-		return 16
-	if 40 == math.random_int(0, 89):
-		return 16
-	if 41 == math.random_int(0, 89):
-		return 17
-	if 42 == math.random_int(0, 89):
-		return 17
-	if 43 == math.random_int(0, 89):
-		return 17
-	if 44 == math.random_int(0, 89):
-		return 17
-	if 45 == math.random_int(0, 89):
-		return 17
-	if 46 == math.random_int(0, 89):
-		return 50
-	if 47 == math.random_int(0, 89):
-		return 50
-	if 48 == math.random_int(0, 89):
-		return 50
-	if 49 == math.random_int(0, 89):
-		return 50
-	if 50 == math.random_int(0, 89):
-		return 50
-	if 51 == math.random_int(0, 89):
-		return 41
-	if 52 == math.random_int(0, 89):
-		return 42
-	if 53 == math.random_int(0, 89):
-		return 47
-	if 54 == math.random_int(0, 89):
-		return 92
-	if 55 == math.random_int(0, 89):
-		return 92
-	if 56 == math.random_int(0, 89):
-		return 92
-	if 57 == math.random_int(0, 89):
-		return 93
-	if 58 == math.random_int(0, 89):
-		return 93
-	if 59 == math.random_int(0, 89):
-		return 93
-	if 60 == math.random_int(0, 89):
-		return 93
-	if 61 == math.random_int(0, 89):
-		return 93
-	if 62 == math.random_int(0, 89):
-		return 94
-	if 63 == math.random_int(0, 89):
-		return 94
-	if 64 == math.random_int(0, 89):
-		return 94
-	if 65 == math.random_int(0, 89):
-		return 94
-	if 66 == math.random_int(0, 89):
-		return 86
-	if 67 == math.random_int(0, 89):
-		return 86
-	if 68 == math.random_int(0, 89):
-		return 86
-	if 69 == math.random_int(0, 89):
-		return 86
-	if 70 == math.random_int(0, 89):
-		return 87
-	if 71 == math.random_int(0, 89):
-		return 87
-	if 72 == math.random_int(0, 89):
-		return 87
-	if 73 == math.random_int(0, 89):
-		return 87
-	if 74 == math.random_int(0, 89):
-		return 87
-	if 75 == math.random_int(0, 89):
-		return 87
-	if 76 == math.random_int(0, 89):
-		return 80
-	if 77 == math.random_int(0, 89):
-		return 80
-	if 78 == math.random_int(0, 89):
-		return 80
-	if 79 == math.random_int(0, 89):
-		return 80
-	if 80 == math.random_int(0, 89):
-		return 81
-	if 81 == math.random_int(0, 89):
-		return 81
-	if 82 == math.random_int(0, 89):
-		return 81
-	if 83 == math.random_int(0, 89):
-		return 82
-	if 84 == math.random_int(0, 89):
-		return 82
-	if 85 == math.random_int(0, 89):
-		return 82
-	if 86 == math.random_int(0, 89):
-		return 116
-	if 87 == math.random_int(0, 89):
-		return 117
-	if 88 == math.random_int(0, 89):
-		return 113
-	if 89 == math.random_int(0, 89):
-		return 121
+	match math.random_int(0, 89):
+		0, 1, 2, 3, 4, 5, 6:
+			return 3
+		7, 8, 9:
+			return 8
+		10, 11, 12:
+			return 9
+		13, 14, 15:
+			return 10
+		16, 17, 18, 19, 20:
+			return 11
+		21, 22, 23, 24:
+			return 12
+		25, 26:
+			return 13
+		27, 28, 29, 30, 31:
+			return 14
+		32, 33, 34, 35, 36, 37:
+			return 15
+		38, 39, 40:
+			return 16
+		41, 42, 43, 44, 45:
+			return 17
+		46, 47, 48, 49, 50:
+			return 50
+		51:
+			return 41
+		52:
+			return 42
+		53:
+			return 47
+		54, 55, 56:
+			return 92
+		57, 58, 59, 60, 61:
+			return 93
+		62, 63, 64, 65:
+			return 94
+		66, 67, 68, 69:
+			return 86
+		70, 71, 72, 73, 74, 75:
+			return 87
+		76, 77, 78, 79:
+			return 80
+		80, 81, 82:
+			return 81
+		83, 84, 85:
+			return 82
+		86:
+			return 116
+		87:
+			return 117
+		88:
+			return 113
+		89:
+			return 121
 	return 0
 	return 0
 
 func local_35838() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 89)):
-		return 3
-	if 1 == math.random_int(0, 89):
-		return 3
-	if 2 == math.random_int(0, 89):
-		return 3
-	if 3 == math.random_int(0, 89):
-		return 3
-	if 4 == math.random_int(0, 89):
-		return 3
-	if 5 == math.random_int(0, 89):
-		return 3
-	if 6 == math.random_int(0, 89):
-		return 3
-	if 7 == math.random_int(0, 89):
-		return 8
-	if 8 == math.random_int(0, 89):
-		return 8
-	if 9 == math.random_int(0, 89):
-		return 8
-	if 10 == math.random_int(0, 89):
-		return 9
-	if 11 == math.random_int(0, 89):
-		return 9
-	if 12 == math.random_int(0, 89):
-		return 9
-	if 13 == math.random_int(0, 89):
-		return 10
-	if 14 == math.random_int(0, 89):
-		return 10
-	if 15 == math.random_int(0, 89):
-		return 10
-	if 16 == math.random_int(0, 89):
-		return 11
-	if 17 == math.random_int(0, 89):
-		return 11
-	if 18 == math.random_int(0, 89):
-		return 11
-	if 19 == math.random_int(0, 89):
-		return 11
-	if 20 == math.random_int(0, 89):
-		return 11
-	if 21 == math.random_int(0, 89):
-		return 12
-	if 22 == math.random_int(0, 89):
-		return 12
-	if 23 == math.random_int(0, 89):
-		return 12
-	if 24 == math.random_int(0, 89):
-		return 12
-	if 25 == math.random_int(0, 89):
-		return 13
-	if 26 == math.random_int(0, 89):
-		return 13
-	if 27 == math.random_int(0, 89):
-		return 14
-	if 28 == math.random_int(0, 89):
-		return 14
-	if 29 == math.random_int(0, 89):
-		return 14
-	if 30 == math.random_int(0, 89):
-		return 14
-	if 31 == math.random_int(0, 89):
-		return 14
-	if 32 == math.random_int(0, 89):
-		return 15
-	if 33 == math.random_int(0, 89):
-		return 15
-	if 34 == math.random_int(0, 89):
-		return 15
-	if 35 == math.random_int(0, 89):
-		return 15
-	if 36 == math.random_int(0, 89):
-		return 15
-	if 37 == math.random_int(0, 89):
-		return 15
-	if 38 == math.random_int(0, 89):
-		return 16
-	if 39 == math.random_int(0, 89):
-		return 16
-	if 40 == math.random_int(0, 89):
-		return 16
-	if 41 == math.random_int(0, 89):
-		return 17
-	if 42 == math.random_int(0, 89):
-		return 17
-	if 43 == math.random_int(0, 89):
-		return 17
-	if 44 == math.random_int(0, 89):
-		return 17
-	if 45 == math.random_int(0, 89):
-		return 17
-	if 46 == math.random_int(0, 89):
-		return 50
-	if 47 == math.random_int(0, 89):
-		return 50
-	if 48 == math.random_int(0, 89):
-		return 50
-	if 49 == math.random_int(0, 89):
-		return 50
-	if 50 == math.random_int(0, 89):
-		return 50
-	if 51 == math.random_int(0, 89):
-		return 41
-	if 52 == math.random_int(0, 89):
-		return 42
-	if 53 == math.random_int(0, 89):
-		return 47
-	if 54 == math.random_int(0, 89):
-		return 92
-	if 55 == math.random_int(0, 89):
-		return 92
-	if 56 == math.random_int(0, 89):
-		return 92
-	if 57 == math.random_int(0, 89):
-		return 93
-	if 58 == math.random_int(0, 89):
-		return 93
-	if 59 == math.random_int(0, 89):
-		return 93
-	if 60 == math.random_int(0, 89):
-		return 93
-	if 61 == math.random_int(0, 89):
-		return 93
-	if 62 == math.random_int(0, 89):
-		return 94
-	if 63 == math.random_int(0, 89):
-		return 94
-	if 64 == math.random_int(0, 89):
-		return 94
-	if 65 == math.random_int(0, 89):
-		return 94
-	if 66 == math.random_int(0, 89):
-		return 86
-	if 67 == math.random_int(0, 89):
-		return 86
-	if 68 == math.random_int(0, 89):
-		return 86
-	if 69 == math.random_int(0, 89):
-		return 86
-	if 70 == math.random_int(0, 89):
-		return 87
-	if 71 == math.random_int(0, 89):
-		return 87
-	if 72 == math.random_int(0, 89):
-		return 87
-	if 73 == math.random_int(0, 89):
-		return 87
-	if 74 == math.random_int(0, 89):
-		return 87
-	if 75 == math.random_int(0, 89):
-		return 87
-	if 76 == math.random_int(0, 89):
-		return 80
-	if 77 == math.random_int(0, 89):
-		return 80
-	if 78 == math.random_int(0, 89):
-		return 80
-	if 79 == math.random_int(0, 89):
-		return 80
-	if 80 == math.random_int(0, 89):
-		return 81
-	if 81 == math.random_int(0, 89):
-		return 81
-	if 82 == math.random_int(0, 89):
-		return 81
-	if 83 == math.random_int(0, 89):
-		return 82
-	if 84 == math.random_int(0, 89):
-		return 82
-	if 85 == math.random_int(0, 89):
-		return 82
-	if 86 == math.random_int(0, 89):
-		return 116
-	if 87 == math.random_int(0, 89):
-		return 117
-	if 88 == math.random_int(0, 89):
-		return 113
-	if 89 == math.random_int(0, 89):
-		return 121
+	match math.random_int(0, 89):
+		0, 1, 2, 3, 4, 5, 6:
+			return 3
+		7, 8, 9:
+			return 8
+		10, 11, 12:
+			return 9
+		13, 14, 15:
+			return 10
+		16, 17, 18, 19, 20:
+			return 11
+		21, 22, 23, 24:
+			return 12
+		25, 26:
+			return 13
+		27, 28, 29, 30, 31:
+			return 14
+		32, 33, 34, 35, 36, 37:
+			return 15
+		38, 39, 40:
+			return 16
+		41, 42, 43, 44, 45:
+			return 17
+		46, 47, 48, 49, 50:
+			return 50
+		51:
+			return 41
+		52:
+			return 42
+		53:
+			return 47
+		54, 55, 56:
+			return 92
+		57, 58, 59, 60, 61:
+			return 93
+		62, 63, 64, 65:
+			return 94
+		66, 67, 68, 69:
+			return 86
+		70, 71, 72, 73, 74, 75:
+			return 87
+		76, 77, 78, 79:
+			return 80
+		80, 81, 82:
+			return 81
+		83, 84, 85:
+			return 82
+		86:
+			return 116
+		87:
+			return 117
+		88:
+			return 113
+		89:
+			return 121
 	return 0
 	return 0
 
 func local_36911() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 4)):
-		return 317
-	if 1 == math.random_int(0, 4):
-		return 317
-	if 2 == math.random_int(0, 4):
-		return 317
-	if 3 == math.random_int(0, 4):
-		return 315
-	if 4 == math.random_int(0, 4):
-		return 7
+	match math.random_int(0, 4):
+		0, 1, 2:
+			return 317
+		3:
+			return 315
+		4:
+			return 7
 	return 0
 	return 0
 
@@ -6092,6 +4697,8 @@ func find_cargo_for_location(v0) -> Variant:
 		120:
 			v1 = await local_38395()
 			return v1
+		_:
+			return 0
 	return 0
 	return 0
 
@@ -7401,470 +6008,466 @@ func find_mini_cargo_for_location(v0) -> Variant:
 func cheap_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 74)):
-		return 4
-	if 1 == math.random_int(0, 74):
-		return 398
-	if 2 == math.random_int(0, 74):
-		return 92
-	if 3 == math.random_int(0, 74):
-		return 410
-	if 4 == math.random_int(0, 74):
-		return 427
-	if 5 == math.random_int(0, 74):
-		return 93
-	if 6 == math.random_int(0, 74):
-		return 411
-	if 7 == math.random_int(0, 74):
-		return 412
-	if 8 == math.random_int(0, 74):
-		return 26
-	if 9 == math.random_int(0, 74):
-		return 17
-	if 10 == math.random_int(0, 74):
-		return 445
-	if 11 == math.random_int(0, 74):
-		return 94
-	if 12 == math.random_int(0, 74):
-		return 18
-	if 13 == math.random_int(0, 74):
-		return 428
-	if 14 == math.random_int(0, 74):
-		return 428
-	if 15 == math.random_int(0, 74):
-		return 83
-	if 16 == math.random_int(0, 74):
-		return 446
-	if 17 == math.random_int(0, 74):
-		return 21
-	if 18 == math.random_int(0, 74):
-		return 438
-	if 19 == math.random_int(0, 74):
-		return 14
-	if 20 == math.random_int(0, 74):
-		return 399
-	if 21 == math.random_int(0, 74):
-		return 397
-	if 22 == math.random_int(0, 74):
-		return 400
-	if 23 == math.random_int(0, 74):
-		return 429
-	if 24 == math.random_int(0, 74):
-		return 420
-	if 25 == math.random_int(0, 74):
-		return 15
-	if 26 == math.random_int(0, 74):
-		return 23
-	if 27 == math.random_int(0, 74):
-		return 24
-	if 28 == math.random_int(0, 74):
-		return 85
-	if 29 == math.random_int(0, 74):
-		return 407
-	if 30 == math.random_int(0, 74):
-		return 84
-	if 31 == math.random_int(0, 74):
-		return 87
-	if 32 == math.random_int(0, 74):
-		return 408
-	if 33 == math.random_int(0, 74):
-		return 82
-	if 34 == math.random_int(0, 74):
-		return 419
-	if 35 == math.random_int(0, 74):
-		return 426
-	if 36 == math.random_int(0, 74):
-		return 315
-	if 37 == math.random_int(0, 74):
-		return 414
-	if 38 == math.random_int(0, 74):
-		return 319
-	if 39 == math.random_int(0, 74):
-		return 19
-	if 40 == math.random_int(0, 74):
-		return 11
-	if 41 == math.random_int(0, 74):
-		return 325
-	if 42 == math.random_int(0, 74):
-		return 424
-	if 43 == math.random_int(0, 74):
-		return 46
-	if 44 == math.random_int(0, 74):
-		return 425
-	if 45 == math.random_int(0, 74):
-		return 20
-	if 46 == math.random_int(0, 74):
-		return 433
-	if 47 == math.random_int(0, 74):
-		return 434
-	if 48 == math.random_int(0, 74):
-		return 435
-	if 49 == math.random_int(0, 74):
-		return 415
-	if 50 == math.random_int(0, 74):
-		return 447
-	if 51 == math.random_int(0, 74):
-		return 403
-	if 52 == math.random_int(0, 74):
-		return 416
-	if 53 == math.random_int(0, 74):
-		return 417
-	if 54 == math.random_int(0, 74):
-		return 421
-	if 55 == math.random_int(0, 74):
-		return 449
-	if 56 == math.random_int(0, 74):
-		return 450
-	if 57 == math.random_int(0, 74):
-		return 451
-	if 58 == math.random_int(0, 74):
-		return 452
-	if 59 == math.random_int(0, 74):
-		return 453
-	if 60 == math.random_int(0, 74):
-		return 13
-	if 61 == math.random_int(0, 74):
-		return 22
-	if 62 == math.random_int(0, 74):
-		return 91
-	if 63 == math.random_int(0, 74):
-		return 437
-	if 64 == math.random_int(0, 74):
-		return 81
-	if 65 == math.random_int(0, 74):
-		return 8
-	if 66 == math.random_int(0, 74):
-		return 422
-	if 67 == math.random_int(0, 74):
-		return 418
-	if 68 == math.random_int(0, 74):
-		return 342
-	if 69 == math.random_int(0, 74):
-		return 423
-	if 70 == math.random_int(0, 74):
-		return 16
-	if 71 == math.random_int(0, 74):
-		return 413
-	if 72 == math.random_int(0, 74):
-		return 436
-	if 73 == math.random_int(0, 74):
-		return 326
-	if 74 == math.random_int(0, 74):
-		return 138
+	match math.random_int(0, 74):
+		0:
+			return 4
+		1:
+			return 398
+		2:
+			return 92
+		3:
+			return 410
+		4:
+			return 427
+		5:
+			return 93
+		6:
+			return 411
+		7:
+			return 412
+		8:
+			return 26
+		9:
+			return 17
+		10:
+			return 445
+		11:
+			return 94
+		12:
+			return 18
+		13, 14:
+			return 428
+		15:
+			return 83
+		16:
+			return 446
+		17:
+			return 21
+		18:
+			return 438
+		19:
+			return 14
+		20:
+			return 399
+		21:
+			return 397
+		22:
+			return 400
+		23:
+			return 429
+		24:
+			return 420
+		25:
+			return 15
+		26:
+			return 23
+		27:
+			return 24
+		28:
+			return 85
+		29:
+			return 407
+		30:
+			return 84
+		31:
+			return 87
+		32:
+			return 408
+		33:
+			return 82
+		34:
+			return 419
+		35:
+			return 426
+		36:
+			return 315
+		37:
+			return 414
+		38:
+			return 319
+		39:
+			return 19
+		40:
+			return 11
+		41:
+			return 325
+		42:
+			return 424
+		43:
+			return 46
+		44:
+			return 425
+		45:
+			return 20
+		46:
+			return 433
+		47:
+			return 434
+		48:
+			return 435
+		49:
+			return 415
+		50:
+			return 447
+		51:
+			return 403
+		52:
+			return 416
+		53:
+			return 417
+		54:
+			return 421
+		55:
+			return 449
+		56:
+			return 450
+		57:
+			return 451
+		58:
+			return 452
+		59:
+			return 453
+		60:
+			return 13
+		61:
+			return 22
+		62:
+			return 91
+		63:
+			return 437
+		64:
+			return 81
+		65:
+			return 8
+		66:
+			return 422
+		67:
+			return 418
+		68:
+			return 342
+		69:
+			return 423
+		70:
+			return 16
+		71:
+			return 413
+		72:
+			return 436
+		73:
+			return 326
+		74:
+			return 138
 	return 0
 	return 0
 
 func medium_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 154)):
-		return 383
-	if 1 == math.random_int(0, 154):
-		return 384
-	if 2 == math.random_int(0, 154):
-		return 38
-	if 3 == math.random_int(0, 154):
-		return 41
-	if 4 == math.random_int(0, 154):
-		return 323
-	if 5 == math.random_int(0, 154):
-		return 318
-	if 6 == math.random_int(0, 154):
-		return 147
-	if 7 == math.random_int(0, 154):
-		return 147
-	if 8 == math.random_int(0, 154):
-		return 261
-	if 9 == math.random_int(0, 154):
-		return 262
-	if 10 == math.random_int(0, 154):
-		return 67
-	if 11 == math.random_int(0, 154):
-		return 44
-	if 12 == math.random_int(0, 154):
-		return 126
-	if 13 == math.random_int(0, 154):
-		return 543
-	if 14 == math.random_int(0, 154):
-		return 9
-	if 15 == math.random_int(0, 154):
-		return 486
-	if 16 == math.random_int(0, 154):
-		return 459
-	if 17 == math.random_int(0, 154):
-		return 97
-	if 18 == math.random_int(0, 154):
-		return 10
-	if 19 == math.random_int(0, 154):
-		return 460
-	if 20 == math.random_int(0, 154):
-		return 492
-	if 21 == math.random_int(0, 154):
-		return 544
-	if 22 == math.random_int(0, 154):
-		return 127
-	if 23 == math.random_int(0, 154):
-		return 392
-	if 24 == math.random_int(0, 154):
-		return 320
-	if 25 == math.random_int(0, 154):
-		return 409
-	if 26 == math.random_int(0, 154):
-		return 78
-	if 27 == math.random_int(0, 154):
-		return 367
-	if 28 == math.random_int(0, 154):
-		return 324
-	if 29 == math.random_int(0, 154):
-		return 50
-	if 30 == math.random_int(0, 154):
-		return 204
-	if 31 == math.random_int(0, 154):
-		return 454
-	if 32 == math.random_int(0, 154):
-		return 12
-	if 34 == math.random_int(0, 154):
-		return 331
-	if 35 == math.random_int(0, 154):
-		return 264
-	if 36 == math.random_int(0, 154):
-		return 498
-	if 37 == math.random_int(0, 154):
-		return 129
-	if 38 == math.random_int(0, 154):
-		return 130
-	if 39 == math.random_int(0, 154):
-		return 99
-	if 40 == math.random_int(0, 154):
-		return 316
-	if 41 == math.random_int(0, 154):
-		return 335
-	if 42 == math.random_int(0, 154):
-		return 157
-	if 43 == math.random_int(0, 154):
-		return 448
-	if 44 == math.random_int(0, 154):
-		return 79
-	if 45 == math.random_int(0, 154):
-		return 79
-	if 46 == math.random_int(0, 154):
-		return 406
-	if 47 == math.random_int(0, 154):
-		return 317
-	if 48 == math.random_int(0, 154):
-		return 48
-	if 49 == math.random_int(0, 154):
-		return 80
-	if 50 == math.random_int(0, 154):
-		return 541
-	if 51 == math.random_int(0, 154):
-		return 103
-	if 52 == math.random_int(0, 154):
-		return 131
-	if 53 == math.random_int(0, 154):
-		return 339
-	if 54 == math.random_int(0, 154):
-		return 340
-	if 55 == math.random_int(0, 154):
-		return 25
-	if 56 == math.random_int(0, 154):
-		return 102
-	if 57 == math.random_int(0, 154):
-		return 132
-	if 58 == math.random_int(0, 154):
-		return 321
-	if 59 == math.random_int(0, 154):
-		return 439
-	if 60 == math.random_int(0, 154):
-		return 461
-	if 61 == math.random_int(0, 154):
-		return 390
-	if 62 == math.random_int(0, 154):
-		return 361
-	if 63 == math.random_int(0, 154):
-		return 327
-	if 64 == math.random_int(0, 154):
-		return 328
-	if 65 == math.random_int(0, 154):
-		return 329
-	if 66 == math.random_int(0, 154):
-		return 27
-	if 67 == math.random_int(0, 154):
-		return 295
-	if 68 == math.random_int(0, 154):
-		return 254
-	if 69 == math.random_int(0, 154):
-		return 255
-	if 70 == math.random_int(0, 154):
-		return 350
-	if 71 == math.random_int(0, 154):
-		return 542
-	if 72 == math.random_int(0, 154):
-		return 357
-	if 73 == math.random_int(0, 154):
-		return 28
-	if 74 == math.random_int(0, 154):
-		return 146
-	if 75 == math.random_int(0, 154):
-		return 123
-	if 76 == math.random_int(0, 154):
-		return 40
-	if 77 == math.random_int(0, 154):
-		return 61
-	if 78 == math.random_int(0, 154):
-		return 64
-	if 79 == math.random_int(0, 154):
-		return 244
-	if 80 == math.random_int(0, 154):
-		return 387
-	if 81 == math.random_int(0, 154):
-		return 293
-	if 82 == math.random_int(0, 154):
-		return 42
-	if 83 == math.random_int(0, 154):
-		return 253
-	if 84 == math.random_int(0, 154):
-		return 256
-	if 85 == math.random_int(0, 154):
-		return 263
-	if 86 == math.random_int(0, 154):
-		return 257
-	if 87 == math.random_int(0, 154):
-		return 148
-	if 88 == math.random_int(0, 154):
-		return 363
-	if 89 == math.random_int(0, 154):
-		return 43
-	if 90 == math.random_int(0, 154):
-		return 292
-	if 91 == math.random_int(0, 154):
-		return 391
-	if 92 == math.random_int(0, 154):
-		return 343
-	if 93 == math.random_int(0, 154):
-		return 336
-	if 94 == math.random_int(0, 154):
-		return 125
-	if 95 == math.random_int(0, 154):
-		return 388
-	if 96 == math.random_int(0, 154):
-		return 463
-	if 97 == math.random_int(0, 154):
-		return 51
-	if 98 == math.random_int(0, 154):
-		return 457
-	if 99 == math.random_int(0, 154):
-		return 458
-	if 100 == math.random_int(0, 154):
-		return 322
-	if 101 == math.random_int(0, 154):
-		return 68
-	if 102 == math.random_int(0, 154):
-		return 45
-	if 103 == math.random_int(0, 154):
-		return 98
-	if 104 == math.random_int(0, 154):
-		return 364
-	if 105 == math.random_int(0, 154):
-		return 494
-	if 106 == math.random_int(0, 154):
-		return 545
-	if 107 == math.random_int(0, 154):
-		return 466
-	if 108 == math.random_int(0, 154):
-		return 385
-	if 109 == math.random_int(0, 154):
-		return 356
-	if 110 == math.random_int(0, 154):
-		return 371
-	if 111 == math.random_int(0, 154):
-		return 240
-	if 112 == math.random_int(0, 154):
-		return 121
-	if 113 == math.random_int(0, 154):
-		return 563
-	if 114 == math.random_int(0, 154):
-		return 455
-	if 115 == math.random_int(0, 154):
-		return 464
-	if 116 == math.random_int(0, 154):
-		return 274
-	if 117 == math.random_int(0, 154):
-		return 199
-	if 118 == math.random_int(0, 154):
-		return 537
-	if 119 == math.random_int(0, 154):
-		return 538
-	if 120 == math.random_int(0, 154):
-		return 539
-	if 121 == math.random_int(0, 154):
-		return 465
-	if 122 == math.random_int(0, 154):
-		return 88
-	if 123 == math.random_int(0, 154):
-		return 100
-	if 124 == math.random_int(0, 154):
-		return 258
-	if 125 == math.random_int(0, 154):
-		return 47
-	if 126 == math.random_int(0, 154):
-		return 440
-	if 127 == math.random_int(0, 154):
-		return 380
-	if 128 == math.random_int(0, 154):
-		return 288
-	if 129 == math.random_int(0, 154):
-		return 289
-	if 130 == math.random_int(0, 154):
-		return 290
-	if 131 == math.random_int(0, 154):
-		return 291
-	if 132 == math.random_int(0, 154):
-		return 488
-	if 133 == math.random_int(0, 154):
-		return 151
-	if 134 == math.random_int(0, 154):
-		return 95
-	if 135 == math.random_int(0, 154):
-		return 96
-	if 136 == math.random_int(0, 154):
-		return 105
-	if 137 == math.random_int(0, 154):
-		return 341
-	if 138 == math.random_int(0, 154):
-		return 151
-	if 139 == math.random_int(0, 154):
-		return 360
-	if 140 == math.random_int(0, 154):
-		return 70
-	if 141 == math.random_int(0, 154):
-		return 71
-	if 142 == math.random_int(0, 154):
-		return 72
-	if 143 == math.random_int(0, 154):
-		return 73
-	if 144 == math.random_int(0, 154):
-		return 74
-	if 145 == math.random_int(0, 154):
-		return 75
-	if 146 == math.random_int(0, 154):
-		return 76
-	if 147 == math.random_int(0, 154):
-		return 77
-	if 148 == math.random_int(0, 154):
-		return 369
-	if 149 == math.random_int(0, 154):
-		return 332
-	if 150 == math.random_int(0, 154):
-		return 382
-	if 151 == math.random_int(0, 154):
-		return 396
-	if 152 == math.random_int(0, 154):
-		return 145
-	if 153 == math.random_int(0, 154):
-		return 34
-	if 154 == math.random_int(0, 154):
-		return 104
+	match math.random_int(0, 154):
+		0:
+			return 383
+		1:
+			return 384
+		2:
+			return 38
+		3:
+			return 41
+		4:
+			return 323
+		5:
+			return 318
+		6, 7:
+			return 147
+		8:
+			return 261
+		9:
+			return 262
+		10:
+			return 67
+		11:
+			return 44
+		12:
+			return 126
+		13:
+			return 543
+		14:
+			return 9
+		15:
+			return 486
+		16:
+			return 459
+		17:
+			return 97
+		18:
+			return 10
+		19:
+			return 460
+		20:
+			return 492
+		21:
+			return 544
+		22:
+			return 127
+		23:
+			return 392
+		24:
+			return 320
+		25:
+			return 409
+		26:
+			return 78
+		27:
+			return 367
+		28:
+			return 324
+		29:
+			return 50
+		30:
+			return 204
+		31:
+			return 454
+		32:
+			return 12
+		34:
+			return 331
+		35:
+			return 264
+		36:
+			return 498
+		37:
+			return 129
+		38:
+			return 130
+		39:
+			return 99
+		40:
+			return 316
+		41:
+			return 335
+		42:
+			return 157
+		43:
+			return 448
+		44, 45:
+			return 79
+		46:
+			return 406
+		47:
+			return 317
+		48:
+			return 48
+		49:
+			return 80
+		50:
+			return 541
+		51:
+			return 103
+		52:
+			return 131
+		53:
+			return 339
+		54:
+			return 340
+		55:
+			return 25
+		56:
+			return 102
+		57:
+			return 132
+		58:
+			return 321
+		59:
+			return 439
+		60:
+			return 461
+		61:
+			return 390
+		62:
+			return 361
+		63:
+			return 327
+		64:
+			return 328
+		65:
+			return 329
+		66:
+			return 27
+		67:
+			return 295
+		68:
+			return 254
+		69:
+			return 255
+		70:
+			return 350
+		71:
+			return 542
+		72:
+			return 357
+		73:
+			return 28
+		74:
+			return 146
+		75:
+			return 123
+		76:
+			return 40
+		77:
+			return 61
+		78:
+			return 64
+		79:
+			return 244
+		80:
+			return 387
+		81:
+			return 293
+		82:
+			return 42
+		83:
+			return 253
+		84:
+			return 256
+		85:
+			return 263
+		86:
+			return 257
+		87:
+			return 148
+		88:
+			return 363
+		89:
+			return 43
+		90:
+			return 292
+		91:
+			return 391
+		92:
+			return 343
+		93:
+			return 336
+		94:
+			return 125
+		95:
+			return 388
+		96:
+			return 463
+		97:
+			return 51
+		98:
+			return 457
+		99:
+			return 458
+		100:
+			return 322
+		101:
+			return 68
+		102:
+			return 45
+		103:
+			return 98
+		104:
+			return 364
+		105:
+			return 494
+		106:
+			return 545
+		107:
+			return 466
+		108:
+			return 385
+		109:
+			return 356
+		110:
+			return 371
+		111:
+			return 240
+		112:
+			return 121
+		113:
+			return 563
+		114:
+			return 455
+		115:
+			return 464
+		116:
+			return 274
+		117:
+			return 199
+		118:
+			return 537
+		119:
+			return 538
+		120:
+			return 539
+		121:
+			return 465
+		122:
+			return 88
+		123:
+			return 100
+		124:
+			return 258
+		125:
+			return 47
+		126:
+			return 440
+		127:
+			return 380
+		128:
+			return 288
+		129:
+			return 289
+		130:
+			return 290
+		131:
+			return 291
+		132:
+			return 488
+		133:
+			return 151
+		134:
+			return 95
+		135:
+			return 96
+		136:
+			return 105
+		137:
+			return 341
+		138:
+			return 151
+		139:
+			return 360
+		140:
+			return 70
+		141:
+			return 71
+		142:
+			return 72
+		143:
+			return 73
+		144:
+			return 74
+		145:
+			return 75
+		146:
+			return 76
+		147:
+			return 77
+		148:
+			return 369
+		149:
+			return 332
+		150:
+			return 382
+		151:
+			return 396
+		152:
+			return 145
+		153:
+			return 34
+		154:
+			return 104
 	return 0
 	return 0
 
@@ -8265,208 +6868,97 @@ func very_high_cargo_generator() -> Variant:
 func supply_cargo_generator() -> Variant:
 	if math.random_int(0, 99) < 18:
 		return await needed_type()
-	if _pog_is_null(math.random_int(0, 100)):
-		return 11
-	if 1 == math.random_int(0, 100):
-		return 11
-	if 2 == math.random_int(0, 100):
-		return 11
-	if 3 == math.random_int(0, 100):
-		return 13
-	if 4 == math.random_int(0, 100):
-		return 13
-	if 5 == math.random_int(0, 100):
-		return 14
-	if 6 == math.random_int(0, 100):
-		return 14
-	if 7 == math.random_int(0, 100):
-		return 14
-	if 8 == math.random_int(0, 100):
-		return 14
-	if 9 == math.random_int(0, 100):
-		return 15
-	if 10 == math.random_int(0, 100):
-		return 15
-	if 11 == math.random_int(0, 100):
-		return 15
-	if 12 == math.random_int(0, 100):
-		return 15
-	if 13 == math.random_int(0, 100):
-		return 15
-	if 14 == math.random_int(0, 100):
-		return 17
-	if 15 == math.random_int(0, 100):
-		return 17
-	if 16 == math.random_int(0, 100):
-		return 17
-	if 17 == math.random_int(0, 100):
-		return 17
-	if 18 == math.random_int(0, 100):
-		return 17
-	if 19 == math.random_int(0, 100):
-		return 17
-	if 20 == math.random_int(0, 100):
-		return 18
-	if 21 == math.random_int(0, 100):
-		return 18
-	if 22 == math.random_int(0, 100):
-		return 18
-	if 23 == math.random_int(0, 100):
-		return 18
-	if 24 == math.random_int(0, 100):
-		return 18
-	if 25 == math.random_int(0, 100):
-		return 18
-	if 26 == math.random_int(0, 100):
-		return 19
-	if 27 == math.random_int(0, 100):
-		return 19
-	if 28 == math.random_int(0, 100):
-		return 19
-	if 29 == math.random_int(0, 100):
-		return 20
-	if 30 == math.random_int(0, 100):
-		return 20
-	if 31 == math.random_int(0, 100):
-		return 21
-	if 32 == math.random_int(0, 100):
-		return 21
-	if 33 == math.random_int(0, 100):
-		return 21
-	if 34 == math.random_int(0, 100):
-		return 21
-	if 35 == math.random_int(0, 100):
-		return 21
-	if 36 == math.random_int(0, 100):
-		return 22
-	if 37 == math.random_int(0, 100):
-		return 22
-	if 38 == math.random_int(0, 100):
-		return 23
-	if 39 == math.random_int(0, 100):
-		return 24
-	if 40 == math.random_int(0, 100):
-		return 24
-	if 41 == math.random_int(0, 100):
-		return 16
-	if 42 == math.random_int(0, 100):
-		return 26
-	if 43 == math.random_int(0, 100):
-		return 26
-	if 44 == math.random_int(0, 100):
-		return 26
-	if 45 == math.random_int(0, 100):
-		return 26
-	if 46 == math.random_int(0, 100):
-		return 26
-	if 47 == math.random_int(0, 100):
-		return 10
-	if 48 == math.random_int(0, 100):
-		return 12
-	if 49 == math.random_int(0, 100):
-		return 13
-	if 50 == math.random_int(0, 100):
-		return 87
-	if 51 == math.random_int(0, 100):
-		return 87
-	if 52 == math.random_int(0, 100):
-		return 87
-	if 53 == math.random_int(0, 100):
-		return 78
-	if 54 == math.random_int(0, 100):
-		return 92
-	if 55 == math.random_int(0, 100):
-		return 119
-	if 56 == math.random_int(0, 100):
-		return 125
-	if 57 == math.random_int(0, 100):
-		return 129
-	if 58 == math.random_int(0, 100):
-		return 129
-	if 59 == math.random_int(0, 100):
-		return 129
-	if 60 == math.random_int(0, 100):
-		return 130
-	if 61 == math.random_int(0, 100):
-		return 130
-	if 62 == math.random_int(0, 100):
-		return 130
-	if 63 == math.random_int(0, 100):
-		return 130
-	if 64 == math.random_int(0, 100):
-		return 131
-	if 65 == math.random_int(0, 100):
-		return 138
-	if 66 == math.random_int(0, 100):
-		return 138
-	if 67 == math.random_int(0, 100):
-		return 138
-	if 68 == math.random_int(0, 100):
-		return 253
-	if 69 == math.random_int(0, 100):
-		return 261
-	if 70 == math.random_int(0, 100):
-		return 274
-	if 71 == math.random_int(0, 100):
-		return 315
-	if 72 == math.random_int(0, 100):
-		return 315
-	if 73 == math.random_int(0, 100):
-		return 315
-	if 74 == math.random_int(0, 100):
-		return 316
-	if 75 == math.random_int(0, 100):
-		return 316
-	if 76 == math.random_int(0, 100):
-		return 316
-	if 77 == math.random_int(0, 100):
-		return 316
-	if 78 == math.random_int(0, 100):
-		return 318
-	if 79 == math.random_int(0, 100):
-		return 319
-	if 80 == math.random_int(0, 100):
-		return 320
-	if 81 == math.random_int(0, 100):
-		return 321
-	if 82 == math.random_int(0, 100):
-		return 322
-	if 83 == math.random_int(0, 100):
-		return 323
-	if 84 == math.random_int(0, 100):
-		return 324
-	if 85 == math.random_int(0, 100):
-		return 331
-	if 86 == math.random_int(0, 100):
-		return 346
-	if 87 == math.random_int(0, 100):
-		return 346
-	if 88 == math.random_int(0, 100):
-		return 350
-	if 89 == math.random_int(0, 100):
-		return 385
-	if 90 == math.random_int(0, 100):
-		return 386
-	if 91 == math.random_int(0, 100):
-		return 408
-	if 92 == math.random_int(0, 100):
-		return 408
-	if 93 == math.random_int(0, 100):
-		return 408
-	if 94 == math.random_int(0, 100):
-		return 408
-	if 95 == math.random_int(0, 100):
-		return 408
-	if 96 == math.random_int(0, 100):
-		return 408
-	if 97 == math.random_int(0, 100):
-		return 416
-	if 98 == math.random_int(0, 100):
-		return 416
-	if 99 == math.random_int(0, 100):
-		return 416
-	if 100 == math.random_int(0, 100):
-		return 416
+	match math.random_int(0, 100):
+		0, 1, 2:
+			return 11
+		3, 4:
+			return 13
+		5, 6, 7, 8:
+			return 14
+		9, 10, 11, 12, 13:
+			return 15
+		14, 15, 16, 17, 18, 19:
+			return 17
+		20, 21, 22, 23, 24, 25:
+			return 18
+		26, 27, 28:
+			return 19
+		29, 30:
+			return 20
+		31, 32, 33, 34, 35:
+			return 21
+		36, 37:
+			return 22
+		38:
+			return 23
+		39, 40:
+			return 24
+		41:
+			return 16
+		42, 43, 44, 45, 46:
+			return 26
+		47:
+			return 10
+		48:
+			return 12
+		49:
+			return 13
+		50, 51, 52:
+			return 87
+		53:
+			return 78
+		54:
+			return 92
+		55:
+			return 119
+		56:
+			return 125
+		57, 58, 59:
+			return 129
+		60, 61, 62, 63:
+			return 130
+		64:
+			return 131
+		65, 66, 67:
+			return 138
+		68:
+			return 253
+		69:
+			return 261
+		70:
+			return 274
+		71, 72, 73:
+			return 315
+		74, 75, 76, 77:
+			return 316
+		78:
+			return 318
+		79:
+			return 319
+		80:
+			return 320
+		81:
+			return 321
+		82:
+			return 322
+		83:
+			return 323
+		84:
+			return 324
+		85:
+			return 331
+		86, 87:
+			return 346
+		88:
+			return 350
+		89:
+			return 385
+		90:
+			return 386
+		91, 92, 93, 94, 95, 96:
+			return 408
+		97, 98, 99, 100:
+			return 416
 	return 0
 	return 0
 

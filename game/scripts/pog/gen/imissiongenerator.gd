@@ -836,6 +836,12 @@ func local_12188(v0, v1) -> Variant:
 
 func local_14543(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
+	var v5: Variant = 0
+	var v6: Variant = 0
+	var v7: Variant = 0
+	var v8: Variant = 0
+	var v9: Variant = 0
+	var v10: Variant = 0
 	if PogRuntime.TRACE:
 		debug.print_string("iMissionGenerator: Sending communication")
 		debug.print_string("\n")
@@ -848,26 +854,22 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 				iemail.send_email(object.string_property(v0, "patron_character_name"), v3, v2, 0)
 			else:
 				iemail.send_email("Independent", v3, v2, 0)
-			return 0
 		1:
 			while true:
 				await _pog_wait(1.0)
 				if not (not _pog_eq(global.string("gl_genmission_jafs"), "")):
 					break
 			global.set_string("gl_genmission_jafs", v2)
-			return 0
 		3:
 			if PogRuntime.TRACE:
 				debug.print_string("iMissionGenerator: Clay shouts somat")
 				debug.print_string("\n")
 			icomms.shout(0, "name_lay", v2)
-			return 0
 		2:
 			if PogRuntime.TRACE:
 				debug.print_string("iMissionGenerator: Smith sez somat")
 				debug.print_string("\n")
 			icomms.shout(0, "name_smith", v2)
-			return 0
 		5:
 			await local_9666(v0)
 			if PogRuntime.TRACE:
@@ -875,10 +877,87 @@ func local_14543(v0, v1, v2, v3) -> Variant:
 				debug.print_string("\n")
 			v4 = isim.cast(object.handle_property(v0, "patron_ship_handle"))
 			await iconversation.one_liner(v4, "", v2)
+		_:
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator: iGeneratedMission.SendBriefing - Error, invalid briefing type !")
+				debug.print_string("\n")
 			return 0
+	return 0
 	if PogRuntime.TRACE:
-		debug.print_string("iMissionGenerator: iGeneratedMission.SendBriefing - Error, invalid briefing type !")
+		debug.print_string("iMissionGenerator: Behaviour handler starts")
 		debug.print_string("\n")
+	if _pog_eq(v1, "TravelTo"):
+		if not _pog_eq(v2, "None"):
+			v4 = imapentity.find_by_name(await pick_location(v2))
+		else:
+			v4 = imapentity.find_by_name(await pick_location(v3))
+		if _pog_is_null(v4):
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator.BehaviourHandler: Error: Unable to create location handle from given parameters: ")
+				debug.print_string(v2)
+				debug.print_string("\n")
+				debug.print_string(v3)
+				debug.print_string("\n")
+				debug.print_string("iMissionGenerator.BehaviourHandler: Unable to create a location handle from given parameters\n")
+		_pog_detach(_pog_spawn(iscriptedorders.travel_to.bind(v0, v4)))
+		return 0
+	if _pog_eq(v1, "TravelBetween"):
+		if not _pog_eq(v2, "None"):
+			v4 = imapentity.find_by_name(await pick_location(v2))
+		else:
+			v4 = imapentity.find_by_name(await pick_location(v3))
+		if _pog_is_null(v4):
+			if PogRuntime.TRACE:
+				debug.print_string("iMissionGenerator.BehaviourHandler: Error: Unable to create location handle from given parameters: ")
+				debug.print_string(v2)
+				debug.print_string("\n")
+				debug.print_string(v3)
+				debug.print_string("\n")
+				debug.print_string("iMissionGenerator.BehaviourHandler: Unable to create a location handle from given parameters")
+		_pog_detach(_pog_spawn(iscriptedorders.travel_between.bind(v0, v4)))
+		return 0
+	if not _pog_eq(v1, "MonkeyAbout"):
+		return 0
+	if not _pog_eq(v2, "None"):
+		v4 = imapentity.find_by_name(await pick_location(v2))
+	else:
+		v4 = imapentity.find_by_name(await pick_location(v3))
+	if _pog_is_null(v4):
+		if PogRuntime.TRACE:
+			debug.print_string("iMissionGenerator.BehaviourHandler: Error: Unable to create location handle from given parameters: ")
+			debug.print_string(v2)
+			debug.print_string("\n")
+			debug.print_string(v3)
+			debug.print_string("\n")
+			debug.print_string("iMissionGenerator.BehaviourHandler: Unable to create a location handle from given parameters")
+	_pog_detach(_pog_spawn(iscriptedorders.monkey_about.bind(v0, v4)))
+	return 0
+	v7 = object.int_property(v0, "number_of_cargo_types")
+	v8 = ""
+	v9 = []
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: Installing mission cargo on ships")
+		debug.print_string("\n")
+	if _pog_eq(object.string_property(v0, "target_locomotion"), "Yes"):
+		v3 = 1
+	v4 = 0
+	while v4 < v7:
+		v10 = iship.cast(group.nth_sim(v1, v4))
+		v6 = object.int_property(v0, await local_29122("cargo_quantity", v4))
+		v5 = 0
+		while v5 < v6:
+			if PogRuntime.TRACE:
+				debug.print_string(string.join("iMissionGenerator.setupcargo: seting up cargo pod ", string.from_int(v5)))
+				debug.print_string("\n")
+			v8 = await iutilities.get_cargo_name_from_i_n_i(object.string_property(v0, await local_29122("required_cargo_type", v4)))
+			list.add_tail(v9, iship.create("ini:/sims/ships/utility/cargo_pod", string.join("Pod of ", v8)))
+			object.add_string_property(list.tail(v9), "mission_cargo", object.string_property(v0, await local_29122("required_cargo_type", v4)))
+			if v3:
+				iship.dock(iship.cast(list.tail(v9)), v10)
+			else:
+				sim.place_near(iship.cast(list.get_nth(v9, v5)), imapentity.waypoint_for_entity(v2), math.random(600.0, 1000.0))
+			v5 = v5 + 1
+		v4 = v4 + 1
 	return 0
 	return 0
 
@@ -1385,452 +1464,157 @@ func new_mission_task() -> Variant:
 	var v11: Variant = 0
 	var v12: Variant = 0
 	var v13: Variant = 0
-	var v14: Variant = 0
-	var _pc: int = 26103
-	while true:
-		if _pc == 26103:
-			v13 = ""
-			v12 = _pog_current()
-			_pc = 26206
-			continue
-		elif _pc == 26143:
-			debug.print_string("iMissionGenerator:NewMissionTask task is ")
-			debug.print_handle(v12)
-			debug.print_string("\n")
-			_pc = 26206
-			continue
-		elif _pc == 26206:
-			v11 = state.find(v12)
-			_pc = 26298
-			continue
-		elif _pc == 26235:
-			debug.print_string("iMissionGenerator:NewMissionTask state is ")
-			debug.print_handle(v11)
-			debug.print_string("\n")
-			_pc = 26298
-			continue
-		elif _pc == 26298:
-			if 1 == object.property_exists(v11, "patron_location_system"):
-				_pc = 26330
-				continue
-			else:
-				_pc = 26761
-				continue
-		elif _pc == 26330:
-			v10 = object.int_property(v11, "countout")
-			_pc = 26429
-			continue
-		elif _pc == 26366:
+	v13 = ""
+	v12 = _pog_current()
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator:NewMissionTask task is ")
+		debug.print_handle(v12)
+		debug.print_string("\n")
+	v11 = state.find(v12)
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator:NewMissionTask state is ")
+		debug.print_handle(v11)
+		debug.print_string("\n")
+	if 1 == object.property_exists(v11, "patron_location_system"):
+		v10 = object.int_property(v11, "countout")
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator:NewMissionTask countout value is ")
 			debug.print_int(v10)
 			debug.print_string(" \n")
-			_pc = 26429
-			continue
-		elif _pc == 26429:
-			if v10 > 4:
-				_pc = 26442
-				continue
-			else:
-				_pc = 26723
-				continue
-		elif _pc == 26442:
+		if v10 > 4:
 			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_goto"), 2)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_collect"), 2)
 			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_deliver"), 2)
 			await local_35147(v11)
 			state.destroy(_pog_current())
-			_pc = 29113
-			continue
-		elif _pc == 26723:
-			object.set_int_property(v11, "countout", v10 + 1)
-			_pc = 26788
-			continue
-		elif _pc == 26761:
-			object.add_int_property(v11, "countout", 0)
-			_pc = 26788
-			continue
-		elif _pc == 26788:
-			_pc = 26837
-			continue
-		elif _pc == 26793:
-			debug.print_string("iMissionGenerator: New mission task - now started but dormant")
-			debug.print_string("\n")
-			_pc = 26837
-			continue
-		elif _pc == 26837:
-			v9 = state.progress(v11)
-			if v9 > 1:
-				_pc = 26873
-				continue
-			else:
-				_pc = 27145
-				continue
-		elif _pc == 26873:
-			_pc = 26941
-			continue
-		elif _pc == 26878:
+			return
+		object.set_int_property(v11, "countout", v10 + 1)
+	else:
+		object.add_int_property(v11, "countout", 0)
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator: New mission task - now started but dormant")
+		debug.print_string("\n")
+	v9 = state.progress(v11)
+	if v9 > 1:
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator.NewMissionTask mission_state is apparently ")
 			debug.print_int(v9)
 			debug.print_string(" \n")
-			_pc = 26941
-			continue
-		elif _pc == 26941:
-			_pc = 27006
-			continue
-		elif _pc == 26946:
+		if PogRuntime.TRACE:
 			debug.print_string("iMissionGenerator.NewMissionTask MS_WaitToRead is ")
 			debug.print_int(4)
 			debug.print_string(" \n")
-			_pc = 27006
-			continue
-		elif _pc == 27006:
-			if v9 >= 5:
-				_pc = 27019
-				continue
-			else:
-				_pc = 27126
-				continue
-		elif _pc == 27019:
+		if v9 >= 5:
 			if await local_21611(v11):
-				_pc = 27042
-				continue
-			else:
-				_pc = 27126
-				continue
-		elif _pc == 27042:
-			await on_success(v11)
-			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
-			state.set_progress(v11, 3)
-			_pc = 27126
-			continue
-		elif _pc == 27126:
-			await local_6296(v11)
-			_pc = 27145
-			continue
-		elif _pc == 27145:
-			_pc = 28723
-			continue
-		elif _pc == 27150:
-			_pc = 27176
-			continue
-		elif _pc == 27155:
-			debug.print_string("iMissionGenerator: progress MS_Dormant\n")
-			_pc = 27176
-			continue
-		elif _pc == 27176:
-			await _pog_wait(5.0)
-			_pc = 27257
-			continue
-		elif _pc == 27213:
-			debug.print_string("iMissionGenerator: GMission checking state")
-			debug.print_string("\n")
-			_pc = 27257
-			continue
-		elif _pc == 27257:
-			_pc = 27325
-			continue
-		elif _pc == 27262:
-			debug.print_string("checked state is ")
-			debug.print_handle(v11)
-			debug.print_string("\n")
-			_pc = 27325
-			continue
-		elif _pc == 27325:
-			if not _pog_is_null(state.progress(v11)):
-				_pc = 27350
-				continue
-			else:
-				_pc = 27176
-				continue
-		elif _pc == 27350:
-			_pc = 27399
-			continue
-		elif _pc == 27355:
-			debug.print_string("iMissionGenerator: GMission state change - going around")
-			debug.print_string("\n")
-			_pc = 27399
-			continue
-		elif _pc == 27399:
-			_pc = 28807
-			continue
-		elif _pc == 27404:
-			_pc = 27430
-			continue
-		elif _pc == 27409:
-			debug.print_string("iMissionGenerator: progress MS_Waiting\n")
-			_pc = 27430
-			continue
-		elif _pc == 27430:
-			_pc = 27479
-			continue
-		elif _pc == 27435:
-			debug.print_string("iMissionGenerator: GMission sending briefing")
-			debug.print_string("\n")
-			_pc = 27479
-			continue
-		elif _pc == 27479:
-			if object.property_exists(v11, "comm_briefing_type"):
-				_pc = 27509
-				continue
-			else:
-				_pc = 27696
-				continue
-		elif _pc == 27509:
-			v7 = object.int_property(v11, "comm_briefing_type")
-			_pc = 27608
-			continue
-		elif _pc == 27545:
-			debug.print_string("comm_type: ")
-			debug.print_int(v7)
-			debug.print_string("\n")
-			_pc = 27608
-			continue
-		elif _pc == 27608:
-			if v7 == 5:
-				_pc = 27621
-				continue
-			else:
-				_pc = 27621
-				continue
-		elif _pc == 27621:
-			await local_14543(v11, v7, object.string_property(v11, "comm_briefing_reference"), object.string_property(v11, "comm_briefing_subject"))
-			_pc = 27696
-			continue
-		elif _pc == 27696:
-			if v7 != 4:
-				_pc = 27709
-				continue
-			else:
-				_pc = 27754
-				continue
-		elif _pc == 27709:
-			await setup_trade_delivery(v11)
-			state.set_progress(v11, 5)
-			_pc = 27775
-			continue
-		elif _pc == 27754:
-			state.set_progress(v11, 4)
-			_pc = 27775
-			continue
-		elif _pc == 27775:
-			if v7 == 1:
-				_pc = 27787
-				continue
-			else:
-				_pc = 27827
-				continue
-		elif _pc == 27787:
-			_pc = 27813
-			continue
-		elif _pc == 27792:
-			debug.print_string("iMissionGenerator:NewMissionTask - waiting for player to return to base and speak to Jafs.\n")
-			_pc = 27813
-			continue
-		elif _pc == 27813:
-			await local_873()
-			_pc = 27827
-			continue
-		elif _pc == 27827:
-			_pc = 28807
-			continue
-		elif _pc == 27832:
-			_pc = 27858
-			continue
-		elif _pc == 27837:
-			debug.print_string("iMissionGenerator: progress MS_WaitToRead\n")
-			_pc = 27858
-			continue
-		elif _pc == 27858:
-			await _pog_wait(5.0)
-			if not _pog_is_null(iemail.read(iemail.find(object.string_property(v11, "comm_briefing_reference")))):
-				_pc = 27949
-				continue
-			else:
-				_pc = 27858
-				continue
-		elif _pc == 27949:
-			await setup_trade_delivery(v11)
-			state.set_progress(v11, 5)
-			object.set_int_property(v11, "countout", 0)
-			_pc = 28807
-			continue
-		elif _pc == 28021:
-			await local_2088(v11, "_goto", 1)
-			await local_2088(v11, "_collect", 1)
-			await local_2088(v11, "_deliver", 1)
-			_pc = 28128
-			continue
-		elif _pc == 28107:
-			debug.print_string("iMissionGenerator: progress MS_Piracy\n")
-			_pc = 28128
-			continue
-		elif _pc == 28128:
-			_pc = 28177
-			continue
-		elif _pc == 28133:
-			debug.print_string("iMissionGenerator: GMission in piracy mode")
-			debug.print_string("\n")
-			_pc = 28177
-			continue
-		elif _pc == 28177:
-			await local_12159(v11)
-			if await resolve_piracy(v11):
-				_pc = 28219
-				continue
-			else:
-				_pc = 28272
-				continue
-		elif _pc == 28219:
-			state.set_progress(v11, 7)
-			object.set_int_property(v11, "countout", 0)
-			_pc = 28318
-			continue
-		elif _pc == 28272:
-			await _pog_wait(25.0)
-			await local_873()
-			_pc = 28318
-			continue
-		elif _pc == 28318:
-			state.set_progress(v11, 7)
-			_pc = 28807
-			continue
-		elif _pc == 28344:
-			state.set_progress(v11, 6)
-			_pc = 28807
-			continue
-		elif _pc == 28370:
-			_pc = 28396
-			continue
-		elif _pc == 28375:
-			debug.print_string("iMissionGenerator: progress MS_Delivery\n")
-			_pc = 28396
-			continue
-		elif _pc == 28396:
-			_pc = 28445
-			continue
-		elif _pc == 28401:
-			debug.print_string("iMissionGenerator: Mission waiting for player to make delivery")
-			debug.print_string("\n")
-			_pc = 28445
-			continue
-		elif _pc == 28445:
-			await resolve_delivery(v11)
-			object.set_int_property(v11, "countout", 0)
-			state.set_progress(v11, 9)
-			_pc = 28807
-			continue
-		elif _pc == 28517:
-			_pc = 28543
-			continue
-		elif _pc == 28522:
-			debug.print_string("iMissionGenerator: progress MS_Complete\n")
-			_pc = 28543
-			continue
-		elif _pc == 28543:
-			_pc = 28592
-			continue
-		elif _pc == 28548:
-			debug.print_string("iMissionGenerator: Mission is done and dusted")
-			debug.print_string("\n")
-			_pc = 28592
-			continue
-		elif _pc == 28592:
-			state.set_progress(v11, 3)
-			await on_success(v11)
-			await _pog_wait(10.0)
-			_pc = 28807
-			continue
-		elif _pc == 28669:
-			_pc = 28718
-			continue
-		elif _pc == 28674:
-			debug.print_string("iMissionGenerator: Unrecognised state, y' bastard")
-			debug.print_string("\n")
-			_pc = 28718
-			continue
-		elif _pc == 28718:
-			_pc = 28807
-			continue
-		elif _pc == 28723:
-			v14 = state.progress(v11)
-			if not _pog_is_null(v14):
-				_pc = 28749
-				continue
-			else:
-				_pc = 27150
-				continue
-		elif _pc == 28749:
-			if 1 != v14:
-				_pc = 28757
-				continue
-			else:
-				_pc = 27404
-				continue
-		elif _pc == 28757:
-			if 4 != v14:
-				_pc = 28766
-				continue
-			else:
-				_pc = 27832
-				continue
-		elif _pc == 28766:
-			if 5 != v14:
-				_pc = 28775
-				continue
-			else:
-				_pc = 28021
-				continue
-		elif _pc == 28775:
-			if 7 != v14:
-				_pc = 28784
-				continue
-			else:
-				_pc = 28344
-				continue
-		elif _pc == 28784:
-			if 6 != v14:
-				_pc = 28793
-				continue
-			else:
-				_pc = 28370
-				continue
-		elif _pc == 28793:
-			if 9 != v14:
-				_pc = 28802
-				continue
-			else:
-				_pc = 28517
-				continue
-		elif _pc == 28802:
-			_pc = 28669
-			continue
-		elif _pc == 28807:
-			if state.progress(v11) == 3:
-				_pc = 28833
-				continue
-			else:
-				_pc = 27145
-				continue
-		elif _pc == 28833:
-			_pc = 28859
-			continue
-		elif _pc == 28838:
-			debug.print_string("iMissionGenerator:NewMissionTask removing task's state. \n")
-			_pc = 28859
-			continue
-		elif _pc == 28859:
-			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_goto"), 1)
-			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_collect"), 1)
-			iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_deliver"), 1)
-			global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
-			state.destroy(_pog_current())
-			_pc = 29113
-			continue
-		elif _pc == 29113:
-			return
-		else:
-			return 0
+				await on_success(v11)
+				global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
+				state.set_progress(v11, 3)
+		await local_6296(v11)
+	while true:
+		match state.progress(v11):
+			0:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: progress MS_Dormant\n")
+				while true:
+					await _pog_wait(5.0)
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGenerator: GMission checking state")
+						debug.print_string("\n")
+					if PogRuntime.TRACE:
+						debug.print_string("checked state is ")
+						debug.print_handle(v11)
+						debug.print_string("\n")
+					if not (_pog_is_null(state.progress(v11))):
+						break
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: GMission state change - going around")
+					debug.print_string("\n")
+			1:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: progress MS_Waiting\n")
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: GMission sending briefing")
+					debug.print_string("\n")
+				if object.property_exists(v11, "comm_briefing_type"):
+					v7 = object.int_property(v11, "comm_briefing_type")
+					if PogRuntime.TRACE:
+						debug.print_string("comm_type: ")
+						debug.print_int(v7)
+						debug.print_string("\n")
+					if v7 == 5:
+						pass
+					await local_14543(v11, v7, object.string_property(v11, "comm_briefing_reference"), object.string_property(v11, "comm_briefing_subject"))
+				if v7 != 4:
+					await setup_trade_delivery(v11)
+					state.set_progress(v11, 5)
+				else:
+					state.set_progress(v11, 4)
+				if v7 == 1:
+					if PogRuntime.TRACE:
+						debug.print_string("iMissionGenerator:NewMissionTask - waiting for player to return to base and speak to Jafs.\n")
+					await local_873()
+			4:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: progress MS_WaitToRead\n")
+				while true:
+					await _pog_wait(5.0)
+					if not (_pog_is_null(iemail.read(iemail.find(object.string_property(v11, "comm_briefing_reference"))))):
+						break
+				await setup_trade_delivery(v11)
+				state.set_progress(v11, 5)
+				object.set_int_property(v11, "countout", 0)
+			5:
+				await local_2088(v11, "_goto", 1)
+				await local_2088(v11, "_collect", 1)
+				await local_2088(v11, "_deliver", 1)
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: progress MS_Piracy\n")
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: GMission in piracy mode")
+					debug.print_string("\n")
+				await local_12159(v11)
+				if await resolve_piracy(v11):
+					state.set_progress(v11, 7)
+					object.set_int_property(v11, "countout", 0)
+				else:
+					await _pog_wait(25.0)
+					await local_873()
+				state.set_progress(v11, 7)
+			7:
+				state.set_progress(v11, 6)
+			6:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: progress MS_Delivery\n")
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: Mission waiting for player to make delivery")
+					debug.print_string("\n")
+				await resolve_delivery(v11)
+				object.set_int_property(v11, "countout", 0)
+				state.set_progress(v11, 9)
+			9:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: progress MS_Complete\n")
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: Mission is done and dusted")
+					debug.print_string("\n")
+				state.set_progress(v11, 3)
+				await on_success(v11)
+				await _pog_wait(10.0)
+			_:
+				if PogRuntime.TRACE:
+					debug.print_string("iMissionGenerator: Unrecognised state, y' bastard")
+					debug.print_string("\n")
+		if not (state.progress(v11) != 3):
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("iMissionGenerator:NewMissionTask removing task's state. \n")
+	iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_goto"), 1)
+	iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_collect"), 1)
+	iobjectives.set_state(string.join(object.string_property(v11, "objective_stub"), "_objectives_deliver"), 1)
+	global.set_int("gl_missgen_number_currently_active", global.pog_int("gl_missgen_number_currently_active") - 1)
+	state.destroy(_pog_current())
+	return
 	return 0
 
 func local_29122(v0, v1) -> Variant:

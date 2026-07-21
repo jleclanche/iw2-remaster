@@ -1931,68 +1931,19 @@ func local_17318() -> Variant:
 	return 0
 
 func local_17527(v0) -> Variant:
-	var v1: Variant = 0
-	var _pc: int = 17527
-	while true:
-		if _pc == 17527:
-			_pc = 17635
-			continue
-		elif _pc == 17532:
+	match v0:
+		0:
 			return await local_17687()
-		elif _pc == 17550:
+		1:
 			return await local_17984()
-		elif _pc == 17568:
+		2:
 			return await local_18107()
-		elif _pc == 17586:
+		3:
 			return await local_18230()
-		elif _pc == 17604:
-			_pc = 17630
-			continue
-		elif _pc == 17609:
-			debug.print_string("Attempt to create a ship of unknown actor type\n")
-			_pc = 17630
-			continue
-		elif _pc == 17630:
-			_pc = 17679
-			continue
-		elif _pc == 17635:
-			v1 = v0
-			if not _pog_is_null(v1):
-				_pc = 17648
-				continue
-			else:
-				_pc = 17532
-				continue
-		elif _pc == 17648:
-			if 1 != v1:
-				_pc = 17656
-				continue
-			else:
-				_pc = 17550
-				continue
-		elif _pc == 17656:
-			if 2 != v1:
-				_pc = 17665
-				continue
-			else:
-				_pc = 17568
-				continue
-		elif _pc == 17665:
-			if 3 != v1:
-				_pc = 17674
-				continue
-			else:
-				_pc = 17586
-				continue
-		elif _pc == 17674:
-			_pc = 17604
-			continue
-		elif _pc == 17679:
-			return 0
-		elif _pc == 17685:
-			return
-		else:
-			return 0
+		_:
+			if PogRuntime.TRACE:
+				debug.print_string("Attempt to create a ship of unknown actor type\n")
+	return 0
 	return 0
 
 func local_17687() -> Variant:

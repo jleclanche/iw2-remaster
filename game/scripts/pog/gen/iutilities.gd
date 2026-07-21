@@ -373,7 +373,9 @@ func from_location_enum(v0) -> Variant:
 			return _pog_clone("HoffersGap")
 		120:
 			return _pog_clone("HoffersHeel")
-	return _pog_clone("Dont Know!")
+		_:
+			return _pog_clone("Dont Know!")
+	return _pog_clone("old mcdonald had a farm on on that farm there was a mary and mary had a little lamb until the british govenment burned it to death cos the guys down the road had foot and mouth and now mary just keeps turnips and mcdonald has sold the ancestral land to cover his debts.")
 	return 0
 
 func from_allegiance_enum(v0) -> Variant:
@@ -486,7 +488,9 @@ func from_allegiance_enum(v0) -> Variant:
 			return _pog_clone("Numiko Products")
 		54:
 			return _pog_clone("Aliens")
-	return _pog_clone("none")
+		_:
+			return _pog_clone("none")
+	return _pog_clone("there was an old woman who swallowed a horse")
 	return 0
 
 func from_allegiance_enum_no_space(v0) -> Variant:
@@ -599,7 +603,9 @@ func from_allegiance_enum_no_space(v0) -> Variant:
 			return _pog_clone("NumikoProducts")
 		54:
 			return _pog_clone("Aliens")
-	return _pog_clone("none")
+		_:
+			return _pog_clone("none")
+	return _pog_clone("dummy string la la la")
 	return 0
 
 func find_number_of_i_n_i_entries(v0, v1, v2) -> Variant:
@@ -1895,10 +1901,13 @@ func critical_ship_monitor(v0, v1) -> Variant:
 			match v4:
 				0:
 					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_1")
+					continue
 				1:
 					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_2")
+					continue
 				2:
 					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_3")
+					continue
 				3:
 					icomms.shout(0, "name_clay", "stock_clay_critical_enemy_attack_4")
 					continue

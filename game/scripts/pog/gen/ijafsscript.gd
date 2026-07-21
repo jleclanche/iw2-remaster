@@ -141,873 +141,234 @@ func local_1092(v0, v1, v2) -> Variant:
 	var v17: Variant = 0
 	var v18: Variant = 0
 	var v19: Variant = 0
-	var v20: Variant = 0
-	var _pc: int = 1092
-	while true:
-		if _pc == 1092:
-			v4 = iship.find_player_ship()
-			v5 = group.nth_group(v1, 0)
-			v7 = ifaction.find("Player")
-			v8 = 5000.0
-			v10 = 0
-			v11 = 0
-			v12 = 1
-			v13 = 1
-			if _pog_is_null(group.sim_count(v1)):
-				_pc = 1231
-				continue
-			else:
-				_pc = 1322
-				continue
-		elif _pc == 1231:
-			await local_18414(v0, "jafs_nothing_for_me_to_pickup", 0, 0)
-			_pc = 1285
-			continue
-		elif _pc == 1264:
+	v4 = iship.find_player_ship()
+	v5 = group.nth_group(v1, 0)
+	v7 = ifaction.find("Player")
+	v8 = 5000.0
+	v10 = 0
+	v11 = 0
+	v12 = 1
+	v13 = 1
+	if _pog_is_null(group.sim_count(v1)):
+		await local_18414(v0, "jafs_nothing_for_me_to_pickup", 0, 0)
+		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.jafs_loads_pods: No pods to pick up. Jafs going home in a huff,\n")
-			_pc = 1285
-			continue
-		elif _pc == 1285:
-			_pog_detach(_pog_spawn(jafs_goes_home.bind(v0)))
-			_pc = 5409
-			continue
-		elif _pc == 1322:
-			_pc = 1348
-			continue
-		elif _pc == 1327:
-			debug.print_string("iJafsScript.SummonJafs: Jafs arrived at pod waypoint.\n")
-			_pc = 1348
-			continue
-		elif _pc == 1348:
-			if global.pog_int("g_jafs_comment") > 0:
-				_pc = 1375
-				continue
-			else:
-				_pc = 1394
-				continue
-		elif _pc == 1375:
-			await jafs_comment(v0)
-			_pc = 1394
-			continue
-		elif _pc == 1394:
-			_pc = 1420
-			continue
-		elif _pc == 1399:
-			debug.print_string("iJafsScript.jafs_loads_pods: STARTED\n")
-			_pc = 1420
-			continue
-		elif _pc == 1420:
-			_pc = 1501
-			continue
-		elif _pc == 1425:
-			debug.print_string("iJafsScript.jafs_loads_pods: Group Of Tagged pods contains ")
-			debug.print_int(group.sim_count(v1))
-			debug.print_string(" \n")
-			_pc = 1501
-			continue
-		elif _pc == 1501:
-			v11 = 0
-			v14 = 1
-			_pc = 1596
-			continue
-		elif _pc == 1520:
-			debug.print_string("iJafsScript.jafs_loads_pods: Number of free dockports on jafs: ")
-			debug.print_int(list.item_count(v2))
-			debug.print_string(" \n")
-			_pc = 1596
-			continue
-		elif _pc == 1596:
-			v17 = 0
-			v14 = group.total_sim_count(v1)
-			_pc = 1627
-			continue
-		elif _pc == 1627:
-			v3 = iship.cast(await get_closest_pod(v0, v1))
-			_pc = 1737
-			continue
-		elif _pc == 1674:
+		_pog_detach(_pog_spawn(jafs_goes_home.bind(v0)))
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iJafsScript.SummonJafs: Jafs arrived at pod waypoint.\n")
+	if global.pog_int("g_jafs_comment") > 0:
+		await jafs_comment(v0)
+	if PogRuntime.TRACE:
+		debug.print_string("iJafsScript.jafs_loads_pods: STARTED\n")
+	if PogRuntime.TRACE:
+		debug.print_string("iJafsScript.jafs_loads_pods: Group Of Tagged pods contains ")
+		debug.print_int(group.sim_count(v1))
+		debug.print_string(" \n")
+	v11 = 0
+	v14 = 1
+	if PogRuntime.TRACE:
+		debug.print_string("iJafsScript.jafs_loads_pods: Number of free dockports on jafs: ")
+		debug.print_int(list.item_count(v2))
+		debug.print_string(" \n")
+	v17 = 0
+	v14 = group.total_sim_count(v1)
+	while true:
+		v3 = iship.cast(await get_closest_pod(v0, v1))
+		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.jafs_loads_pods: Checking pod")
 			debug.print_int(v14)
 			debug.print_string("\n")
-			_pc = 1737
-			continue
-		elif _pc == 1737:
-			if sim.is_dead(v0):
-				_pc = 1760
-				continue
-			else:
-				_pc = 1805
-				continue
-		elif _pc == 1760:
-			_pc = 1786
-			continue
-		elif _pc == 1765:
-			debug.print_string("iJafsScript.jafs_loads_pods: ERROR: Jafs is dead. Exiting.\n")
-			_pc = 1786
-			continue
-		elif _pc == 1786:
+		if sim.is_dead(v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: ERROR: Jafs is dead. Exiting.\n")
 			await flag_jafs_inactive()
-			_pc = 5409
+			return
+		if sim.is_dead(v3):
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is dead. Ignoring.\n")
 			continue
-		elif _pc == 1805:
-			if sim.is_dead(v3):
-				_pc = 1828
-				continue
-			else:
-				_pc = 1859
-				continue
-		elif _pc == 1828:
-			_pc = 1854
-			continue
-		elif _pc == 1833:
-			debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is dead. Ignoring.\n")
-			_pc = 1854
-			continue
-		elif _pc == 1854:
-			_pc = 1627
-			continue
-		elif _pc == 1859:
-			if isim.is_docked(v3) and not (isim.is_docked_to(v3, v0)):
-				_pc = 1907
-				continue
-			else:
-				_pc = 1983
-				continue
-		elif _pc == 1907:
-			_pc = 1933
-			continue
-		elif _pc == 1912:
-			debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is docked. Ignoring.\n")
-			_pc = 1933
-			continue
-		elif _pc == 1933:
+		if isim.is_docked(v3) and not (isim.is_docked_to(v3, v0)):
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is docked. Ignoring.\n")
 			ihud.pog_print("hud_untagging_docked_pod")
 			await untag_pod(v1, v3)
-			_pc = 1627
 			continue
-		elif _pc == 1983:
-			if sim.distance_between(v0, v3) > v8:
-				_pc = 2017
-				continue
-			else:
-				_pc = 3266
-				continue
-		elif _pc == 2017:
-			_pc = 2043
-			continue
-		elif _pc == 2022:
-			debug.print_string("iJafsScript.jafs_loads_pods: Pod is outside the loading range. Waiting for current loading pods to dock.\n")
-			_pc = 2043
-			continue
-		elif _pc == 2043:
+		if sim.distance_between(v0, v3) > v8:
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: Pod is outside the loading range. Waiting for current loading pods to dock.\n")
 			v11 = 1
-			_pc = 2050
-			continue
-		elif _pc == 2050:
-			if iai.is_order_complete(v1):
-				_pc = 2073
-				continue
-			else:
-				_pc = 2106
-				continue
-		elif _pc == 2073:
-			_pc = 2099
-			continue
-		elif _pc == 2078:
-			debug.print_string("iJafsScript.jafs_loads_pods: Current pods finished loading.\n")
-			_pc = 2099
-			continue
-		elif _pc == 2099:
-			v11 = 0
-			_pc = 2106
-			continue
-		elif _pc == 2106:
-			if await jafs_attacked(v0, v4, 5):
-				_pc = 2136
-				continue
-			else:
-				_pc = 2167
-				continue
-		elif _pc == 2136:
-			_pc = 2162
-			continue
-		elif _pc == 2141:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs has been attacked.")
-			_pc = 2162
-			continue
-		elif _pc == 2162:
-			_pc = 5409
-			continue
-		elif _pc == 2167:
-			if not (await jafs_in_range(v4, v0, v1, 300000.0)):
-				_pc = 2206
-				continue
-			else:
-				_pc = 2311
-				continue
-		elif _pc == 2206:
-			_pc = 2232
-			continue
-		elif _pc == 2211:
-			debug.print_string("iJafsScript.jafs_loads_pods : player out of sensor range, starting CollectPods\n")
-			_pc = 2232
-			continue
-		elif _pc == 2232:
-			await collect_pods(1)
-			sim.destroy(v0)
-			await flag_jafs_inactive()
-			_pc = 2306
-			continue
-		elif _pc == 2285:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Player out of range.\n")
-			_pc = 2306
-			continue
-		elif _pc == 2306:
-			_pc = 5409
-			continue
-		elif _pc == 2311:
-			if group.total_sim_count(v1) < v14 and not (v10):
-				_pc = 2347
-				continue
-			else:
-				_pc = 2382
-				continue
-		elif _pc == 2347:
-			v10 = 1
-			await local_18414(v0, "jafs_oops_thats_one_less", 1, 1)
-			_pc = 2382
-			continue
-		elif _pc == 2382:
-			await _pog_wait(1.0)
-			if not (v11 == 1 and sim.is_alive(v0) and sim.is_alive(v3) and not (isim.is_docked(v3))):
-				_pc = 2484
-				continue
-			else:
-				_pc = 2050
-				continue
-		elif _pc == 2484:
+			while true:
+				if iai.is_order_complete(v1):
+					if PogRuntime.TRACE:
+						debug.print_string("iJafsScript.jafs_loads_pods: Current pods finished loading.\n")
+					v11 = 0
+				if await jafs_attacked(v0, v4, 5):
+					if PogRuntime.TRACE:
+						debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs has been attacked.")
+					return
+				if not (await jafs_in_range(v4, v0, v1, 300000.0)):
+					if PogRuntime.TRACE:
+						debug.print_string("iJafsScript.jafs_loads_pods : player out of sensor range, starting CollectPods\n")
+					await collect_pods(1)
+					sim.destroy(v0)
+					await flag_jafs_inactive()
+					if PogRuntime.TRACE:
+						debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Player out of range.\n")
+					return
+				if group.total_sim_count(v1) < v14 and not (v10):
+					v10 = 1
+					await local_18414(v0, "jafs_oops_thats_one_less", 1, 1)
+				await _pog_wait(1.0)
+				if not (v11 == 1 and sim.is_alive(v0) and sim.is_alive(v3) and not (isim.is_docked(v3))):
+					break
 			if sim.is_dead(v0):
-				_pc = 2507
-				continue
-			else:
-				_pc = 2552
-				continue
-		elif _pc == 2507:
-			_pc = 2533
-			continue
-		elif _pc == 2512:
-			debug.print_string("iJafsScript.jafs_loads_pods: ERROR: Jafs is dead. Exiting.\n")
-			_pc = 2533
-			continue
-		elif _pc == 2533:
-			await flag_jafs_inactive()
-			_pc = 5409
-			continue
-		elif _pc == 2552:
+				if PogRuntime.TRACE:
+					debug.print_string("iJafsScript.jafs_loads_pods: ERROR: Jafs is dead. Exiting.\n")
+				await flag_jafs_inactive()
+				return
 			if sim.is_dead(v3):
-				_pc = 2575
+				if PogRuntime.TRACE:
+					debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is dead. Ignoring.\n")
 				continue
-			else:
-				_pc = 2606
-				continue
-		elif _pc == 2575:
-			_pc = 2601
-			continue
-		elif _pc == 2580:
-			debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is dead. Ignoring.\n")
-			_pc = 2601
-			continue
-		elif _pc == 2601:
-			_pc = 1627
-			continue
-		elif _pc == 2606:
 			if isim.is_docked(v3) and not (isim.is_docked_to(v3, v0)):
-				_pc = 2654
+				if PogRuntime.TRACE:
+					debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is docked. Ignoring.\n")
+				ihud.pog_print("hud_untagging_docked_pod")
+				await untag_pod(v1, v3)
 				continue
-			else:
-				_pc = 2730
-				continue
-		elif _pc == 2654:
-			_pc = 2680
-			continue
-		elif _pc == 2659:
-			debug.print_string("iJafsScript.jafs_loads_pods: WARNING: Pod is docked. Ignoring.\n")
-			_pc = 2680
-			continue
-		elif _pc == 2680:
-			ihud.pog_print("hud_untagging_docked_pod")
-			await untag_pod(v1, v3)
-			_pc = 1627
-			continue
-		elif _pc == 2730:
-			_pc = 2756
-			continue
-		elif _pc == 2735:
-			debug.print_string("iJafsScript.jafs_loads_pods: Jafs approaching pod.\n")
-			_pc = 2756
-			continue
-		elif _pc == 2756:
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: Jafs approaching pod.\n")
 			v6 = sim.create("ini:/sims/nav/waypoint", "Jafs Pod Waypoint")
 			await iutilities.sim_place_between_exact(v6, v3, v0, 1000.0)
 			iai.give_approach_order_advanced(v0, v3, 500.0, 200.0, 1)
-			_pc = 2857
-			continue
-		elif _pc == 2857:
-			await _pog_wait(2.0)
-			if await jafs_attacked(v0, v4, 5):
-				_pc = 2919
-				continue
-			else:
-				_pc = 2969
-				continue
-		elif _pc == 2919:
-			sim.destroy(v6)
-			_pc = 2964
-			continue
-		elif _pc == 2943:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs has been attacked.")
-			_pc = 2964
-			continue
-		elif _pc == 2964:
-			_pc = 5409
-			continue
-		elif _pc == 2969:
-			if not (await jafs_in_range(v4, v0, v1, 300000.0)):
-				_pc = 3008
-				continue
-			else:
-				_pc = 3132
-				continue
-		elif _pc == 3008:
-			_pc = 3034
-			continue
-		elif _pc == 3013:
-			debug.print_string("iJafsScript.jafs_loads_pods : player out of sensor range, starting CollectPods\n")
-			_pc = 3034
-			continue
-		elif _pc == 3034:
-			await collect_pods(1)
-			sim.destroy(v0)
-			sim.destroy(v6)
-			await flag_jafs_inactive()
-			_pc = 3127
-			continue
-		elif _pc == 3106:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Player out of range.\n")
-			_pc = 3127
-			continue
-		elif _pc == 3127:
-			_pc = 5409
-			continue
-		elif _pc == 3132:
-			if group.total_sim_count(v1) < v14 and not (v10):
-				_pc = 3168
-				continue
-			else:
-				_pc = 3203
-				continue
-		elif _pc == 3168:
-			v10 = 1
-			await local_18414(v0, "jafs_oops_thats_one_less", 1, 1)
-			_pc = 3203
-			continue
-		elif _pc == 3203:
-			if not (not (iai.is_order_complete(v0)) and sim.is_alive(v3) and not (isim.is_docked(v3))):
-				_pc = 3266
-				continue
-			else:
-				_pc = 2857
-				continue
-		elif _pc == 3266:
-			sim.destroy(v6)
-			_pc = 3311
-			continue
-		elif _pc == 3290:
+			while true:
+				await _pog_wait(2.0)
+				if await jafs_attacked(v0, v4, 5):
+					sim.destroy(v6)
+					if PogRuntime.TRACE:
+						debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs has been attacked.")
+					return
+				if not (await jafs_in_range(v4, v0, v1, 300000.0)):
+					if PogRuntime.TRACE:
+						debug.print_string("iJafsScript.jafs_loads_pods : player out of sensor range, starting CollectPods\n")
+					await collect_pods(1)
+					sim.destroy(v0)
+					sim.destroy(v6)
+					await flag_jafs_inactive()
+					if PogRuntime.TRACE:
+						debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Player out of range.\n")
+					return
+				if group.total_sim_count(v1) < v14 and not (v10):
+					v10 = 1
+					await local_18414(v0, "jafs_oops_thats_one_less", 1, 1)
+				if not (not (iai.is_order_complete(v0)) and sim.is_alive(v3) and not (isim.is_docked(v3))):
+					break
+		sim.destroy(v6)
+		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.jafs_loads_pods: Pod in range. Loading.\n")
-			_pc = 3311
-			continue
-		elif _pc == 3311:
-			if v12:
-				_pc = 3321
-				continue
-			else:
-				_pc = 3390
-				continue
-		elif _pc == 3321:
+		if v12:
 			v12 = 0
 			await local_18284(v0, "jafs_load_up_starting_", 4, 1, 1)
 			await _pog_wait(2.0)
-			_pc = 3390
-			continue
-		elif _pc == 3390:
-			iship.install_a_i_pilot(v3, 30.0, 30.0, 0.10000000149011612, "", "", "", "")
-			iship.set_free_without_pilot(v3, 0)
-			iship.heal(v3)
-			isim.set_indestructable(v3, 1)
-			v18 = idockport.cast(list.get_nth(v2, v17))
-			_pc = 3627
-			continue
-		elif _pc == 3564:
+		iship.install_a_i_pilot(v3, 30.0, 30.0, 0.10000000149011612, "", "", "", "")
+		iship.set_free_without_pilot(v3, 0)
+		iship.heal(v3)
+		isim.set_indestructable(v3, 1)
+		v18 = idockport.cast(list.get_nth(v2, v17))
+		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.jafs_loads_pods: Pod docking to dockport no: ")
 			debug.print_int(v17)
 			debug.print_string(" \n")
-			_pc = 3627
-			continue
-		elif _pc == 3627:
-			v17 = v17 + 1
-			v19 = await enable_pod_dockport(v3)
-			idockport.enable(idockport.cast(v18))
-			iai.give_dock_order_with_dockport(v19, v18)
-			group.add_sim(v5, v3)
-			object.add_int_property(v3, "loading", 0)
-			isim.set_mission_critical(v3, 0)
-			isim.set_faction(v3, v7)
-			await _pog_wait(2.0)
-			if sim.distance_between(v0, v4) < 50000.0:
-				_pc = 3882
-				continue
-			else:
-				_pc = 4399
-				continue
-		elif _pc == 3882:
+		v17 = v17 + 1
+		v19 = await enable_pod_dockport(v3)
+		idockport.enable(idockport.cast(v18))
+		iai.give_dock_order_with_dockport(v19, v18)
+		group.add_sim(v5, v3)
+		object.add_int_property(v3, "loading", 0)
+		isim.set_mission_critical(v3, 0)
+		isim.set_faction(v3, v7)
+		await _pog_wait(2.0)
+		if sim.distance_between(v0, v4) < 50000.0:
 			v16 = math.random_int(0, 100)
 			if v16 < 30:
-				_pc = 3917
-				continue
+				v15 = icargo.value(icargo.find(object.int_property(v3, "cargo")))
+				if v15 <= 1:
+					await local_18284(v0, "jafs_load_up_poor_", 4, 0, 1)
+				else:
+					if v15 > 1 and v15 < 7:
+						await local_18284(v0, "jafs_load_up_medium_", 4, 0, 1)
+					else:
+						await local_18284(v0, "jafs_load_up_good_", 4, 0, 1)
 			else:
-				_pc = 4112
-				continue
-		elif _pc == 3917:
-			v15 = icargo.value(icargo.find(object.int_property(v3, "cargo")))
-			if v15 <= 1:
-				_pc = 3986
-				continue
-			else:
-				_pc = 4021
-				continue
-		elif _pc == 3986:
-			await local_18284(v0, "jafs_load_up_poor_", 4, 0, 1)
-			_pc = 4107
-			continue
-		elif _pc == 4021:
-			if v15 > 1 and v15 < 7:
-				_pc = 4042
-				continue
-			else:
-				_pc = 4077
-				continue
-		elif _pc == 4042:
-			await local_18284(v0, "jafs_load_up_medium_", 4, 0, 1)
-			_pc = 4107
-			continue
-		elif _pc == 4077:
-			await local_18284(v0, "jafs_load_up_good_", 4, 0, 1)
-			_pc = 4107
-			continue
-		elif _pc == 4107:
-			_pc = 4399
-			continue
-		elif _pc == 4112:
-			if v13:
-				_pc = 4122
-				continue
-			else:
-				_pc = 4399
-				continue
-		elif _pc == 4122:
-			_pc = 4167
-			continue
-		elif _pc == 4127:
-			await local_18414(v0, "jafs_load_up_animals_1", 1, 1)
-			v13 = 0
-			_pc = 4399
-			continue
-		elif _pc == 4167:
-			v20 = object.int_property(v3, "cargo")
-			if 27 != v20:
-				_pc = 4201
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4201:
-			if 28 != v20:
-				_pc = 4210
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4210:
-			if 29 != v20:
-				_pc = 4219
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4219:
-			if 30 != v20:
-				_pc = 4228
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4228:
-			if 31 != v20:
-				_pc = 4237
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4237:
-			if 32 != v20:
-				_pc = 4246
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4246:
-			if 33 != v20:
-				_pc = 4255
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4255:
-			if 34 != v20:
-				_pc = 4264
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4264:
-			if 35 != v20:
-				_pc = 4273
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4273:
-			if 36 != v20:
-				_pc = 4282
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4282:
-			if 37 != v20:
-				_pc = 4291
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4291:
-			if 38 != v20:
-				_pc = 4300
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4300:
-			if 39 != v20:
-				_pc = 4309
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4309:
-			if 40 != v20:
-				_pc = 4318
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4318:
-			if 41 != v20:
-				_pc = 4327
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4327:
-			if 42 != v20:
-				_pc = 4336
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4336:
-			if 43 != v20:
-				_pc = 4345
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4345:
-			if 44 != v20:
-				_pc = 4354
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4354:
-			if 45 != v20:
-				_pc = 4363
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4363:
-			if 46 != v20:
-				_pc = 4372
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4372:
-			if 47 != v20:
-				_pc = 4381
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4381:
-			if 48 != v20:
-				_pc = 4390
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4390:
-			if 49 != v20:
-				_pc = 4399
-				continue
-			else:
-				_pc = 4127
-				continue
-		elif _pc == 4399:
-			await _pog_wait(5.0)
-			if not (group.sim_count(v1) > 0 and group.sim_count(v5) < 12):
-				_pc = 4478
-				continue
-			else:
-				_pc = 1627
-				continue
-		elif _pc == 4478:
-			_pc = 4483
-			continue
-		elif _pc == 4483:
-			await _pog_frame()
-			if _pog_every(4484, 10.0):
-				_pc = 4497
-				continue
-			else:
-				_pc = 4978
-				continue
-		elif _pc == 4497:
-			_pc = 4523
-			continue
-		elif _pc == 4502:
+				if v13:
+					match object.int_property(v3, "cargo"):
+						27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49:
+							await local_18414(v0, "jafs_load_up_animals_1", 1, 1)
+							v13 = 0
+		await _pog_wait(5.0)
+		if not (group.sim_count(v1) > 0 and group.sim_count(v5) < 12):
+			break
+	while true:
+		await _pog_wait(10)
+		if PogRuntime.TRACE:
 			debug.print_string("iJafsScript.jafs_loads_pods: Checking for pods docked... \n")
-			_pc = 4523
-			continue
-		elif _pc == 4523:
-			if sim.is_dead(v0):
-				_pc = 4546
-				continue
-			else:
-				_pc = 4591
-				continue
-		elif _pc == 4546:
+		if sim.is_dead(v0):
 			await flag_jafs_inactive()
-			_pc = 4586
-			continue
-		elif _pc == 4565:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs is NULL, possibly destroyed\n")
-			_pc = 4586
-			continue
-		elif _pc == 4586:
-			_pc = 5409
-			continue
-		elif _pc == 4591:
-			if await jafs_attacked(v0, v4, 3):
-				_pc = 4621
-				continue
-			else:
-				_pc = 4652
-				continue
-		elif _pc == 4621:
-			_pc = 4647
-			continue
-		elif _pc == 4626:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs has been attacked.")
-			_pc = 4647
-			continue
-		elif _pc == 4647:
-			_pc = 5409
-			continue
-		elif _pc == 4652:
-			v9 = 1
-			v14 = 0
-			_pc = 4666
-			continue
-		elif _pc == 4666:
-			if v14 < group.sim_count(v5):
-				_pc = 4695
-				continue
-			else:
-				_pc = 4935
-				continue
-		elif _pc == 4695:
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs is NULL, possibly destroyed\n")
+			return
+		if await jafs_attacked(v0, v4, 3):
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs has been attacked.")
+			return
+		v9 = 1
+		v14 = 0
+		while v14 < group.sim_count(v5):
 			v3 = iship.cast(group.nth_sim(v5, v14))
 			if group.total_sim_count(v1) < v14 and not (v10):
-				_pc = 4773
-				continue
-			else:
-				_pc = 4808
-				continue
-		elif _pc == 4773:
-			v10 = 1
-			await local_18414(v0, "jafs_oops_thats_one_less", 1, 1)
-			_pc = 4808
-			continue
-		elif _pc == 4808:
+				v10 = 1
+				await local_18414(v0, "jafs_oops_thats_one_less", 1, 1)
 			if not (isim.is_docked_to(v3, v0)):
-				_pc = 4837
-				continue
+				v9 = 0
 			else:
-				_pc = 4849
-				continue
-		elif _pc == 4837:
-			v9 = 0
-			_pc = 4917
-			continue
-		elif _pc == 4849:
-			_pc = 4917
-			continue
-		elif _pc == 4854:
-			debug.print_string("iJafsScript.jafs_loads_pods: Pod")
-			debug.print_int(v14)
-			debug.print_string(" docked.\n")
-			_pc = 4917
-			continue
-		elif _pc == 4917:
+				if PogRuntime.TRACE:
+					debug.print_string("iJafsScript.jafs_loads_pods: Pod")
+					debug.print_int(v14)
+					debug.print_string(" docked.\n")
 			v14 = v14 + 1
-			_pc = 4666
-			continue
-		elif _pc == 4935:
-			if v9 == 1:
-				_pc = 4947
-				continue
-			else:
-				_pc = 4978
-				continue
-		elif _pc == 4947:
-			_pc = 4973
-			continue
-		elif _pc == 4952:
-			debug.print_string("iJafsScript.jafs_loads_pods: All Pods Docked.\n")
-			_pc = 4973
-			continue
-		elif _pc == 4973:
-			_pc = 5253
-			continue
-		elif _pc == 4978:
-			if _pog_every(4978, 10.0):
-				_pc = 4991
-				continue
-			else:
-				_pc = 5248
-				continue
-		elif _pc == 4991:
-			if sim.is_dead(v0):
-				_pc = 5014
-				continue
-			else:
-				_pc = 5078
-				continue
-		elif _pc == 5014:
+		if v9 == 1:
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: All Pods Docked.\n")
+			break
+		if sim.is_dead(v0):
 			iai.remove_order(v3)
 			await flag_jafs_inactive()
-			_pc = 5073
-			continue
-		elif _pc == 5052:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs is NULL, possibly destroyed.\n")
-			_pc = 5073
-			continue
-		elif _pc == 5073:
-			_pc = 5409
-			continue
-		elif _pc == 5078:
-			if not (await jafs_in_range(v4, v0, v1, 300000.0)):
-				_pc = 5117
-				continue
-			else:
-				_pc = 5248
-				continue
-		elif _pc == 5117:
-			_pc = 5143
-			continue
-		elif _pc == 5122:
-			debug.print_string("iJafsScript.JaffsPicksUpTaggedPods : player out of sensor range, starting CollectPods\n")
-			_pc = 5143
-			continue
-		elif _pc == 5143:
-			await collect_pods(1)
-			sim.destroy(v0)
-			await flag_jafs_inactive()
-			_pc = 5217
-			continue
-		elif _pc == 5196:
-			debug.print_string("iJafsScript.SummonJafs: Flagged Jafs as INACTIVE\n")
-			_pc = 5217
-			continue
-		elif _pc == 5217:
-			_pc = 5243
-			continue
-		elif _pc == 5222:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Player out of range.\n")
-			_pc = 5243
-			continue
-		elif _pc == 5243:
-			_pc = 5409
-			continue
-		elif _pc == 5248:
-			_pc = 4483
-			continue
-		elif _pc == 5253:
-			if sim.is_dead(v0):
-				_pc = 5278
-				continue
-			else:
-				_pc = 5323
-				continue
-		elif _pc == 5278:
-			await flag_jafs_inactive()
-			_pc = 5318
-			continue
-		elif _pc == 5297:
-			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs is NULL, possibly destroyed\n")
-			_pc = 5318
-			continue
-		elif _pc == 5318:
-			_pc = 5409
-			continue
-		elif _pc == 5323:
-			_pc = 5349
-			continue
-		elif _pc == 5328:
-			debug.print_string("iJafsScript.jafs_loads_pods: COMPLETED\n")
-			_pc = 5349
-			continue
-		elif _pc == 5349:
-			await local_18414(v0, "jafs_im_heading_home", 1, 1)
-			_pog_detach(_pog_spawn(jafs_goes_home.bind(v0)))
-			_pc = 5409
-			continue
-		elif _pc == 5409:
+			if PogRuntime.TRACE:
+				debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs is NULL, possibly destroyed.\n")
 			return
-		else:
-			return 0
+		if await jafs_in_range(v4, v0, v1, 300000.0):
+			continue
+		if PogRuntime.TRACE:
+			debug.print_string("iJafsScript.JaffsPicksUpTaggedPods : player out of sensor range, starting CollectPods\n")
+		await collect_pods(1)
+		sim.destroy(v0)
+		await flag_jafs_inactive()
+		if PogRuntime.TRACE:
+			debug.print_string("iJafsScript.SummonJafs: Flagged Jafs as INACTIVE\n")
+		if PogRuntime.TRACE:
+			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Player out of range.\n")
+		return
+	if sim.is_dead(v0):
+		await flag_jafs_inactive()
+		if PogRuntime.TRACE:
+			debug.print_string("iJafsScript.jafs_loads_pods: TERMINATED - Jafs is NULL, possibly destroyed\n")
+		return
+	if PogRuntime.TRACE:
+		debug.print_string("iJafsScript.jafs_loads_pods: COMPLETED\n")
+	await local_18414(v0, "jafs_im_heading_home", 1, 1)
+	_pog_detach(_pog_spawn(jafs_goes_home.bind(v0)))
+	return
 	return 0
 
 func collect_pods(v0) -> Variant:

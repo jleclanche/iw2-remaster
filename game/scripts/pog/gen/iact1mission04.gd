@@ -176,6 +176,7 @@ func local_861(v0, v1) -> Variant:
 				await _pog_wait(1.0)
 				await iconversation.one_liner(0, "name_clay", "a1_m04_dialogue_clay_try_the_junkyard")
 				iobjectives.add("a1_m04_objectives_get_iff")
+				continue
 			2:
 				await iconversation.say(v6, "", "a1_m04_dialogue_stepson_c1_response_2_go_away")
 				await iconversation.end()
@@ -324,6 +325,7 @@ func local_2529(v0, v1) -> Variant:
 				await iconversation.say(v5, "", "a1_m04_dialogue_junker_c2_response_1_whats_it_to_you")
 				await iconversation.end()
 				v2 = 0
+				continue
 			2:
 				if state.progress(v1) != 3:
 					await iconversation.say(v5, "", "a1_m04_dialogue_junker_c2_response_2_ah_let_see")

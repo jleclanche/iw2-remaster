@@ -341,25 +341,17 @@ func flight_confirm_screen() -> Variant:
 	return 0
 
 func flight_confirm_screen__on_o_k() -> Variant:
-	if _pog_is_null(igame.game_type()):
-		gui.pop_screens_to("icSPMasterScreen")
-		gui.pop_screen()
-		return 0
-	if 1 == igame.game_type():
-		gui.pop_screens_to("icSPMasterScreen")
-		gui.pop_screen()
-		return 0
-	if 2 == igame.game_type():
-		gui.pop_screens_to("icSPMasterScreen")
-		gui.pop_screen()
-		return 0
-	if 3 == igame.game_type():
-		imultiplay.client_set_requested_to_cycle(0)
-		gui.pop_screen()
-		gui.pop_screen()
-		gui.push_screen("icPDAOverlayManager")
-		gui.overlay_screen("icNetworkScreen")
-		return 0
+	match igame.game_type():
+		0, 1, 2:
+			gui.pop_screens_to("icSPMasterScreen")
+			gui.pop_screen()
+		3:
+			imultiplay.client_set_requested_to_cycle(0)
+			gui.pop_screen()
+			gui.pop_screen()
+			gui.push_screen("icPDAOverlayManager")
+			gui.overlay_screen("icNetworkScreen")
+			return 0
 	return 0
 	return 0
 

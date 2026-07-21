@@ -814,8 +814,10 @@ func local_14140(v0, v1) -> Variant:
 			match v3:
 				0:
 					icomms.shout(v0, "", "a2_m18_dialogue_freighter_help_were_under_attack")
+					continue
 				1:
 					icomms.shout(v0, "", "a2_m18_dialogue_freighter_were_being_fired_upon")
+					continue
 				2:
 					icomms.shout(v0, "", "a2_m18_dialogue_freighter_enemy_ships_are_attacking")
 					continue

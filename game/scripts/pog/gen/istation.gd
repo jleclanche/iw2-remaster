@@ -175,9 +175,11 @@ func warning_name(v0) -> Variant:
 			return _pog_clone("attack_guarded_")
 		7:
 			return _pog_clone("attack_severe_")
-	if PogRuntime.TRACE:
-		debug.error("iStation.warning_name : Bad station reaction. !!!SHOULDNT HAPPEN")
-	return _pog_clone("")
+		_:
+			if PogRuntime.TRACE:
+				debug.error("iStation.warning_name : Bad station reaction. !!!SHOULDNT HAPPEN")
+			return _pog_clone("")
+	return _pog_clone("dummy string")
 	return 0
 
 func local_1627(v0, v1, v2) -> Variant:
@@ -228,7 +230,6 @@ func local_1627(v0, v1, v2) -> Variant:
 				else:
 					object.set_int_property(v0, "warned_level", 2)
 				object.set_float_property(v0, "warned_time", igame.game_time())
-			return 0
 		2:
 			if _pog_eq(v0, iship.find_player_ship()) or _pog_eq(v0, await iremotepilot.return_current_remote_vessel()):
 				await local_837(v1, 6)
@@ -240,8 +241,9 @@ func local_1627(v0, v1, v2) -> Variant:
 				v6 = _pog_spawn(station_protection_handler.bind(v1))
 				_pog_detach(v6)
 				object.add_handle_property(v1, "station_protection_handler", v6)
+		_:
+			await local_498("add_station_enemy: This ship is already in the bad books....", v1, v0)
 			return 0
-	await local_498("add_station_enemy: This ship is already in the bad books....", v1, v0)
 	return 0
 	return 0
 

@@ -1002,48 +1002,51 @@ func local_18052(v0, v1, v2, v3, v4) -> Variant:
 		1:
 			if object.int_property(v4, "courage") == 1:
 				state.set_progress(v4, 5)
-			v5 = await local_17812(v3)
-			if _pog_is_null(v5):
-				state.set_progress(v4, 5)
-				await iconversation.end()
 			else:
-				v6 = await iutilities.create_waypoint_relative_to(v1, 7000.0, 0.0, 0.0)
-				await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_courage_grn")
-				state.set_progress(v4, 4)
-				iobjectives.add("a2_m02_objectives_fly_courage")
-				_pog_detach(_pog_spawn(local_2490.bind(v6, v5, v4)))
-				await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_courage")
-				await iconversation.end()
+				v5 = await local_17812(v3)
+				if _pog_is_null(v5):
+					state.set_progress(v4, 5)
+					await iconversation.end()
+				else:
+					v6 = await iutilities.create_waypoint_relative_to(v1, 7000.0, 0.0, 0.0)
+					await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_courage_grn")
+					state.set_progress(v4, 4)
+					iobjectives.add("a2_m02_objectives_fly_courage")
+					_pog_detach(_pog_spawn(local_2490.bind(v6, v5, v4)))
+					await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_courage")
+					await iconversation.end()
 		2:
 			if object.int_property(v4, "cunning") == 1:
 				state.set_progress(v4, 5)
-			v5 = await local_17812(v3)
-			if _pog_is_null(v5):
-				state.set_progress(v4, 5)
-				await iconversation.end()
 			else:
-				v6 = await iutilities.create_waypoint_relative_to(v1, -7000.0, 0.0, 0.0)
-				await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_cunning_grn")
-				state.set_progress(v4, 4)
-				iobjectives.add("a2_m02_objectives_fly_cunning")
-				_pog_detach(_pog_spawn(local_7854.bind(v6, v5, v4)))
-				await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_cunning")
-				await iconversation.end()
+				v5 = await local_17812(v3)
+				if _pog_is_null(v5):
+					state.set_progress(v4, 5)
+					await iconversation.end()
+				else:
+					v6 = await iutilities.create_waypoint_relative_to(v1, -7000.0, 0.0, 0.0)
+					await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_cunning_grn")
+					state.set_progress(v4, 4)
+					iobjectives.add("a2_m02_objectives_fly_cunning")
+					_pog_detach(_pog_spawn(local_7854.bind(v6, v5, v4)))
+					await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_cunning")
+					await iconversation.end()
 		3:
 			if object.int_property(v4, "wisdom") == 1:
 				state.set_progress(v4, 5)
-			v5 = await local_17812(v3)
-			if _pog_is_null(v5):
-				state.set_progress(v4, 5)
-				await iconversation.end()
 			else:
-				v6 = await iutilities.create_waypoint_relative_to(v1, 0.0, 0.0, -7000.0)
-				await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_wisdom_grn")
-				state.set_progress(v4, 4)
-				iobjectives.add("a2_m02_objectives_fly_wisdom")
-				_pog_detach(_pog_spawn(local_15504.bind(v6, v5, v4)))
-				await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_wisdom")
-				await iconversation.end()
+				v5 = await local_17812(v3)
+				if _pog_is_null(v5):
+					state.set_progress(v4, 5)
+					await iconversation.end()
+				else:
+					v6 = await iutilities.create_waypoint_relative_to(v1, 0.0, 0.0, -7000.0)
+					await iutilities.make_waypoint_visible(v6, 1, "a2_m02_name_wisdom_grn")
+					state.set_progress(v4, 4)
+					iobjectives.add("a2_m02_objectives_fly_wisdom")
+					_pog_detach(_pog_spawn(local_15504.bind(v6, v5, v4)))
+					await iconversation.say(v2, "", "a2_m02_dialogue_escort_remote_pilot_wisdom")
+					await iconversation.end()
 	await iconversation.end()
 	return
 	return 0

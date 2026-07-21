@@ -152,13 +152,10 @@ func server_on_user_message() -> Variant:
 			v4 = iship.cast(v1)
 			iship.undock_self(v4)
 			imultiplay.server_send_user_message(15, v4, 0, "")
-			return 0
 		16:
 			imultiplay.send_scores(v1)
-			return 0
 		99:
 			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-			return 0
 		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			imultiplay.server_send_user_message(204, v1, v2, v3)
@@ -652,7 +649,6 @@ func client_on_user_message() -> Variant:
 			if not _pog_eq(v4, iship.find_player_ship()):
 				v4 = iship.cast(v1)
 				iship.undock_self(v4)
-			return 0
 		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			return 0

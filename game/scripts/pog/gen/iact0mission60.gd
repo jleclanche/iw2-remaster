@@ -222,100 +222,51 @@ func local_2414(v0, v1) -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var v9: Variant = 0
-	var _pc: int = 2414
+	v2 = 0
+	v3 = 0
+	v4 = 0
+	v5 = await local_1215()
+	v6 = iship.cast(group.leader(v5))
+	v8 = imapentity.find_by_name("Hoffer's Gap")
+	await istation.add_reactive_exception(ihabitat.cast(v8))
+	idirector.begin()
+	iship.undock_self(v0)
+	sim.place_relative_to(v6, v0, 0.0, 0.0, 7000.0)
+	sim.point_at(v6, v0)
+	await iformation.v(v5, 80.0, 1)
+	iai.give_approach_order(v6, v0)
+	idirector.set_focus(v6)
+	idirector.set_secondary_focus(group.nth_sim(v5, 1))
+	idirector.set_camera(13)
 	while true:
-		if _pc == 2414:
-			v2 = 0
-			v3 = 0
-			v4 = 0
-			v5 = await local_1215()
-			v6 = iship.cast(group.leader(v5))
-			v8 = imapentity.find_by_name("Hoffer's Gap")
-			await istation.add_reactive_exception(ihabitat.cast(v8))
-			idirector.begin()
-			iship.undock_self(v0)
-			sim.place_relative_to(v6, v0, 0.0, 0.0, 7000.0)
-			sim.point_at(v6, v0)
-			await iformation.v(v5, 80.0, 1)
-			iai.give_approach_order(v6, v0)
-			idirector.set_focus(v6)
-			idirector.set_secondary_focus(group.nth_sim(v5, 1))
-			idirector.set_camera(13)
-			_pc = 2767
-			continue
-		elif _pc == 2767:
-			await _pog_wait(1.0)
-			if sim.distance_between(v6, v0) <= 1000.0:
-				_pc = 2833
-				continue
-			else:
-				_pc = 2767
-				continue
-		elif _pc == 2833:
-			idirector.set_secondary_focus(v0)
-			idirector.set_camera(15)
-			await iconversation.one_liner(v6, "", "a0_m60_dialogue_caleb_i_think")
-			await iconversation.one_liner(0, "name_young_cal", "a0_m60_dialogue_young_cal_you_killed")
-			await iconversation.one_liner(v6, "", "a0_m60_dialogue_caleb_ah_the")
-			await iconversation.begin()
-			_pc = 2974
-			continue
-		elif _pc == 2974:
-			await iconversation.add_response("a0_m60_text_c1_option1_who", "a0_m60_dialogue_player_c1_option1_who")
-			await iconversation.add_response("a0_m60_text_c1_option2_why", "a0_m60_dialogue_player_c1_option2_why")
-			await iconversation.add_response("a0_m60_text_c1_option3_kill", "a0_m60_dialogue_player_c1_option3_kill")
-			v7 = await iconversation.ask(v6, "", "a0_m60_dialogue_caleb_c1_any")
-			_pc = 3215
-			continue
-		elif _pc == 3097:
-			await iconversation.say(v6, "", "a0_m60_dialogue_caleb_c1_response1_im_caleb")
-			v4 = v4 + 1
-			_pc = 3242
-			continue
-		elif _pc == 3147:
-			await iconversation.say(v6, "", "a0_m60_dialogue_caleb_c1_respose2_ah_yes")
-			v4 = v4 + 1
-			_pc = 3242
-			continue
-		elif _pc == 3197:
-			v4 = 2
-			_pc = 3242
-			continue
-		elif _pc == 3210:
-			_pc = 3242
-			continue
-		elif _pc == 3215:
-			v9 = v7
-			if 1 != v9:
-				_pc = 3228
-				continue
-			else:
-				_pc = 3097
-				continue
-		elif _pc == 3228:
-			if 2 != v9:
-				_pc = 3237
-				continue
-			else:
-				_pc = 3147
-				continue
-		elif _pc == 3237:
-			_pc = 3197
-			continue
-		elif _pc == 3242:
-			if v4 >= 2:
-				_pc = 3255
-				continue
-			else:
-				_pc = 2974
-				continue
-		elif _pc == 3255:
-			await iconversation.end()
-			await iconversation.one_liner(v6, "", "a0_m60_dialogue_caleb_this_conversation")
-			return
-		else:
-			return 0
+		await _pog_wait(1.0)
+		if not (sim.distance_between(v6, v0) > 1000.0):
+			break
+	idirector.set_secondary_focus(v0)
+	idirector.set_camera(15)
+	await iconversation.one_liner(v6, "", "a0_m60_dialogue_caleb_i_think")
+	await iconversation.one_liner(0, "name_young_cal", "a0_m60_dialogue_young_cal_you_killed")
+	await iconversation.one_liner(v6, "", "a0_m60_dialogue_caleb_ah_the")
+	await iconversation.begin()
+	while true:
+		await iconversation.add_response("a0_m60_text_c1_option1_who", "a0_m60_dialogue_player_c1_option1_who")
+		await iconversation.add_response("a0_m60_text_c1_option2_why", "a0_m60_dialogue_player_c1_option2_why")
+		await iconversation.add_response("a0_m60_text_c1_option3_kill", "a0_m60_dialogue_player_c1_option3_kill")
+		v7 = await iconversation.ask(v6, "", "a0_m60_dialogue_caleb_c1_any")
+		match v7:
+			1:
+				await iconversation.say(v6, "", "a0_m60_dialogue_caleb_c1_response1_im_caleb")
+				v4 = v4 + 1
+			2:
+				await iconversation.say(v6, "", "a0_m60_dialogue_caleb_c1_respose2_ah_yes")
+				v4 = v4 + 1
+			_:
+				v4 = 2
+		if not (v4 < 2):
+			break
+	await iconversation.end()
+	await iconversation.one_liner(v6, "", "a0_m60_dialogue_caleb_this_conversation")
+	return
 	return 0
 
 func local_3303(v0, v1, v2, v3) -> Variant:

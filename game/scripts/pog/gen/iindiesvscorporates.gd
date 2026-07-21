@@ -506,122 +506,45 @@ func local_7534(v0) -> Variant:
 	var v8: Variant = 0
 	var v9: Variant = 0
 	var v10: Variant = 0
-	var v11: Variant = 0
-	var _pc: int = 7534
-	while true:
-		if _pc == 7534:
-			v1 = sim.cast(global.handle("g_lpoint_start"))
-			v2 = sim.cast(global.handle("g_lpoint_destination"))
-			v3 = sim.find_by_name("Midway Station")
-			v6 = math.random_int(3, 5)
-			v10 = 4
-			v5 = 0
-			_pc = 7680
-			continue
-		elif _pc == 7680:
-			if v5 < v6:
-				_pc = 7696
-				continue
-			else:
-				_pc = 8208
-				continue
-		elif _pc == 7696:
-			v7 = math.random_int(0, 2)
-			_pc = 8107
-			continue
-		elif _pc == 7723:
-			v4 = iship.cast(sim.create("ini:/sims/multiplayer/freighter", string.join("MP_NAME_Freighter", string.from_int(v5))))
-			await local_7352(v4, 35, v10)
-			v8 = 20
-			_pc = 8142
-			continue
-		elif _pc == 7840:
-			v4 = iship.cast(sim.create("ini:/sims/multiplayer/containercarrier", string.join("MP_NAME_Freighter", string.from_int(v5))))
-			await local_7352(v4, 253, v10)
-			v8 = 30
-			_pc = 8142
-			continue
-		elif _pc == 7958:
-			v4 = iship.cast(sim.create("ini:/sims/multiplayer/containercarrier", string.join("MP_NAME_Freighter", string.from_int(v5))))
-			await local_7352(v4, 131, v10)
-			v8 = 45
-			_pc = 8142
-			continue
-		elif _pc == 8076:
-			debug.error("arse")
-			_pc = 8142
-			continue
-		elif _pc == 8102:
-			_pc = 8142
-			continue
-		elif _pc == 8107:
-			v11 = v7
-			if not _pog_is_null(v11):
-				_pc = 8120
-				continue
-			else:
-				_pc = 7723
-				continue
-		elif _pc == 8120:
-			if 1 != v11:
-				_pc = 8128
-				continue
-			else:
-				_pc = 7840
-				continue
-		elif _pc == 8128:
-			if 2 != v11:
-				_pc = 8137
-				continue
-			else:
-				_pc = 7958
-				continue
-		elif _pc == 8137:
-			_pc = 8076
-			continue
-		elif _pc == 8142:
-			await local_7143(v4, v8)
-			group.add_sim(v0, v4)
-			v5 = v5 + 1
-			_pc = 7680
-			continue
-		elif _pc == 8208:
-			v9 = global.pog_int("g_ea_count") + 1
-			global.set_int("g_ea_count", v9)
-			if v9 == 7 or v9 == 14:
-				_pc = 8284
-				continue
-			else:
-				_pc = 8375
-				continue
-		elif _pc == 8284:
-			v4 = iship.cast(sim.create("ini:/sims/ships/utility/taxi", "Not For Hire"))
-			await local_7143(v4, 200)
-			group.add_sim(v0, v4)
-			_pc = 8375
-			continue
-		elif _pc == 8375:
-			await local_6750(v0, 1)
-			v5 = 0
-			_pc = 8402
-			continue
-		elif _pc == 8402:
-			if v5 < group.sim_count(v0):
-				_pc = 8431
-				continue
-			else:
-				_pc = 8500
-				continue
-		elif _pc == 8431:
-			imultiplay.set_update_flag(iship.cast(group.nth_sim(v0, v5)), 1)
-			v5 = v5 + 1
-			_pc = 8402
-			continue
-		elif _pc == 8500:
-			debug.print_string("*** made traffic\n")
-			return 0
-		else:
-			return 0
+	v1 = sim.cast(global.handle("g_lpoint_start"))
+	v2 = sim.cast(global.handle("g_lpoint_destination"))
+	v3 = sim.find_by_name("Midway Station")
+	v6 = math.random_int(3, 5)
+	v10 = 4
+	v5 = 0
+	while v5 < v6:
+		v7 = math.random_int(0, 2)
+		match v7:
+			0:
+				v4 = iship.cast(sim.create("ini:/sims/multiplayer/freighter", string.join("MP_NAME_Freighter", string.from_int(v5))))
+				await local_7352(v4, 35, v10)
+				v8 = 20
+			1:
+				v4 = iship.cast(sim.create("ini:/sims/multiplayer/containercarrier", string.join("MP_NAME_Freighter", string.from_int(v5))))
+				await local_7352(v4, 253, v10)
+				v8 = 30
+			2:
+				v4 = iship.cast(sim.create("ini:/sims/multiplayer/containercarrier", string.join("MP_NAME_Freighter", string.from_int(v5))))
+				await local_7352(v4, 131, v10)
+				v8 = 45
+			_:
+				debug.error("arse")
+		await local_7143(v4, v8)
+		group.add_sim(v0, v4)
+		v5 = v5 + 1
+	v9 = global.pog_int("g_ea_count") + 1
+	global.set_int("g_ea_count", v9)
+	if v9 == 7 or v9 == 14:
+		v4 = iship.cast(sim.create("ini:/sims/ships/utility/taxi", "Not For Hire"))
+		await local_7143(v4, 200)
+		group.add_sim(v0, v4)
+	await local_6750(v0, 1)
+	v5 = 0
+	while v5 < group.sim_count(v0):
+		imultiplay.set_update_flag(iship.cast(group.nth_sim(v0, v5)), 1)
+		v5 = v5 + 1
+	debug.print_string("*** made traffic\n")
+	return 0
 	return 0
 
 func local_8525() -> Variant:
@@ -722,27 +645,21 @@ func server_on_user_message() -> Variant:
 				object.set_int_property(v8, "bot_index", v12)
 				await imputils.spawn_player(v8, group.cast(global.handle("mp_respawn_group")))
 				imultiplay.server_send_user_message(1, v8, 0, ifaction.pog_name(isim.faction(v8)))
-			return 0
 		15:
 			v6 = iship.cast(v1)
 			iship.undock_self(v6)
 			imultiplay.server_send_user_message(15, v6, 0, "")
-			return 0
 		16:
 			imultiplay.send_scores(v1)
-			return 0
 		99:
 			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-			return 0
 		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			imultiplay.server_send_user_message(204, v1, v2, v3)
-			return 0
 		202:
 			if not (object.property_exists(v2, "mp_remote_linked")):
 				object.add_handle_property(v2, "mp_remote_linked", v1)
 				imultiplay.server_send_user_message(202, v1, v2, "")
-			return 0
 		203:
 			if object.property_exists(v2, "mp_remote_linked"):
 				object.remove_property(v2, "mp_remote_linked")
@@ -1585,15 +1502,12 @@ func client_end_game() -> Variant:
 func client_g_u_i() -> Variant:
 	var v0: Variant = 0
 	v0 = global.pog_int("GameState")
-	if 1 == v0:
-		await capture_the_flag_screen()
-		return 0
-	if 2 == v0:
-		await local_3135()
-		return 0
-	if 4 == v0:
-		await local_3135()
-		return 0
+	match v0:
+		1:
+			await capture_the_flag_screen()
+		2, 4:
+			await local_3135()
+			return 0
 	return 0
 	return 0
 

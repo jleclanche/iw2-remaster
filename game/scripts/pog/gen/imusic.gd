@@ -103,116 +103,15 @@ func local_587(v0) -> Variant:
 	return 0
 
 func local_836(v0) -> Variant:
-	if _pog_is_null(v0):
-		return 0
-	if 1 == v0:
-		return 0
-	if 2 == v0:
-		return 0
-	if 6 == v0:
-		return 0
-	if 9 == v0:
-		return 0
-	if 10 == v0:
-		return 0
-	if 12 == v0:
-		return 0
-	if 19 == v0:
-		return 0
-	if 20 == v0:
-		return 0
-	if 13 == v0:
-		return 0
-	if 5 == v0:
-		return 0
-	if 21 == v0:
-		return 0
-	if 22 == v0:
-		return 0
-	if 3 == v0:
-		return 1
-	if 11 == v0:
-		return 1
-	if 7 == v0:
-		return 1
-	if 14 == v0:
-		return 1
-	if 15 == v0:
-		return 1
-	if 16 == v0:
-		return 1
-	if 23 == v0:
-		return 1
-	if 24 == v0:
-		return 1
-	if 25 == v0:
-		return 1
-	if 26 == v0:
-		return 1
-	if 27 == v0:
-		return 1
-	if 28 == v0:
-		return 1
-	if 29 == v0:
-		return 1
-	if 30 == v0:
-		return 1
-	if 31 == v0:
-		return 1
-	if 32 == v0:
-		return 1
-	if 33 == v0:
-		return 1
-	if 34 == v0:
-		return 1
-	if 35 == v0:
-		return 1
-	if 36 == v0:
-		return 1
-	if 37 == v0:
-		return 1
-	if 38 == v0:
-		return 1
-	if 39 == v0:
-		return 1
-	if 40 == v0:
-		return 1
-	if 41 == v0:
-		return 1
-	if 42 == v0:
-		return 1
-	if 43 == v0:
-		return 1
-	if 44 == v0:
-		return 1
-	if 45 == v0:
-		return 1
-	if 46 == v0:
-		return 1
-	if 47 == v0:
-		return 1
-	if 48 == v0:
-		return 1
-	if 49 == v0:
-		return 1
-	if 50 == v0:
-		return 1
-	if 51 == v0:
-		return 1
-	if 52 == v0:
-		return 1
-	if 4 == v0:
-		return 2
-	if 8 == v0:
-		return 2
-	if 17 == v0:
-		return 2
-	if 18 == v0:
-		return 2
-	if 53 == v0:
-		return 2
-	if 54 == v0:
-		return 2
+	match v0:
+		0, 1, 2, 6, 9, 10, 12, 19, 20, 13, 5, 21, 22:
+			return 0
+		3, 11, 7, 14, 15, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52:
+			return 1
+		4, 8, 17, 18, 53, 54:
+			return 2
+		_:
+			return 0
 	return 0
 	return 0
 
@@ -259,154 +158,33 @@ func local_1866(v0, v1) -> Variant:
 	var v2: Variant = 0
 	var v3: Variant = 0
 	var v4: Variant = 0
-	var v5: Variant = 0
-	var _pc: int = 1866
-	while true:
-		if _pc == 1866:
-			v2 = math.random(0.0, 1.0)
-			v3 = v0
-			v4 = []
-			v4 = list.from_set(isim.player_hostiles_in_radius(200000.0, 536842240))
-			_pc = 2227
-			continue
-		elif _pc == 1972:
+	v2 = math.random(0.0, 1.0)
+	v3 = v0
+	v4 = []
+	v4 = list.from_set(isim.player_hostiles_in_radius(200000.0, 536842240))
+	match v0:
+		0, 2, 1:
 			if await local_1382(v4, 20000.0):
-				_pc = 2000
-				continue
+				v3 = 4
 			else:
-				_pc = 2013
-				continue
-		elif _pc == 2000:
-			v3 = 4
-			_pc = 2275
-			continue
-		elif _pc == 2013:
-			if await local_1382(v4, 100000.0):
-				_pc = 2041
-				continue
-			else:
-				_pc = 2054
-				continue
-		elif _pc == 2041:
-			v3 = 3
-			_pc = 2275
-			continue
-		elif _pc == 2054:
-			_pc = 2275
-			continue
-		elif _pc == 2059:
+				if await local_1382(v4, 100000.0):
+					v3 = 3
+		3:
 			if list.is_empty(v4):
-				_pc = 2082
-				continue
+				v3 = 1
 			else:
-				_pc = 2094
-				continue
-		elif _pc == 2082:
-			v3 = 1
-			_pc = 2275
-			continue
-		elif _pc == 2094:
-			if await local_1382(v4, 20000.0):
-				_pc = 2122
-				continue
-			else:
-				_pc = 2135
-				continue
-		elif _pc == 2122:
-			v3 = 4
-			_pc = 2275
-			continue
-		elif _pc == 2135:
-			_pc = 2275
-			continue
-		elif _pc == 2140:
+				if await local_1382(v4, 20000.0):
+					v3 = 4
+		4:
 			if list.is_empty(v4):
-				_pc = 2163
-				continue
+				v3 = 1
 			else:
-				_pc = 2175
-				continue
-		elif _pc == 2163:
-			v3 = 1
-			_pc = 2275
-			continue
-		elif _pc == 2175:
-			if not (await local_1382(v4, 100000.0)):
-				_pc = 2204
-				continue
-			else:
-				_pc = 2217
-				continue
-		elif _pc == 2204:
+				if not (await local_1382(v4, 100000.0)):
+					v3 = 3
+	if v3 != 4 and v3 != 3:
+		if await local_1561(1000000.0):
 			v3 = 3
-			_pc = 2275
-			continue
-		elif _pc == 2217:
-			_pc = 2275
-			continue
-		elif _pc == 2222:
-			_pc = 2275
-			continue
-		elif _pc == 2227:
-			v5 = v0
-			if not _pog_is_null(v5):
-				_pc = 2240
-				continue
-			else:
-				_pc = 1972
-				continue
-		elif _pc == 2240:
-			if 2 != v5:
-				_pc = 2249
-				continue
-			else:
-				_pc = 1972
-				continue
-		elif _pc == 2249:
-			if 1 != v5:
-				_pc = 2257
-				continue
-			else:
-				_pc = 1972
-				continue
-		elif _pc == 2257:
-			if 3 != v5:
-				_pc = 2266
-				continue
-			else:
-				_pc = 2059
-				continue
-		elif _pc == 2266:
-			if 4 != v5:
-				_pc = 2275
-				continue
-			else:
-				_pc = 2140
-				continue
-		elif _pc == 2275:
-			if v3 != 4 and v3 != 3:
-				_pc = 2297
-				continue
-			else:
-				_pc = 2328
-				continue
-		elif _pc == 2297:
-			if await local_1561(1000000.0):
-				_pc = 2320
-				continue
-			else:
-				_pc = 2328
-				continue
-		elif _pc == 2320:
-			v3 = 3
-			_pc = 2328
-			continue
-		elif _pc == 2328:
-			return v3
-		elif _pc == 2338:
-			return
-		else:
-			return 0
+	return v3
 	return 0
 
 func local_2347(v0) -> Variant:
@@ -452,57 +230,17 @@ func local_2347(v0) -> Variant:
 func local_2800(v0) -> Variant:
 	var v1: Variant = 0
 	var v2: Variant = 0
-	var v3: Variant = 0
-	var _pc: int = 2800
-	while true:
-		if _pc == 2800:
-			_pc = 2854
-			continue
-		elif _pc == 2810:
+	match v0:
+		0:
 			return 0
-		elif _pc == 2816:
+		1:
 			return 0
-		elif _pc == 2822:
+		2:
 			v1 = 5
 			v2 = 9
-			_pc = 2889
-			continue
-		elif _pc == 2843:
+		_:
 			return 0
-		elif _pc == 2849:
-			_pc = 2889
-			continue
-		elif _pc == 2854:
-			v3 = v0
-			if not _pog_is_null(v3):
-				_pc = 2867
-				continue
-			else:
-				_pc = 2810
-				continue
-		elif _pc == 2867:
-			if 1 != v3:
-				_pc = 2875
-				continue
-			else:
-				_pc = 2816
-				continue
-		elif _pc == 2875:
-			if 2 != v3:
-				_pc = 2884
-				continue
-			else:
-				_pc = 2822
-				continue
-		elif _pc == 2884:
-			_pc = 2843
-			continue
-		elif _pc == 2889:
-			return math.random_int(v1, v2)
-		elif _pc == 2917:
-			return
-		else:
-			return 0
+	return math.random_int(v1, v2)
 	return 0
 
 func monitor() -> Variant:
@@ -522,393 +260,123 @@ func monitor() -> Variant:
 	var v13: Variant = 0
 	var v14: Variant = 0
 	var v15: Variant = 0
-	var v16: Variant = 0
-	var _pc: int = 2919
+	v4 = ""
+	v5 = ""
+	v6 = ""
+	v11 = 0
+	v13 = 0
 	while true:
-		if _pc == 2919:
-			v4 = ""
-			v5 = ""
-			v6 = ""
-			v11 = 0
-			v13 = 0
-			_pc = 2976
-			continue
-		elif _pc == 2976:
-			await _pog_frame()
-			if _pog_every(2977, 1.0):
-				_pc = 2990
-				continue
-			else:
-				_pc = 4702
-				continue
-		elif _pc == 2990:
-			v0 = global.pog_int("g_music_mood")
-			v2 = v0
-			v1 = global.pog_int("g_music_suite")
-			v3 = v1
-			v4 = global.string("g_music_current")
-			v8 = v8 - 1.0
-			v9 = math.random(0.0, 1.0)
-			v10 = 0
-			v12 = 0
-			v1 = global.pog_int("g_music_suite")
-			if not _pog_eq(v6, imapentity.system_name()):
-				_pc = 3204
-				continue
-			else:
-				_pc = 3290
-				continue
-		elif _pc == 3204:
+		await _pog_wait(1)
+		v0 = global.pog_int("g_music_mood")
+		v2 = v0
+		v1 = global.pog_int("g_music_suite")
+		v3 = v1
+		v4 = global.string("g_music_current")
+		v8 = v8 - 1.0
+		v9 = math.random(0.0, 1.0)
+		v10 = 0
+		v12 = 0
+		v1 = global.pog_int("g_music_suite")
+		if not _pog_eq(v6, imapentity.system_name()):
 			v6 = imapentity.system_name()
 			v3 = await local_587(v6)
 			if v9 > 0.5:
-				_pc = 3265
-				continue
+				v2 = 0
 			else:
-				_pc = 3277
-				continue
-		elif _pc == 3265:
-			v2 = 0
-			_pc = 3285
-			continue
-		elif _pc == 3277:
-			v2 = 2
-			_pc = 3285
-			continue
-		elif _pc == 3285:
-			_pc = 3330
-			continue
-		elif _pc == 3290:
+				v2 = 2
+		else:
 			if v8 < 0.0:
-				_pc = 3306
-				continue
-			else:
-				_pc = 3330
-				continue
-		elif _pc == 3306:
-			v3 = await local_2347(v1)
-			_pc = 3330
-			continue
-		elif _pc == 3330:
-			if not _pog_eq(global.pog_int("g_music_ambient_environment"), v13):
-				_pc = 3361
-				continue
-			else:
-				_pc = 3646
-				continue
-		elif _pc == 3361:
+				v3 = await local_2347(v1)
+		if not _pog_eq(global.pog_int("g_music_ambient_environment"), v13):
 			v13 = global.pog_int("g_music_ambient_environment")
-			_pc = 3600
-			continue
-		elif _pc == 3392:
-			_pc = 3418
-			continue
-		elif _pc == 3397:
-			debug.print_string("iMusic.monitor: Entering deep space\n")
-			_pc = 3418
-			continue
-		elif _pc == 3418:
-			stream.stop(2, 1)
-			_pc = 3635
-			continue
-		elif _pc == 3440:
-			_pc = 3466
-			continue
-		elif _pc == 3445:
-			debug.print_string("iMusic.monitor: Entering Effrit environment\n")
-			_pc = 3466
-			continue
-		elif _pc == 3466:
-			stream.stop(2, 1)
-			_pc = 3635
-			continue
-		elif _pc == 3488:
-			_pc = 3514
-			continue
-		elif _pc == 3493:
-			debug.print_string("iMusic.monitor: Entering aliens' environment\n")
-			_pc = 3514
-			continue
-		elif _pc == 3514:
-			stream.play(2, "sound:/audio/ambient/alien_loop", 1, 1)
-			v2 = 6
-			_pc = 3635
-			continue
-		elif _pc == 3552:
-			_pc = 3578
-			continue
-		elif _pc == 3557:
-			debug.print_string("iMusic.monitor: Unknown ambient environment\n")
-			_pc = 3578
-			continue
-		elif _pc == 3578:
-			stream.stop(2, 1)
-			_pc = 3635
-			continue
-		elif _pc == 3600:
-			v16 = v13
-			if not _pog_is_null(v16):
-				_pc = 3613
-				continue
-			else:
-				_pc = 3392
-				continue
-		elif _pc == 3613:
-			if 1 != v16:
-				_pc = 3621
-				continue
-			else:
-				_pc = 3440
-				continue
-		elif _pc == 3621:
-			if 2 != v16:
-				_pc = 3630
-				continue
-			else:
-				_pc = 3488
-				continue
-		elif _pc == 3630:
-			_pc = 3552
-			continue
-		elif _pc == 3635:
+			match v13:
+				0:
+					if PogRuntime.TRACE:
+						debug.print_string("iMusic.monitor: Entering deep space\n")
+					stream.stop(2, 1)
+				1:
+					if PogRuntime.TRACE:
+						debug.print_string("iMusic.monitor: Entering Effrit environment\n")
+					stream.stop(2, 1)
+				2:
+					if PogRuntime.TRACE:
+						debug.print_string("iMusic.monitor: Entering aliens' environment\n")
+					stream.play(2, "sound:/audio/ambient/alien_loop", 1, 1)
+					v2 = 6
+				_:
+					if PogRuntime.TRACE:
+						debug.print_string("iMusic.monitor: Unknown ambient environment\n")
+					stream.stop(2, 1)
 			v14 = 0.0
-			_pc = 3646
-			continue
-		elif _pc == 3646:
-			if _pog_is_null(stream.is_playing(0)) and v0 != 6:
-				_pc = 3676
-				continue
-			else:
-				_pc = 3799
-				continue
-		elif _pc == 3676:
-			_pc = 3702
-			continue
-		elif _pc == 3681:
-			debug.print_string("iMusic.monitor: Track finished - deciding what mood to play next\n")
-			_pc = 3702
-			continue
-		elif _pc == 3702:
+		if _pog_is_null(stream.is_playing(0)) and v0 != 6:
+			if PogRuntime.TRACE:
+				debug.print_string("iMusic.monitor: Track finished - deciding what mood to play next\n")
 			v2 = await local_1866(v0, 1)
 			if v2 == 4 and v0 == 4:
-				_pc = 3749
-				continue
-			else:
-				_pc = 3787
-				continue
-		elif _pc == 3749:
-			if v11 == 1:
-				_pc = 3761
-				continue
-			else:
-				_pc = 3780
-				continue
-		elif _pc == 3761:
-			v12 = 1
-			v11 = 0
-			_pc = 3787
-			continue
-		elif _pc == 3780:
-			v11 = 1
-			_pc = 3787
-			continue
-		elif _pc == 3787:
+				if v11 == 1:
+					v12 = 1
+					v11 = 0
+				else:
+					v11 = 1
 			v10 = 1
-			_pc = 3840
-			continue
-		elif _pc == 3799:
+		else:
 			if _pog_eq(v2, v0):
-				_pc = 3815
-				continue
-			else:
-				_pc = 3840
-				continue
-		elif _pc == 3815:
-			v2 = await local_1866(v0, 0)
-			_pc = 3840
-			continue
-		elif _pc == 3840:
-			if not _pog_eq(v3, v1):
-				_pc = 3856
-				continue
-			else:
-				_pc = 3968
-				continue
-		elif _pc == 3856:
-			_pc = 3924
-			continue
-		elif _pc == 3861:
-			debug.print_string("iMusic.monitor: Changing suite (")
-			debug.print_int(v3)
-			debug.print_string(")\n")
-			_pc = 3924
-			continue
-		elif _pc == 3924:
+				v2 = await local_1866(v0, 0)
+		if not _pog_eq(v3, v1):
+			if PogRuntime.TRACE:
+				debug.print_string("iMusic.monitor: Changing suite (")
+				debug.print_int(v3)
+				debug.print_string(")\n")
 			global.set_int("g_music_suite", v3)
 			v8 = 20.0
 			v10 = 1
-			_pc = 3968
-			continue
-		elif _pc == 3968:
-			if not _pog_eq(v2, v0):
-				_pc = 3984
-				continue
-			else:
-				_pc = 4176
-				continue
-		elif _pc == 3984:
-			_pc = 4052
-			continue
-		elif _pc == 3989:
-			debug.print_string("iMusic.monitor: Changing mood (")
-			debug.print_int(v2)
-			debug.print_string(")\n")
-			_pc = 4052
-			continue
-		elif _pc == 4052:
+		if not _pog_eq(v2, v0):
+			if PogRuntime.TRACE:
+				debug.print_string("iMusic.monitor: Changing mood (")
+				debug.print_int(v2)
+				debug.print_string(")\n")
 			global.set_int("g_music_mood", v2)
 			v10 = 1
 			if v2 == 4 or v2 == 3:
-				_pc = 4107
-				continue
-			else:
-				_pc = 4176
-				continue
-		elif _pc == 4107:
-			if v9 > 0.699999988079071:
-				_pc = 4123
-				continue
-			else:
-				_pc = 4144
-				continue
-		elif _pc == 4123:
-			await play_event(4)
-			_pc = 4176
-			continue
-		elif _pc == 4144:
-			if v9 > 0.30000001192092896:
-				_pc = 4160
-				continue
-			else:
-				_pc = 4176
-				continue
-		elif _pc == 4160:
-			await play_event(3)
-			_pc = 4176
-			continue
-		elif _pc == 4176:
-			if v10:
-				_pc = 4186
-				continue
-			else:
-				_pc = 4522
-				continue
-		elif _pc == 4186:
+				if v9 > 0.699999988079071:
+					await play_event(4)
+				else:
+					if v9 > 0.30000001192092896:
+						await play_event(3)
+		if v10:
 			if v2 == 6:
-				_pc = 4199
-				continue
+				stream.stop(0, 1)
 			else:
-				_pc = 4220
-				continue
-		elif _pc == 4199:
-			stream.stop(0, 1)
-			_pc = 4522
+				if v12:
+					if PogRuntime.TRACE:
+						debug.print_string("iMusic.monitor: Forcing change to tension track\n")
+					v5 = await local_52(v3, 3)
+				else:
+					v5 = await local_52(v3, v2)
+				if PogRuntime.TRACE:
+					debug.print_string("iMusic.monitor: Changing to track ")
+					debug.print_string(v5)
+					debug.print_string(" (suite=")
+					debug.print_int(v3)
+					debug.print_string(" mood=")
+					debug.print_int(v2)
+					debug.print_string(")\n")
+				global.set_string("g_music_current", v5)
+				stream.play(0, v5, 1, v2 == 1)
+		if _pog_is_null(v13):
 			continue
-		elif _pc == 4220:
-			if v12:
-				_pc = 4230
-				continue
-			else:
-				_pc = 4289
-				continue
-		elif _pc == 4230:
-			_pc = 4256
+		if stream.is_playing(1):
 			continue
-		elif _pc == 4235:
-			debug.print_string("iMusic.monitor: Forcing change to tension track\n")
-			_pc = 4256
-			continue
-		elif _pc == 4256:
-			v5 = await local_52(v3, 3)
-			_pc = 4320
-			continue
-		elif _pc == 4289:
-			v5 = await local_52(v3, v2)
-			_pc = 4320
-			continue
-		elif _pc == 4320:
-			_pc = 4468
-			continue
-		elif _pc == 4325:
-			debug.print_string("iMusic.monitor: Changing to track ")
-			debug.print_string(v5)
-			debug.print_string(" (suite=")
-			debug.print_int(v3)
-			debug.print_string(" mood=")
-			debug.print_int(v2)
-			debug.print_string(")\n")
-			_pc = 4468
-			continue
-		elif _pc == 4468:
-			global.set_string("g_music_current", v5)
-			stream.play(0, v5, 1, v2 == 1)
-			_pc = 4522
-			continue
-		elif _pc == 4522:
-			if not _pog_is_null(v13):
-				_pc = 4534
-				continue
-			else:
-				_pc = 4702
-				continue
-		elif _pc == 4534:
-			if not (stream.is_playing(1)):
-				_pc = 4554
-				continue
-			else:
-				_pc = 4702
-				continue
-		elif _pc == 4554:
-			if v14 < 0.0:
-				_pc = 4570
-				continue
-			else:
-				_pc = 4685
-				continue
-		elif _pc == 4570:
-			_pc = 4596
-			continue
-		elif _pc == 4575:
-			debug.print_string("iMusic.monitor: Playing ambient effect\n")
-			_pc = 4596
-			continue
-		elif _pc == 4596:
+		if v14 < 0.0:
+			if PogRuntime.TRACE:
+				debug.print_string("iMusic.monitor: Playing ambient effect\n")
 			v15 = await local_2800(v13)
 			if not _pog_is_null(v15):
-				_pc = 4632
-				continue
-			else:
-				_pc = 4651
-				continue
-		elif _pc == 4632:
-			await play_event(v15)
-			_pc = 4651
-			continue
-		elif _pc == 4651:
+				await play_event(v15)
 			v14 = math.random(0.0, 30.0)
-			_pc = 4702
-			continue
-		elif _pc == 4685:
-			v14 = v14 - 1.0
-			_pc = 4702
-			continue
-		elif _pc == 4702:
-			_pc = 2976
-			continue
-		elif _pc == 4707:
-			return
 		else:
-			return 0
+			v14 = v14 - 1.0
+	return
 	return 0
 
 func initialise() -> Variant:
@@ -951,157 +419,36 @@ func play(v0, v1, v2) -> Variant:
 
 func play_event(v0) -> Variant:
 	var v1: Variant = 0
-	var v2: Variant = 0
-	var _pc: int = 5167
-	while true:
-		if _pc == 5167:
-			v1 = ""
-			if stream.is_playing(1):
-				_pc = 5202
-				continue
-			else:
-				_pc = 5207
-				continue
-		elif _pc == 5202:
-			_pc = 5535
-			continue
-		elif _pc == 5207:
-			_pc = 5415
-			continue
-		elif _pc == 5212:
-			_pc = 5535
-			continue
-		elif _pc == 5217:
+	v1 = ""
+	if stream.is_playing(1):
+		return 0
+	match v0:
+		0:
+			return 0
+		1:
 			v1 = "sound:/audio/music/short_cymbal"
-			_pc = 5513
-			continue
-		elif _pc == 5235:
+		2:
 			v1 = "sound:/audio/music/long_cymbal"
-			_pc = 5513
-			continue
-		elif _pc == 5253:
+		3:
 			v1 = "sound:/audio/music/soft_timpani"
-			_pc = 5513
-			continue
-		elif _pc == 5271:
+		4:
 			v1 = "sound:/audio/music/loud_timpani"
-			_pc = 5513
-			continue
-		elif _pc == 5289:
+		5:
 			v1 = "sound:/audio/ambient/alien_moan_1"
-			_pc = 5513
-			continue
-		elif _pc == 5307:
+		6:
 			v1 = "sound:/audio/ambient/alien_moan_2"
-			_pc = 5513
-			continue
-		elif _pc == 5325:
+		7:
 			v1 = "sound:/audio/ambient/alien_roar_1"
-			_pc = 5513
-			continue
-		elif _pc == 5343:
+		8:
 			v1 = "sound:/audio/ambient/alien_roar_2"
-			_pc = 5513
-			continue
-		elif _pc == 5361:
+		9:
 			v1 = "sound:/audio/ambient/alien_grumble"
-			_pc = 5513
-			continue
-		elif _pc == 5379:
-			_pc = 5405
-			continue
-		elif _pc == 5384:
-			debug.print_string("iMusic.PlayEvent: Unknown event\n")
-			_pc = 5405
-			continue
-		elif _pc == 5405:
-			_pc = 5535
-			continue
-		elif _pc == 5410:
-			_pc = 5513
-			continue
-		elif _pc == 5415:
-			v2 = v0
-			if not _pog_is_null(v2):
-				_pc = 5428
-				continue
-			else:
-				_pc = 5212
-				continue
-		elif _pc == 5428:
-			if 1 != v2:
-				_pc = 5436
-				continue
-			else:
-				_pc = 5217
-				continue
-		elif _pc == 5436:
-			if 2 != v2:
-				_pc = 5445
-				continue
-			else:
-				_pc = 5235
-				continue
-		elif _pc == 5445:
-			if 3 != v2:
-				_pc = 5454
-				continue
-			else:
-				_pc = 5253
-				continue
-		elif _pc == 5454:
-			if 4 != v2:
-				_pc = 5463
-				continue
-			else:
-				_pc = 5271
-				continue
-		elif _pc == 5463:
-			if 5 != v2:
-				_pc = 5472
-				continue
-			else:
-				_pc = 5289
-				continue
-		elif _pc == 5472:
-			if 6 != v2:
-				_pc = 5481
-				continue
-			else:
-				_pc = 5307
-				continue
-		elif _pc == 5481:
-			if 7 != v2:
-				_pc = 5490
-				continue
-			else:
-				_pc = 5325
-				continue
-		elif _pc == 5490:
-			if 8 != v2:
-				_pc = 5499
-				continue
-			else:
-				_pc = 5343
-				continue
-		elif _pc == 5499:
-			if 9 != v2:
-				_pc = 5508
-				continue
-			else:
-				_pc = 5361
-				continue
-		elif _pc == 5508:
-			_pc = 5379
-			continue
-		elif _pc == 5513:
-			stream.play(1, v1, 0, 0)
-			_pc = 5535
-			continue
-		elif _pc == 5535:
+		_:
+			if PogRuntime.TRACE:
+				debug.print_string("iMusic.PlayEvent: Unknown event\n")
 			return 0
-		else:
-			return 0
+	stream.play(1, v1, 0, 0)
+	return 0
 	return 0
 
 func pause() -> Variant:

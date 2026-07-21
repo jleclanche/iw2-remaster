@@ -341,92 +341,34 @@ func local_4788(v0, v1, v2, v3) -> Variant:
 	var v4: Variant = 0
 	var v5: Variant = 0
 	var v6: Variant = 0
-	var v7: Variant = 0
-	var _pc: int = 4788
-	while true:
-		if _pc == 4788:
-			v4 = iship.cast(group.leader(v0))
-			v6 = 3
-			if v2 < v6:
-				_pc = 4854
-				continue
-			else:
-				_pc = 5264
-				continue
-		elif _pc == 4854:
-			iai.give_formate_order(v4, v1, 0.0, 0.0, 70.0)
-			_pc = 4893
-			continue
-		elif _pc == 4893:
+	v4 = iship.cast(group.leader(v0))
+	v6 = 3
+	if v2 < v6:
+		iai.give_formate_order(v4, v1, 0.0, 0.0, 70.0)
+		while true:
 			await _pog_wait(1.0)
 			if not (not (iai.is_order_complete(v4)) and sim.distance_between(v4, v1) < 700.0):
-				_pc = 4979
-				continue
-			else:
-				_pc = 4893
-				continue
-		elif _pc == 4979:
-			await iconversation.begin()
-			_pc = 5067
-			continue
-		elif _pc == 4998:
-			await iconversation.add_response("a3_m05_text_c2_option_1_spanner", "a3_m05_dialogue_player_c2_option_1_spanner")
-			_pc = 5085
-			continue
-		elif _pc == 5030:
-			await iconversation.add_response("a3_m05_text_c2_option_1_spanner_ag", "a3_m05_dialogue_player_c2_option_1_spanner_ag")
-			_pc = 5085
-			continue
-		elif _pc == 5062:
-			_pc = 5085
-			continue
-		elif _pc == 5067:
-			v7 = v2
-			if 1 != v7:
-				_pc = 5080
-				continue
-			else:
-				_pc = 4998
-				continue
-		elif _pc == 5080:
-			_pc = 5030
-			continue
-		elif _pc == 5085:
-			await iconversation.add_response("a3_m05_text_c2_option_2_rumbled", "a3_m05_dialogue_player_option2_rumbled")
-			v5 = await iconversation.ask(v4, "", "a3_m05_dialogue_security_c2_whats_going")
-			await iconversation.end()
-			if v5 == 1:
-				_pc = 5175
-				continue
-			else:
-				_pc = 5264
-				continue
-		elif _pc == 5175:
+				break
+		await iconversation.begin()
+		match v2:
+			1:
+				await iconversation.add_response("a3_m05_text_c2_option_1_spanner", "a3_m05_dialogue_player_c2_option_1_spanner")
+			_:
+				await iconversation.add_response("a3_m05_text_c2_option_1_spanner_ag", "a3_m05_dialogue_player_c2_option_1_spanner_ag")
+		await iconversation.add_response("a3_m05_text_c2_option_2_rumbled", "a3_m05_dialogue_player_option2_rumbled")
+		v5 = await iconversation.ask(v4, "", "a3_m05_dialogue_security_c2_whats_going")
+		await iconversation.end()
+		if v5 == 1:
 			await iconversation.one_liner(v4, "", "a3_m05_dialogue_security_c2_repsonse_2_ok")
 			iai.give_approach_order(v4, v3)
 			await iconversation.one_liner(0, "name_clay", "a3_m05_dialogue_clay_some_way")
-			_pc = 5370
-			continue
-		elif _pc == 5264:
-			iai.give_attack_order(v0, v1)
-			if v5 == 2:
-				_pc = 5301
-				continue
-			else:
-				_pc = 5338
-				continue
-		elif _pc == 5301:
-			await iconversation.one_liner(v4, "", "a3_m05_dialogue_security_you_wont")
-			_pc = 5370
-			continue
-		elif _pc == 5338:
-			await iconversation.one_liner(v4, "", "a3_m05_dialogue_security_right")
-			_pc = 5370
-			continue
-		elif _pc == 5370:
 			return
-		else:
-			return 0
+	iai.give_attack_order(v0, v1)
+	if v5 == 2:
+		await iconversation.one_liner(v4, "", "a3_m05_dialogue_security_you_wont")
+		return
+	await iconversation.one_liner(v4, "", "a3_m05_dialogue_security_right")
+	return
 	return 0
 
 func flash_colour(v0, v1, v2) -> Variant:
@@ -512,18 +454,42 @@ func local_6517(v0, v1, v2) -> Variant:
 	var v15: Variant = 0
 	var v16: Variant = 0
 	var v17: Variant = 0
-	v3 = 0
-	v4 = 0
-	v5 = 1
-	v8 = ifaction.find("Independent")
-	v11 = sim.create("ini:/sims/stations/commscustom", "Comms Flasher")
+	var v18: Variant = 0
+	var _pc: int = 6517
 	while true:
-		await _pog_wait(2)
-		if not _pog_eq(isim.active_world(), "map:/geog/gagarin/owens_star"):
+		if _pc == 6517:
+			v3 = 0
+			v4 = 0
+			v5 = 1
+			v8 = ifaction.find("Independent")
+			v11 = sim.create("ini:/sims/stations/commscustom", "Comms Flasher")
+			_pc = 6605
 			continue
-		await istation.add_reactive_exception(ihabitat.cast(v1))
-		await irangecheck.add_traffic_exception(imapentity.cast(v1))
-		if sim.distance_between(v0, v1) < 100000.0 and not (v3):
+		elif _pc == 6605:
+			await _pog_frame()
+			if _pog_every(6606, 2.0):
+				_pc = 6619
+				continue
+			else:
+				_pc = 8041
+				continue
+		elif _pc == 6619:
+			if _pog_eq(isim.active_world(), "map:/geog/gagarin/owens_star"):
+				_pc = 6646
+				continue
+			else:
+				_pc = 8041
+				continue
+		elif _pc == 6646:
+			await istation.add_reactive_exception(ihabitat.cast(v1))
+			await irangecheck.add_traffic_exception(imapentity.cast(v1))
+			if sim.distance_between(v0, v1) < 100000.0 and not (v3):
+				_pc = 6751
+				continue
+			else:
+				_pc = 7130
+				continue
+		elif _pc == 6751:
 			v3 = 1
 			isim.dock(isim.cast(v11), isim.cast(v1))
 			isim.set_sensor_visibility(isim.cast(v11), 0)
@@ -537,137 +503,405 @@ func local_6517(v0, v1, v2) -> Variant:
 			await _pog_wait(0.5)
 			v7 = await local_3194(v1)
 			v15 = group.sim_count(v7)
-		if not (v3 and state.progress(v2) < 4):
+			_pc = 7130
 			continue
-		if not (iai.is_order_complete(v9) or sim.distance_between(v9, v0) < 700.0):
-			continue
-		await iconversation.begin()
-		if state.progress(v2) == 3:
+		elif _pc == 7130:
+			if v3 and state.progress(v2) < 4:
+				_pc = 7162
+				continue
+			else:
+				_pc = 8041
+				continue
+		elif _pc == 7162:
+			if iai.is_order_complete(v9) or sim.distance_between(v9, v0) < 700.0:
+				_pc = 7215
+				continue
+			else:
+				_pc = 8041
+				continue
+		elif _pc == 7215:
+			await iconversation.begin()
+			if state.progress(v2) == 3:
+				_pc = 7255
+				continue
+			else:
+				_pc = 7287
+				continue
+		elif _pc == 7255:
 			await iconversation.add_response("a3_m05_text_c1_option_1_35vb89", "a3_m05_dialogue_c1_cal_option_1_35vb89")
-		else:
+			_pc = 7314
+			continue
+		elif _pc == 7287:
 			await iconversation.add_response("a3_m05_text_c1_cal_option_2_clearence", "a3_m05_dialogue_cal_c1_option_2_clearence")
-		await iconversation.add_response("a3_m05_text_c1_option_3_oops", "a3_m05_dialogue_cal_c1_option_3_oops")
-		v17 = await iconversation.ask(v9, "", "a3_m05_dialogue_security_c1_this_is")
-		match v17:
-			1:
-				if state.progress(v2) == 3:
-					state.set_progress(v2, 4)
-					await iconversation.say(v9, "", "a3_m05_dialogue_security_c1_response_1_very_well")
-					await iconversation.end()
-					iobjectives.set_state("a3_m05_objectives_travel", 1)
-					iai.purge_orders(v9)
-					iai.give_approach_order(v9, v10)
-				await iconversation.say(v9, "", "a3_m05_dialogue_security_c1_response_2_invalid")
-				await iconversation.end()
-				state.set_progress(v2, 5)
-				iai.purge_orders(v9)
-				iai.give_approach_order(v9, v10)
-				await _pog_wait(30.0)
-			2:
-				await iconversation.say(v9, "", "a3_m05_dialogue_security_c1_response_3_leave")
-				await iconversation.end()
-				state.set_progress(v2, 5)
-				iai.purge_orders(v9)
-				iai.give_approach_order(v9, v10)
-				await _pog_wait(30.0)
-		if state.progress(v2) == 4:
-			break
-		if state.progress(v2) == 5 and sim.distance_between(v0, v9) < 10000.0:
+			_pc = 7314
+			continue
+		elif _pc == 7314:
+			await iconversation.add_response("a3_m05_text_c1_option_3_oops", "a3_m05_dialogue_cal_c1_option_3_oops")
+			v17 = await iconversation.ask(v9, "", "a3_m05_dialogue_security_c1_this_is")
+			_pc = 7850
+			continue
+		elif _pc == 7383:
+			if state.progress(v2) == 3:
+				_pc = 7409
+				continue
+			else:
+				_pc = 7551
+				continue
+		elif _pc == 7409:
+			state.set_progress(v2, 4)
+			await iconversation.say(v9, "", "a3_m05_dialogue_security_c1_response_1_very_well")
+			await iconversation.end()
+			iobjectives.set_state("a3_m05_objectives_travel", 1)
+			iai.purge_orders(v9)
+			iai.give_approach_order(v9, v10)
+			_pc = 7872
+			continue
+		elif _pc == 7546:
+			_pc = 7698
+			continue
+		elif _pc == 7551:
+			await iconversation.say(v9, "", "a3_m05_dialogue_security_c1_response_2_invalid")
+			await iconversation.end()
+			state.set_progress(v2, 5)
+			iai.purge_orders(v9)
+			iai.give_approach_order(v9, v10)
+			await _pog_wait(30.0)
+			_pc = 7872
+			continue
+		elif _pc == 7698:
+			await iconversation.say(v9, "", "a3_m05_dialogue_security_c1_response_3_leave")
+			await iconversation.end()
+			state.set_progress(v2, 5)
+			iai.purge_orders(v9)
+			iai.give_approach_order(v9, v10)
+			await _pog_wait(30.0)
+			_pc = 7872
+			continue
+		elif _pc == 7845:
+			_pc = 7872
+			continue
+		elif _pc == 7850:
+			v18 = v17
+			if 1 != v18:
+				_pc = 7863
+				continue
+			else:
+				_pc = 7383
+				continue
+		elif _pc == 7863:
+			if 2 != v18:
+				_pc = 7872
+				continue
+			else:
+				_pc = 7698
+				continue
+		elif _pc == 7872:
+			if state.progress(v2) == 4:
+				_pc = 7898
+				continue
+			else:
+				_pc = 7903
+				continue
+		elif _pc == 7898:
+			_pc = 8046
+			continue
+		elif _pc == 7903:
+			if state.progress(v2) == 5 and sim.distance_between(v0, v9) < 10000.0:
+				_pc = 7959
+				continue
+			else:
+				_pc = 8020
+				continue
+		elif _pc == 7959:
 			iai.give_attack_order(v6, v0)
 			await iconversation.one_liner(v9, "", "a3_m05_dialogue_security_we_warned")
-		else:
-			state.set_progress(v2, 2)
-	await icutsceneutilities.handle_abort(_pog_spawn(local_5575.bind(v0, v11, v7)))
-	iobjectives.add("a3_m05_objectives_reroute")
-	while true:
-		await _pog_wait(2)
-		v16 = await local_3991(v0, v7, v15)
-		if v16 >= 0 and v16 < v15:
-			if not (v4):
-				v4 = 1
-				await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_ill_explain")
-			match v16:
-				0:
-					if _pog_is_null(object.int_property(v2, "transmitter_1_done")):
-						global.create_string("g_current_colour", 2, "green")
-						v12 = _pog_spawn(transmitter_sabotage_handler.bind(2, 2, 1, v2, v11, v5))
-						while true:
-							await _pog_wait(1.0)
-							if not (not ((1 - _pog_is_running(v12)))):
-								break
-						if object.int_property(v2, "transmitter_1_done") == 1:
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
-							isim.set_mission_critical(isim.cast(group.nth_sim(v7, 0)), 0)
-							v13 = v13 + 1
-						else:
-							iship.undock(v0, group.nth_sim(v7, 0))
-							v14 = v14 + 1
-							_pog_spawn(local_4788.bind(v6, v0, v14, v10))
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
-				1:
-					if _pog_is_null(object.int_property(v2, "transmitter_2_done")):
-						global.create_string("g_current_colour", 2, "red")
-						v12 = _pog_spawn(transmitter_sabotage_handler.bind(2, 1, 2, v2, v11, v5))
-						while true:
-							await _pog_wait(1.0)
-							if not (not ((1 - _pog_is_running(v12)))):
-								break
-						if object.int_property(v2, "transmitter_2_done") == 1:
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
-							isim.set_mission_critical(isim.cast(group.nth_sim(v7, 1)), 0)
-							v13 = v13 + 1
-						else:
-							iship.undock(v0, group.nth_sim(v7, 1))
-							v14 = v14 + 1
-							_pog_spawn(local_4788.bind(v6, v0, v14, v10))
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
-				2:
-					if _pog_is_null(object.int_property(v2, "transmitter_3_done")):
-						global.create_string("g_current_colour", 2, "blue")
-						v12 = _pog_spawn(transmitter_sabotage_handler.bind(3, 3, 3, v2, v11, v5))
-						while true:
-							await _pog_wait(1.0)
-							if not (not ((1 - _pog_is_running(v12)))):
-								break
-						if object.int_property(v2, "transmitter_3_done") == 1:
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
-							isim.set_mission_critical(isim.cast(group.nth_sim(v7, 2)), 0)
-							v13 = v13 + 1
-						else:
-							iship.undock(v0, group.nth_sim(v7, 2))
-							v14 = v14 + 1
-							_pog_spawn(local_4788.bind(v6, v0, v14, v10))
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
-				3:
-					if _pog_is_null(object.int_property(v2, "transmitter_4_done")):
-						global.create_string("g_current_colour", 2, "blue")
-						v12 = _pog_spawn(transmitter_sabotage_handler.bind(4, 3, 4, v2, v11, v5))
-						while true:
-							await _pog_wait(1.0)
-							if not (not ((1 - _pog_is_running(v12)))):
-								break
-						if object.int_property(v2, "transmitter_4_done") == 1:
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
-							isim.set_mission_critical(isim.cast(group.nth_sim(v7, 3)), 0)
-							v13 = v13 + 1
-						else:
-							iship.undock(v0, group.nth_sim(v7, 3))
-							v14 = v14 + 1
-							_pog_spawn(local_4788.bind(v6, v0, v14, v10))
-							await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
-			if v5:
-				v5 = 0
-		if v13 != 4:
+			_pc = 8041
 			continue
-		await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_thats_all")
-		iobjectives.set_state("a3_m05_objectives_reroute", 1)
-		sim.destroy(v10)
-		global.destroy("g_current_colour")
-		group.destroy(v6, 0)
-		group.destroy(v7, 0)
-		state.set_progress(v2, 8)
-		return
-	return
+		elif _pc == 8020:
+			state.set_progress(v2, 2)
+			_pc = 8041
+			continue
+		elif _pc == 8041:
+			_pc = 6605
+			continue
+		elif _pc == 8046:
+			await icutsceneutilities.handle_abort(_pog_spawn(local_5575.bind(v0, v11, v7)))
+			iobjectives.add("a3_m05_objectives_reroute")
+			_pc = 8115
+			continue
+		elif _pc == 8115:
+			await _pog_frame()
+			if _pog_every(8116, 2.0):
+				_pc = 8129
+				continue
+			else:
+				_pc = 10070
+				continue
+		elif _pc == 8129:
+			v16 = await local_3991(v0, v7, v15)
+			if v16 >= 0 and v16 < v15:
+				_pc = 8187
+				continue
+			else:
+				_pc = 9901
+				continue
+		elif _pc == 8187:
+			if not (v4):
+				_pc = 8198
+				continue
+			else:
+				_pc = 8233
+				continue
+		elif _pc == 8198:
+			v4 = 1
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_ill_explain")
+			_pc = 8233
+			continue
+		elif _pc == 8233:
+			_pc = 9845
+			continue
+		elif _pc == 8238:
+			if _pog_is_null(object.int_property(v2, "transmitter_1_done")):
+				_pc = 8270
+				continue
+			else:
+				_pc = 8632
+				continue
+		elif _pc == 8270:
+			global.create_string("g_current_colour", 2, "green")
+			v12 = _pog_spawn(transmitter_sabotage_handler.bind(2, 2, 1, v2, v11, v5))
+			_pc = 8338
+			continue
+		elif _pc == 8338:
+			await _pog_wait(1.0)
+			if (1 - _pog_is_running(v12)):
+				_pc = 8394
+				continue
+			else:
+				_pc = 8338
+				continue
+		elif _pc == 8394:
+			if object.int_property(v2, "transmitter_1_done") == 1:
+				_pc = 8426
+				continue
+			else:
+				_pc = 8519
+				continue
+		elif _pc == 8426:
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
+			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 0)), 0)
+			v13 = v13 + 1
+			_pc = 8632
+			continue
+		elif _pc == 8519:
+			iship.undock(v0, group.nth_sim(v7, 0))
+			v14 = v14 + 1
+			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
+			_pc = 8632
+			continue
+		elif _pc == 8632:
+			_pc = 9884
+			continue
+		elif _pc == 8637:
+			if _pog_is_null(object.int_property(v2, "transmitter_2_done")):
+				_pc = 8669
+				continue
+			else:
+				_pc = 9031
+				continue
+		elif _pc == 8669:
+			global.create_string("g_current_colour", 2, "red")
+			v12 = _pog_spawn(transmitter_sabotage_handler.bind(2, 1, 2, v2, v11, v5))
+			_pc = 8737
+			continue
+		elif _pc == 8737:
+			await _pog_wait(1.0)
+			if (1 - _pog_is_running(v12)):
+				_pc = 8793
+				continue
+			else:
+				_pc = 8737
+				continue
+		elif _pc == 8793:
+			if object.int_property(v2, "transmitter_2_done") == 1:
+				_pc = 8825
+				continue
+			else:
+				_pc = 8918
+				continue
+		elif _pc == 8825:
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
+			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 1)), 0)
+			v13 = v13 + 1
+			_pc = 9031
+			continue
+		elif _pc == 8918:
+			iship.undock(v0, group.nth_sim(v7, 1))
+			v14 = v14 + 1
+			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
+			_pc = 9031
+			continue
+		elif _pc == 9031:
+			_pc = 9884
+			continue
+		elif _pc == 9036:
+			if _pog_is_null(object.int_property(v2, "transmitter_3_done")):
+				_pc = 9068
+				continue
+			else:
+				_pc = 9433
+				continue
+		elif _pc == 9068:
+			global.create_string("g_current_colour", 2, "blue")
+			v12 = _pog_spawn(transmitter_sabotage_handler.bind(3, 3, 3, v2, v11, v5))
+			_pc = 9137
+			continue
+		elif _pc == 9137:
+			await _pog_wait(1.0)
+			if (1 - _pog_is_running(v12)):
+				_pc = 9193
+				continue
+			else:
+				_pc = 9137
+				continue
+		elif _pc == 9193:
+			if object.int_property(v2, "transmitter_3_done") == 1:
+				_pc = 9225
+				continue
+			else:
+				_pc = 9319
+				continue
+		elif _pc == 9225:
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
+			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 2)), 0)
+			v13 = v13 + 1
+			_pc = 9433
+			continue
+		elif _pc == 9319:
+			iship.undock(v0, group.nth_sim(v7, 2))
+			v14 = v14 + 1
+			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
+			_pc = 9433
+			continue
+		elif _pc == 9433:
+			_pc = 9884
+			continue
+		elif _pc == 9438:
+			if _pog_is_null(object.int_property(v2, "transmitter_4_done")):
+				_pc = 9470
+				continue
+			else:
+				_pc = 9835
+				continue
+		elif _pc == 9470:
+			global.create_string("g_current_colour", 2, "blue")
+			v12 = _pog_spawn(transmitter_sabotage_handler.bind(4, 3, 4, v2, v11, v5))
+			_pc = 9539
+			continue
+		elif _pc == 9539:
+			await _pog_wait(1.0)
+			if (1 - _pog_is_running(v12)):
+				_pc = 9595
+				continue
+			else:
+				_pc = 9539
+				continue
+		elif _pc == 9595:
+			if object.int_property(v2, "transmitter_4_done") == 1:
+				_pc = 9627
+				continue
+			else:
+				_pc = 9721
+				continue
+		elif _pc == 9627:
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_that_worked")
+			isim.set_mission_critical(isim.cast(group.nth_sim(v7, 3)), 0)
+			v13 = v13 + 1
+			_pc = 9835
+			continue
+		elif _pc == 9721:
+			iship.undock(v0, group.nth_sim(v7, 3))
+			v14 = v14 + 1
+			_pog_spawn(local_4788.bind(v6, v0, v14, v10))
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_damn")
+			_pc = 9835
+			continue
+		elif _pc == 9835:
+			_pc = 9884
+			continue
+		elif _pc == 9840:
+			_pc = 9884
+			continue
+		elif _pc == 9845:
+			v18 = v16
+			if not _pog_is_null(v18):
+				_pc = 9858
+				continue
+			else:
+				_pc = 8238
+				continue
+		elif _pc == 9858:
+			if 1 != v18:
+				_pc = 9866
+				continue
+			else:
+				_pc = 8637
+				continue
+		elif _pc == 9866:
+			if 2 != v18:
+				_pc = 9875
+				continue
+			else:
+				_pc = 9036
+				continue
+		elif _pc == 9875:
+			if 3 != v18:
+				_pc = 9884
+				continue
+			else:
+				_pc = 9438
+				continue
+		elif _pc == 9884:
+			if v5:
+				_pc = 9894
+				continue
+			else:
+				_pc = 9901
+				continue
+		elif _pc == 9894:
+			v5 = 0
+			_pc = 9901
+			continue
+		elif _pc == 9901:
+			if v13 == 4:
+				_pc = 9914
+				continue
+			else:
+				_pc = 10070
+				continue
+		elif _pc == 9914:
+			await iconversation.one_liner(0, "name_smith", "a3_m05_dialogue_smith_thats_all")
+			iobjectives.set_state("a3_m05_objectives_reroute", 1)
+			sim.destroy(v10)
+			global.destroy("g_current_colour")
+			group.destroy(v6, 0)
+			group.destroy(v7, 0)
+			state.set_progress(v2, 8)
+			_pc = 10076
+			continue
+		elif _pc == 10070:
+			_pc = 8115
+			continue
+		elif _pc == 10075:
+			_pc = 10076
+			continue
+		elif _pc == 10076:
+			return
+		else:
+			return 0
 	return 0
 
 func mission_handler() -> Variant:

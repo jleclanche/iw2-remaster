@@ -1135,112 +1135,35 @@ func launch_pod_ships(v0, v1, v2, v3) -> Variant:
 	var v9: Variant = 0
 	var v10: Variant = 0
 	var v11: Variant = 0
-	var v12: Variant = 0
-	var _pc: int = 19230
+	v4 = iship.find_player_ship()
+	v8 = ifaction.find("Marauders")
+	v9 = group.sim_count(v0)
+	v10 = 10
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission25.launch_pod_ships: Timer Started.\n")
 	while true:
-		if _pc == 19230:
-			v4 = iship.find_player_ship()
-			v8 = ifaction.find("Marauders")
-			v9 = group.sim_count(v0)
-			v10 = 10
-			_pc = 19338
-			continue
-		elif _pc == 19317:
-			debug.print_string("iAct2Mission25.launch_pod_ships: Timer Started.\n")
-			_pc = 19338
-			continue
-		elif _pc == 19338:
-			_pc = 19343
-			continue
-		elif _pc == 19343:
-			await _pog_frame()
-			if _pog_every(19344, 1.0):
-				_pc = 19357
-				continue
-			else:
-				_pc = 19428
-				continue
-		elif _pc == 19357:
-			if group.sim_count(v0) < v9:
-				_pc = 19386
-				continue
-			else:
-				_pc = 19398
-				continue
-		elif _pc == 19386:
+		await _pog_wait(1)
+		if group.sim_count(v0) < v9:
 			v3 = 0
-			_pc = 19433
-			continue
-		elif _pc == 19398:
-			if v3 < 1:
-				_pc = 19410
-				continue
-			else:
-				_pc = 19415
-				continue
-		elif _pc == 19410:
-			_pc = 19433
-			continue
-		elif _pc == 19415:
-			v3 = v3 - 1
-			_pc = 19428
-			continue
-		elif _pc == 19428:
-			_pc = 19343
-			continue
-		elif _pc == 19433:
-			_pc = 19460
-			continue
-		elif _pc == 19439:
-			debug.print_string("iAct2Mission25.launch_pod_ships: Timer Stopped.\n")
-			_pc = 19460
-			continue
-		elif _pc == 19460:
-			v11 = group.sim_count(v0)
-			_pc = 19484
-			continue
-		elif _pc == 19484:
-			if v11 >= 0:
-				_pc = 19496
-				continue
-			else:
-				_pc = 19566
-				continue
-		elif _pc == 19496:
-			isim.set_standard_sensor_visibility(isim.cast(group.nth_sim(v0, v11)), 1)
-			v11 = v11 + -1
-			_pc = 19484
-			continue
-		elif _pc == 19566:
-			await iconversation.one_liner(0, "name_smith", "a2_m25_dialogue_smith_those_pods_are_powering_up")
-			await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_better_take_care_of_them")
-			v3 = 0
-			v7 = isim.cast(sim.create("ini:/sims/nav/waypoint", "podpoint"))
-			_pc = 19679
-			continue
-		elif _pc == 19679:
-			await _pog_frame()
-			if _pog_every(19680, 1.0):
-				_pc = 19693
-				continue
-			else:
-				_pc = 20477
-				continue
-		elif _pc == 19693:
-			if group.sim_count(v0) > 0:
-				_pc = 19718
-				continue
-			else:
-				_pc = 20413
-				continue
-		elif _pc == 19718:
-			_pc = 19744
-			continue
-		elif _pc == 19723:
-			debug.print_string("iAct2Mission25.launch_pod_ships: Launching ship.\n")
-			_pc = 19744
-			continue
-		elif _pc == 19744:
+			break
+		if v3 < 1:
+			break
+		v3 = v3 - 1
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2Mission25.launch_pod_ships: Timer Stopped.\n")
+	v11 = group.sim_count(v0)
+	while v11 >= 0:
+		isim.set_standard_sensor_visibility(isim.cast(group.nth_sim(v0, v11)), 1)
+		v11 = v11 + -1
+	await iconversation.one_liner(0, "name_smith", "a2_m25_dialogue_smith_those_pods_are_powering_up")
+	await iconversation.one_liner(0, "name_clay", "a2_m25_dialogue_clay_better_take_care_of_them")
+	v3 = 0
+	v7 = isim.cast(sim.create("ini:/sims/nav/waypoint", "podpoint"))
+	while true:
+		await _pog_wait(1)
+		if group.sim_count(v0) > 0:
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission25.launch_pod_ships: Launching ship.\n")
 			v6 = isim.cast(group.leader(v0))
 			group.remove_sim(v0, v6)
 			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
@@ -1256,87 +1179,26 @@ func launch_pod_ships(v0, v1, v2, v3) -> Variant:
 			await _pog_wait(1.0)
 			sim.avatar_set_channel(v6, "door", 0.0)
 			await _pog_wait(2.0)
-			_pc = 20298
-			continue
-		elif _pc == 20216:
-			iai.give_attack_order(v5, v2)
-			_pc = 20357
-			continue
-		elif _pc == 20245:
-			iai.give_attack_order(v5, v4)
-			_pc = 20357
-			continue
-		elif _pc == 20274:
-			iai.give_generic_attack_order(v5)
-			_pc = 20357
-			continue
-		elif _pc == 20298:
-			v12 = math.random_int(0, 4)
-			if not _pog_is_null(v12):
-				_pc = 20322
-				continue
-			else:
-				_pc = 20216
-				continue
-		elif _pc == 20322:
-			if 1 != v12:
-				_pc = 20330
-				continue
-			else:
-				_pc = 20216
-				continue
-		elif _pc == 20330:
-			if 2 != v12:
-				_pc = 20339
-				continue
-			else:
-				_pc = 20216
-				continue
-		elif _pc == 20339:
-			if 3 != v12:
-				_pc = 20348
-				continue
-			else:
-				_pc = 20245
-				continue
-		elif _pc == 20348:
-			if 4 != v12:
-				_pc = 20357
-				continue
-			else:
-				_pc = 20274
-				continue
-		elif _pc == 20357:
+			match math.random_int(0, 4):
+				0, 1, 2:
+					iai.give_attack_order(v5, v2)
+				3:
+					iai.give_attack_order(v5, v4)
+				4:
+					iai.give_generic_attack_order(v5)
 			await _pog_wait(3.0)
 			isim.kill(v6)
-			_pc = 20444
-			continue
-		elif _pc == 20413:
-			_pc = 20439
-			continue
-		elif _pc == 20418:
-			debug.print_string("iAct2Mission25.launch_pod_ships: No more pods EXITING.\n")
-			_pc = 20439
-			continue
-		elif _pc == 20439:
-			_pc = 20483
-			continue
-		elif _pc == 20444:
-			await _pog_wait(v10)
-			_pc = 20477
-			continue
-		elif _pc == 20477:
-			_pc = 19679
-			continue
-		elif _pc == 20482:
-			_pc = 20483
-			continue
-		elif _pc == 20483:
-			return
-		elif _pc == 20635:
-			return
 		else:
-			return 0
+			if PogRuntime.TRACE:
+				debug.print_string("iAct2Mission25.launch_pod_ships: No more pods EXITING.\n")
+			return
+		await _pog_wait(v10)
+	return
+	v6 = await ishipcreation.create_cargo_pods(v1, v5)
+	sim.place_relative_to(group.leader(v6), v0, v2, v3, v4)
+	await iformation.box(v6, 100.0, 1)
+	await iformation.jiggle(v6, 50.0, 90.0)
+	return v6
 	return 0
 
 func local_20637(v0, v1, v2, v3, v4, v5) -> Variant:

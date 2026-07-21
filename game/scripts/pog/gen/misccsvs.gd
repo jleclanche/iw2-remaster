@@ -24025,176 +24025,89 @@ func local_366027() -> Variant:
 		await iconversation.add_response("wingmen_addendum_2.csv", "I'd like to see file wingmen_addendum_2.csv, please")
 		v0 = await iconversation.ask(0, "particle_employee", "which file do you want to test?")
 		await iconversation.end()
-		while true:
-			var _sw1: Variant = v0
-			var _arm1: int = -1
-			if _pog_eq(_sw1, 1):
-				_arm1 = 0
-			elif _pog_eq(_sw1, 2):
-				_arm1 = 1
-			elif _pog_eq(_sw1, 3):
-				_arm1 = 2
-			elif _pog_eq(_sw1, 4):
-				_arm1 = 3
-			elif _pog_eq(_sw1, 5):
-				_arm1 = 4
-			elif _pog_eq(_sw1, 6):
-				_arm1 = 5
-			elif _pog_eq(_sw1, 7):
-				_arm1 = 6
-			elif _pog_eq(_sw1, 8):
-				_arm1 = 7
-			elif _pog_eq(_sw1, 9):
-				_arm1 = 8
-			elif _pog_eq(_sw1, 10):
-				_arm1 = 9
-			elif _pog_eq(_sw1, 11):
-				_arm1 = 10
-			elif _pog_eq(_sw1, 12):
-				_arm1 = 11
-			elif _pog_eq(_sw1, 13):
-				_arm1 = 12
-			elif _pog_eq(_sw1, 14):
-				_arm1 = 13
-			elif _pog_eq(_sw1, 15):
-				_arm1 = 14
-			elif _pog_eq(_sw1, 16):
-				_arm1 = 15
-			elif _pog_eq(_sw1, 17):
-				_arm1 = 16
-			elif _pog_eq(_sw1, 18):
-				_arm1 = 17
-			elif _pog_eq(_sw1, 19):
-				_arm1 = 18
-			elif _pog_eq(_sw1, 20):
-				_arm1 = 19
-			elif _pog_eq(_sw1, 21):
-				_arm1 = 20
-			elif _pog_eq(_sw1, 22):
-				_arm1 = 21
-			elif _pog_eq(_sw1, 23):
-				_arm1 = 22
-			elif _pog_eq(_sw1, 24):
-				_arm1 = 23
-			elif _pog_eq(_sw1, 25):
-				_arm1 = 24
-			elif _pog_eq(_sw1, 26):
-				_arm1 = 25
-			elif _pog_eq(_sw1, 27):
-				_arm1 = 26
-			elif _pog_eq(_sw1, 28):
-				_arm1 = 27
-			elif _pog_eq(_sw1, 29):
-				_arm1 = 28
-			elif _pog_eq(_sw1, 30):
-				_arm1 = 29
-			elif _pog_eq(_sw1, 31):
-				_arm1 = 30
-			elif _pog_eq(_sw1, 32):
-				_arm1 = 31
-			elif _pog_eq(_sw1, 33):
-				_arm1 = 32
-			elif _pog_eq(_sw1, 34):
-				_arm1 = 33
-			elif _pog_eq(_sw1, 35):
-				_arm1 = 34
-			elif _pog_eq(_sw1, 36):
-				_arm1 = 35
-			elif _pog_eq(_sw1, 37):
-				_arm1 = 36
-			elif _pog_eq(_sw1, 38):
-				_arm1 = 37
-			elif _pog_eq(_sw1, 39):
-				_arm1 = 38
-			elif _pog_eq(_sw1, 40):
-				_arm1 = 39
-			elif _pog_eq(_sw1, 41):
-				_arm1 = 40
-			if _arm1 == -1:
-				break
-			if _arm1 <= 0:
+		match v0:
+			1:
 				await local_0()
-			if _arm1 <= 1:
+			2:
 				await local_34191()
-			if _arm1 <= 2:
+			3:
 				await local_41894()
-			if _arm1 <= 3:
+			4:
 				await local_43822()
-			if _arm1 <= 4:
+			5:
 				await local_45057()
-			if _arm1 <= 5:
+			6:
 				await local_45599()
-			if _arm1 <= 6:
+			7:
 				await local_47296()
-			if _arm1 <= 7:
+			8:
 				await local_62160()
-			if _arm1 <= 8:
+			9:
 				await local_66244()
-			if _arm1 <= 9:
+			10:
 				await local_90733()
-			if _arm1 <= 10:
+			11:
 				await local_93431()
-			if _arm1 <= 11:
+			12:
 				await local_93588()
-			if _arm1 <= 12:
+			13:
 				await local_93822()
-			if _arm1 <= 13:
+			14:
 				await local_93902()
-			if _arm1 <= 14:
+			15:
 				await local_97062()
-			if _arm1 <= 15:
+			16:
 				await local_111926()
-			if _arm1 <= 16:
+			17:
 				await local_112776()
-			if _arm1 <= 17:
+			18:
 				await local_128102()
-			if _arm1 <= 18:
+			19:
 				await local_128567()
-			if _arm1 <= 19:
+			20:
 				await local_128801()
-			if _arm1 <= 20:
+			21:
 				await local_129497()
-			if _arm1 <= 21:
+			22:
 				await local_132349()
-			if _arm1 <= 22:
+			23:
 				await local_132429()
-			if _arm1 <= 23:
+			24:
 				await local_139208()
-			if _arm1 <= 24:
+			25:
 				await local_140905()
-			if _arm1 <= 25:
+			26:
 				await local_142371()
-			if _arm1 <= 26:
+			27:
 				await local_142990()
-			if _arm1 <= 27:
+			28:
 				await local_144841()
-			if _arm1 <= 28:
+			29:
 				await local_175644()
-			if _arm1 <= 29:
+			30:
 				await local_175647()
-			if _arm1 <= 30:
+			31:
 				await local_175958()
-			if _arm1 <= 31:
+			32:
 				await local_188743()
-			if _arm1 <= 32:
+			33:
 				await local_189362()
-			if _arm1 <= 33:
+			34:
 				await local_341594()
-			if _arm1 <= 34:
+			35:
 				await local_343060()
-			if _arm1 <= 35:
+			36:
 				await local_357847()
-			if _arm1 <= 36:
+			37:
 				await local_359082()
-			if _arm1 <= 37:
+			38:
 				await local_362165()
-			if _arm1 <= 38:
+			39:
 				await local_363246()
-			if _arm1 <= 39:
+			40:
 				await local_365405()
-			if _arm1 <= 40:
+			41:
 				await local_365870()
-				break
 	text.remove("csv:/text/cargo_list")
 	text.remove("csv:/text/cargo_list_addendum")
 	text.remove("csv:/text/cargo_list_addendum_2")

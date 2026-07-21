@@ -219,6 +219,7 @@ func league_dialogue_monitor(v0, v1) -> Variant:
 						await _pog_wait(20.0)
 				await iconversation.end()
 				v2 = 0
+				continue
 			3:
 				v2 = 1
 				await iconversation.begin()
@@ -239,6 +240,7 @@ func league_dialogue_monitor(v0, v1) -> Variant:
 						state.set_progress(v1, 5)
 				await iconversation.end()
 				v2 = 0
+				continue
 			8:
 				v2 = 1
 				v9 = iship.cast(p_set.first_element(sim.children(group.leader(v0))))

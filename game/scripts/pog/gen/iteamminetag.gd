@@ -248,18 +248,14 @@ func server_on_user_message() -> Variant:
 				await imputils.spawn_player(v7, group.cast(global.handle("mp_respawn_group")))
 				imultiplay.server_send_user_message(1, v7, 0, ifaction.pog_name(isim.faction(v7)))
 			await local_5447(v1)
-			return 0
 		15:
 			v4 = iship.cast(v1)
 			iship.undock_self(v4)
 			imultiplay.server_send_user_message(15, v4, 0, "")
-			return 0
 		16:
 			imultiplay.send_scores(v1)
-			return 0
 		99:
 			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-			return 0
 		40:
 			v2 = sim.find_by_name(v3)
 			if not (object.property_exists(v2, "mp_tagged_by")):
@@ -269,18 +265,15 @@ func server_on_user_message() -> Variant:
 				else:
 					imultiplay.server_send_user_message(42, v1, v2, v3)
 				object.add_handle_property(v2, "mp_tagged_by", v1)
-			return 0
 		202:
 			if not (object.property_exists(v2, "mp_remote_linked")):
 				object.add_handle_property(v2, "mp_remote_linked", v1)
 				imultiplay.server_send_user_message(202, v1, v2, "")
-			return 0
 		203:
 			if object.property_exists(v2, "mp_remote_linked"):
 				object.remove_property(v2, "mp_remote_linked")
 				imultiplay.sever_remote_link_to(iship.cast(v2))
 				imultiplay.server_send_user_message(203, v1, v2, "")
-			return 0
 		204:
 			if _pog_is_null(v2):
 				v2 = sim.find_by_name(v3)
@@ -1153,12 +1146,10 @@ func client_on_user_message() -> Variant:
 				object.remove_property(v1, "mp_on_team_beta")
 			v10 = _pog_spawn(local_17046.bind(v1, _pog_clone(v9)))
 			_pog_detach(v10)
-			return 0
 		15:
 			if not _pog_eq(v4, iship.find_player_ship()):
 				v4 = iship.cast(v1)
 				iship.undock_self(v4)
-			return 0
 		41:
 			v2 = sim.find_by_name(v3)
 			isim.set_faction(isim.cast(v2), v8)
@@ -1171,7 +1162,6 @@ func client_on_user_message() -> Variant:
 				sim.avatar_set_channel(v2, "alpha", 0.0)
 				sim.avatar_set_channel(v2, "beta", 1.0)
 			object.add_bool_property(v2, "mp_is_tagged", 1)
-			return 0
 		42:
 			v2 = sim.find_by_name(v3)
 			isim.set_faction(isim.cast(v2), v7)
@@ -1184,14 +1174,12 @@ func client_on_user_message() -> Variant:
 				sim.avatar_set_channel(v2, "alpha", 0.0)
 				sim.avatar_set_channel(v2, "beta", 1.0)
 			object.add_bool_property(v2, "mp_is_tagged", 1)
-			return 0
 		43:
 			v2 = sim.find_by_name(v3)
 			object.remove_property(v2, "mp_is_tagged")
 			isim.set_faction(isim.cast(v2), ifaction.find("NINEX Wetware"))
 			sim.avatar_set_channel(v2, "alpha", 0.0)
 			sim.avatar_set_channel(v2, "beta", 0.0)
-			return 0
 		45:
 			if _pog_eq(v4, iship.find_player_ship()):
 				v2 = sim.find_by_name(v3)
@@ -1199,7 +1187,6 @@ func client_on_user_message() -> Variant:
 				object.add_bool_property(v2, "mp_is_tagged", 1)
 				sim.avatar_add_channel(v2, "alpha", 1.0)
 				sim.avatar_add_channel(v2, "beta", 0.0)
-			return 0
 		46:
 			if _pog_eq(v4, iship.find_player_ship()):
 				v2 = sim.find_by_name(v3)
@@ -1210,7 +1197,6 @@ func client_on_user_message() -> Variant:
 				object.add_bool_property(v2, "mp_is_tagged", 1)
 				sim.avatar_add_channel(v2, "alpha", 0.0)
 				sim.avatar_add_channel(v2, "beta", 1.0)
-			return 0
 		47:
 			if _pog_eq(v4, iship.find_player_ship()):
 				v2 = sim.find_by_name(v3)
@@ -1218,10 +1204,8 @@ func client_on_user_message() -> Variant:
 				object.remove_property(v2, "mp_is_tagged")
 				sim.avatar_add_channel(v2, "alpha", 0.0)
 				sim.avatar_add_channel(v2, "beta", 0.0)
-			return 0
 		48:
 			await iremotepilot.enable_remote_connection(iship.cast(v1), 0)
-			return 0
 		50:
 			v2 = sim.find_by_name(v3)
 			if _pog_eq(isim.faction(v5), isim.faction(isim.cast(v2))):
@@ -1230,19 +1214,16 @@ func client_on_user_message() -> Variant:
 			else:
 				sim.avatar_set_channel(v2, "alpha", 0.0)
 				sim.avatar_set_channel(v2, "beta", 1.0)
-			return 0
 		202:
 			if _pog_eq(v5, iship.cast(v1)):
 				v4 = iship.cast(v2)
 				imultiplay.remote_link_to(v4)
 				isim.set_faction(v4, isim.faction(v5))
-			return 0
 		203:
 			if not _pog_eq(v5, iship.cast(v1)):
 				v4 = iship.cast(v2)
 				imultiplay.sever_remote_link_to(v4)
 				isim.set_faction(v4, ifaction.find("Neutral"))
-			return 0
 		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			return 0

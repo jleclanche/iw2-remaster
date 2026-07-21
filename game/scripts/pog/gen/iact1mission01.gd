@@ -333,16 +333,18 @@ func local_6028(v0, v1, v2) -> Variant:
 			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c3_i_see")
 			if v4 == 3:
 				pass
-			if v4 == 2:
-				v3 = v3 + 1
-			await iconversation.add_response("a1_m01_text_player_c4_option_1_my_last_one", "a1_m01_dialogue_player_c4_option_1_my_last_one")
-			await iconversation.add_response("a1_m01_text_player_c4_option_2_this_is_a_tug", "a1_m01_dialogue_player_c4_option_2_this_is_a_tug")
-			await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
-			v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c4_right_so_why")
-			if v4 == 3:
-				v5 = 1
-			if v4 == 1:
-				v3 = v3 + 1
+			else:
+				if v4 == 2:
+					v3 = v3 + 1
+				await iconversation.add_response("a1_m01_text_player_c4_option_1_my_last_one", "a1_m01_dialogue_player_c4_option_1_my_last_one")
+				await iconversation.add_response("a1_m01_text_player_c4_option_2_this_is_a_tug", "a1_m01_dialogue_player_c4_option_2_this_is_a_tug")
+				await iconversation.add_response("a1_m01_text_player_c2_option_3_look_over", "a1_m01_dialogue_player_c2_option_3_look_over")
+				v4 = await iconversation.ask(v6, "", "a1_m01_dialogue_police_c4_right_so_why")
+				if v4 == 3:
+					v5 = 1
+				else:
+					if v4 == 1:
+						v3 = v3 + 1
 			break
 		if _arm1 <= 2:
 			v5 = 1

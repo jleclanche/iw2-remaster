@@ -276,6 +276,7 @@ func local_812(v0, v1, v2) -> Variant:
 				ifaction.set_feeling(v12, v11, 4.0)
 				v3 = 0
 				state.set_progress(v2, 6)
+				continue
 			2:
 				await iconversation.say(v9, "", "a1_m02_dialogue_stepson_c3_response_2_damn_you")
 				await iconversation.end()

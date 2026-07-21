@@ -1375,168 +1375,43 @@ func local_11794(v0, v1, v2) -> Variant:
 	var v5: Variant = 0
 	var v6: Variant = 0
 	var v7: Variant = 0
-	var v8: Variant = 0
-	var _pc: int = 11794
-	while true:
-		if _pc == 11794:
-			v7 = ifaction.find("Marauders")
-			_pc = 11881
-			continue
-		elif _pc == 11830:
-			if global.exists("g_a2_m01_no_enemies"):
-				_pc = 11855
-				continue
-			else:
-				_pc = 11881
-				continue
-		elif _pc == 11855:
+	v7 = ifaction.find("Marauders")
+	if PogRuntime.TRACE:
+		if global.exists("g_a2_m01_no_enemies"):
 			debug.print_string("iAct2_Mission01 - WARNING: Marauders disabled - no marauders created.\n")
-			_pc = 12697
-			continue
-		elif _pc == 11881:
-			if v1 > 0:
-				_pc = 11893
-				continue
-			else:
-				_pc = 11923
-				continue
-		elif _pc == 11893:
-			v3 = math.random_int(1, v1)
-			_pc = 11935
-			continue
-		elif _pc == 11923:
-			v3 = -(v1)
-			_pc = 11935
-			continue
-		elif _pc == 11935:
-			v6 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
-			object.add_bool_property(v6, "no_shockwave", 1)
-			await ipilotsetup.marauder(v6)
-			isim.set_faction(v6, v7)
-			sim.place_near(v6, v2, 40000.0)
-			iai.give_approach_order(v6, v2)
-			group.add_sim(v0, v6)
-			v4 = 1
-			_pc = 12137
-			continue
-		elif _pc == 12137:
-			if v4 < v3:
-				_pc = 12153
-				continue
-			else:
-				_pc = 12697
-				continue
-		elif _pc == 12153:
-			_pc = 12428
-			continue
-		elif _pc == 12158:
-			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
-			_pc = 12532
-			continue
-		elif _pc == 12211:
-			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
-			_pc = 12532
-			continue
-		elif _pc == 12264:
-			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
-			_pc = 12532
-			continue
-		elif _pc == 12317:
-			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
-			_pc = 12532
-			continue
-		elif _pc == 12370:
-			v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
-			_pc = 12532
-			continue
-		elif _pc == 12423:
-			_pc = 12532
-			continue
-		elif _pc == 12428:
-			v8 = math.random_int(0, 9)
-			if not _pog_is_null(v8):
-				_pc = 12452
-				continue
-			else:
-				_pc = 12158
-				continue
-		elif _pc == 12452:
-			if 1 != v8:
-				_pc = 12460
-				continue
-			else:
-				_pc = 12158
-				continue
-		elif _pc == 12460:
-			if 2 != v8:
-				_pc = 12469
-				continue
-			else:
-				_pc = 12211
-				continue
-		elif _pc == 12469:
-			if 3 != v8:
-				_pc = 12478
-				continue
-			else:
-				_pc = 12211
-				continue
-		elif _pc == 12478:
-			if 4 != v8:
-				_pc = 12487
-				continue
-			else:
-				_pc = 12264
-				continue
-		elif _pc == 12487:
-			if 5 != v8:
-				_pc = 12496
-				continue
-			else:
-				_pc = 12264
-				continue
-		elif _pc == 12496:
-			if 6 != v8:
-				_pc = 12505
-				continue
-			else:
-				_pc = 12264
-				continue
-		elif _pc == 12505:
-			if 7 != v8:
-				_pc = 12514
-				continue
-			else:
-				_pc = 12317
-				continue
-		elif _pc == 12514:
-			if 8 != v8:
-				_pc = 12523
-				continue
-			else:
-				_pc = 12317
-				continue
-		elif _pc == 12523:
-			if 9 != v8:
-				_pc = 12532
-				continue
-			else:
-				_pc = 12370
-				continue
-		elif _pc == 12532:
-			object.add_bool_property(v5, "no_shockwave", 1)
-			await ipilotsetup.marauder(v5)
-			isim.set_faction(v5, v7)
-			sim.place_near(v5, v6, 1000.0)
-			iai.give_approach_order(v5, v2)
-			group.add_sim(v0, v5)
-			v4 = v4 + 1
-			_pc = 12137
-			continue
-		elif _pc == 12697:
 			return 0
-		else:
-			return 0
+	if v1 > 0:
+		v3 = math.random_int(1, v1)
+	else:
+		v3 = -(v1)
+	v6 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
+	object.add_bool_property(v6, "no_shockwave", 1)
+	await ipilotsetup.marauder(v6)
+	isim.set_faction(v6, v7)
+	sim.place_near(v6, v2, 40000.0)
+	iai.give_approach_order(v6, v2)
+	group.add_sim(v0, v6)
+	v4 = 1
+	while v4 < v3:
+		match math.random_int(0, 9):
+			0, 1:
+				v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter", await ishipcreation.ship_name("Marauders", -1))
+			2, 3:
+				v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
+			4, 5, 6:
+				v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
+			7, 8:
+				v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_weak", await ishipcreation.ship_name("Marauders", -1))
+			9:
+				v5 = iship.create("ini:/sims/ships/marauder/marauder_cutter_gatling", await ishipcreation.ship_name("Marauders", -1))
+		object.add_bool_property(v5, "no_shockwave", 1)
+		await ipilotsetup.marauder(v5)
+		isim.set_faction(v5, v7)
+		sim.place_near(v5, v6, 1000.0)
+		iai.give_approach_order(v5, v2)
+		group.add_sim(v0, v5)
+		v4 = v4 + 1
+	return 0
 	return 0
 
 func local_12700(v0, v1, v2, v3) -> Variant:

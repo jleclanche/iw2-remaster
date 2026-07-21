@@ -506,7 +506,8 @@ class Port:
                 out = ["%smatch %s:" % (i, self.x(s.sel))]
                 for vals, body, _brk in s.arms:
                     out += ["%s%s:" % (_ind(d + 1),
-                                       ", ".join(self.x(v) for v in vals))]
+                                       ", ".join(self.x(v) for v in vals)
+                                       if vals else "_")]
                     out += self.body(body, d + 2)
                 return out
             # A fall-through switch is a resume-dispatch loop (pogdec.Case):
@@ -532,14 +533,21 @@ class Port:
                    "%svar %s: Variant = %s" % (_ind(d + 1), sw,
                                                self.x(s.sel)),
                    "%svar %s: int = -1" % (_ind(d + 1), arm)]
+            first = True
+            default_k = None
             for k, (vals, _body, _brk) in enumerate(s.arms):
+                if not vals:            # the default arm has no compare
+                    default_k = k
+                    continue
                 cond = " or ".join("_pog_eq(%s, %s)" % (sw, self.x(v))
                                    for v in vals)
                 out.append("%s%s %s:" % (_ind(d + 1),
-                                         "if" if k == 0 else "elif", cond))
+                                         "if" if first else "elif", cond))
                 out.append("%s%s = %d" % (_ind(d + 2), arm, k))
+                first = False
             out += ["%sif %s == -1:" % (_ind(d + 1), arm),
-                    "%sbreak" % _ind(d + 2)]
+                    "%sbreak" % _ind(d + 2) if default_k is None
+                    else "%s%s = %d" % (_ind(d + 2), arm, default_k)]
             for k, (_vals, body, brk) in enumerate(s.arms):
                 out.append("%sif %s <= %d:" % (_ind(d + 1), arm, k))
                 out += self.body(body, d + 2)

@@ -438,18 +438,14 @@ func server_on_user_message() -> Variant:
 				object.set_int_property(v8, "bot_index", v12)
 				await imputils.spawn_player(v8, group.cast(global.handle("mp_respawn_group")))
 				imultiplay.server_send_user_message(1, v8, 0, ifaction.pog_name(isim.faction(v8)))
-			return 0
 		15:
 			v6 = iship.cast(v1)
 			iship.undock_self(v6)
 			imultiplay.server_send_user_message(15, v6, 0, "")
-			return 0
 		16:
 			imultiplay.send_scores(v1)
-			return 0
 		99:
 			await imputils.server_do_debug(isim.cast(v1), isim.cast(v2), v3)
-			return 0
 		204:
 			isim.dock(isim.cast(v1), isim.cast(v2))
 			imultiplay.server_send_user_message(204, v1, v2, v3)
@@ -1321,15 +1317,12 @@ func client_end_game() -> Variant:
 func client_g_u_i() -> Variant:
 	var v0: Variant = 0
 	v0 = global.pog_int("GameState")
-	if 1 == v0:
-		await capture_the_flag_screen()
-		return 0
-	if 2 == v0:
-		await local_2798()
-		return 0
-	if 4 == v0:
-		await local_2798()
-		return 0
+	match v0:
+		1:
+			await capture_the_flag_screen()
+		2, 4:
+			await local_2798()
+			return 0
 	return 0
 	return 0
 

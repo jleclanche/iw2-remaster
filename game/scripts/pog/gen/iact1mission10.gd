@@ -167,6 +167,7 @@ func local_722(v0) -> Variant:
 				await iconversation.say(v5, "", "a1_m04_dialogue_stepson_c1_response_1_we_thought_we_were")
 				await iconversation.end()
 				await _pog_wait(5.0)
+				continue
 			2:
 				await iconversation.say(v5, "", "a1_m04_dialogue_stepson_c1_response_2_go_away")
 				await iconversation.end()
@@ -235,6 +236,7 @@ func local_1655(v0, v1) -> Variant:
 				v2 = 0
 				state.set_progress(v1, 2)
 				iobjectives.add("a1_m10_objectives_invest")
+				continue
 			2:
 				await iconversation.say(v0, "", "a1_m10_dialogue_mad_bill_c1_response_2_really_and_what")
 				await iconversation.end()

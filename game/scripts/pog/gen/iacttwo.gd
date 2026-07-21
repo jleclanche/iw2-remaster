@@ -1353,139 +1353,71 @@ func eureka_story_script() -> Variant:
 	var v3: Variant = 0
 	var v4: Variant = 0
 	var v5: Variant = 0
-	var v6: Variant = 0
-	var _pc: int = 21998
-	while true:
-		if _pc == 21998:
-			v0 = _pog_current()
-			v2 = iship.find_player_ship()
-			v3 = imapentity.find_by_name("Belial L-Point STC HQ")
-			v4 = 0
-			v5 = 0
-			if not _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
-				_pc = 22109
-				continue
-			else:
-				_pc = 22140
-				continue
-		elif _pc == 22109:
-			_pc = 22135
-			continue
-		elif _pc == 22114:
+	v0 = _pog_current()
+	v2 = iship.find_player_ship()
+	v3 = imapentity.find_by_name("Belial L-Point STC HQ")
+	v4 = 0
+	v5 = 0
+	if not _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
+		if PogRuntime.TRACE:
 			debug.print_string("iActTwo.EurekaStoryScript : task is trying to start outside of Eureka, quitting\n")
-			_pc = 22135
-			continue
-		elif _pc == 22135:
-			_pc = 24675
-			continue
-		elif _pc == 22140:
-			v1 = state.find(v0)
-			if _pog_is_null(v1):
-				_pc = 22177
-				continue
-			else:
-				_pc = 22252
-				continue
-		elif _pc == 22177:
-			v1 = state.create(v0, 0)
-			global.set_handle("g_eureka_state", v1)
-			global.create_int("g_eureka_conversation_number", 2, 1)
-			_pc = 22252
-			continue
-		elif _pc == 22252:
-			_pc = 22278
-			continue
-		elif _pc == 22257:
-			debug.print_string("iActTwo.EurekaStoryScript : Commencing  Eureka story script\n")
-			_pc = 22278
-			continue
-		elif _pc == 22278:
-			_pog_spawn(local_18968.bind())
-			_pc = 24597
-			continue
-		elif _pc == 22297:
+		return
+	v1 = state.find(v0)
+	if _pog_is_null(v1):
+		v1 = state.create(v0, 0)
+		global.set_handle("g_eureka_state", v1)
+		global.create_int("g_eureka_conversation_number", 2, 1)
+	if PogRuntime.TRACE:
+		debug.print_string("iActTwo.EurekaStoryScript : Commencing  Eureka story script\n")
+	_pog_spawn(local_18968.bind())
+	while true:
+		var _sw3: Variant = state.progress(v1)
+		var _arm3: int = -1
+		if _pog_eq(_sw3, 0):
+			_arm3 = 0
+		elif _pog_eq(_sw3, 1):
+			_arm3 = 1
+		elif _pog_eq(_sw3, 2):
+			_arm3 = 2
+		elif _pog_eq(_sw3, 3):
+			_arm3 = 3
+		if _arm3 == -1:
+			break
+		if _arm3 <= 0:
 			global.set_bool("g_act2_eureka_visited", 1)
 			await isystemcutscene.eureka()
-			_pc = 22333
-			continue
-		elif _pc == 22333:
-			await _pog_wait(0.10000000149011612)
-			if idirector.is_busy():
-				_pc = 22384
-				continue
-			else:
-				_pc = 22333
-				continue
-		elif _pc == 22384:
+			while true:
+				await _pog_wait(0.10000000149011612)
+				if not (not (idirector.is_busy())):
+					break
 			await iconversation.begin()
 			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_eureka_hmm_eureka")
 			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_c1_eureka_the")
 			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_eureka_yeh")
 			await iconversation.end()
-			_pc = 22496
-			continue
-		elif _pc == 22496:
-			await _pog_wait(1.0)
-			if not (idirector.is_busy()):
-				_pc = 22546
-				continue
-			else:
-				_pc = 22496
-				continue
-		elif _pc == 22546:
-			_pc = 22572
-			continue
-		elif _pc == 22551:
-			debug.print_string("iActTwo.EurekaStoryScript - players is not near Belial traffic control station, sleeping\n")
-			_pc = 22572
-			continue
-		elif _pc == 22572:
-			await _pog_wait(0.10000000149011612)
-			if sim.distance_between(v2, v3) <= 30000.0:
-				_pc = 22638
-				continue
-			else:
-				_pc = 22546
-				continue
-		elif _pc == 22638:
+			while true:
+				await _pog_wait(1.0)
+				if not (idirector.is_busy()):
+					break
+			while true:
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.EurekaStoryScript - players is not near Belial traffic control station, sleeping\n")
+				await _pog_wait(0.10000000149011612)
+				if not (sim.distance_between(v2, v3) > 30000.0):
+					break
 			await iconversation.begin()
 			await iconversation.add_response("a2_master_dialogue_cal_looking_for_work", "a2_master_dialogue_cal_looking_for_work")
 			await iconversation.add_response("a2_master_option_cal_representative_from_hoffers_wake", "a2_master_dialogue_cal_representative_from_hoffers_wake")
 			await iconversation.add_response("a2_master_dialogue_cal_just_wandering", "a2_master_dialogue_cal_just_wandering")
 			v4 = await iconversation.ask(0, "a2_master_stc_control", "a2_master_dialogue_stc_hi_there_traffic_control")
 			if v4 == 1:
-				_pc = 22778
-				continue
+				await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_you_might_be_a_little_dissapointed")
 			else:
-				_pc = 22811
-				continue
-		elif _pc == 22778:
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_you_might_be_a_little_dissapointed")
-			_pc = 22898
-			continue
-		elif _pc == 22811:
-			if v4 == 2:
-				_pc = 22824
-				continue
-			else:
-				_pc = 22857
-				continue
-		elif _pc == 22824:
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_i_think_you_are_in_the_wrong_system")
-			_pc = 22898
-			continue
-		elif _pc == 22857:
-			if v4 == 3:
-				_pc = 22870
-				continue
-			else:
-				_pc = 22898
-				continue
-		elif _pc == 22870:
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_the_without_being_rude")
-			_pc = 22898
-			continue
-		elif _pc == 22898:
+				if v4 == 2:
+					await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_i_think_you_are_in_the_wrong_system")
+				else:
+					if v4 == 3:
+						await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_the_without_being_rude")
 			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_the_third_way")
 			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_youve_never_heard")
 			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_the_third_way_are")
@@ -1494,306 +1426,93 @@ func eureka_story_script() -> Variant:
 			global.create_bool("g_had_lucifuge_hint", 2, 1)
 			v5 = 1
 			state.set_progress(v1, 1)
-			_pc = 23075
-			continue
-		elif _pc == 23075:
-			if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
-				_pc = 23102
-				continue
-			else:
-				_pc = 24215
-				continue
-		elif _pc == 23102:
-			if sim.distance_between(v2, v3) < 30000.0:
-				_pc = 23136
-				continue
-			else:
-				_pc = 24208
-				continue
-		elif _pc == 23136:
-			if v5:
-				_pc = 23146
-				continue
-			else:
-				_pc = 23216
-				continue
-		elif _pc == 23146:
-			_pc = 23172
-			continue
-		elif _pc == 23151:
-			debug.print_string("iActTwo.EurekaStoryScript : player is close to Belil L-point, but traffic control has spoken this visit, sleeping for five minutes...\n")
-			_pc = 23172
-			continue
-		elif _pc == 23172:
-			await _pog_wait(300.0)
-			v5 = 0
-			_pc = 24203
-			continue
-		elif _pc == 23216:
-			_pc = 23242
-			continue
-		elif _pc == 23221:
-			debug.print_string("iActTwo.EurekaStoryScript : player is close to Belil L-point, and he has not spoken this time.....\n")
-			_pc = 23242
-			continue
-		elif _pc == 23242:
-			_pc = 24143
-			continue
-		elif _pc == 23247:
-			_pc = 23273
-			continue
-		elif _pc == 23252:
-			debug.print_string("iActTwo.EurekaStoryScript - Giving player first return eureka conversation\n")
-			_pc = 23273
-			continue
-		elif _pc == 23273:
-			await iconversation.begin()
-			await iconversation.add_response("a2_master_dialogue_cal_tell_me_more_about_the_third_way", "a2_master_dialogue_cal_tell_me_more_about_the_third_way")
-			await iconversation.add_response("a2_master_dialogue_cal_why_are_you_so_chatty", "a2_master_dialogue_cal_why_are_you_so_chatty")
-			await iconversation.add_response("a2_master_dialogue_cal_no_im_fine", "a2_master_dialogue_cal_no_im_fine")
-			v4 = await iconversation.ask(0, "a2_master_stc_control", "a2_master_dialogue_stc_why_hello_again")
-			if v4 == 1:
-				_pc = 23413
-				continue
-			else:
-				_pc = 23502
-				continue
-		elif _pc == 23413:
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_a_strange_bunch")
-			await iconversation.end()
-			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
-			_pc = 23659
-			continue
-		elif _pc == 23502:
-			if v4 == 2:
-				_pc = 23515
-				continue
-			else:
-				_pc = 23604
-				continue
-		elif _pc == 23515:
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_just_enjoy_the_company")
-			await iconversation.end()
-			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
-			_pc = 23659
-			continue
-		elif _pc == 23604:
-			if v4 == 3:
-				_pc = 23617
-				continue
-			else:
-				_pc = 23659
-				continue
-		elif _pc == 23617:
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_be_seing_you2")
-			await iconversation.end()
-			_pc = 23659
-			continue
-		elif _pc == 23659:
-			_pc = 24203
-			continue
-		elif _pc == 23664:
-			_pc = 23690
-			continue
-		elif _pc == 23669:
-			debug.print_string("iActTwo.EurekaStoryScript - Giving player second return eureka conversation\n")
-			_pc = 23690
-			continue
-		elif _pc == 23690:
-			await iconversation.begin()
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_hello_there_again_back_for_another_visit")
-			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
-			await iconversation.end()
-			_pc = 24203
-			continue
-		elif _pc == 23793:
-			_pc = 23819
-			continue
-		elif _pc == 23798:
-			debug.print_string("iActTwo.EurekaStoryScript - Giving player third return eureka conversation\n")
-			_pc = 23819
-			continue
-		elif _pc == 23819:
-			await iconversation.begin()
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_hello_again")
-			await iconversation.end()
-			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
-			_pc = 24203
-			continue
-		elif _pc == 23922:
-			_pc = 23948
-			continue
-		elif _pc == 23927:
-			debug.print_string("iActTwo.EurekaStoryScript - Giving player fourth return eureka conversation\n")
-			_pc = 23948
-			continue
-		elif _pc == 23948:
-			await iconversation.begin()
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_my_captain_johnson_you_seem_to")
-			global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
-			await iconversation.end()
-			_pc = 24203
-			continue
-		elif _pc == 24051:
-			_pc = 24077
-			continue
-		elif _pc == 24056:
-			debug.print_string("iActTwo.EurekaStoryScript - Giving player fifth return eureka conversation\n")
-			_pc = 24077
-			continue
-		elif _pc == 24077:
-			await iconversation.begin()
-			await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_welcome_back_commander_johnston")
-			await iconversation.end()
-			_pc = 24203
-			continue
-		elif _pc == 24138:
-			_pc = 24203
-			continue
-		elif _pc == 24143:
-			v6 = global.pog_int("g_eureka_conversation_number")
-			if 1 != v6:
-				_pc = 24171
-				continue
-			else:
-				_pc = 23247
-				continue
-		elif _pc == 24171:
-			if 2 != v6:
-				_pc = 24180
-				continue
-			else:
-				_pc = 23664
-				continue
-		elif _pc == 24180:
-			if 3 != v6:
-				_pc = 24189
-				continue
-			else:
-				_pc = 23793
-				continue
-		elif _pc == 24189:
-			if 4 != v6:
-				_pc = 24198
-				continue
-			else:
-				_pc = 23922
-				continue
-		elif _pc == 24198:
-			_pc = 24051
-			continue
-		elif _pc == 24203:
-			_pc = 24215
-			continue
-		elif _pc == 24208:
-			v5 = 0
-			_pc = 24215
-			continue
-		elif _pc == 24215:
-			await _pog_wait(13.0)
-			if not _pog_is_null(global.pog_bool("g_act2_need_pilots")):
-				_pc = 24274
-				continue
-			else:
-				_pc = 23075
-				continue
-		elif _pc == 24274:
+		if _arm3 <= 1:
+			while true:
+				if _pog_eq(isim.active_world(), "map:/geog/badlands/eureka"):
+					if sim.distance_between(v2, v3) < 30000.0:
+						if v5:
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.EurekaStoryScript : player is close to Belil L-point, but traffic control has spoken this visit, sleeping for five minutes...\n")
+							await _pog_wait(300.0)
+							v5 = 0
+						else:
+							if PogRuntime.TRACE:
+								debug.print_string("iActTwo.EurekaStoryScript : player is close to Belil L-point, and he has not spoken this time.....\n")
+							match global.pog_int("g_eureka_conversation_number"):
+								1:
+									if PogRuntime.TRACE:
+										debug.print_string("iActTwo.EurekaStoryScript - Giving player first return eureka conversation\n")
+									await iconversation.begin()
+									await iconversation.add_response("a2_master_dialogue_cal_tell_me_more_about_the_third_way", "a2_master_dialogue_cal_tell_me_more_about_the_third_way")
+									await iconversation.add_response("a2_master_dialogue_cal_why_are_you_so_chatty", "a2_master_dialogue_cal_why_are_you_so_chatty")
+									await iconversation.add_response("a2_master_dialogue_cal_no_im_fine", "a2_master_dialogue_cal_no_im_fine")
+									v4 = await iconversation.ask(0, "a2_master_stc_control", "a2_master_dialogue_stc_why_hello_again")
+									if v4 == 1:
+										await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_a_strange_bunch")
+										await iconversation.end()
+										global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
+									else:
+										if v4 == 2:
+											await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_just_enjoy_the_company")
+											await iconversation.end()
+											global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
+										else:
+											if v4 == 3:
+												await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_be_seing_you2")
+												await iconversation.end()
+								2:
+									if PogRuntime.TRACE:
+										debug.print_string("iActTwo.EurekaStoryScript - Giving player second return eureka conversation\n")
+									await iconversation.begin()
+									await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_hello_there_again_back_for_another_visit")
+									global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
+									await iconversation.end()
+								3:
+									if PogRuntime.TRACE:
+										debug.print_string("iActTwo.EurekaStoryScript - Giving player third return eureka conversation\n")
+									await iconversation.begin()
+									await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_hello_again")
+									await iconversation.end()
+									global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
+								4:
+									if PogRuntime.TRACE:
+										debug.print_string("iActTwo.EurekaStoryScript - Giving player fourth return eureka conversation\n")
+									await iconversation.begin()
+									await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_my_captain_johnson_you_seem_to")
+									global.set_int("g_eureka_conversation_number", global.pog_int("g_eureka_conversation_number") + 1)
+									await iconversation.end()
+								_:
+									if PogRuntime.TRACE:
+										debug.print_string("iActTwo.EurekaStoryScript - Giving player fifth return eureka conversation\n")
+									await iconversation.begin()
+									await iconversation.say(0, "a2_master_stc_control", "a2_master_dialogue_stc_welcome_back_commander_johnston")
+									await iconversation.end()
+					else:
+						v5 = 0
+				await _pog_wait(13.0)
+				if not (_pog_is_null(global.pog_bool("g_act2_need_pilots"))):
+					break
 			state.set_progress(v1, 2)
-			_pc = 24295
-			continue
-		elif _pc == 24295:
-			if _pog_is_null(global.pog_bool("g_eureka_food_supplies")):
-				_pc = 24322
-				continue
-			else:
-				_pc = 24385
-				continue
-		elif _pc == 24322:
-			_pc = 24348
-			continue
-		elif _pc == 24327:
-			debug.print_string("iActTwo.EurekaStoryScript : waiting for the player to complete act2 mission 03 - trouble at the ranch, sleeping\n")
-			_pc = 24348
-			continue
-		elif _pc == 24348:
-			await _pog_wait(5.0)
-			_pc = 24295
-			continue
-		elif _pc == 24385:
-			_pc = 24411
-			continue
-		elif _pc == 24390:
-			debug.print_string("iActTwo.EurekaStoryScript : the player has compelted act02 mission 03 - progressing to next bit...\n")
-			_pc = 24411
-			continue
-		elif _pc == 24411:
+		if _arm3 <= 2:
+			while _pog_is_null(global.pog_bool("g_eureka_food_supplies")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.EurekaStoryScript : waiting for the player to complete act2 mission 03 - trouble at the ranch, sleeping\n")
+				await _pog_wait(5.0)
+			if PogRuntime.TRACE:
+				debug.print_string("iActTwo.EurekaStoryScript : the player has compelted act02 mission 03 - progressing to next bit...\n")
 			state.set_progress(v1, 3)
-			_pc = 24432
-			continue
-		elif _pc == 24432:
-			if _pog_is_null(global.pog_bool("g_act2_third_way_provided_pilots")):
-				_pc = 24459
-				continue
-			else:
-				_pc = 24522
-				continue
-		elif _pc == 24459:
-			_pc = 24485
-			continue
-		elif _pc == 24464:
-			debug.print_string("iActTwo.eureakStoryScript : Waiting for the third way to pleadge pilots to the player cause, sleeping\n")
-			_pc = 24485
-			continue
-		elif _pc == 24485:
-			await _pog_wait(5.0)
-			_pc = 24432
-			continue
-		elif _pc == 24522:
+		if _arm3 <= 3:
+			while _pog_is_null(global.pog_bool("g_act2_third_way_provided_pilots")):
+				if PogRuntime.TRACE:
+					debug.print_string("iActTwo.eureakStoryScript : Waiting for the third way to pleadge pilots to the player cause, sleeping\n")
+				await _pog_wait(5.0)
 			state.destroy(_pog_current())
 			global.destroy("g_eureka_conversation_number")
 			global.set_bool("g_eureka_script_complete", 1)
-			_pc = 24649
-			continue
-		elif _pc == 24597:
-			v6 = state.progress(v1)
-			if not _pog_is_null(v6):
-				_pc = 24623
-				continue
-			else:
-				_pc = 22297
-				continue
-		elif _pc == 24623:
-			if 1 != v6:
-				_pc = 24631
-				continue
-			else:
-				_pc = 23075
-				continue
-		elif _pc == 24631:
-			if 2 != v6:
-				_pc = 24640
-				continue
-			else:
-				_pc = 24295
-				continue
-		elif _pc == 24640:
-			if 3 != v6:
-				_pc = 24649
-				continue
-			else:
-				_pc = 24432
-				continue
-		elif _pc == 24649:
-			_pc = 24675
-			continue
-		elif _pc == 24654:
-			debug.print_string("iAct2.Eurekascript: Exiting eureka task....\n")
-			_pc = 24675
-			continue
-		elif _pc == 24675:
-			return
-		else:
-			return 0
+			break
+	if PogRuntime.TRACE:
+		debug.print_string("iAct2.Eurekascript: Exiting eureka task....\n")
+	return
 	return 0
 
 func local_24677(v0) -> Variant:
@@ -1972,27 +1691,27 @@ func kompira_story_script() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.KompiraStoryScript : Commencing  Kompira story script\n")
 	while true:
-		var _sw3: Variant = state.progress(v1)
-		var _arm3: int = -1
-		if _pog_eq(_sw3, 0):
-			_arm3 = 0
-		elif _pog_eq(_sw3, 1):
-			_arm3 = 1
-		elif _pog_eq(_sw3, 2):
-			_arm3 = 2
-		elif _pog_eq(_sw3, 3):
-			_arm3 = 3
-		elif _pog_eq(_sw3, 4):
-			_arm3 = 4
-		elif _pog_eq(_sw3, 5):
-			_arm3 = 5
-		elif _pog_eq(_sw3, 6):
-			_arm3 = 6
-		elif _pog_eq(_sw3, 7):
-			_arm3 = 7
-		if _arm3 == -1:
+		var _sw4: Variant = state.progress(v1)
+		var _arm4: int = -1
+		if _pog_eq(_sw4, 0):
+			_arm4 = 0
+		elif _pog_eq(_sw4, 1):
+			_arm4 = 1
+		elif _pog_eq(_sw4, 2):
+			_arm4 = 2
+		elif _pog_eq(_sw4, 3):
+			_arm4 = 3
+		elif _pog_eq(_sw4, 4):
+			_arm4 = 4
+		elif _pog_eq(_sw4, 5):
+			_arm4 = 5
+		elif _pog_eq(_sw4, 6):
+			_arm4 = 6
+		elif _pog_eq(_sw4, 7):
+			_arm4 = 7
+		if _arm4 == -1:
 			break
-		if _arm3 <= 0:
+		if _arm4 <= 0:
 			await isystemcutscene.kompira()
 			while true:
 				await _pog_wait(1.0)
@@ -2003,7 +1722,7 @@ func kompira_story_script() -> Variant:
 			await iconversation.say(0, "name_cal", "a2_master_dialogue_cal_ever_thought_of_a_career_as_a_travel_guide")
 			await iconversation.end()
 			state.set_progress(v1, 1)
-		if _arm3 <= 1:
+		if _arm4 <= 1:
 			while true:
 				if not (v3):
 					if sim.distance_between(v4, ihabitat.nearest(v5, v4)) < 300000.0:
@@ -2113,7 +1832,7 @@ func kompira_story_script() -> Variant:
 				if not (sim.distance_between(v4, v13) > 100000.0):
 					break
 			state.set_progress(v1, 2)
-		if _arm3 <= 2:
+		if _arm4 <= 2:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.KompiraStoryScript : waiting for the player to approach Daru el-Salam\n")
@@ -2124,7 +1843,7 @@ func kompira_story_script() -> Variant:
 			await iconversation.say(v13, "", "a2_master_dialogue_main_oman_welcome_to_daru_el_salam")
 			await iconversation.end()
 			state.set_progress(v1, 3)
-		if _arm3 <= 3:
+		if _arm4 <= 3:
 			while not (v10):
 				if not (isim.is_docked_to_structure(v4, v13)):
 					if PogRuntime.TRACE:
@@ -2184,7 +1903,7 @@ func kompira_story_script() -> Variant:
 								await _pog_wait(5.0)
 			await iact2mission02.main()
 			state.set_progress(v1, 4)
-		if _arm3 <= 4:
+		if _arm4 <= 4:
 			while _pog_is_null(global.pog_bool("g_act2_oman_initiation_complete")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.KompiraStoryScript : waiting for the player to finish act 02 mission 02 -meet the oman, sleeping.\n")
@@ -2214,7 +1933,7 @@ func kompira_story_script() -> Variant:
 				await igmtracker.set_g_m_range(20, 23)
 				global.create_bool("g_added_gm_batch_8", 1, 1)
 			state.set_progress(v1, 5)
-		if _arm3 <= 5:
+		if _arm4 <= 5:
 			v16 = _pog_spawn(local_24677.bind(1))
 			while true:
 				if PogRuntime.TRACE:
@@ -2223,7 +1942,7 @@ func kompira_story_script() -> Variant:
 				if not (_pog_is_null(global.pog_bool("g_act2_need_pilots"))):
 					break
 			state.set_progress(v1, 6)
-		if _arm3 <= 6:
+		if _arm4 <= 6:
 			if _pog_is_null(v16):
 				v16 = _pog_spawn(local_24677.bind(2))
 			else:
@@ -2236,7 +1955,7 @@ func kompira_story_script() -> Variant:
 				if not (_pog_is_null(global.pog_bool("g_oman_provided_pilots"))):
 					break
 			state.set_progress(v1, 7)
-		if _arm3 <= 7:
+		if _arm4 <= 7:
 			if _pog_is_null(v16):
 				v16 = _pog_spawn(local_24677.bind(3))
 			else:
@@ -2457,21 +2176,21 @@ func firefrost_story_script() -> Variant:
 		debug.print_string("iActTwo.FirefrostStoryScript : Commencing  Firefrost story script\n")
 	_pog_spawn(firefrost_conversations.bind())
 	while true:
-		var _sw4: Variant = state.progress(v1)
-		var _arm4: int = -1
-		if _pog_eq(_sw4, 0):
-			_arm4 = 0
-		elif _pog_eq(_sw4, 1):
-			_arm4 = 1
-		elif _pog_eq(_sw4, 2):
-			_arm4 = 2
-		elif _pog_eq(_sw4, 3):
-			_arm4 = 3
-		elif _pog_eq(_sw4, 4):
-			_arm4 = 4
-		if _arm4 == -1:
+		var _sw5: Variant = state.progress(v1)
+		var _arm5: int = -1
+		if _pog_eq(_sw5, 0):
+			_arm5 = 0
+		elif _pog_eq(_sw5, 1):
+			_arm5 = 1
+		elif _pog_eq(_sw5, 2):
+			_arm5 = 2
+		elif _pog_eq(_sw5, 3):
+			_arm5 = 3
+		elif _pog_eq(_sw5, 4):
+			_arm5 = 4
+		if _arm5 == -1:
 			break
-		if _arm4 <= 0:
+		if _arm5 <= 0:
 			if PogRuntime.TRACE:
 				debug.print_string("iActTwo.FirefrostStoryScript : initialising firefrost intro cut scene\n")
 			if global.pog_bool("g_skip_to_specific") != 1:
@@ -2495,16 +2214,16 @@ func firefrost_story_script() -> Variant:
 			await iconversation.end()
 			iobjectives.add("a2_master_objectives_firefrost1")
 			state.set_progress(v1, 1)
-		if _arm4 <= 1:
+		if _arm5 <= 1:
 			state.set_progress(v1, 2)
-		if _arm4 <= 2:
+		if _arm5 <= 2:
 			while _pog_is_null(global.pog_bool("g_act2_high_noon_offered")) and global.pog_bool("g_skip_to_specific") != 1:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.FirefrostStoryScript : waiting for player to accept ranch mission from firefrost sherrif, sleeping\n")
 				await _pog_wait(10.0)
 			await iact2mission04.main()
 			state.set_progress(v1, 3)
-		if _arm4 <= 3:
+		if _arm5 <= 3:
 			while _pog_is_null(global.pog_bool("g_act2_firefrost_high_noon_complete")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.FirefrostStoryScript : watinig for the player to finish act 02 mission 04 - high noon, sleeping \n")
@@ -2516,7 +2235,7 @@ func firefrost_story_script() -> Variant:
 			await igangsterincidentgen.set_delay_check(40.0)
 			_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
 			state.set_progress(v1, 4)
-		if _arm4 <= 4:
+		if _arm5 <= 4:
 			while _pog_is_null(global.pog_bool("g_act2_need_pilots")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.FirefrostStoryScript : waiting until the MCA need pilots, sleeping\n")
@@ -2559,15 +2278,15 @@ func coyote_story_script() -> Variant:
 		object.add_bool_property(v1, "ran_jackson_encounter", 1)
 		_pog_detach(_pog_spawn(jackson_encounter_setup.bind()))
 	while true:
-		var _sw5: Variant = state.progress(v1)
-		var _arm5: int = -1
-		if _pog_eq(_sw5, 0):
-			_arm5 = 0
-		elif _pog_eq(_sw5, 1):
-			_arm5 = 1
-		if _arm5 == -1:
+		var _sw6: Variant = state.progress(v1)
+		var _arm6: int = -1
+		if _pog_eq(_sw6, 0):
+			_arm6 = 0
+		elif _pog_eq(_sw6, 1):
+			_arm6 = 1
+		if _arm6 == -1:
 			break
-		if _arm5 <= 0:
+		if _arm6 <= 0:
 			while _pog_is_null(global.pog_bool("g_act2_league_plea")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.CoyoteStoryScript : wating for the player to be sent to get help by league...Sleeping.\n")
@@ -2597,7 +2316,7 @@ func coyote_story_script() -> Variant:
 					if not (idirector.is_busy()):
 						break
 			state.set_progress(v1, 1)
-		if _arm5 <= 1:
+		if _arm6 <= 1:
 			if global.pog_bool("g_act2_referred_to_hoffer") == 1:
 				iobjectives.add("a2_master_objectives_talk_jackson")
 			while true:
@@ -2768,15 +2487,15 @@ func dagda_story_script() -> Variant:
 		isim.set_indestructable(v11, 1)
 		_pog_spawn(local_39403.bind(v10, v11, v13, v1))
 	while true:
-		var _sw6: Variant = state.progress(v1)
-		var _arm6: int = -1
-		if _pog_eq(_sw6, 0):
-			_arm6 = 0
-		elif _pog_eq(_sw6, 1):
-			_arm6 = 1
-		if _arm6 == -1:
+		var _sw7: Variant = state.progress(v1)
+		var _arm7: int = -1
+		if _pog_eq(_sw7, 0):
+			_arm7 = 0
+		elif _pog_eq(_sw7, 1):
+			_arm7 = 1
+		if _arm7 == -1:
 			break
-		if _arm6 <= 0:
+		if _arm7 <= 0:
 			if _pog_is_null(global.exists("g_running_corporate_holdings")):
 				await isystemcutscene.dagda()
 				while true:
@@ -2787,7 +2506,7 @@ func dagda_story_script() -> Variant:
 				await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_c1_dagda_wooa")
 				await iconversation.end()
 				state.set_progress(v1, 1)
-		if _arm6 <= 1:
+		if _arm7 <= 1:
 			if PogRuntime.TRACE:
 				debug.print_string("iActTwo.DagdaStoryScript : commencing the Dagda traffic control loop\n")
 			if sim.distance_between(v9, v7) < 15000.0:
@@ -2867,26 +2586,26 @@ func santa_romera_story_script() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iActTwo.SantaRomeraStoryScript - Commencing Santa Romera Story Script.\n")
 	while true:
-		var _sw7: Variant = state.progress(v1)
-		var _arm7: int = -1
-		if _pog_eq(_sw7, 0):
-			_arm7 = 0
-		elif _pog_eq(_sw7, 1):
-			_arm7 = 1
-		elif _pog_eq(_sw7, 2):
-			_arm7 = 2
-		elif _pog_eq(_sw7, 3):
-			_arm7 = 3
-		if _arm7 == -1:
+		var _sw8: Variant = state.progress(v1)
+		var _arm8: int = -1
+		if _pog_eq(_sw8, 0):
+			_arm8 = 0
+		elif _pog_eq(_sw8, 1):
+			_arm8 = 1
+		elif _pog_eq(_sw8, 2):
+			_arm8 = 2
+		elif _pog_eq(_sw8, 3):
+			_arm8 = 3
+		if _arm8 == -1:
 			break
-		if _arm7 <= 0:
+		if _arm8 <= 0:
 			_pog_spawn(accelerator_cut_scene_monitor.bind())
 			await iconversation.begin()
 			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_this_is_santa_romera")
 			await iconversation.end()
 			_pog_spawn(ritz_intro_monitor.bind())
 			state.set_progress(v1, 1)
-		if _arm7 <= 1:
+		if _arm8 <= 1:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iAct2SantaRomeraStoryScript : Waiting for the player to visit the Ritz, sleeping for 30 seconds. \n")
@@ -2910,7 +2629,7 @@ func santa_romera_story_script() -> Variant:
 				if PogRuntime.TRACE:
 					debug.print_string("Not starting blockade runner twice\n")
 			state.set_progress(v1, 2)
-		if _arm7 <= 2:
+		if _arm8 <= 2:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iAct2SantaRomeraStoryScript : wating for the player to complete a blocakde run to Mwari. sleeping for 30 seconds\n")
@@ -2918,7 +2637,7 @@ func santa_romera_story_script() -> Variant:
 				if not (_pog_is_null(global.pog_bool("g_act2_completed_blockade_run"))):
 					break
 			state.set_progress(v1, 3)
-		if _arm7 <= 3:
+		if _arm8 <= 3:
 			state.destroy(_pog_current())
 			global.set_bool("g_santaromera_script_complete", 1)
 			if _pog_is_null(iemail.find("html:/text/act_2/act2_mission10_email")):
@@ -2941,23 +2660,23 @@ func mwari_blockade_events() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iChapterOne.MwariBlockadeEvents - Commencing Mwari Story Sequence.\n")
 	while true:
-		var _sw8: Variant = state.progress(v1)
-		var _arm8: int = -1
-		if _pog_eq(_sw8, 0):
-			_arm8 = 0
-		elif _pog_eq(_sw8, 2):
-			_arm8 = 1
-		elif _pog_eq(_sw8, 3):
-			_arm8 = 2
-		if _arm8 == -1:
+		var _sw9: Variant = state.progress(v1)
+		var _arm9: int = -1
+		if _pog_eq(_sw9, 0):
+			_arm9 = 0
+		elif _pog_eq(_sw9, 2):
+			_arm9 = 1
+		elif _pog_eq(_sw9, 3):
+			_arm9 = 2
+		if _arm9 == -1:
 			break
-		if _arm8 <= 0:
+		if _arm9 <= 0:
 			while _pog_is_null(global.pog_bool("g_act2_received_selling_secrets_intro")) and global.pog_bool("g_skip_to_specific") != 1:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MwariBlockadeEvents : Waiting for player to receive mail on someone selling mca secrets, sleeping\n")
 				await _pog_wait(10.0)
 			state.set_progress(v1, 2)
-		if _arm8 <= 1:
+		if _arm9 <= 1:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MwariBlockadeEvents : waititng for the player to complete act 02 mission 18 - momma wolf, sleeping\n")
@@ -2966,7 +2685,7 @@ func mwari_blockade_events() -> Variant:
 					break
 			await iact2mission08.main()
 			state.set_progress(v1, 3)
-		if _arm8 <= 2:
+		if _arm9 <= 2:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MwariBlockadeEvents : waiting for the player to finish act 2 mission 08 - corporate holdings. sleeping\n")
@@ -3009,17 +2728,17 @@ func mwari_story_script() -> Variant:
 	await igangsterincidentgen.set_delay_check(40.0)
 	await istation.add_reactive_exception(ihabitat.cast(v2))
 	while true:
-		var _sw9: Variant = state.progress(v1)
-		var _arm9: int = -1
-		if _pog_eq(_sw9, 0):
-			_arm9 = 0
-		elif _pog_eq(_sw9, 1):
-			_arm9 = 1
-		if _arm9 == -1:
+		var _sw10: Variant = state.progress(v1)
+		var _arm10: int = -1
+		if _pog_eq(_sw10, 0):
+			_arm10 = 0
+		elif _pog_eq(_sw10, 1):
+			_arm10 = 1
+		if _arm10 == -1:
 			break
-		if _arm9 <= 0:
+		if _arm10 <= 0:
 			state.set_progress(v1, 1)
-		if _arm9 <= 1:
+		if _arm10 <= 1:
 			if global.pog_bool("g_skip_to_specific") != 1:
 				while true:
 					if sim.distance_between(v3, v2) < 10000.0:
@@ -3115,17 +2834,17 @@ func marauder_hunt_story_script() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iChapterOne.MarauderHuntStorySequence - Commencing Maruader Hunt Story Sequence.\n")
 	while true:
-		var _sw10: Variant = state.progress(v2)
-		var _arm10: int = -1
-		if _pog_eq(_sw10, 0):
-			_arm10 = 0
-		elif _pog_eq(_sw10, 1):
-			_arm10 = 1
-		elif _pog_eq(_sw10, 2):
-			_arm10 = 2
-		if _arm10 == -1:
+		var _sw11: Variant = state.progress(v2)
+		var _arm11: int = -1
+		if _pog_eq(_sw11, 0):
+			_arm11 = 0
+		elif _pog_eq(_sw11, 1):
+			_arm11 = 1
+		elif _pog_eq(_sw11, 2):
+			_arm11 = 2
+		if _arm11 == -1:
 			break
-		if _arm10 <= 0:
+		if _arm11 <= 0:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MarauderHuntStorySequence : Waiting for the player to capture a marauder encryption device, sleeping\n")
@@ -3134,7 +2853,7 @@ func marauder_hunt_story_script() -> Variant:
 					break
 			await iutilities.send_story_element("g_story_2.231", 2, 0)
 			state.set_progress(v2, 1)
-		if _arm10 <= 1:
+		if _arm11 <= 1:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MarauderHuntStorySequence : waiting for boffins to recieve the stuff from smith...\n")
@@ -3151,7 +2870,7 @@ func marauder_hunt_story_script() -> Variant:
 						break
 			await iutilities.send_story_element("g_story_2.230", 2, 0)
 			state.set_progress(v2, 2)
-		if _arm10 <= 2:
+		if _arm11 <= 2:
 			while _pog_is_null(global.pog_bool("g_act2_allies_crack_code")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MarauderHuntStorySequence : Waiting for player to receive story sequence 2.230, sleeping\n")
@@ -3292,33 +3011,33 @@ func mwari_wars_story_script() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iChapterOne.MwariWarsStoryScript : script has started.\n")
 	while true:
-		var _sw11: Variant = state.progress(v1)
-		var _arm11: int = -1
-		if _pog_eq(_sw11, 0):
-			_arm11 = 0
-		elif _pog_eq(_sw11, 1):
-			_arm11 = 1
-		elif _pog_eq(_sw11, 2):
-			_arm11 = 2
-		elif _pog_eq(_sw11, 3):
-			_arm11 = 3
-		elif _pog_eq(_sw11, 4):
-			_arm11 = 4
-		elif _pog_eq(_sw11, 5):
-			_arm11 = 5
-		if _arm11 == -1:
+		var _sw12: Variant = state.progress(v1)
+		var _arm12: int = -1
+		if _pog_eq(_sw12, 0):
+			_arm12 = 0
+		elif _pog_eq(_sw12, 1):
+			_arm12 = 1
+		elif _pog_eq(_sw12, 2):
+			_arm12 = 2
+		elif _pog_eq(_sw12, 3):
+			_arm12 = 3
+		elif _pog_eq(_sw12, 4):
+			_arm12 = 4
+		elif _pog_eq(_sw12, 5):
+			_arm12 = 5
+		if _arm12 == -1:
 			break
-		if _arm11 <= 0:
+		if _arm12 <= 0:
 			await iutilities.send_story_element("g_story_2.160", 2, 0)
 			state.set_progress(v1, 1)
-		if _arm11 <= 1:
+		if _arm12 <= 1:
 			while _pog_is_null(global.pog_bool("g_act2_eureka_visited")) and idirector.is_busy():
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MwariWarsStoryScript :  waiting for the player to visit the eureka system for the first time, sleeping\n")
 				await _pog_wait(10.0)
 			await iact2mission03.main()
 			state.set_progress(v1, 2)
-		if _arm11 <= 2:
+		if _arm12 <= 2:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MwariWarsStoryScript : watinig for the player to complete act 2 mission 03 - trouble at the ranch, sleeping\n")
@@ -3328,7 +3047,7 @@ func mwari_wars_story_script() -> Variant:
 			await iutilities.send_story_element("g_story_2.150", 2, 0)
 			await local_11088(0)
 			state.set_progress(v1, 3)
-		if _arm11 <= 3:
+		if _arm12 <= 3:
 			if _pog_is_null(global.pog_bool("g_act2_reached_pilot_total")):
 				iobjectives.add("a2_master_objectives_find_pilots")
 			while true:
@@ -3353,14 +3072,14 @@ func mwari_wars_story_script() -> Variant:
 					break
 			await iutilities.send_story_element("g_story_2.290", 2, 0)
 			state.set_progress(v1, 4)
-		if _arm11 <= 4:
+		if _arm12 <= 4:
 			while _pog_is_null(global.pog_bool("g_act2_ready_for_battle_of_mwari")) and global.pog_bool("g_skip_to_specific") != 1:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MwariWarsStoryscript : waititng for the player to recive batle of mwari call to arms\n")
 				await _pog_wait(10.0)
 			await iact2mission20.main()
 			state.set_progress(v1, 5)
-		if _arm11 <= 5:
+		if _arm12 <= 5:
 			while _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MwariWarsStoryScript : Waititng for the player to complete the battle of Mwari, sleeping\n")
@@ -3573,278 +3292,84 @@ func allied_search_encounters() -> Variant:
 	var v6: Variant = 0
 	var v7: Variant = 0
 	var v8: Variant = 0
-	var _pc: int = 53819
-	while true:
-		if _pc == 53819:
-			v0 = _pog_current()
-			v1 = state.find(v0)
-			v3 = 0
-			v4 = iship.find_player_ship()
-			v5 = 0
-			v6 = 0
-			if not (v1):
-				_pc = 53918
-				continue
-			else:
-				_pc = 53943
-				continue
-		elif _pc == 53918:
-			v1 = state.create(v0, 0)
-			_pc = 53943
-			continue
-		elif _pc == 53943:
-			_pc = 55515
-			continue
-		elif _pc == 53948:
+	v0 = _pog_current()
+	v1 = state.find(v0)
+	v3 = 0
+	v4 = iship.find_player_ship()
+	v5 = 0
+	v6 = 0
+	if not (v1):
+		v1 = state.create(v0, 0)
+	v8 = state.progress(v1)
+	if _pog_is_null(v8):
+		while true:
 			await _pog_wait(300 + math.random_int(300, 1000))
 			if not _pog_eq(isim.active_world(), "map:/geog/badlands/firefrost") and not _pog_eq(isim.active_world(), "map:/geog/badlands/dante") and not _pog_eq(isim.active_world(), "map:/geog/badlands/mwari"):
-				_pc = 54073
-				continue
-			else:
-				_pc = 55456
-				continue
-		elif _pc == 54073:
-			_pc = 54099
-			continue
-		elif _pc == 54078:
-			debug.print_string("iAct2.AlliedSearchEncounters : generating an encounter with a league patrol searching for a Marauder Base\n")
-			_pc = 54099
-			continue
-		elif _pc == 54099:
-			v2 = await local_9581()
-			iai.give_approach_order(v2, v4)
-			_pc = 54142
-			continue
-		elif _pc == 54142:
-			if sim.distance_between(group.leader(v2), v4) > 2000000.0:
-				_pc = 54189
-				continue
-			else:
-				_pc = 54261
-				continue
-		elif _pc == 54189:
-			_pc = 54215
-			continue
-		elif _pc == 54194:
-			debug.print_string("iActTwo.AlliedSearchEncounters : player has left the allied encounter far behind, killing the ships\n")
-			_pc = 54215
-			continue
-		elif _pc == 54215:
-			v3 = 1
-			group.destroy(v2, 1)
-			v5 = 0
-			v6 = 0
-			_pc = 55445
-			continue
-		elif _pc == 54261:
-			if sim.distance_between(group.leader(v2), v4) < 50000.0 and not (v5):
-				_pc = 54315
-				continue
-			else:
-				_pc = 54428
-				continue
-		elif _pc == 54315:
-			await iconversation.begin()
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_wassup_cal")
-			await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_looks_like_one_of_our_patrols")
-			await iconversation.end()
-			v5 = 1
-			_pc = 55445
-			continue
-		elif _pc == 54428:
-			if iai.is_order_complete(group.leader(v2)) and not (v6):
-				_pc = 54471
-				continue
-			else:
-				_pc = 55387
-				continue
-		elif _pc == 54471:
-			await iconversation.begin()
-			await iconversation.add_response("a2_master_option_cal_any_sign_of_the_marauders", "a2_master_option_cal_any_sign_of_the_marauders")
-			await iconversation.add_response("a2_master_dialogue_cal_hows_things", "a2_master_dialogue_cal_hows_things")
-			v7 = await iconversation.ask(group.leader(v2), "", "a2_master_dialogue_league_patrol_didnt_expect_to_see_you_around_these_parts_cal")
-			if v7 == 1:
-				_pc = 54601
-				continue
-			else:
-				_pc = 54867
-				continue
-		elif _pc == 54601:
-			_pc = 54811
-			continue
-		elif _pc == 54606:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_not_a_sasuage_had_a_few_run_ins_with_their_patols")
-			_pc = 54862
-			continue
-		elif _pc == 54656:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_weve_turned_this_system_upside_down")
-			_pc = 54862
-			continue
-		elif _pc == 54706:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_ninety_nine_percent_sure_that_there_ait_no_marauder_base_here")
-			_pc = 54862
-			continue
-		elif _pc == 54756:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_reackon_theres_no_marauder_bases")
-			_pc = 54862
-			continue
-		elif _pc == 54806:
-			_pc = 54862
-			continue
-		elif _pc == 54811:
-			v8 = math.random_int(1, 4)
-			if 1 != v8:
-				_pc = 54835
-				continue
-			else:
-				_pc = 54606
-				continue
-		elif _pc == 54835:
-			if 2 != v8:
-				_pc = 54844
-				continue
-			else:
-				_pc = 54656
-				continue
-		elif _pc == 54844:
-			if 3 != v8:
-				_pc = 54853
-				continue
-			else:
-				_pc = 54706
-				continue
-		elif _pc == 54853:
-			if 4 != v8:
-				_pc = 54862
-				continue
-			else:
-				_pc = 54756
-				continue
-		elif _pc == 54862:
-			_pc = 55246
-			continue
-		elif _pc == 54867:
-			_pc = 55177
-			continue
-		elif _pc == 54872:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_oh_yknow_could_be_better")
-			_pc = 55246
-			continue
-		elif _pc == 54922:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_things_would_be_a_whole_lot_better")
-			_pc = 55246
-			continue
-		elif _pc == 54972:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_pretty_good_we_whooped_a_marauder_patrol")
-			_pc = 55246
-			continue
-		elif _pc == 55022:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_looking_up_now_we_got_the_marauders_on_the_run")
-			_pc = 55246
-			continue
-		elif _pc == 55072:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_things_are_good_cal_and_would_be_better_of_we_could_find_that_damn_marauder_base")
-			_pc = 55246
-			continue
-		elif _pc == 55122:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_dont_ask")
-			_pc = 55246
-			continue
-		elif _pc == 55172:
-			_pc = 55246
-			continue
-		elif _pc == 55177:
-			v8 = math.random_int(1, 6)
-			if 1 != v8:
-				_pc = 55201
-				continue
-			else:
-				_pc = 54872
-				continue
-		elif _pc == 55201:
-			if 2 != v8:
-				_pc = 55210
-				continue
-			else:
-				_pc = 54922
-				continue
-		elif _pc == 55210:
-			if 3 != v8:
-				_pc = 55219
-				continue
-			else:
-				_pc = 54972
-				continue
-		elif _pc == 55219:
-			if 4 != v8:
-				_pc = 55228
-				continue
-			else:
-				_pc = 55022
-				continue
-		elif _pc == 55228:
-			if 5 != v8:
-				_pc = 55237
-				continue
-			else:
-				_pc = 55072
-				continue
-		elif _pc == 55237:
-			if 6 != v8:
-				_pc = 55246
-				continue
-			else:
-				_pc = 55122
-				continue
-		elif _pc == 55246:
-			await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_gotta_fly_weve_got_a_few_more_places_to_search")
-			await iconversation.end()
-			v6 = 1
-			await iescort.goose(v2, 60.0, 8000.0, 1)
-			_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v2, _pog_clone("Random"))))
-			_pc = 55445
-			continue
-		elif _pc == 55387:
-			_pc = 55413
-			continue
-		elif _pc == 55392:
-			debug.print_string("iActTwo.AlliedSearchEncounters : Allied patrol are attempting to approach the playr, but nothing interesting is happening, sleeping\n")
-			_pc = 55413
-			continue
-		elif _pc == 55413:
-			await _pog_wait(2.0)
-			_pc = 55445
-			continue
-		elif _pc == 55445:
-			if v3:
-				_pc = 55456
-				continue
-			else:
-				_pc = 54142
-				continue
-		elif _pc == 55456:
-			if not _pog_is_null(global.pog_bool("g_act2_wolfs_lair_complete")):
-				_pc = 55483
-				continue
-			else:
-				_pc = 53948
-				continue
-		elif _pc == 55483:
-			state.destroy(_pog_current())
-			_pc = 55541
-			continue
-		elif _pc == 55515:
-			v8 = state.progress(v1)
-			if not _pog_is_null(v8):
-				_pc = 55541
-				continue
-			else:
-				_pc = 53948
-				continue
-		elif _pc == 55541:
-			return
-		else:
-			return 0
+				if PogRuntime.TRACE:
+					debug.print_string("iAct2.AlliedSearchEncounters : generating an encounter with a league patrol searching for a Marauder Base\n")
+				v2 = await local_9581()
+				iai.give_approach_order(v2, v4)
+				while true:
+					if sim.distance_between(group.leader(v2), v4) > 2000000.0:
+						if PogRuntime.TRACE:
+							debug.print_string("iActTwo.AlliedSearchEncounters : player has left the allied encounter far behind, killing the ships\n")
+						v3 = 1
+						group.destroy(v2, 1)
+						v5 = 0
+						v6 = 0
+					else:
+						if sim.distance_between(group.leader(v2), v4) < 50000.0 and not (v5):
+							await iconversation.begin()
+							await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_wassup_cal")
+							await iconversation.say(0, "name_clay", "a2_master_dialogue_clay_looks_like_one_of_our_patrols")
+							await iconversation.end()
+							v5 = 1
+						else:
+							if iai.is_order_complete(group.leader(v2)) and not (v6):
+								await iconversation.begin()
+								await iconversation.add_response("a2_master_option_cal_any_sign_of_the_marauders", "a2_master_option_cal_any_sign_of_the_marauders")
+								await iconversation.add_response("a2_master_dialogue_cal_hows_things", "a2_master_dialogue_cal_hows_things")
+								v7 = await iconversation.ask(group.leader(v2), "", "a2_master_dialogue_league_patrol_didnt_expect_to_see_you_around_these_parts_cal")
+								if v7 == 1:
+									match math.random_int(1, 4):
+										1:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_not_a_sasuage_had_a_few_run_ins_with_their_patols")
+										2:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_weve_turned_this_system_upside_down")
+										3:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_ninety_nine_percent_sure_that_there_ait_no_marauder_base_here")
+										4:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_reackon_theres_no_marauder_bases")
+								else:
+									match math.random_int(1, 6):
+										1:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_oh_yknow_could_be_better")
+										2:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_things_would_be_a_whole_lot_better")
+										3:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_pretty_good_we_whooped_a_marauder_patrol")
+										4:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_looking_up_now_we_got_the_marauders_on_the_run")
+										5:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_things_are_good_cal_and_would_be_better_of_we_could_find_that_damn_marauder_base")
+										6:
+											await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_dont_ask")
+								await iconversation.say(group.leader(v2), "", "a2_master_dialogue_league_patrol_gotta_fly_weve_got_a_few_more_places_to_search")
+								await iconversation.end()
+								v6 = 1
+								await iescort.goose(v2, 60.0, 8000.0, 1)
+								_pog_detach(_pog_spawn(iscriptedorders.lagrange_handler.bind(v2, _pog_clone("Random"))))
+							else:
+								if PogRuntime.TRACE:
+									debug.print_string("iActTwo.AlliedSearchEncounters : Allied patrol are attempting to approach the playr, but nothing interesting is happening, sleeping\n")
+								await _pog_wait(2.0)
+					if not (not (v3)):
+						break
+			if not (_pog_is_null(global.pog_bool("g_act2_wolfs_lair_complete"))):
+				break
+		state.destroy(_pog_current())
+		return
+	return v8
 	return 0
 
 func master_script() -> Variant:
@@ -3949,48 +3474,48 @@ func master_script() -> Variant:
 	if PogRuntime.TRACE:
 		debug.print_string("iChapterOne.PiracyRatingTracker - Commencing Act Two Chapter Script.\n")
 	while true:
-		var _sw12: Variant = state.progress(v1)
-		var _arm12: int = -1
-		if _pog_eq(_sw12, 0):
-			_arm12 = 0
-		elif _pog_eq(_sw12, 1):
-			_arm12 = 1
-		elif _pog_eq(_sw12, 3):
-			_arm12 = 2
-		elif _pog_eq(_sw12, 4):
-			_arm12 = 3
-		elif _pog_eq(_sw12, 5):
-			_arm12 = 4
-		elif _pog_eq(_sw12, 6):
-			_arm12 = 5
-		elif _pog_eq(_sw12, 7):
-			_arm12 = 6
-		elif _pog_eq(_sw12, 8):
-			_arm12 = 7
-		elif _pog_eq(_sw12, 11):
-			_arm12 = 8
-		elif _pog_eq(_sw12, 12):
-			_arm12 = 9
-		elif _pog_eq(_sw12, 14):
-			_arm12 = 10
-		elif _pog_eq(_sw12, 15):
-			_arm12 = 11
-		elif _pog_eq(_sw12, 16):
-			_arm12 = 12
-		elif _pog_eq(_sw12, 17):
-			_arm12 = 13
-		elif _pog_eq(_sw12, 18):
-			_arm12 = 14
-		elif _pog_eq(_sw12, 19):
-			_arm12 = 15
-		elif _pog_eq(_sw12, 20):
-			_arm12 = 16
-		if _arm12 == -1:
+		var _sw13: Variant = state.progress(v1)
+		var _arm13: int = -1
+		if _pog_eq(_sw13, 0):
+			_arm13 = 0
+		elif _pog_eq(_sw13, 1):
+			_arm13 = 1
+		elif _pog_eq(_sw13, 3):
+			_arm13 = 2
+		elif _pog_eq(_sw13, 4):
+			_arm13 = 3
+		elif _pog_eq(_sw13, 5):
+			_arm13 = 4
+		elif _pog_eq(_sw13, 6):
+			_arm13 = 5
+		elif _pog_eq(_sw13, 7):
+			_arm13 = 6
+		elif _pog_eq(_sw13, 8):
+			_arm13 = 7
+		elif _pog_eq(_sw13, 11):
+			_arm13 = 8
+		elif _pog_eq(_sw13, 12):
+			_arm13 = 9
+		elif _pog_eq(_sw13, 14):
+			_arm13 = 10
+		elif _pog_eq(_sw13, 15):
+			_arm13 = 11
+		elif _pog_eq(_sw13, 16):
+			_arm13 = 12
+		elif _pog_eq(_sw13, 17):
+			_arm13 = 13
+		elif _pog_eq(_sw13, 18):
+			_arm13 = 14
+		elif _pog_eq(_sw13, 19):
+			_arm13 = 15
+		elif _pog_eq(_sw13, 20):
+			_arm13 = 16
+		if _arm13 == -1:
 			break
-		if _arm12 <= 0:
+		if _arm13 <= 0:
 			await iact2mission01.main()
 			state.set_progress(v1, 1)
-		if _arm12 <= 1:
+		if _arm13 <= 1:
 			while true:
 				await _pog_wait(2)
 				if global.pog_bool("g_act2_survivors_rescued") == 1:
@@ -4005,7 +3530,7 @@ func master_script() -> Variant:
 			iobjectives.add("a2_master_objectives_look_help")
 			global.set_int("g_story_2.10", 1)
 			state.set_progress(v1, 3)
-		if _arm12 <= 2:
+		if _arm13 <= 2:
 			while _pog_is_null(global.pog_bool("g_act2_ambassador_rescued")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript - Waiting for the player to complete act 02 mission 07 - the ambassador, sleeping\n")
@@ -4016,14 +3541,14 @@ func master_script() -> Variant:
 			await iact2mission11.main()
 			await iutilities.send_story_element("g_story_2.190", 2, 0)
 			state.set_progress(v1, 4)
-		if _arm12 <= 3:
+		if _arm13 <= 3:
 			while _pog_is_null(global.pog_bool("g_act2_unification_complete")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : waiting for the player to complete act 2 mission 11 - unification, sleeping\n")
 				await _pog_wait(2.0)
 			await iact2mission13.main()
 			state.set_progress(v1, 5)
-		if _arm12 <= 4:
+		if _arm13 <= 4:
 			while _pog_is_null(global.pog_bool("g_act2_kong_fracture_complete")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : Waiting for the player to complete act 2 mission 13 - The kong Fracture, Sleeping\n")
@@ -4040,12 +3565,12 @@ func master_script() -> Variant:
 			await igangsterincidentgen.set_delay_check(37.0)
 			_pog_detach(_pog_spawn(igangsterincidentgen.gangster_war_generator.bind()))
 			state.set_progress(v1, 6)
-		if _arm12 <= 5:
+		if _arm13 <= 5:
 			await iutilities.send_story_element("g_story_2.210", 2, 0)
 			await iutilities.send_story_element("g_story_2.180", 2, 0)
 			_pog_spawn(hoffer_reveal_monitor.bind())
 			state.set_progress(v1, 7)
-		if _arm12 <= 6:
+		if _arm13 <= 6:
 			if global.pog_bool("g_skip_to_specific") != 1:
 				while true:
 					if PogRuntime.TRACE:
@@ -4064,7 +3589,7 @@ func master_script() -> Variant:
 			iai.clear_autopilot()
 			global.set_bool("g_act2_base_has_moved", 1)
 			state.set_progress(v1, 8)
-		if _arm12 <= 7:
+		if _arm13 <= 7:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : waiting for the player base to be moved to anta Romera, Sleeping\n")
@@ -4072,10 +3597,10 @@ func master_script() -> Variant:
 				if not (_pog_is_null(global.pog_bool("g_act2_base_has_moved"))):
 					break
 			state.set_progress(v1, 11)
-		if _arm12 <= 8:
+		if _arm13 <= 8:
 			await iact2mission18.main()
 			state.set_progress(v1, 12)
-		if _arm12 <= 9:
+		if _arm13 <= 9:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : waiting for player to complete act 02 mission 18 - momma wolf, sleeping\n")
@@ -4087,14 +3612,14 @@ func master_script() -> Variant:
 			await iutilities.send_story_element("g_story_2.260", 2, 0)
 			await iutilities.send_story_element("g_story_2.280", 2, 0)
 			state.set_progress(v1, 14)
-		if _arm12 <= 10:
+		if _arm13 <= 10:
 			while _pog_is_null(global.pog_bool("g_act2_got_hyperspace_tracker")):
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : Waiting for the player to get his hands on the hyperspace tracker\n")
 				await _pog_wait(2.0)
 			await iact2mission22.main()
 			state.set_progress(v1, 15)
-		if _arm12 <= 11:
+		if _arm13 <= 11:
 			await igangsterincidentgen.set_active(1)
 			await igangsterincidentgen.set_faction(17)
 			await igangsterincidentgen.set_number_of_vessel_attackers_var(4)
@@ -4113,14 +3638,14 @@ func master_script() -> Variant:
 			await igangsterincidentgen.set_number_of_station_attackers_var(6)
 			await igangsterincidentgen.set_delay_check(45.0)
 			state.set_progress(v1, 16)
-		if _arm12 <= 12:
+		if _arm13 <= 12:
 			while true:
 				await _pog_wait(1.0)
 				if not (not (global.exists("g_revealed_hoffer"))):
 					break
 			await iutilities.send_story_element("g_story_2.320", 2, 0)
 			state.set_progress(v1, 17)
-		if _arm12 <= 13:
+		if _arm13 <= 13:
 			if global.pog_bool("g_skip_to_specific") == 1:
 				_pog_spawn(firefrost_story_script.bind())
 				_pog_spawn(santa_romera_story_script.bind())
@@ -4137,7 +3662,7 @@ func master_script() -> Variant:
 				object.remove_property(v1, "a2_m24_waiter")
 			await iact2mission24.main()
 			state.set_progress(v1, 18)
-		if _arm12 <= 14:
+		if _arm13 <= 14:
 			while true:
 				if PogRuntime.TRACE:
 					debug.print_string("iActTwo.MasterScript : Waiting for player to complete act 2 mission 24 - Hide And Seek.\n")
@@ -4150,7 +3675,7 @@ func master_script() -> Variant:
 					if not (1):
 						break
 			state.set_progress(v1, 19)
-		if _arm12 <= 15:
+		if _arm13 <= 15:
 			if _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")) and _pog_is_null(iemail.find("html:/text/act_2/act2_master_hoffermail_mwari")):
 				iemail.send_email("a2_master_hoffer_mail_sender", "a2_m13_email_subject", "html:/text/act_2/act2_master_hoffermail_mwari", 1)
 			while _pog_is_null(global.pog_bool("g_act2_mwari_siege_lifted")):
@@ -4159,7 +3684,7 @@ func master_script() -> Variant:
 					debug.print_string("iActTwo.MasterScript : Waiting for the player complete clear seige in Mwari\n")
 			await iact2mission25.main()
 			state.set_progress(v1, 20)
-		if _arm12 <= 16:
+		if _arm13 <= 16:
 			while global.pog_bool("g_skip_to_specific") == 1:
 				await _pog_wait(1.0)
 			while _pog_is_null(global.pog_bool("g_act2_marauders_defeated")):
