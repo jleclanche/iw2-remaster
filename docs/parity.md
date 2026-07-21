@@ -43,13 +43,18 @@ and most of it is listed on this page.
    mechcheck player-beam-fitted/-select/-lowgate/-burst/-damage/-heat.
    Antimatter Streamer and the cutting beam route the same way when
    looted.
-4. **Campaign verification depth is the first mission of every act.**
-   `--campcheck --port` chains act 0 m10 (waypoint objective + iscore
-   checkpoint) -> act 1 m01 (fight won, change_iff) -> act 2 m01 (Haven
-   rescue staged, protect objective) -> act 3 m01 (rendezvous objective),
-   with the stub gate held across the whole run. Missions 2..N of each
-   act are still static analysis, not observation — deepening each act
-   mission-by-mission remains #4's open work. (M, incremental)
+4. **Campaign verification depth: first mission of every act, plus the
+   act 2 free-roam spine.** `--campcheck --port` chains act 0 m10
+   (waypoint objective + iscore checkpoint) -> act 1 m01 (fight won,
+   change_iff) -> act 2 m01 (Haven rescue staged, protect objective) ->
+   the Kompira leg: free-roam dispatch arms the story, the initiation
+   ladder runs (tour, Oman intercept, target/order pairing, Daru dock,
+   initiation Ask), the check leaves the system mid-ladder and re-enters
+   to prove state.Restore resumes it (#38), and m02 BOOTS -> act 3 m01
+   (rendezvous objective), with the stub gate held across the whole
+   run. Missions beyond that are still static analysis, not
+   observation — deepening each act mission-by-mission remains #4's
+   open work. (M, incremental)
 5. **Turret fighters never spawn.** `iship.CreateTurretFighters` is a
    stub and `istartsystem.finish_loadout` calls it on every system
    start, feeding `iwingmen.AddTFighters`. The icTurretShip hull is a
@@ -115,7 +120,7 @@ coverage audit. docs/coverage.md and several element_markers.gd lines
 | Full save → reload roundtrip; debug base dock | mechcheck `_ms_save_reload`, `_ms_debug_base` |
 | Base dock fly-in, interior, room tour, base screens raise, PDA save/load slot screens | `--basecheck` (asserted `_bc` steps + screenshots) |
 | New game end-to-end: front-end button → prelude POG boots → objects spawn → dialogue speaks | `--newgametest` / `--newgamecheck` (PASS/FAIL) |
-| Act 0 m10 waypoint objective + iscore checkpoint; act 1 m01 fight + change_iff; act 2 m01 rescue staging + protect; act 3 m01 rendezvous — chained in ONE run, stub gate held | `--campcheck --port` (act-boot chain, 2026-07-20); the legacy hand-authored driver still covers act 0 m10 under plain `--campcheck` |
+| Act 0 m10 waypoint objective + iscore checkpoint; act 1 m01 fight + change_iff; act 2 m01 rescue staging + protect; act 2 free roam: Kompira story armed, initiation ladder to m02 BOOT, with a leave/re-enter mid-ladder proving state.Restore (#38); act 3 m01 rendezvous — chained in ONE run, stub gate held | `--campcheck --port` (act-boot chain, 2026-07-21); the legacy hand-authored driver still covers act 0 m10 under plain `--campcheck` |
 | Stub-hit gate: every stub reached in a run is counted and held against a recorded per-mode baseline; a new stub hit FAILS the run (proven able to fail by plant) | `--newgamecheck [--port]`, `--campcheck` `_stub_gate` (#25) |
 | Capsule jump initiate → arrival | `--jumpcheck` |
 | All 114 ported packages compile and instantiate | pog/portcheck.gd |
