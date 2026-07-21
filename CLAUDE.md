@@ -77,8 +77,10 @@ fully stripped — assert with:
 - `docs/fields.md` — asteroid/debris fields. `docs/capsule.md` — jumps.
 - Also: combat.md, effects.md, controls.md, formats.md, geography.md,
   decompile.md, act3.md, lds.md, thrusters.md, campaign.md, hud_elements.md.
-- **Work queue: GitHub `jleclanche/iw2-remaster` issues #1–#14 (#14 = meta
-  roadmap).** New findings/gaps → file an issue, don't hoard them in chat.
+- **Work queue: the GitHub `jleclanche/iw2-remaster` issue tracker. Issues
+  are BOUNDED, with an explicit done-state each — no open-ended buckets;
+  act-by-act standing status lives in docs/parity.md instead.** New
+  findings/gaps → file a bounded issue, don't hoard them in chat.
 
 ## Code quality — for NEW code (aspirational, do not retrofit)
 
