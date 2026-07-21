@@ -303,6 +303,7 @@ func _try_dock() -> void:
 	docked_at = near["name"]
 	ship.velocity = Vector3.ZERO
 	ship.set_speed = 0.0
+	_settle_on_dockport(near)
 	audio.play("audio/sfx/dock.wav", -4.0)
 	if not music_monitor_active():
 		# station docks stay in space mode -- the monitor keeps the score;
@@ -314,6 +315,38 @@ func _try_dock() -> void:
 	if docked_at == BaseInterior.BASE_NAME:
 		_deliver_towed_pod()
 		_enter_base()
+
+## Settle the hull ON the station's dockport null, the end-state of
+## icDockPort::OnDock (iwar2 @ 0x1002e540): the docking sim is rigidly attached
+## at the port. We place the ship at the port's world transform, composed from
+## the station's transform and the port's LOCAL pose (attach_pos/attach_hpb out
+## of stations.json) -- the act-0 reactor's port sits 175 m up its +Y (dockport
+## null, hpb 0/-90/0). Without this the ship latched at whatever range F8 fired,
+## nowhere near the clamp (#52).
+##
+## NOTE: the true capture is far tighter than our DOCK_RANGE. icDockPort::
+## TryToDock (0x1002dd20) tests PORT-to-PORT distance against a threshold that
+## is 1 m stationary (_DAT_101193ec) and grows with approach speed/spin
+## (+ spin*(1/pi)*20, + (min(v,1000)*0.001)^3 * 20, up to ~21 m) -- the dock
+## AGENT flies the port corridor to within a metre before OnDock. DOCK_RANGE
+## stays the handover stand-in for that fly-in until the agent is modelled.
+func _settle_on_dockport(rec: Dictionary) -> void:
+	if not rec.has("dock_pos"):
+		return
+	var ap: Array = rec["dock_pos"]
+	var hpb: Array = rec.get("dock_hpb", [0.0, 0.0, 0.0])
+	var st_basis := _record_basis(rec)
+	# attach_pos is station-LOCAL in the map's left-handed +Z frame; mirror Z
+	# into Godot's before rotating by the (already mirrored) station basis
+	var port_local := Vector3(float(ap[0]), float(ap[1]), -float(ap[2]))
+	var port_pos := Vector3(rec["x"], rec["y"], rec["z"]) + st_basis * port_local
+	px = port_pos.x
+	py = port_pos.y
+	pz = port_pos.z
+	# nose into the clamp: the station basis turned by the port's HPB
+	# (LWS heading-pitch-bank, the convention ExplosionFx._hpb_basis uses)
+	ship.global_transform.basis = st_basis * ExplosionFx._hpb_basis(
+			float(hpb[0]), float(hpb[1]), float(hpb[2]))
 
 ## Docking at LUCRECIA'S BASE with a pod in tow unloads it into the player's
 ## stockpile -- the same iinventory.Add + read of the pod's "cargo" property

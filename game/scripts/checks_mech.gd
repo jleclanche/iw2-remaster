@@ -59,6 +59,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_lds_routearound",
 	&"_ms_ap_approach",
 	&"_ms_ap_dock",
+	&"_ms_dock_null",
 	&"_ms_missile_spawn",
 	&"_ms_missile_track",
 	&"_ms_seeker_cross",
@@ -342,6 +343,28 @@ func _ms_ap_dock(_delta: float) -> void:
 	elif demo_t > 90.0:
 		_mech("ap-dock", false, "timeout")
 		_mech_next()
+
+func _ms_dock_null(_delta: float) -> void:
+	# #52: docking settles the hull ON the port null (attach_pos 175 m up the
+	# station +Y), not at the station centre. Pure call to _settle_on_dockport;
+	# px/py/pz and the hull basis are restored in-frame.
+	var saved_p := Vector3(m.px, m.py, m.pz)
+	var saved_b: Basis = m.ship.global_transform.basis
+	var rec := {"category": "station", "name": "Dock Test",
+			"x": 1000.0, "y": 2000.0, "z": 3000.0,
+			"dock_pos": [0.0, 175.0, 0.0], "dock_hpb": [0.0, 0.0, 0.0]}
+	m._settle_on_dockport(rec)
+	var landed := Vector3(m.px, m.py, m.pz)
+	var want := Vector3(1000.0, 2175.0, 3000.0)   # centre + 175 m up the port
+	var off := landed.distance_to(want)
+	var centre_off := landed.distance_to(Vector3(1000.0, 2000.0, 3000.0))
+	m.px = saved_p.x
+	m.py = saved_p.y
+	m.pz = saved_p.z
+	m.ship.global_transform.basis = saved_b
+	_mech("dock-null", off < 1.0 and centre_off > 170.0,
+		"landed=%s off=%.2f centre_off=%.1f" % [str(landed), off, centre_off])
+	_mech_next()
 
 func _ms_missile_spawn(_delta: float) -> void:
 	# a seeker missile tracks and kills: 500 hp / 280 flat blast = 2 hits

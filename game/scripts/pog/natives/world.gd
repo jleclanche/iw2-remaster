@@ -401,10 +401,17 @@ func _load_ship_db() -> void:
 
 
 static func _has_dockport(db: Dictionary) -> bool:
+	return not _dockport_of(db).is_empty()
+
+## The first dockport subsim on a station db (stations.json [Subsims]): its
+## attach_null / attach_pos / attach_hpb locate the port on the station body,
+## which is where icDockPort::OnDock (iwar2 @ 0x1002e540) mates a docking ship.
+static func _dockport_of(db: Dictionary) -> Dictionary:
 	for ss in db.get("subsims", []):
-		if "dockports" in String((ss as Dictionary).get("template", "")):
-			return true
-	return false
+		var s := ss as Dictionary
+		if "dockports" in String(s.get("template", "")):
+			return s
+	return {}
 
 
 ## "ini:/sims/ships/utility/flitter" -> "sims/ships/utility/flitter.ini"
@@ -632,6 +639,13 @@ func _create_object(ini: String, name: String) -> PogSim:
 		rec["category"] = "station"
 		if String(dprops.get("type", "")) == "T_Utility":
 			rec["type"] = "UTIL"    # hud.csv hud_type_utility
+		# carry the port null so docking can settle the ship ON it (icDockPort::
+		# OnDock), not just latch inside a radius (#52)
+		var port := _dockport_of(db)
+		if not port.is_empty():
+			rec["dock_null"] = String(port.get("attach_null", ""))
+			rec["dock_pos"] = port.get("attach_pos", [0.0, 0.0, 0.0])
+			rec["dock_hpb"] = port.get("attach_hpb", [0.0, 0.0, 0.0])
 	if _FIELD_SPHERES.has(stem):
 		# an icFieldSphere is pure geography: no avatar, no hull, nothing on
 		# sensors -- fields.gd reads these records every frame and PlaceAt
