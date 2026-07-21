@@ -1670,6 +1670,10 @@ func _ms_station_reactive(_delta: float) -> void:
 	# registered task with (station, aggressor, damage). Register a probe
 	# package, put a bolt on a station record, and read back what arrived.
 	var probe := _ReactiveProbe.new()
+	# wire the runtime so dispatch takes the REAL path -- the engine starts
+	# the reactive function as its own task (_pog_spawn), not a bare call
+	probe.rt = m.pog_rt
+	probe.name = "checkprobe"
 	m.pog_rt.scripts["checkprobe"] = probe
 	m.pog_rt.native("ihabitat.setreactivefunction", ["checkprobe.OnReactive"])
 	var node := Node3D.new()

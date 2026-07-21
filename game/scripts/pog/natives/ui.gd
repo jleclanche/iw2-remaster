@@ -450,16 +450,31 @@ func dispatch(fq: String, args: Array = []) -> Variant:
 		# and warn when a declared parameter goes unsupplied, because a
 		# handler reading an argument we never gave it is silently wrong.
 		var argc := _method_argc(s, m)
-		if argc == 0:
-			return s.call(m)
-		if args.size() < argc and not _argc_warned.has(m):
+		if args.size() < argc and argc > 0 and not _argc_warned.has(m):
 			_argc_warned[m] = true
 			push_warning(("POG: dispatching %s.%s with %d unsupplied argument(s)"
 				+ " -- the engine passes real ones here") % [pkg, fn,
 					argc - args.size()])
 		var padded := args.slice(0, argc)
 		padded.resize(argc)
-		return s.callv(m, padded)
+		# The engine runs a GUI/event handler as its own POG task, and a
+		# ported handler may be a COROUTINE (the movies screen's rows await
+		# the movie) -- Object.call cannot start one ("Trying to call an
+		# async function without 'await'", the reported click error). Spawn
+		# through the script's task machinery instead: a sync handler still
+		# runs to completion before this returns, a coroutine parks at its
+		# first await like any other task. The engine consumes no return
+		# value from a dispatched handler.
+		var cb := Callable(s, m)
+		if not padded.is_empty():
+			cb = cb.bindv(padded)
+		if s is PogScript and (s as PogScript).rt != null:
+			(s as PogScript)._pog_spawn(cb)
+		else:
+			# an unwired script object (a check probe registered straight into
+			# rt.scripts) has no task machinery; call its handler plainly
+			cb.call()
+		return 0
 	if vm.has_method("start"):                  # PogVM: the bytecode oracle
 		vm.start(pkg, fn, args)
 	return 0
