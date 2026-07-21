@@ -295,11 +295,13 @@ func dockable() -> bool:
 ## `iai.CurrentOrderType(player) == 4 && iai.CurrentOrderTarget(player) == base`
 ## is, here, "ap_mode == 3 and the target is the base".
 func _dock_ordered() -> bool:
-	if main.ap_mode != 3 or main.target_ai != null:
+	# CurrentOrderTarget is the order's LATCHED target (ap_target_*), not the
+	# live nav contact -- re-targeting mid-flight must not cancel the order
+	if main.ap_mode != 3 or main.ap_target_ai != null:
 		return false
-	if main.target_idx < 0 or main.target_idx >= main.objects.size():
+	if main.ap_target_idx < 0 or main.ap_target_idx >= main.objects.size():
 		return false
-	return str(main.objects[main.target_idx]["name"]) == BASE_NAME
+	return str(main.objects[main.ap_target_idx]["name"]) == BASE_NAME
 
 
 func _blocked() -> bool:

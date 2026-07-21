@@ -213,7 +213,29 @@ func _jump_abort() -> void:
 	hud.visible = true
 	jump_state = 0
 
+## The autopilot flies its LATCHED destination (main_state's ap_target_*),
+## not the live nav contact: swap it in for the duration of the tick so every
+## downstream read (_target_pos, _face_target, the marker maths, docking)
+## sees the target the order was engaged WITH, then hand the contact back.
 func _autopilot_process(delta: float) -> void:
+	# a direct ap_mode write (HUD carousel of old saves, check harnesses)
+	# never latched: adopt the live target once
+	if ap_target_idx < 0 and ap_target_ai == null:
+		ap_target_idx = target_idx
+		ap_target_ai = target_ai
+	var live_idx := target_idx
+	var live_ai := target_ai
+	target_idx = ap_target_idx
+	target_ai = ap_target_ai
+	_autopilot_tick(delta)
+	# the tick may re-pick (the dock fallback) or lose the destination
+	if ap_mode != 0:
+		ap_target_idx = target_idx
+		ap_target_ai = target_ai
+	target_idx = live_idx
+	target_ai = live_ai
+
+func _autopilot_tick(delta: float) -> void:
 	var p := _target_pos()
 	if ap_mode == 3 and p == Vector3.INF:
 		var near := _nearest("station")

@@ -712,6 +712,8 @@ func start_in_system(stem: String, at := "") -> void:
 	ship.velocity = Vector3.ZERO
 	ship.set_speed = 0.0
 	ap_mode = 0
+	ap_target_idx = -1
+	ap_target_ai = null
 	clock_start = Time.get_ticks_msec()
 
 func _spawn_player() -> void:

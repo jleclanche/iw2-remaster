@@ -198,6 +198,14 @@ var player_has_fired := false
 var player_last_fire_target: Node3D = null
 var roll_yaw_swap := false  # icPlayerPilot.RollYawToggleHold
 var ap_mode := 0  # 0 off, 1 approach, 2 formate, 3 dock, 4 match velocity
+# The engaged autopilot's OWN destination. icPlayerPilot::EngageAutopilot*
+# (0x100afbc0) hands the CURRENT target to the AI order package
+# (icAIServices::DefaultApproach) and the ORDER keeps it -- re-targeting from
+# the contact list or the starmap swaps the nav contact only, it does NOT
+# re-route an engaged autopilot. Latched by _set_autopilot, flown by
+# _autopilot_process, cleared by _disengage_autopilot.
+var ap_target_idx := -1
+var ap_target_ai: AiShip = null
 var _ap_dock_retry := 0.0  # dock autopilot: re-try the gate once a second
 var _bounds_cache: Dictionary = {}
 var last_aggressor: AiShip = null

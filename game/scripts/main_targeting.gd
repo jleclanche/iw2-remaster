@@ -380,6 +380,9 @@ func _set_autopilot(mode: int) -> void:
 		_disengage_autopilot()
 	else:
 		ap_mode = mode
+		# the order package latches the target it was engaged WITH (0x100afbc0)
+		ap_target_idx = target_idx
+		ap_target_ai = target_ai
 	audio.play("audio/gui/confirm.wav", -10.0)
 	var names := ["OFF", "APPROACH", "FORMATE", "DOCK", "MATCH VELOCITY"]
 	hud.log_msg("AUTOPILOT: %s" % names[mode])
@@ -392,6 +395,8 @@ func _set_autopilot(mode: int) -> void:
 ## that drops the autopilot goes through here.
 func _disengage_autopilot() -> void:
 	ap_mode = 0
+	ap_target_idx = -1
+	ap_target_ai = null
 	ship.set_speed = 0.0
 	ship.input_thrust = Vector3.ZERO
 	ship.input_rotate = Vector3.ZERO

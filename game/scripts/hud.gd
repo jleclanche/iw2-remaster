@@ -1865,8 +1865,9 @@ func _menu_select() -> void:
 			else:
 				var i: int = int(menu_carousel.get(menu_focus, 0))
 				# APPROACH/FORMATE/PURSUIT/DOCK: engine modes 2/1/4/3, which
-				# in main.ap_mode's numbering are 1/2/4/3
-				main.ap_mode = [1, 2, 4, 3][i]
+				# in main.ap_mode's numbering are 1/2/4/3. Through
+				# _set_autopilot so the order latches its target.
+				main._set_autopilot([1, 2, 4, 3][i])
 		"hud_menu_call_jafs":
 			# the menu item runs ijafsscript.CallJafs -- the POG loop that
 			# summons the SNRV, auto-tags the valuable pods if none are
@@ -2578,7 +2579,37 @@ func _draw_target_marks() -> void:
 					str(a.faction))
 			_corner_bracket(_bbox_of_ship(a),
 					Color(col.r, col.g, col.b, 0.7))
+	_draw_ap_mark()
 	_draw_target_bracket()
+
+## REMASTER ADDITION (user-requested): the engaged autopilot flies its LATCHED
+## destination (main.ap_target_*) while the nav contact is free to move on.
+## The original shows nothing for the order's own target, which reads as a
+## silent re-route -- mark it so both are visible at once.
+func _draw_ap_mark() -> void:
+	if main.ap_mode == 0:
+		return
+	var world: Vector3
+	if main.ap_target_ai != null and is_instance_valid(main.ap_target_ai):
+		if main.ap_target_ai == main.target_ai:
+			return
+		world = main.ap_target_ai.global_position
+	elif main.ap_target_idx >= 0 and main.ap_target_idx < main.objects.size():
+		if main.target_ai == null and main.ap_target_idx == main.target_idx:
+			return
+		var t: Dictionary = main.objects[main.ap_target_idx]
+		world = Vector3(t["x"] - main.px, t["y"] - main.py, t["z"] - main.pz)
+	else:
+		return
+	var cam: Camera3D = main.cam
+	if cam.is_position_behind(world):
+		return
+	var p := cam.unproject_position(world)
+	if not Rect2(Vector2.ZERO, _screen()).has_point(p):
+		return
+	var col := Color(GREEN.r, GREEN.g, GREEN.b, 0.9)
+	_corner_bracket(Rect2(p - Vector2(14, 14), Vector2(28, 28)), col, 4)
+	_hud_text(0, 1, p + Vector2(0.0, 18.0), "AUTOPILOT", 2, 0, col)
 
 func _draw_target_bracket() -> void:
 	var world: Vector3
