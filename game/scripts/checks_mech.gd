@@ -82,6 +82,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_tow_dock",
 	&"_ms_tow_ride",
 	&"_ms_contact_law",
+	&"_ms_nav_contact",
 	&"_ms_contact_pair",
 	&"_ms_hull_solid",
 	&"_ms_hull_solid_assert",
@@ -841,6 +842,41 @@ func _ms_contact_law(_delta: float) -> void:
 		"off-centre v.n %+.2f (< the central +6), spin %.4f rad/s" % [vn2, w2])
 	m.ship.velocity = Vector3.ZERO
 	m.ship.angular_velocity = Vector3.ZERO
+	_mech_next()
+
+func _ms_nav_contact(_delta: float) -> void:
+	# #55: the system's geography is a KNOWN nav contact. A star far past the
+	# identification range still lists as STAR / NAV (never the gold UNKNOWN row)
+	# and routes to the NAVIGATION-LOCK class icon 0x36, not the mode-2 EO cube.
+	# Pure-function, state swapped in and fully restored in-frame.
+	var saved_obj: Array = m.objects
+	var saved_idx: int = m.target_idx
+	var saved_ai: Variant = m.target_ai
+	var saved_p := Vector3(m.px, m.py, m.pz)
+	m.px = 0.0
+	m.py = 0.0
+	m.pz = 0.0
+	m.objects = [{"category": "star", "name": "Test Star", "radius": 1.0e8,
+			"x": 0.0, "y": 0.0, "z": -9.0e11}]   # far past SENSOR_ID_RANGE
+	m.target_idx = 0
+	m.target_ai = null
+	var row: Dictionary = {}
+	for e in m.contact_list():
+		if str(e.get("category", "")) == "star":
+			row = e
+			break
+	var icon: int = m.hud._nav_class_icon("star")
+	m.objects = saved_obj
+	m.target_idx = saved_idx
+	m.target_ai = saved_ai
+	m.px = saved_p.x
+	m.py = saved_p.y
+	m.pz = saved_p.z
+	_mech("nav-contact",
+		not row.is_empty() and str(row.get("type", "")) == "STAR"
+			and str(row.get("faction", "")) == "NAV"
+			and not bool(row.get("unknown", true)) and icon == 54,
+		"row=%s icon=%d" % [str(row), icon])
 	_mech_next()
 
 func _ms_contact_pair(_delta: float) -> void:

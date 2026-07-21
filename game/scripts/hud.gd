@@ -2778,7 +2778,13 @@ func _draw_mfd() -> void:
 			# BASE RETURN) is a station, so it is a NAVIGATION LOCK with a nav
 			# icon, NOT a model render. That is the bug the user saw: we were
 			# forcing mode 2 for everything that was not an lpoint/waypoint.
-			"lpoint", "waypoint", "station", "gunstar", "base":
+			"lpoint", "waypoint", "station", "gunstar", "base", \
+			"star", "body", "nebula":
+				# geography is a NAVIGATION LOCK too: icSun/icPlanet/icNebula
+				# have a non-zero class-icon (FUN_100e86d0, star type 1 -> 0x36),
+				# so mode select routes them to 3, not the mode-2 EO render. This
+				# is why a targeted star showed the green fallback cube instead of
+				# a nav icon top-left (#55).
 				mode = 3
 			"cargo":
 				mode = 4
@@ -2852,11 +2858,16 @@ func _nav_class_icon(cat: String) -> int:
 	# 58/59/61 by station sub-type, of which the common value is 58. Our string
 	# categories map onto those cases.
 	match cat:
+		"star":
+			# icSun sensor type 1 -> DAT_1011db64[1] = 0x36 (54)
+			return 54
 		"lpoint":
 			return 60
 		"station", "gunstar", "base":
 			return 58
 		_:
+			# body/nebula (icPlanet type 2 redirects to the ship-type sub-table
+			# DAT_1011dbe4; nebula glyph unresolved) fall back to the nav marker
 			return 47
 
 func _mfd_fallback_cube(feed: Rect2) -> void:
@@ -3454,7 +3465,12 @@ func _draw_contact_list() -> void:
 		off = sel - (CL_ROWS - 1)
 	off = mini(off, maxi(0, all.size() - CL_ROWS))
 	var rows: Array = all.slice(off, off + CL_ROWS)
-	var h := 8.0 + rows.size() * CL_ROW_H
+	# the panel is a FIXED CL_ROWS-tall window, not sized to the row count: the
+	# scroll bookkeeping (FUN_100e49a0) always clamps to a six-row view (the
+	# `5 < count` branch) and the block frame is drawn once at that height before
+	# the rows are walked, so three contacts still get a full-height panel with
+	# blank rows below, not a shrunk three-row box (#55).
+	var h := 8.0 + CL_ROWS * CL_ROW_H
 	var w := 320.0
 	var pos := Vector2(_right_x(w), s.y - h - MARGIN - 2.0 * BORDER)
 	# the same block frame as every other panel, anchor mode 3 (bottom-right block

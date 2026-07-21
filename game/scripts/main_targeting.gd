@@ -25,12 +25,16 @@ func contact_list() -> Array:
 						"targeted": e["idx"] == target_idx,
 						"category": o["category"],
 						"faction": str(o.get("faction",
-							"NAV" if o["category"] in ["lpoint", "waypoint"]
+							"NAV" if o["category"] in
+								["lpoint", "waypoint", "star", "body", "nebula"]
 							else _station_faction(str(o["name"])))),
-						# type column strings: data/text/hud.csv
+						# type column strings: data/text/hud.csv hud_type_star
+						# (STAR), hud_type_planet (BODY), hud_type_nebula (NBULA),
 						# hud_type_waypoint / hud_type_lpoint / hud_type_station
 						"type": str(o.get("type",
-							{"lpoint": "LAGPT", "waypoint": "WAYPT"}.get(
+							{"lpoint": "LAGPT", "waypoint": "WAYPT",
+								"star": "STAR", "body": "BODY",
+								"nebula": "NBULA"}.get(
 								str(o["category"]), "STATN")))})
 		else:
 			var a: AiShip = e["ai"]
@@ -310,10 +314,18 @@ func _contacts_full() -> Array:
 					# nav points pass the sensor gate within 100 km
 					# (FUN_1003ae90's type-5 window, DAT_10119d14)
 					show = d < LPOINT_LIST_RANGE
+				"star", "body", "nebula":
+					# the system's own geography: always on the nav sensor.
+					# icSun/icPlanet/icNebula carry a sensor type (0x194) whose
+					# class-icon lookup FUN_100e86d0 is non-zero (star type 1 ->
+					# icon 0x36), so they are always a KNOWN nav contact, never
+					# the gold UNKNOWN row and never range-gated off the list.
+					show = true
 		if show:
 			list.append({"kind": "obj", "idx": i, "dist": d,
 					"unknown": not forced and d > SENSOR_ID_RANGE
-						and o["category"] not in ["lpoint", "waypoint"]})
+						and o["category"] not in
+							["lpoint", "waypoint", "star", "body", "nebula"]})
 	for a in ai_ships:
 		if not _sensor_visible(a):
 			continue
