@@ -487,10 +487,16 @@ func _m_name(_t, a: Array) -> Variant:
 func _m_set_hidden(_t, a: Array) -> Variant:
 	# Whole planets get hidden in Act 2 (Dante). The impostor is a lazily
 	# instanced node hanging off the record.
+	if a.size() > 0 and a[0] is PogWorld.ForeignRef and game != null:
+		var fr: PogWorld.ForeignRef = a[0]
+		game.flag_entity(fr.stem, fr.ename, "hidden", PogVM._truthy(a[1]))
+		return 0
 	var s = _sim(a[0])
 	if s == null:
 		return 0
 	var hide := PogVM._truthy(a[1])
+	if game != null:
+		game.flag_entity(game.system_stem, s.name, "hidden", hide)
 	s.hidden = hide
 	if not s.rec.is_empty():
 		s.rec["hidden"] = hide
@@ -610,16 +616,29 @@ func _m_system_centre(_t, _a: Array) -> Variant:
 # @native imapentity.SetMapVisibility
 # @native imapentity.IsVisibleOnMap
 func _m_map_visibility(_t, a: Array) -> Variant:
-	# The flag lives on the record and icHUDStarmap's system view honours it
-	# (hud_screens.gd _draw_system): the 56 SetMapVisibility calls are how the
-	# missions hide stations, wrecks and beacons from the map until the plot
-	# reveals them. Map-scoped only -- a hidden entity still appears on sensors
-	# and in the contact list, which is what makes hiding it on the map useful.
+	# The flag lives on the record and icHUDStarmap honours it: the 56
+	# SetMapVisibility calls are how the missions hide stations, wrecks and
+	# beacons from the map until the plot reveals them. Map-scoped only -- a
+	# hidden entity still appears on sensors and in the contact list. The
+	# toggle also persists in main.entity_flags (records are rebuilt per
+	# system load), and a ForeignRef writes the store for a system that is
+	# not resident (HideMapLocations hides Dante's stations from elsewhere).
+	if a.size() > 0 and a[0] is PogWorld.ForeignRef and game != null:
+		var fr: PogWorld.ForeignRef = a[0]
+		if a.size() > 1:
+			game.flag_entity(fr.stem, fr.ename, "map_visible",
+					PogVM._truthy(a[1]))
+			return 0
+		return 1 if bool(game.entity_flag(fr.stem, fr.ename,
+				"map_visible", true)) else 0
 	var s = _sim(a[0])
 	if s == null or s.rec.is_empty():
 		return 1
 	if a.size() > 1:
-		s.rec["map_visible"] = PogVM._truthy(a[1])
+		var vis := PogVM._truthy(a[1])
+		s.rec["map_visible"] = vis
+		if game != null:
+			game.flag_entity(game.system_stem, s.name, "map_visible", vis)
 		return 0
 	return 1 if bool(s.rec.get("map_visible", true)) else 0
 
@@ -858,6 +877,8 @@ func station_attacked(rec: Dictionary, aggressor_node: Node3D,
 func _lp_cast(_t, a: Array) -> Variant:
 	# Must return null for anything that is not an L-point: the scripts branch
 	# on this to tell an L-point apart from a station or a planet.
+	if a.size() > 0 and a[0] is PogWorld.ForeignRef:
+		return a[0]     # unverifiable without the foreign system loaded
 	var s = _sim(a[0] if a.size() > 0 else null)
 	return s if _is_lpoint(s) else null
 
@@ -890,10 +911,17 @@ func _lp_create(_t, _a: Array) -> Variant:
 func _lp_set_usable(_t, a: Array) -> Variant:
 	# An unusable L-point is one you cannot jump from, and what main.gd reads to
 	# decide that is the route list. Park the routes rather than lose them.
+	if a.size() > 0 and a[0] is PogWorld.ForeignRef and game != null:
+		var fr: PogWorld.ForeignRef = a[0]
+		game.flag_entity(fr.stem, fr.ename, "usable", PogVM._truthy(a[1]))
+		return 0
 	var s = _sim(a[0])
 	if s == null or s.rec.is_empty():
 		return 0
-	if PogVM._truthy(a[1]):
+	var usable := PogVM._truthy(a[1])
+	if game != null:
+		game.flag_entity(game.system_stem, s.name, "usable", usable)
+	if usable:
 		if s.rec.has("jumps_locked"):
 			s.rec["jumps"] = s.rec["jumps_locked"]
 			s.rec.erase("jumps_locked")

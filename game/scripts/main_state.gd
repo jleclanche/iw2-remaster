@@ -255,6 +255,24 @@ func music_stop() -> void:
 			return
 	audio.stop_track()
 
+# Plot-toggled entity state, keyed "<system stem>/<entity name>" -> {flag:
+# value} for map_visible / hidden / sensor_visible / usable. The original
+# persists these on the session's entities and in icSaveGame; our records are
+# rebuilt from JSON on every system load, so the toggles live here, are
+# re-applied by _load_system, and ride the save file (istartsystem.pog
+# HideMapLocations is what seeds them at campaign start).
+var entity_flags: Dictionary = {}
+
+func flag_entity(stem: String, ename: String, flag: String, v: Variant) -> void:
+	var key := stem.to_lower() + "/" + ename
+	var d: Dictionary = entity_flags.get(key, {})
+	d[flag] = v
+	entity_flags[key] = d
+
+func entity_flag(stem: String, ename: String, flag: String, dflt: Variant) -> Variant:
+	var d: Dictionary = entity_flags.get(stem.to_lower() + "/" + ename, {})
+	return d.get(flag, dflt)
+
 var px := 0.0
 var py := 0.0
 var pz := 0.0

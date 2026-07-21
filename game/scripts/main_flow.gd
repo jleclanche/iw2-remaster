@@ -334,6 +334,9 @@ func save_extras() -> Dictionary:
 		"mags": mags,
 		"inventory": inv,
 		"ai": ai,
+		# the plot's entity toggles (HideMapLocations and every later
+		# reveal) -- the original keeps these in icSaveGame
+		"entity_flags": entity_flags,
 	}
 
 ## Fit a player hull by its ini path alone, resolving the avatar out of
@@ -352,6 +355,8 @@ func fit_player_by_path(want: String) -> void:
 			return
 
 func restore_extras(d: Dictionary) -> void:
+	entity_flags = d.get("entity_flags", {})
+	_apply_entity_flags()   # the records were rebuilt before this ran
 	fit_player_by_path(str(d.get("ship_ini", "")))
 	var v: Array = d.get("vel", [0, 0, 0])
 	ship.velocity = Vector3(v[0], v[1], v[2])

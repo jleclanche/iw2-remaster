@@ -558,9 +558,40 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 		var to := Vector3(entry["x"] - px, entry["y"] - py, entry["z"] - pz)
 		ship.global_transform.basis = Basis.looking_at(to.normalized(),
 				Vector3.UP)
+	_apply_entity_flags()
 	jump_sel = 0
 	_setup_sky(stem)
 	_spawn_traffic()
+
+## Re-stamp the plot's persistent entity toggles (main.entity_flags) onto the
+## freshly built records -- mirroring exactly what each native writes live
+## (imapentity.SetMapVisibility / SetHidden, isim.SetSensorVisibility,
+## ilagrangepoint.SetUsable in natives/). Without this, jumping away and back
+## (or loading a save) resurrected everything HideMapLocations hid.
+func _apply_entity_flags() -> void:
+	for rec: Dictionary in objects:
+		var d: Dictionary = entity_flags.get(
+				system_stem.to_lower() + "/" + str(rec["name"]), {})
+		if d.is_empty():
+			continue
+		if d.has("map_visible"):
+			rec["map_visible"] = bool(d["map_visible"])
+		if d.has("hidden"):
+			rec["hidden"] = bool(d["hidden"])
+			var n = rec.get("node")
+			if n != null and is_instance_valid(n):
+				n.visible = not bool(d["hidden"])
+		if d.has("sensor_visible"):
+			rec["sensor_hidden"] = not bool(d["sensor_visible"])
+			rec["sensor_forced"] = bool(d["sensor_visible"])
+		if d.has("usable"):
+			if bool(d["usable"]):
+				if rec.has("jumps_locked"):
+					rec["jumps"] = rec["jumps_locked"]
+					rec.erase("jumps_locked")
+			elif not rec.has("jumps_locked"):
+				rec["jumps_locked"] = rec.get("jumps", [])
+				rec["jumps"] = []
 	# iBackToBase.Initialise: the base is on sensors -- and so in the contact
 	# list -- in exactly one system, and only once the act's found-base flag is
 	# set. See base_interior.gd.

@@ -35,6 +35,20 @@ const _WEAPON_CLASSES: Array[String] = [
 ]
 var sims: Dictionary = {}              ## name -> PogSim
 var ship_db: Dictionary = {}           ## "sims/ships/x.ini" -> ships.json record
+
+## A named entity in a system that is NOT resident. FindByNameInSystem hands
+## these back for foreign systems so the plot's flag writes (SetMapVisibility,
+## SetHidden, SetSensorVisibility, SetUsable -- istartsystem.HideMapLocations
+## hides Marauder stations IN DANTE from Hoffer's Wake) land in
+## main.entity_flags instead of silently no-oping; _load_system re-applies
+## them when that system loads.
+class ForeignRef extends RefCounted:
+	var ename := ""
+	var stem := ""
+
+	func _init(n: String, s: String) -> void:
+		ename = n
+		stem = s
 var _preloaded: Dictionary = {}
 var _player_infection_fx: Node3D = null
 var pilot_ghost = null  # PogSim: the cutscene ghost holding the pilot
@@ -673,6 +687,13 @@ func _s_find_by_name(_t, a: Array) -> Variant:
 # @native isim.FindByNameInSystem
 # @native imapentity.FindByNameInSystem
 func _s_find_in_system(_t, a: Array) -> Variant:
+	# a foreign system's entity resolves to a ForeignRef the flag natives can
+	# still write through; only the resident system has live sims
+	if a.size() > 1 and game != null:
+		var stem := PogStd._s(a[1]).get_file().to_lower()
+		if not stem.is_empty() \
+				and stem != str(game.system_stem).to_lower():
+			return ForeignRef.new(PogStd._s(a[0]), stem)
 	return find_by_name(PogStd._s(a[0]))
 
 # @native sim.Name
@@ -737,6 +758,8 @@ func _s_is_dead(_t, a: Array) -> Variant:
 func _s_cast(_t, a: Array) -> Variant:
 	# POG is statically typed; a cast that would fail at compile time cannot
 	# occur, so at runtime this is identity on anything that is a sim.
+	if a.size() > 0 and a[0] is ForeignRef:
+		return a[0]     # a foreign entity stays castable down its own chain
 	return _as_sim(a[0])
 
 # --- placement. All of these are "put A somewhere near B".
@@ -1480,10 +1503,17 @@ func _i_set_sensor_visibility(_t, a: Array) -> Variant:
 	# Whether the ship shows up on sensors at all. The contact list and the ORB
 	# both read the record, so a hidden sim simply is not there to be found --
 	# which is how the scripts stage ambushes.
+	if a.size() > 0 and a[0] is ForeignRef and game != null:
+		var fr: ForeignRef = a[0]
+		game.flag_entity(fr.stem, fr.ename, "sensor_visible",
+				PogVM._truthy(a[1]) if a.size() > 1 else true)
+		return 0
 	var s := _as_sim(a[0])
 	if s == null:
 		return 0
 	var vis := PogVM._truthy(a[1]) if a.size() > 1 else true
+	if game != null:
+		game.flag_entity(game.system_stem, s.name, "sensor_visible", vis)
 	s.sensor_visible = vis
 	if not s.rec.is_empty():
 		s.rec["sensor_hidden"] = not vis
