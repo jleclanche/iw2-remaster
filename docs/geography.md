@@ -212,8 +212,48 @@ steps. It is a *range* per class, and each star rolls once inside it.
    `+0xe8` is **3 when class <= 2 and 1 otherwise**.
 
 `icSun::UpdateAvatar` (`0x1006a4b0`) then, every frame, **pushes the first flare
-toward the camera** and drives both flares' intensity envelopes from
-`distance / radius`.
+toward the camera** (20 m in front of the eye along the sun bearing,
+`_DAT_101190b0`) and drives both flares' intensity envelopes from
+`distance / radius`. RECOVERED in full (constants read from the PE):
+
+The distance metric is the octagonal norm `max + 0.34375*mid + 0.25*min`
+(`_DAT_101191f0` / `_DAT_101191ec`) of |dx|,|dy|,|dz|, divided by the sun's
+radius (`this+0x1c`) -- so **r is measured in sun radii**.
+
+**The camera-pushed flare** (envelope at avatar `+0xd0`), piecewise linear:
+
+| r (radii)  | intensity                          | segment          |
+|------------|------------------------------------|------------------|
+| < 5        | 1.0                                | full             |
+| 5 .. 25    | `0.5 + (25 - r) * 0.025`           | 1.0 -> 0.5       |
+| 25 .. 75   | `0.15 + (75 - r) * 0.007`          | 0.5 -> 0.15      |
+| 75 .. 125  | `(125 - r) * 0.003`                | 0.15 -> 0        |
+| >= 125     | 0                                  | off              |
+
+(breakpoints `_DAT_101183f0`=5, `_DAT_101190b0`=20, `_DAT_1011a1c0`=50;
+slopes `_DAT_1011b35c`=0.025, `_DAT_1011b358`=0.007, `_DAT_1011b350`=0.003;
+levels `_DAT_10117738`=0.5, `_DAT_1011b354`=0.15.) The flare therefore
+ignites at **125 sun radii** and steepens as you close -- for Hoffer's Wake
+Beta (radius 1.81e8 m) the onset is 2.26e10 m = ~22.6 million km, and the
+"all at once" leg is the last 5 radii.
+
+**The sphere node** (avatar `+0x18`): its `+0xe0` field rises
+`clamp(r * 0.008, 0, 1)` (`_DAT_1011b348`; reaches 1 exactly at
+`_DAT_1011b34c` = 125 radii), and its own `+0xd0` envelope holds
+`(1 - clamp(r * 2e-05, 0, 1)) * 0.05` (`_DAT_1011b340`, clamp knee
+`_DAT_1011b344` = 50000 radii, scale `_DAT_1011a198` = 0.05) -- a near-flat
+0.05 within any system.
+
+**OPEN -- the SIZE law per flare mode.** ParseSunInfo (`0x1004e5a0`) feeds
+`FiSim::SetRadius` the map record's `+0x138` float verbatim; Hoffer's Wake
+Alpha is authored at 1.75e11 m, so at the campaign spawn (3.7e11 m out,
+r = 2.1) even the ORIGINAL runs the pushed flare's envelope at 1.0 -- yet
+the original render is not glare-dominated there. Therefore the intensity
+-> pixels mapping must differ per flare mode (mode 0 carries `size +0xe4 =
+radius`; the pushed flare rides 20 m from the eye), and the
+`atan(m_intensity_scale x intensity)` law read off the SKY flares cannot be
+what the sun's mode-0 flare uses. The answer is in FcLensFlareNode::Render
+(flux `0xe6100`)'s mode branches, still unread.
 
 **NOT RECOVERED:** Ghidra leaves the sun avatar's draw (`0x100d2b30` /
 `0x100d2b80`) undisassembled -- same as the Lagrange icon -- so the corona's
