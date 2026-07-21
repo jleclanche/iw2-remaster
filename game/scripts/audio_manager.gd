@@ -14,6 +14,7 @@ var lds_player: AudioStreamPlayer
 var music_a: AudioStreamPlayer
 var music_b: AudioStreamPlayer
 var music_current: AudioStreamPlayer
+var _music_tw: Tween = null  # the ONE live fade; see _kill_music_tween
 var sting_player: AudioStreamPlayer   # imusic PlayEvent's channel 1 (cymbal/timpani)
 var current_mood := ""
 var current_track := ""       # a one-off stream (the credits' badlands), not a mood
@@ -229,9 +230,19 @@ func stop_track() -> void:
 	_mood_before_track = ""
 	if music_current != null and music_current.playing:
 		var fading := music_current
-		var tw := create_tween()
-		tw.tween_property(fading, "volume_db", -60.0, 2.0)
-		tw.tween_callback(fading.stop)
+		_kill_music_tween()
+		_music_tw = create_tween()
+		_music_tw.tween_property(fading, "volume_db", -60.0, 2.0)
+		_music_tw.tween_callback(fading.stop)
+
+## A fade owns BOTH players until it finishes; a new fade starting inside its
+## window must cancel it, or its deferred stop() strangles whichever player
+## the next crossfade re-uses (the reported music-dies-after-a-second when
+## the PDA score restarted right after a movie's stop_track fade).
+func _kill_music_tween() -> void:
+	if _music_tw != null and _music_tw.is_valid():
+		_music_tw.kill()
+	_music_tw = null
 
 ## End-of-track probe for stream.IsPlaying(0)/IsPlayingURL(0, ...): imusic's
 ## monitor polls it to know when a one-shot mood finished (only the ambient
@@ -277,7 +288,8 @@ func _crossfade(file: String, loop: bool) -> void:
 	next.play()
 	var fading := music_current
 	music_current = next
-	var tw := create_tween()
-	tw.tween_property(next, "volume_db", -8.0, 2.0)
-	tw.parallel().tween_property(fading, "volume_db", -60.0, 2.0)
-	tw.tween_callback(fading.stop)
+	_kill_music_tween()
+	_music_tw = create_tween()
+	_music_tw.tween_property(next, "volume_db", -8.0, 2.0)
+	_music_tw.parallel().tween_property(fading, "volume_db", -60.0, 2.0)
+	_music_tw.tween_callback(fading.stop)
