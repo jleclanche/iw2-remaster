@@ -115,6 +115,12 @@ func _uicheck(_delta: float) -> void:
 # out of ibacktobase.pog and [icSPPlayerBaseScreen] in the shipped defaults.ini;
 # see base_interior.gd.
 
+# The base legs (detector confirm, cutscene fly-in, per-phase settle waits) are
+# delta-driven and the shutdown movie short-circuits in headless (_play_movie),
+# so the whole run scales cleanly with the clock -- drive it at 6x like the mech
+# suite's 4x so basecheck fits the <=30 s suite budget (#53).
+const BASE_FAST_TIME_SCALE := 6.0
+
 var _base_fail := 0
 var _base_shot := 0
 var _door_shot := false
@@ -137,6 +143,8 @@ func _basecheck(_delta: float) -> void:
 		0:
 			if demo_t < 0.5:
 				return
+			# accelerate the clock for the real-time legs (reset at the quit)
+			Engine.time_scale = BASE_FAST_TIME_SCALE
 			m.menu.launched = true
 			m.menu.close()
 			# Fly home in the tug -- the ship you get AT Lucrecia's Base and the
@@ -535,6 +543,7 @@ func _basecheck(_delta: float) -> void:
 			m.pog_rt.native("gui.popscreen", [])
 			print("BASECHECK: ", "PASS" if _base_fail == 0 else "FAIL",
 				" -- ", _base_fail, " failure(s)")
+			Engine.time_scale = 1.0
 			get_tree().quit(0 if _base_fail == 0 else 1)
 
 func _contact_has_base() -> bool:
