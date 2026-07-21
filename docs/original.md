@@ -2004,6 +2004,60 @@ cluster**, **`0x100fda70` system**.
   tests for it literally), while the flight HUD is in absolute pixels against the
   real framebuffer. They are not the same coordinate system.
 
+### `icHUDStarmap`, second recovery pass (open state, mouse, sounds, frame)
+
+- **On-open** (vtable slot 11 @ `0x100fba50`): the map raises **already in
+  state 2, SYSTEM VIEW**, of the player's current system (`[0x10167ee4]->+0x14`
+  player ship `->+0x12c` its solar system into `+0xc4`). It then min-scans the
+  entity list by `FiSim::DistanceBetweenCentres(player, entity)`; the winner's
+  `+0x1da` short indexes the focus node (`+0x130`, via `0x10100320/0x10100330`)
+  and its `+0x1d8` becomes the selection (`+0xc8`, via `0x10100610`). Zoom and
+  camera **snap** (`+0xe8 <- +0xf0`, `+0xf8.. <- +0x118..`): the map opens
+  framed on the player's neighbourhood, no ease-in.
+- **Mouse**: the flight screen's cursor tick (`0x100e0700`) arms the cursor
+  (`host+0x1c4`) on the first mouse **movement**, tracks FcMouse into
+  `+0x1d0/+0x1d4`, and edge-detects button 1/2 into `+0x1da/+0x1db`. The host
+  then dispatches a left-click edge to the active element's vtable **+0x3c**
+  and a right-click edge to **+0x40** (`iwar2.dll.c:174229-174236`).
+  - **Right click** (`0x100fbf40`) is one instruction of substance:
+    `this->input(1)` -- inject menu command 1, ZOOM OUT.
+  - **Left click** (`0x100fbce0`): state 2 picks under the cursor
+    (`0x100ffa30`); a node that descends (`0x10100ce0`) becomes the focus
+    root; the **already-selected** child gets command 4 (commit); anything
+    else becomes the selection (focus from its `+0x1da`, index from `+0x1d8`);
+    no pick beeps invalid. State 0 picks via `FUN_100ffb50` (nearest within
+    `sqrt(144) = 12 px`); the selected system dives, another system becomes
+    the selection. Accepted clicks play sound 0, empty clicks sound 1.
+- **The HUD sound bank** (ctor loop, table `0x10162dc8..0x10162ddc`, played by
+  `FUN_100ea750(n, volume)`): **0** `audio/hud/valid_input`, **1**
+  `invalid_input`, **2** `target_changed`, **3** `missile_warning`, **4**
+  `klaxon`, **5** `ping`. Map commands: every accepted command plays 0 at
+  volume 1.0, a rejected one plays 1 (`FUN_100fcd60`/`FUN_100fce60` tails);
+  the cluster **keyboard** dive is silent (case 0 returns before the sound
+  tail) but the **click** dive beeps (`0x100fbec2`). Command 4 plays **2**
+  (`target_changed`) and then `FUN_100df520(host, 0)` -- **committing a nav
+  target CLOSES the starmap**.
+- **Body-draw text** (`0x100fbf50` tail): exactly **two** lines,
+  `FUN_100eb270(font 1, style 1, x = 20, y = 60 | 80)`, both in the general
+  HUD colour register (`this+0x1778 <- DAT_10176038`). State 0: cached
+  "CLUSTER VIEW" / "SELECTED: " + Field(selected system); state 2:
+  "SYSTEM VIEW: " + Field(system) / "SELECTED: " + Field(selected child);
+  state 4 swaps line 0 for the L-point-type string. The names print in their
+  localised mixed case (`data/text/clusters.csv` maps `map:/geog/...` to the
+  display names the cluster chart and these lines use).
+- **The shared page frame**: `FUN_100f1920` draws the caption band
+  (16,16)-(w-16,48) in the same `DAT_10176038` colour at alpha
+  `_DAT_101191ec = 0.25`, then calls the menu-node member's vfunc
+  (`param+0x24 -> vfunc(1, 20.0, 19.0)`) -- the band text is the **node
+  label** ("STARMAP"), not the `hud_map_caption` string. The element vtable's
+  **+0x24** slot (`0x100f1400`, shared by the five pages) calls the body draw,
+  then -- cursor armed -- draws **full-screen hairlines through the cursor**
+  in the HUD colour at `0.5` alpha (`0x10117738`) with **sprite 3** stamped on
+  the crossing, additive.
+- **Sprite passes are additive**: `FcGraphicsEngine::SetBlend(2)` precedes the
+  map's `FUN_100e9de0` runs -- the glow in reference captures is additive
+  blending, not an art asset.
+
 ---
 
 ## 8f. `icHUDShipStatus` is the top-centre strip
@@ -2123,6 +2177,20 @@ Things we do differently, on purpose. Each one is a decision, not an accident.
 ## 10. Open questions
 
 Known gaps. **Do not fill these in with plausible values** -- find the answer.
+
+### The menu-page wash and background grid
+
+The brown full-screen tint and the 16 px background grid behind every HUD menu
+page (starmap included) are drawn by the flight region below the elements; the
+draw was not located in the decompile. Current values are **pixel-matched to
+the 2026-07-21 reference captures**: composite over black space reads
+(112, 61, 13) -> wash (0.517, 0.282, 0.06) at 0.85 alpha; grid lines read
++(7, 10, 0) over the wash on a 16 px pitch (additive HUD green at 0.04). Find
+the drawing function and its colour statics to replace the empirical values.
+Also unpinned: the caption's exact font index (the band label renders in the
+large OCR-B face by cap-height measurement, ~16 px vs the 10 px body lines --
+consistent with `fonts/ocrb_18pt`, table index 2 @ `0x10162c60`, but the node
+label's own draw was not chased to its `FUN_100eb270` call).
 
 ### icGasBallAvatar's alpha pass source alpha
 

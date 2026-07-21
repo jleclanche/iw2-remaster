@@ -60,16 +60,36 @@ func _page() -> Vector2:
 	# top-left of the 640x480 authoring page, centred in the viewport
 	return ((get_viewport_rect().size - PAGE) * 0.5).floor()
 
+# The host's cursor (icHUDFlightScreen +0x1c4/+0x1d0/+0x1d4, tick @
+# 0x100e0700): armed by the first mouse MOVEMENT while a page is up, then the
+# page draws the full-screen crosshair through it (FUN_100f1400).
+var _cursor := Vector2.ZERO
+var _cursor_on := false
+
 func _process(d: float) -> void:
 	if hud != null and hud.screen != _last_screen:
+		if hud.screen != "" and _last_screen == "":
+			# menu pages own the OS cursor; flight recaptures it on close
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		elif hud.screen == "" and _last_screen != "" \
+				and (main.menu == null or not main.menu.visible):
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		_last_screen = hud.screen
 		_open_t = 0.0
+		_cursor_on = false
+		_cursor = get_viewport().get_mouse_position()
 		# drop any latched menu direction across an open/close (icHUD clears
 		# +0x1bc on the release it never gets to see while the screen is down)
 		_menu_held = false
 		_menu_down.clear()
 		if hud.screen == "hud_menu_map":
 			_map_open()
+	if hud != null and hud.screen != "":
+		var m := get_viewport().get_mouse_position()
+		if not _cursor_on and m.distance_to(_cursor) > 0.5:
+			_cursor_on = true   # armed by movement, like the host's +0x1c4
+		if _cursor_on:
+			_cursor = m
 	_open_t += d
 	if hud != null and hud.screen == "hud_menu_map":
 		_map_step(d)
@@ -87,37 +107,45 @@ func handle_key(key: int) -> bool:
 			return _map_key(key)
 	return false
 
+## The menu-page backdrop. The wash + 16 px grid are drawn by the flight
+## region under the menu elements; their draw was not recovered to an address,
+## so both are pixel-matched to the 2026-07-21 reference captures: background
+## composite over black space reads (112, 61, 13) -> wash (0.517, 0.282, 0.06)
+## at 0.85; grid lines read +(7, 10, 0) over the wash on a 16 px pitch --
+## additive HUD green at 0.04. (Address still an open question, docs/original.md.)
+const WASH := Color(0.517, 0.282, 0.06, 0.85)
+const GRID_STEP := 16.0
+const GRID_A := 0.04
+
 func _draw() -> void:
 	if hud == null or main == null or hud.screen == "":
 		return
 	var size := get_viewport_rect().size
-	# the original washes the whole scene in the menu family's amber while a
-	# page is up -- the issue #35 reference captures read ~#8a5a20 over dark
-	# space, the world reduced to silhouettes (tint approximated from those
-	# captures; the wash colour's own address is unread). Opacity high enough
-	# that a bright scene cannot outshine the page elements.
-	draw_rect(Rect2(Vector2.ZERO, size), Color(0.55, 0.35, 0.11, 0.85))
+	draw_rect(Rect2(Vector2.ZERO, size), WASH)
+	var grid := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, GRID_A)
+	var gx := GRID_STEP
+	while gx < size.x:
+		draw_line(Vector2(gx, 0), Vector2(gx, size.y), grid, 1.0)
+		gx += GRID_STEP
+	var gy := GRID_STEP
+	while gy < size.y:
+		draw_line(Vector2(0, gy), Vector2(size.x, gy), grid, 1.0)
+		gy += GRID_STEP
 	# the element's one-second fade-in (icHUDEngineering this+0x58)
 	var fade := clampf(_open_t / FADE_T, 0.0, 1.0)
-	# the caption band (FUN_100f1920): chartreuse quad (16,16)-(w-16,48) at
-	# 0.25 alpha, caption text at (20,19)
-	var captions := {
-		"hud_menu_eng": "ENGINEERING",             # hud_menu_engineering
-		"hud_menu_map": "STELLAR NAVIGATION OVERLAY",  # hud_map_caption
-		"hud_menu_log": "MISSION LOG",             # hud_log_caption
-		"hud_menu_objectives": "MISSION OBJECTIVES",   # hud_objectives_caption
-		"hud_menu_score_table": "STATISTICS",      # hud_score_sheet_caption
-	}
-	var caption := str(captions.get(hud.screen, ""))
-	# band + caption in the menu family's AMBER, not the flight HUD's green:
-	# the issue #35 reference captures show the whole page uniform amber, so
-	# the earlier "chartreuse" reading of FUN_100f1920's quad colour was the
-	# wrong constant (or pre-modulation)
-	draw_rect(Rect2(Vector2(16, 16), Vector2(size.x - 32.0, 32.0)),
-			Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, 0.25 * fade))
-	draw_string(hud._font, Vector2(20, 19 + hud.FONT_SIZE), caption,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.FONT_SIZE,
-			Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, fade))
+	# The caption band (FUN_100f1920): quad (16,16)-(w-16,48) in the HUD's
+	# general colour (DAT_10176038, the same register the body text uses) at
+	# alpha 0.25 (_DAT_101191ec). The band text is the MENU NODE's own label
+	# drawn through the node member at (20,19) (F1920 tail, member+0x24
+	# vfunc(1, 20.0, 19.0)) -- the reference capture shows "STARMAP", the
+	# hud_menu_map label, in the large OCR-B face, not the hud_map_caption
+	# string.
+	var caption := str(Hud.MENU.get(hud.screen, {}).get("label", ""))
+	var band_green := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.25 * fade)
+	draw_rect(Rect2(Vector2(16, 16), Vector2(size.x - 32.0, 32.0)), band_green)
+	draw_string(hud._font_head, Vector2(20, 19 + hud.head_size), caption,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.head_size,
+			Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade))
 	# NO open flash: the scanline burst _DAT_1011d814 times belongs to the
 	# LDSi-disruption effect, not to a page opening -- the original opens
 	# its pages clean (user capture review, issue #35)
@@ -137,6 +165,16 @@ func _draw() -> void:
 					_draw_objectives(body)
 				"hud_menu_score_table":
 					_draw_list(body, _score_entries())
+	# FUN_100f1400 (element vtable +0x24, shared by all five pages): with the
+	# host cursor armed, full-screen hairlines cross at the cursor in HUD green
+	# at 0.5 alpha, ADDITIVE (SetBlend path) -- over the flat wash that
+	# composites to (0.69, 0.74, 0.05), the reference capture's (176, 189, 12)
+	# -- and sprite 3 is stamped on the crossing (FUN_100e9de0(x, y, 3, 0, 0)).
+	if _cursor_on:
+		var cc := Color(0.69, 0.74, 0.05, fade)
+		draw_line(Vector2(_cursor.x, 0), Vector2(_cursor.x, size.y), cc, 1.0)
+		draw_line(Vector2(0, _cursor.y), Vector2(size.x, _cursor.y), cc, 1.0)
+		_spr(_cursor, 3, Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade))
 
 # --- the sprite atlas --------------------------------------------------------
 # hud.gd's SPR only carries the cells the flight HUD needs. These are the extra
@@ -166,22 +204,34 @@ const SPR2 := {
 	68: [165, 191, 32, 32, 16, 16],   # TRI axis 2 -- ship + deflecting arc
 }
 
-func _spr(pos: Vector2, id: int, col: Color, rot := 0.0) -> void:
+func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, scale := 1.0) -> void:
 	# FUN_100e9de0(x, y, sprite, flags, rotation): the quad spans
 	# [-origin, size - origin] about the anchor, at NATIVE atlas size.
 	var tex: Texture2D = hud._sprites
-	if tex == null or not SPR2.has(id):
+	if tex == null:
 		return
-	var s: Array = SPR2[id]
-	var sz := Vector2(float(s[2]), float(s[3]))
-	var off := Vector2(-float(s[4]), -float(s[5]))
-	var src := Rect2(float(s[0]), float(s[1]), sz.x, sz.y)
+	# fall back to the flight HUD's cells (hud.gd SPR) for shared sprites like
+	# the cursor star (3)
+	var s: Array = SPR2.get(id, Hud.SPR.get(id, []))
+	if s.is_empty():
+		return
+	var sz := Vector2(float(s[2]), float(s[3])) * scale
+	var off := Vector2(-float(s[4]), -float(s[5])) * scale
+	var src := Rect2(float(s[0]), float(s[1]), float(s[2]), float(s[3]))
 	if is_zero_approx(rot):
 		draw_texture_rect_region(tex, Rect2(pos + off, sz), src, col)
 		return
 	draw_set_transform(pos, rot, Vector2.ONE)
 	draw_texture_rect_region(tex, Rect2(off, sz), src, col)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+## The engine draws the map sprites ADDITIVELY (SetBlend(2) before every
+## FUN_100e9de0 run), which is where the reference capture's glow comes from.
+## Godot's canvas draws alpha-blended; the halo pass underneath approximates
+## the additive bloom.
+func _spr_glow(pos: Vector2, id: int, col: Color) -> void:
+	_spr(pos, id, Color(col.r, col.g, col.b, col.a * 0.35), 0.0, 1.8)
+	_spr(pos, id, col)
 
 # --- icHUDEngineering: the TRI ------------------------------------------------
 # @element icHUDEngineering
@@ -1116,6 +1166,23 @@ func _cluster() -> Array:
 		if lpos.has(i):
 			_cluster_labels.append({"text": str(lab[i]).replace("_", " ").to_upper(),
 					"pos": lpos[i]})
+	# localised system names for the chart nodes and the caption lines --
+	# data/text/clusters.csv maps "map:/geog/badlands/<stem>" to the display
+	# name ("Hoffer's Wake"), which is what the original's Field() lookups
+	# print on the SYSTEM VIEW / SELECTED lines
+	var names: Dictionary = {}
+	var nf := FileAccess.open(
+			main._base().path_join("data/text/clusters.csv"), FileAccess.READ)
+	if nf != null:
+		while not nf.eof_reached():
+			var nl := nf.get_line()
+			var comma := nl.find(",")
+			if comma > 0 and nl.begins_with("map:"):
+				names[nl.substr(0, comma).get_file().to_lower()] = \
+						nl.substr(comma + 1).strip_edges()
+	for s: Dictionary in _cluster_cache:
+		s["name"] = str(names.get(str(s["stem"]).to_lower(),
+				str(s["stem"]).replace("_", " ")))
 	# the node sprite: FUN_10100650 counts the jump links touching each system
 	# and picks 55 (>2 links) or 57.
 	for s: Dictionary in _cluster_cache:
@@ -1259,6 +1326,12 @@ func _leave_system() -> void:
 	_clu_zoom = CLU_FLOOR * _clu_zoom_to
 	_clu_cam = _clu_cam_to
 
+## On-open (vtable slot 11 @ 0x100fba50): the map raises ALREADY IN SYSTEM
+## VIEW (state = 2 outright) of the player's current system, the selection is
+## the map node nearest the player ship (min-scan over the entity list by
+## FiSim::DistanceBetweenCentres, focus root from its +0x1da parent node,
+## selection from its +0x1d8 slot), and both zoom and camera SNAP to their
+## targets -- the map opens framed, no ease-in.
 func _map_open() -> void:
 	var c := _cluster()
 	if not c.is_empty():
@@ -1266,10 +1339,30 @@ func _map_open() -> void:
 			if str(c[i]["stem"]) == main.system_stem:
 				map_sel = i
 		_map_visited[main.system_stem] = true
-	map_state = 0
-	_clu_zoom = CLU_ZOOM
 	_refresh_cluster()
+	_clu_zoom = CLU_ZOOM
 	_clu_cam = _clu_cam_to
+	_load_geo(main.system_stem)
+	map_state = 2
+	if _geo.is_empty():
+		map_state = 0
+		return
+	var pp := Vector2(main.px, -main.pz)
+	var best := 0
+	var bd := INF
+	for g: Dictionary in _geo:
+		if int(g["i"]) == 0:
+			continue
+		var d: float = (Vector2(g["pos"]) - pp).length()
+		if d < bd:
+			bd = d
+			best = int(g["i"])
+	_focus = int(_geo[best]["parent"]) if best != 0 else 0
+	_kids = _kids_of(_focus)
+	_sel = maxi(0, _kids.find(best))
+	_refresh_system()
+	_sys_zoom = _sys_zoom_to
+	_sys_cam = _sys_cam_to
 
 func _clu_scale() -> float:
 	var s := get_viewport_rect().size
@@ -1341,6 +1434,15 @@ func _map_step(d: float) -> void:
 	elif map_state == 3 and is_equal_approx(_sys_zoom, _sys_zoom_to):
 		map_state = 0
 
+# The HUD sound bank (ctor loop @ 0x100e0480 region, table head
+# PTR_s_sound__audio_hud_valid_input_10162dc8): 0 = valid_input,
+# 1 = invalid_input, 2 = target_changed, 3 = missile_warning, 4 = klaxon,
+# 5 = ping. Every accepted map command plays 0 via FUN_100ea750(0, 1.0), a
+# rejected one plays 1 (FUN_100fce60 / 0x100fbce0 tails).
+func _map_snd(ok: bool) -> void:
+	main.audio.play("audio/hud/valid_input.wav" if ok
+			else "audio/hud/invalid_input.wav", -8.0)
+
 # --- the six menu commands (vtable slot 13 -> FUN_100fbc60) -------------------
 func _map_cmd(cmd: int) -> void:
 	var c := _cluster()
@@ -1349,7 +1451,8 @@ func _map_cmd(cmd: int) -> void:
 	match map_state:
 		0:      # FUN_100fcd60
 			match cmd:
-				0:      # ZOOM IN: dive into the selected system
+				0:      # ZOOM IN: dive into the selected system (no beep --
+					# case 0 returns before the sound tail)
 					var stem := str(c[map_sel]["stem"])
 					_map_visited[stem] = true
 					_enter_system(stem)
@@ -1358,9 +1461,11 @@ func _map_cmd(cmd: int) -> void:
 				2:
 					map_sel = wrapi(map_sel - 1, 0, c.size())
 					_refresh_cluster()
+					_map_snd(true)
 				3:
 					map_sel = wrapi(map_sel + 1, 0, c.size())
 					_refresh_cluster()
+					_map_snd(true)
 		2:      # FUN_100fce60
 			if _kids.is_empty():
 				return
@@ -1368,13 +1473,18 @@ func _map_cmd(cmd: int) -> void:
 			match cmd:
 				0:      # ZOOM IN
 					if _can_jump(s):
+						_map_snd(true)
 						_open_jump_list(s)          # FUN_100fca90 -> state 4
 					elif not _kids_of(s).is_empty():
 						_focus = s                  # descend
 						_kids = _kids_of(_focus)
 						_sel = 0
 						_refresh_system()
-				1:      # ZOOM OUT
+						_map_snd(true)
+					else:
+						_map_snd(false)             # nothing to descend into
+				1:      # ZOOM OUT (always beeps valid, FUN_100fce60 case 1)
+					_map_snd(true)
 					if _focus == 0:
 						# only leaves once the zoom has settled (FUN_100fce60)
 						if is_equal_approx(_sys_zoom, _sys_zoom_to):
@@ -1390,21 +1500,26 @@ func _map_cmd(cmd: int) -> void:
 				2:
 					_sel = wrapi(_sel - 1, 0, _kids.size())
 					_refresh_system()
+					_map_snd(true)
 				3:
 					_sel = wrapi(_sel + 1, 0, _kids.size())
 					_refresh_system()
+					_map_snd(true)
 				4:      # SELECT -> SetUserNavTarget on the selection
 					_map_select(s)
 		4:      # FUN_100fd130
 			match cmd:
 				1:
 					map_state = 2
+					_map_snd(true)
 				2:
 					if not _lps.is_empty():
 						_lp_sel = wrapi(_lp_sel - 1, 0, _lps.size())
+						_map_snd(true)
 				3:
 					if not _lps.is_empty():
 						_lp_sel = wrapi(_lp_sel + 1, 0, _lps.size())
+						_map_snd(true)
 				4:      # COMMIT (case 4 @ 0x100fd130): arm the L-point with the
 					# chosen waypoint (its +0x204 <- the original index; ours is
 					# the live route cursor the J key reads) and SetUserNavTarget
@@ -1412,7 +1527,98 @@ func _map_cmd(cmd: int) -> void:
 					# does.
 					if not _lps.is_empty() and _lp_of >= 0:
 						main.jump_sel = _lp_sel
-						_map_select(_lp_of)
+						_map_select(_lp_of, false)
+
+# --- the mouse (host tick @ 0x100e0700 -> element vtable +0x3c/+0x40) ---------
+# Left click dispatches to the element's own handler (0x100fbce0), right click
+# injects menu command 1, ZOOM OUT (0x100fbf40: this->input(1)).
+func _unhandled_input(e: InputEvent) -> void:
+	if hud == null or main == null or hud.screen != "hud_menu_map":
+		return
+	if main.menu != null and main.menu.visible:
+		return
+	if not (e is InputEventMouseButton and (e as InputEventMouseButton).pressed):
+		return
+	match (e as InputEventMouseButton).button_index:
+		MOUSE_BUTTON_RIGHT:
+			_map_cmd(1)
+			get_viewport().set_input_as_handled()
+		MOUSE_BUTTON_LEFT:
+			_map_click((e as InputEventMouseButton).position)
+			get_viewport().set_input_as_handled()
+
+## The 12 px pick: FUN_100ffb50 takes the nearest node within sqrt(144) px of
+## the host cursor (cluster); the system view's pick (0x100ffa30) walks the
+## same list. Returns an index into `c`/_geo, or -1.
+func _map_pick_cluster(at: Vector2) -> int:
+	var c := _cluster()
+	var centre := (get_viewport_rect().size * 0.5).floor()
+	var scale := _clu_scale()
+	var best := -1
+	var bd := PICK_R
+	for i in c.size():
+		var p: Vector2 = centre + (Vector2(c[i]["pos"]) - _clu_cam) * scale
+		var d := p.distance_to(at)
+		if d < bd:
+			bd = d
+			best = i
+	return best
+
+func _map_pick_geo(at: Vector2) -> int:
+	var centre := (get_viewport_rect().size * 0.5).floor()
+	var scale := _sys_scale()
+	var best := -1
+	var bd := PICK_R
+	for g: Dictionary in _geo:
+		if int(g["i"]) == 0:
+			continue
+		var p: Vector2 = centre + (Vector2(g["pos"]) - _sys_cam) * scale
+		var d := p.distance_to(at)
+		if d < bd:
+			bd = d
+			best = int(g["i"])
+	return best
+
+## 0x100fbce0, the left-click law. System view: click nothing -> invalid beep;
+## click a node with children -> descend into it; click the already-selected
+## node -> command 4 (commit); click anything else -> select it. Cluster view:
+## click nothing -> invalid beep; click the selected system -> dive; click
+## another -> select it.
+func _map_click(at: Vector2) -> void:
+	if _menu_click(at):
+		return
+	match map_state:
+		2:
+			var pick := _map_pick_geo(at)
+			if pick < 0:
+				_map_snd(false)
+				return
+			if not _kids_of(pick).is_empty() and not _can_jump(pick):
+				_focus = pick
+				_kids = _kids_of(_focus)
+				_sel = 0
+				_refresh_system()
+				_map_snd(true)
+			elif not _kids.is_empty() and pick == _kids[_sel]:
+				_map_cmd(4)
+			else:
+				_focus = int(_geo[pick]["parent"])
+				_kids = _kids_of(_focus)
+				_sel = maxi(0, _kids.find(pick))
+				_refresh_system()
+				_map_snd(true)
+		0:
+			var pick := _map_pick_cluster(at)
+			if pick < 0:
+				_map_snd(false)
+				return
+			if pick == map_sel:
+				_map_cmd(0)      # the click-dive DOES beep (0x100fbec2)
+				_map_snd(true)
+			else:
+				map_sel = pick
+				_refresh_cluster()
+				_map_snd(true)
 
 func _can_jump(i: int) -> bool:
 	# FUN_10100d20: an L-point that has known jump waypoints.
@@ -1424,16 +1630,20 @@ func _can_jump(i: int) -> bool:
 ## was not on it). Only sims exist to target, so it can only land in the
 ## system the player is actually in -- the original's FindInstance +
 ## IsDerivedFrom(iiSim) gate does the same thing for a foreign-system pick.
-func _map_select(i: int) -> void:
-	if _geo_stem != main.system_stem:
-		return
+func _map_select(i: int, close := true) -> void:
 	var want := str(_geo[i]["name"])
-	for oi in main.objects.size():
-		if str(main.objects[oi]["name"]) == want:
-			main.target_idx = oi
-			main.target_ai = null
-			main.audio.play("audio/hud/target_changed.wav", -10.0)
-			return
+	if _geo_stem == main.system_stem:
+		for oi in main.objects.size():
+			if str(main.objects[oi]["name"]) == want:
+				main.target_idx = oi
+				main.target_ai = null
+				break
+	# HUD sound 2 (FUN_100fce60 case 4 -> FUN_100ea750(2, 1.0)), then
+	# FUN_100df520(host, 0): the commit CLOSES the starmap and hands the
+	# flight view back -- unconditionally, found or not.
+	main.audio.play("audio/hud/target_changed.wav", -10.0)
+	if close:
+		hud.screen = ""
 
 ## The nav-target geo index for the route highlight (the this+0x154 list;
 ## see the header -- one hop, because only the loaded system is targetable).
@@ -1515,61 +1725,136 @@ func _draw_starmap(fade: float) -> void:
 	if _sys_cam.distance_to(_sys_cam_to) > 0.0:
 		_spr(Vector2(72, 126), 29, bc)
 
-	# the three text lines (FUN_100eb270 puts two at x = 20, y = 60 / 80).
+	# EXACTLY TWO text lines (0x100fbf50 tail: FUN_100eb270(font 1, style 1,
+	# x=20, ...) at y = 60 (0x42700000) and y = 80 (0x42a00000), both in the
+	# HUD's general colour). State 0: "CLUSTER VIEW" / "SELECTED: <system>";
+	# state 2: "SYSTEM VIEW: <system>" / "SELECTED: <selection>"; state 4: the
+	# L-point type line / "SELECTED: <destination>". Names print in their
+	# localised mixed case (hud.csv hud_map_* keys + Field lookups).
 	var tc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
-	var ac := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, fade)
-	var sel := str(c[map_sel]["stem"]).replace("_", " ").to_upper()
 	var l0 := "CLUSTER VIEW"
-	var l1 := "SELECTED: %s" % sel
-	var l2 := ""
-	if map_state != 0:
-		l0 = "SYSTEM VIEW: %s" % _geo_name(0)
-		l1 = "SELECTED: %s" % _geo_name(_focus)
-		if not _kids.is_empty():
-			l2 = "SELECTED: %s" % _geo_name(_kids[clampi(_sel, 0, _kids.size() - 1)])
-	if map_state == 4:
-		l2 = "JUMP DESTINATION: %s" % (str(_lps[_lp_sel]).replace("_", " ").to_upper()
+	var l1 := "SELECTED: %s" % str(c[map_sel]["name"])
+	if map_state == 2 or map_state == 1 or map_state == 3:
+		l0 = "SYSTEM VIEW: %s" % _sys_display_name()
+		l1 = "SELECTED: %s" % (_geo_name(_kids[clampi(_sel, 0, _kids.size() - 1)])
+				if not _kids.is_empty() else _geo_name(_focus))
+	elif map_state == 4:
+		# hud_map_interstellar_point / hud_map_local_point (hud.csv:270-271);
+		# an L-point with a foreign-system jump is interstellar
+		var inter := false
+		if _lp_of >= 0:
+			for d: String in _geo[_lp_of]["jumps"]:
+				if str(d).to_lower() != _geo_stem:
+					inter = true
+		l0 = "INTERSTELLAR L-POINT" if inter else "LOCAL L-POINT"
+		l1 = "SELECTED: %s" % (_lp_display(_lps[_lp_sel])
 				if not _lps.is_empty() else "NONE")
-	draw_string(hud._font_num, Vector2(20, 60), l0,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, tc)
-	draw_string(hud._font_num, Vector2(20, 80), l1,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, tc)
-	draw_string(hud._font_num, Vector2(20, 100), l2,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, ac)
-	_draw_map_legend(fade)
+	draw_string(hud._font_menu, Vector2(20, 60), l0,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size, tc)
+	draw_string(hud._font_menu, Vector2(20, 80), l1,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size, tc)
+	_draw_map_menu(fade)
 
 func _geo_name(i: int) -> String:
 	if i < 0 or i >= _geo.size():
 		return ""
-	return str(_geo[i]["name"]).to_upper()
+	return str(_geo[i]["name"])
 
-# --- the control legend (FUN_100fd2b0 / FUN_100fd440 / FUN_100fd5a0) ----------
-func _draw_map_legend(fade: float) -> void:
+## The viewed system's localised display name (clusters.csv), the string the
+## original's Field(system+0xc) resolves for the SYSTEM VIEW line.
+func _sys_display_name() -> String:
+	for s: Dictionary in _cluster():
+		if str(s["stem"]) == _geo_stem:
+			return str(s["name"])
+	return _geo_name(0)
+
+func _lp_display(stem: String) -> String:
+	for s: Dictionary in _cluster():
+		if str(s["stem"]).to_lower() == str(stem).to_lower():
+			return str(s["name"])
+	return str(stem).replace("_", " ")
+
+# --- the centre menu (FUN_100fd2b0 / FUN_100fd440 / FUN_100fd5a0) -------------
+# The map's commands are MENU nodes: the reticle menu stays on screen with the
+# element's command list hung around the centre ring -- PREV left, NEXT right,
+# ZOOM OUT below, ZOOM IN above (menu offsets MENU_OFF, alignment table
+# 0x1011dec8), exactly as the reference capture shows. Commands that would be
+# rejected are simply not offered (FUN_100fd2b0 rebuilds the list per state).
+const MAP_RETICLE_R := 75.0
+# additive full green / amber over the flat wash, from the reference capture
+const MAP_MENU_GREEN := Color(0.92, 1.0, 0.05)
+
+var _menu_pills: Array = []    # [[Rect2, cmd], ...] rebuilt each draw
+
+func _draw_map_menu(fade: float) -> void:
+	_menu_pills = []
 	if map_state == 1 or map_state == 3:
 		return                                  # FUN_100fd380 clears it
-	var items: Array = []                       # [sprite, text, red]
+	var centre := (get_viewport_rect().size * 0.5).floor()
+	var col := Color(MAP_MENU_GREEN.r, MAP_MENU_GREEN.g, MAP_MENU_GREEN.b, fade)
+	# the reticle ring with its cardinal ticks
+	draw_arc(centre, MAP_RETICLE_R, 0, TAU, 96, col, 1.0, true)
+	for k in 4:
+		var dir := Vector2.RIGHT.rotated(TAU * k / 4.0)
+		draw_line(centre + dir * (MAP_RETICLE_R - 5.0),
+				centre + dir * (MAP_RETICLE_R + 5.0), col, 1.0, true)
+	var items: Array = []                       # [sprite, text, cmd, dir, red]
 	match map_state:
 		0:
-			items = [[36, "ZOOM IN", false], [34, "PREV", false], [35, "NEXT", false]]
+			items = [[36, "ZOOM IN", 0, "up", false],
+					[34, "PREV", 2, "left", false],
+					[35, "NEXT", 3, "right", false]]
 		2:
-			var zin := [36, "ZOOM IN", false]
-			if not _kids.is_empty() and _can_jump(_kids[_sel]):
-				zin = [36, "JUMP DESTINATION", false]
-			items = [zin, [37, "ZOOM OUT", false],
-					[34, "PREV", false], [35, "NEXT", false]]
+			if not _kids.is_empty():
+				var s: int = _kids[_sel]
+				if _can_jump(s):
+					items.append([36, "JUMP DESTINATION", 0, "up", false])
+				elif not _kids_of(s).is_empty():
+					items.append([36, "ZOOM IN", 0, "up", false])
+			items.append([37, "ZOOM OUT", 1, "down", false])
+			items.append([34, "PREV", 2, "left", false])
+			items.append([35, "NEXT", 3, "right", false])
 		4:
-			items = [[31, "CANCEL", true], [34, "PREV", false], [35, "NEXT", false]]
-	var size := get_viewport_rect().size
-	var x := 24.0
-	var y: float = size.y - 28.0
+			items = [[31, "CANCEL", 1, "down", true],
+					[34, "PREV", 2, "left", false],
+					[35, "NEXT", 3, "right", false]]
 	for it: Array in items:
-		var col: Color = Color(1, 0.25, 0.25, fade) if bool(it[2]) \
-				else Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
-		_spr(Vector2(x + 10.0, y), int(it[0]), col)
-		draw_string(hud._font_num, Vector2(x + 26.0, y + 5.0), str(it[1]),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size, col)
-		x += 34.0 + hud._font_num.get_string_size(str(it[1]),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.num_size).x
+		var c: Color = Color(1, 0.25, 0.25, fade) if bool(it[4]) else col
+		var text := str(it[1])
+		var tw: float = hud._font_menu.get_string_size(text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size).x
+		var pw := tw + 44.0
+		var ph := 22.0
+		var anchor: Vector2 = centre + Hud.MENU_OFF[str(it[3])]
+		var r := Rect2(anchor - Vector2(pw * 0.5, ph * 0.5), Vector2(pw, ph))
+		match str(it[3]):   # alignment table: side boxes hang outwards
+			"left":
+				r.position.x = anchor.x - pw
+			"right":
+				r.position.x = anchor.x
+		_pill(r, c)
+		_spr(r.position + Vector2(14.0, ph * 0.5), int(it[0]), c)
+		draw_string(hud._font_menu,
+				r.position + Vector2(28.0, ph * 0.5 + hud.menu_size * 0.35),
+				text, HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size, c)
+		_menu_pills.append([r, int(it[2])])
+
+func _pill(r: Rect2, col: Color) -> void:
+	# a stadium outline: two half-circle caps joined by rails
+	var rad := r.size.y * 0.5
+	var lc := Vector2(r.position.x + rad, r.position.y + rad)
+	var rc := Vector2(r.end.x - rad, r.position.y + rad)
+	draw_arc(lc, rad, PI * 0.5, PI * 1.5, 12, col, 1.0, true)
+	draw_arc(rc, rad, -PI * 0.5, PI * 0.5, 12, col, 1.0, true)
+	draw_line(Vector2(lc.x, r.position.y), Vector2(rc.x, r.position.y), col, 1.0, true)
+	draw_line(Vector2(lc.x, r.end.y), Vector2(rc.x, r.end.y), col, 1.0, true)
+
+func _menu_click(at: Vector2) -> bool:
+	for p: Array in _menu_pills:
+		if (p[0] as Rect2).has_point(at):
+			_map_cmd(int(p[1]))
+			return true
+	return false
 
 func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
 	var scale := _clu_scale()
@@ -1599,26 +1884,30 @@ func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
 					aa * alpha * 0.6), 1.0, true)
 			draw_line(mid, pb, Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b,
 					ab * alpha * 0.6), 1.0, true)
-	# the nodes: sprite 55 for a hub (>2 links), 57 otherwise
+	# the nodes: sprite 55 for a hub (>2 links), 57 otherwise. The cursor pick
+	# hovers a node to full alpha exactly like the selection (0x100ff0a0 tests
+	# `pick == node` alongside `i == sel`).
+	var hov := _map_pick_cluster(_cursor) if _cursor_on else -1
 	for i in c.size():
 		var stem := str(c[i]["stem"])
 		var p: Vector2 = pos[stem]
 		var here: bool = stem == main.system_stem
 		var a := MAP_A_UNSEEN
 		var style := 0
-		if i == map_sel:
+		if i == map_sel or i == hov:
 			a = 1.0
 			style = 2
 		elif _map_visited.has(stem) or here:
 			a = MAP_A_VISITED
 			style = 1
 		var node := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, a * alpha)
-		_spr(p, int(c[i]["spr"]), node)
-		# style 2 (the selection) is amber, 0 and 1 are green
+		_spr_glow(p, int(c[i]["spr"]), node)
+		# style 2 (the selection) is amber, 0 and 1 are green; the localised
+		# display name (clusters.csv), in its own mixed case
 		var lc: Color = node if style == 2 else \
 				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, a * alpha)
 		draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
-				stem.replace("_", " ").to_upper(), HORIZONTAL_ALIGNMENT_LEFT,
+				str(c[i]["name"]), HORIZONTAL_ALIGNMENT_LEFT,
 				-1, hud.num_size, lc)
 	# the cluster labels (clusters.ini label[n] / label_coords[n])
 	for l: Dictionary in _cluster_labels:
@@ -1636,8 +1925,9 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 	var sel_i: int = _kids[_sel] if not _kids.is_empty() and _sel < _kids.size() else -1
 	var route_i := _route_geo()
 
-	# pass 1: the orbit circles, about each body's PARENT -- drawn in the
-	# engine's line green (DAT_10176038), not the body amber
+	# pass 1: the orbit circles, about each body's PARENT -- in the body AMBER
+	# (the renderer parks DAT_10174fb0 in the colour register at its head; the
+	# reference capture's rings read as additive amber, not green)
 	for g: Dictionary in _geo:
 		var i: int = int(g["i"])
 		var par: int = int(g["parent"])
@@ -1651,11 +1941,11 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		if r > ORBIT_MAX_K * half_diag:
 			continue
 		draw_arc(pc, r, 0, TAU, maxi(24, mini(192, int(r * 0.5))),
-				Color(MAP_LINE.r, MAP_LINE.g, MAP_LINE.b, alpha * oa * 0.5),
+				Color(MAP_BODY.r, MAP_BODY.g, MAP_BODY.b, alpha * oa * 0.5),
 				1.0, true)
 
 	# pass 2: the L-point stubs, toward the partner geography (entity+0x20c),
-	# clipped to 2.1 * half-diagonal, alpha 0.3
+	# clipped to 2.1 * half-diagonal, alpha 0.3, in the same amber
 	for g: Dictionary in _geo:
 		if str(g["cat"]) != "lpoint":
 			continue
@@ -1669,7 +1959,7 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		if dv.length() > lim:
 			dv = dv.normalized() * lim
 		draw_line(p, p + dv,
-				Color(MAP_LINE.r, MAP_LINE.g, MAP_LINE.b, alpha * MAP_A_UNSEEN),
+				Color(MAP_BODY.r, MAP_BODY.g, MAP_BODY.b, alpha * MAP_A_UNSEEN),
 				1.0, true)
 
 	# pass 3: the bodies (FUN_100ff6b0). Everything hangs off the ORBIT length in
@@ -1692,21 +1982,23 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		var base: Color = MAP_ROUTE if i == route_i else MAP_BODY
 		var col := Color(base.r, base.g, base.b, alpha)
 		if ga > 0.0:
-			_spr(p, _glyph_id(g), Color(col.r, col.g, col.b, col.a * ga))
+			_spr_glow(p, _glyph_id(g), Color(col.r, col.g, col.b, col.a * ga))
 			if hot:
 				# the selection stamp: sprite 51 over the glyph (FUN_100ff6b0's
 				# second FUN_100e9de0 call, id 51)
-				_spr(p, 51, col)
+				_spr_glow(p, 51, col)
 		if la > 0.0:
+			# the localised name, in its own mixed case (the reference capture
+			# prints "Lucrecia's Base", not an upper-cased copy)
 			draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
-					str(g["name"]).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
+					str(g["name"]), HORIZONTAL_ALIGNMENT_LEFT, -1,
 					hud.num_size, Color(col.r, col.g, col.b, col.a * la))
 
 	# the player, sprite 66 -- only when the player is in the system being
 	# viewed, and in the route red (0x100fda70 sets DAT_10176018 before it)
 	if _geo_stem == main.system_stem:
 		var pp := centre + (Vector2(main.px, -main.pz) - _sys_cam) * scale
-		_spr(pp, 66, Color(MAP_ROUTE.r, MAP_ROUTE.g, MAP_ROUTE.b, alpha))
+		_spr_glow(pp, 66, Color(MAP_ROUTE.r, MAP_ROUTE.g, MAP_ROUTE.b, alpha))
 
 # --- icHUDLog / icHUDObjectives / icHUDScore ---------------------------------
 # @element icHUDLog
