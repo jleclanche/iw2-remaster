@@ -1789,6 +1789,11 @@ func _unhandled_input(e: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif screens != null and screens.handle_key(key):
 			get_viewport().set_input_as_handled()
+			# a held screen key refires on the FcInputMapper cadence (the
+			# starmap's PREV/NEXT arrows); the refire dies with the screen
+			main.note_key_press(key, func() -> void:
+				if screen != "" and screens != null:
+					screens.handle_key(key))
 		return
 	if menu_locked:
 		return

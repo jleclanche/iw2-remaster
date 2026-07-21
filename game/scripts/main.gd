@@ -253,7 +253,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				# Tab / Shift+Tab; the original shipped comma / period in
 				# configs/default.ini)
 				_cycle_contact(-1 if event.shift_pressed else 1)
-				_arm_key_repeat(KEY_TAB)
+				note_key_press(KEY_TAB, func() -> void:
+					_cycle_contact(-1 if Input.is_key_pressed(KEY_SHIFT)
+							else 1))
 			KEY_HOME:
 				_target_contact_index(0)
 			KEY_END:
@@ -332,31 +334,35 @@ func _unhandled_input(event: InputEvent) -> void:
 # FcInputMapper auto-repeats every held mapped button: after m_initial_delay
 # (0.5 s, flux.dll @ 0x101445e8) the binding re-fires every m_repeat_period
 # (0.1 s, @ 0x101445e4) -- FUN_100e6a80's state machine, state 3 arms the
-# initial delay, state 1 counts down and re-arms with the period. We drive it
-# off Input polling rather than Godot's OS-rate echo events.
+# initial delay, state 1 counts down and re-arms with the period. ONE engine,
+# driven off Input polling rather than Godot's OS-rate echo events; whichever
+# dispatch surface consumed the press hands it the ACTION to refire (flight
+# bindings here, the HUD screens' keys in hud.gd). Which actions consume
+# repeats is per-handler in the engine; one-shots (dock, jump, autopilot,
+# screenshot) stay press-only.
 const KEY_REPEAT_DELAY := 0.5   # FcInputMapper::m_initial_delay
 const KEY_REPEAT_PERIOD := 0.1  # FcInputMapper::m_repeat_period
 var _repeat_key := -1
 var _repeat_t := 0.0
+var _repeat_fire := Callable()
 
-func _arm_key_repeat(key: int) -> void:
+func note_key_press(key: int, fire: Callable) -> void:
 	_repeat_key = key
 	_repeat_t = KEY_REPEAT_DELAY
+	_repeat_fire = fire
 
 func _tick_key_repeat(delta: float) -> void:
 	if _repeat_key < 0:
 		return
 	if not Input.is_physical_key_pressed(_repeat_key) \
-			or (menu != null and menu.visible) or docked_at != "":
+			or (menu != null and menu.visible) or docked_at != "" \
+			or not _repeat_fire.is_valid():
 		_repeat_key = -1
 		return
 	_repeat_t -= delta
 	while _repeat_t <= 0.0:
 		_repeat_t += KEY_REPEAT_PERIOD
-		match _repeat_key:
-			KEY_TAB:
-				_cycle_contact(-1 if Input.is_key_pressed(KEY_SHIFT)
-						else 1)
+		_repeat_fire.call()
 
 func _physics_process(delta: float) -> void:
 	# reload_current_scene() does not stop the outgoing scene immediately: this
