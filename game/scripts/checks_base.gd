@@ -483,7 +483,16 @@ func _basecheck(_delta: float) -> void:
 			# real, distinct, descending-laid-out geometry -- the first cut
 			# shipped rows with x/y/w/h all zero, every label overprinting one
 			# point, and no check noticed because nothing asserted a rect.
+			# Raised a phase early so a windowed run renders a frame to
+			# screenshot (the extracted FcSliderControl skin art, #48).
 			m.pog_rt.native("gui.overlayscreen", ["icSPPDASoundScreen"])
+			demo_phase = 41
+			demo_t = 0.0
+		41:
+			if demo_t < 0.5:
+				return
+			if not m._headless():
+				_shot("pda_sound_screen")
 			var snd: PogUi.PogScreen = m.pog_rt.ui.visible_screen()
 			var sliders: Array = []
 			if snd != null:

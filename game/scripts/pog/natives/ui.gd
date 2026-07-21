@@ -2090,11 +2090,13 @@ func _opt_create_windows(_t, a: Array) -> Variant:
 	# kind nothing consumed and focusable() did not know -- the rows were
 	# never navigable.)
 	var parent := _win(a[0] if a.size() > 0 else null)
-	# Row geometry matched to the reference capture (sound screen, 640x480
-	# native: rows on a 23 px pitch from y~15 into the panel, labels in the
-	# GUI's small Handel Gothic -- igui.pog:34 GUI_type_font = handelgothic
-	# bt_8pt; the engine's own FcListBox metrics are GUI_listbox_entryheight
-	# = 10 + slider control art, igui.pog:236-237).
+	# The engine's own row model, extracted (issue #48): icOptions builds one
+	# 20 px FcWindow per option (FUN_1001c2d0 @ 0x1001c2d0, height 0x14) and
+	# adds it to the options FcListBox, whose entry stacker
+	# (SetEntryOffsets @ flux 0x100876e0) advances by the entry's own height
+	# plus the default 3 px vertical gap (FcListBox ctor @ 0x10085bd0) --
+	# the 23 px pitch the reference capture measured. Labels render in
+	# font:/fonts/square721 bdex bt_8pt (FUN_1001c9f0, string @ 0x1015a1c8).
 	var row_h := 20
 	var top := 12
 	var pw: int = parent.w if parent != null and parent.w > 0 else 480
@@ -2110,7 +2112,7 @@ func _opt_create_windows(_t, a: Array) -> Variant:
 		row.w = pw - 20
 		row.h = row_h
 		row.title = _option_text(o) if is_slider else _option_label(o)
-		row.font_url = "font:/fonts/handelgothic bt_8pt"
+		row.font_url = "font:/fonts/square721 bdex bt_8pt"
 		row.on_press = ""
 		row.overrides[IN_SELECT] = ""
 		row.value = i                 # which option this row steps

@@ -484,17 +484,18 @@ func _click(screen_p: Vector2) -> void:
 	_beep(true)
 
 
-## The pill geometry mirrors _draw_slider; the cursor x lands the thumb at
-## that fraction of the track.
+## The pointer lands the thumb on the NEAREST STEP (FcSliderControl's drag
+## handler @ 0x1007f860 snaps; the fraction clamps to [0, 1]) -- the inverse
+## of _draw_slider's PositionOfNthStep placement.
 func _slider_to(win: PogUi.PogWindow, r: Rect2, p: Vector2) -> void:
-	var tx := r.position.x + r.size.x * 0.5
-	var tw := r.size.x * 0.5 - 6.0
-	var th := minf(r.size.y - 6.0, 16.0)
-	var side := th - 6.0
-	var span := tw - side - 8.0
-	var frac := clampf((p.x - (tx + 4.0 + side * 0.5)) / maxf(span, 1.0),
-			0.0, 1.0)
-	ui.option_set_frac(int(win.value), frac)
+	var sr := _slider_rect(r)
+	var canvas_l := sr.position.x + 3.0
+	var canvas_w := sr.size.x - 6.0
+	var pitch := canvas_w / float(SLIDER_STEPS)
+	var thumb := maxf(pitch, 5.0)
+	var n := clampi(roundi((p.x - canvas_l - thumb * 0.5) / maxf(pitch, 0.001)),
+			0, SLIDER_STEPS - 1)
+	ui.option_set_frac(int(win.value), float(n) / float(SLIDER_STEPS - 1))
 	queue_redraw()
 
 
@@ -1005,38 +1006,95 @@ func _scroll_to(t: PogUi.PogWindow, pos: float) -> void:
 	queue_redraw()
 
 
-## An options slider row (the Sound screen's volume rows, issue #37):
-## the label on the left, a rounded pill track on the right half with a
-## filled square thumb at the value. Shapes matched to the reference
-## screenshot on the issue; FcSliderControl's own skin art is not
-## extracted, so this is the GUI palette over the reference geometry.
+## An options slider row, the engine's own art and geometry (issue #48):
+## icOptions row builder FUN_1001c2d0 @ 0x1001c2d0 -- row FcWindow 20 px
+## tall, label FcStaticWindow (0, 0, w/2-13, h) upper-cased in
+## font:/fonts/square721 bdex bt_8pt (@ 0x1015a1c8) with the state colours
+## of FUN_1001c9f0 and SetTextFormatting(false, 13); the slider control at
+## (w/2+19, 0, w-6, h) (FUN_1001cae0 @ 0x1001cae0). The skin is
+## icSliderControlAvatar (registered @ 0x101100d0; Draw is a Ghidra hole,
+## recovered from raw bytes @ 0x101102c0..0x10110507):
+##  - TRACK: icWindowAvatar::DrawBorder (@ 0x10112e20) at width 7 -- the
+##    GUI fancy-border frame from texture:/images/gui/gui;
+##  - THUMB: the three-cell amber pill drawn at full control height, white
+##    modulate (the art is pre-coloured), centred on PositionOfNthStep.
+## FcSliderControl geometry (flux.dll): canvas = rect inset 3
+## (m_scrollable_canvas_offset @ 0x10145f0c), NumSteps = (max-min)/step + 1
+## (@ 0x1007e8f0), ThumbLength = canvas/NumSteps floored at 5.0
+## (m_minimum_thumb_width @ 0x10145f08), PositionOfNthStep = canvas.left +
+## ThumbLength * 0.5 + n * pitch (@ 0x1007ea20).
+const SLIDER_STEPS := 11  # ftol((1 - 0) / 0.1) + 1: the option rows' range
+const SLIDER_TRACK_CORNER := Rect2(0, 28, 7, 7)     # m_fancy_border_corner
+const SLIDER_TRACK_STRAIGHT := Rect2(8, 28, 7, 1)   # m_fancy_border_straight
+const SLIDER_PILL: Array = [Rect2(110, 13, 5, 20),  # ctor 0x10110190 cells
+		Rect2(116, 13, 1, 20), Rect2(118, 13, 5, 20)]
+const OPT_NEUTRAL := Color(0.6, 0.451, 0.0)   # FUN_1001c9f0 state colours
+const OPT_FOCUSED := Color(1.0, 0.749, 0.0)
+
+
+## FUN_1001cae0: the slider control's rect inside its 20 px option row.
+func _slider_rect(r: Rect2) -> Rect2:
+	return Rect2(r.position.x + r.size.x * 0.5 + 19.0, r.position.y,
+			r.size.x * 0.5 - 25.0, r.size.y)
+
+
+## icWindowAvatar::DrawBorder @ 0x10112e20: four corner cells (orientations
+## 0/1/3/2 -- the corner art mirrored about each axis) and the straight cell
+## stretched along each edge between them, all from the shared gui atlas.
+## Mirroring flips the SOURCE region (negative size), never the canvas
+## transform -- the caller's fixed-pixel transform must survive this call.
+func _draw_border(r: Rect2, bw: float, corner: Rect2, straight: Rect2) -> void:
+	var tex := _gui_atlas()
+	if tex == null:
+		return
+	var x1 := r.end.x
+	var y1 := r.end.y
+	var cx := Rect2(corner.position + Vector2(corner.size.x, 0.0),
+			Vector2(-corner.size.x, corner.size.y))
+	var cy := Rect2(corner.position + Vector2(0.0, corner.size.y),
+			Vector2(corner.size.x, -corner.size.y))
+	var cxy := Rect2(corner.end, -corner.size)
+	draw_texture_rect_region(tex, Rect2(r.position, Vector2(bw, bw)), corner)
+	draw_texture_rect_region(tex, Rect2(x1 - bw, r.position.y, bw, bw), cx)
+	draw_texture_rect_region(tex, Rect2(r.position.x, y1 - bw, bw, bw), cy)
+	draw_texture_rect_region(tex, Rect2(x1 - bw, y1 - bw, bw, bw), cxy)
+	var mw := maxf(r.size.x - 2.0 * bw, 0.0)
+	var mh := maxf(r.size.y - 2.0 * bw, 0.0)
+	var th := straight.size.y   # the edge art is 1 px thick
+	if mw > 0.0:
+		draw_texture_rect_region(tex,
+				Rect2(r.position.x + bw, r.position.y, mw, th), straight)
+		draw_texture_rect_region(tex,
+				Rect2(r.position.x + bw, y1 - th, mw, th), straight)
+	if mh > 0.0:
+		# the vertical edges reuse the horizontal cell across their 1 px
+		# thickness (the engine rotates the cell per orientation; across a
+		# 1 px strip the rotation is invisible)
+		draw_texture_rect_region(tex,
+				Rect2(r.position.x, r.position.y + bw, th, mh), straight)
+		draw_texture_rect_region(tex,
+				Rect2(x1 - th, r.position.y + bw, th, mh), straight)
+
+
 func _draw_slider(w: PogUi.PogWindow, r: Rect2) -> void:
 	var hot: bool = _current() == w
-	var col: Color = AMBER if hot else AMBER_DIM
+	var col: Color = OPT_FOCUSED if hot else OPT_NEUTRAL
 	var f := _font_for(w.font_url, _font)
 	var fs := _font_px(f)
 	var ty := r.position.y + (r.size.y - f.get_height(fs)) * 0.5 \
 			+ f.get_ascent(fs)
-	draw_string(f, Vector2(r.position.x + 4.0, ty), w.title.to_upper(),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
-	# the track pill: the right half of the row, a rounded outline
-	var tx := r.position.x + r.size.x * 0.5
-	var tw := r.size.x * 0.5 - 6.0
-	var th := minf(r.size.y - 6.0, 16.0)
-	var tr := Rect2(Vector2(tx, r.position.y + (r.size.y - th) * 0.5),
-			Vector2(tw, th))
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0, 0, 0, 0)
-	sb.border_color = col
-	sb.set_border_width_all(1)
-	sb.set_corner_radius_all(int(th * 0.5))
-	draw_style_box(sb, tr)
-	# the thumb: a filled square riding the track at the option's value
-	var frac := ui.option_frac(int(w.value))
-	var side := th - 6.0
-	var span := tw - side - 8.0
-	draw_rect(Rect2(Vector2(tr.position.x + 4.0 + span * frac,
-			tr.position.y + 3.0), Vector2(side, side)), col)
+	draw_string(f, Vector2(r.position.x + 13.0, ty), w.title.to_upper(),
+			HORIZONTAL_ALIGNMENT_LEFT, int(r.size.x * 0.5 - 13.0), fs, col)
+	var sr := _slider_rect(r)
+	_draw_border(sr, 7.0, SLIDER_TRACK_CORNER, SLIDER_TRACK_STRAIGHT)
+	var canvas_l := sr.position.x + 3.0
+	var canvas_w := sr.size.x - 6.0
+	var pitch := canvas_w / float(SLIDER_STEPS)
+	var thumb := maxf(pitch, 5.0)
+	var n := roundi(ui.option_frac(int(w.value)) * float(SLIDER_STEPS - 1))
+	var cx := canvas_l + thumb * 0.5 + float(n) * pitch
+	_blit(Rect2(Vector2(cx - thumb * 0.5, sr.position.y),
+			Vector2(thumb, sr.size.y)), SLIDER_PILL)
 	if w.focusable():
 		_hit.append([r, w, -1])
 
