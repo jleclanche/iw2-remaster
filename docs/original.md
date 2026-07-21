@@ -2209,6 +2209,18 @@ large OCR-B face by cap-height measurement, ~16 px vs the 10 px body lines --
 consistent with `fonts/ocrb_18pt`, table index 2 @ `0x10162c60`, but the node
 label's own draw was not chased to its `FUN_100eb270` call).
 
+### Does the starmap gate JUMP DESTINATION on a capsule drive?
+
+User report: the shipped game does not offer jump destinations when the ship
+has no jump system. No such gate was found in the map's own code --
+`FUN_10100d20` (the state-2 gate) checks only waypoints-present, `IsKnown`
+and same-system; the state-4 handler (`0x100fd130`) and the command-list
+rebuild (`FUN_100fd2b0`) call nothing drive-related, and
+`icShip::CapsuleDrive @ 0x10002a20` has no caller in the 0x100fb..0x10101
+range. Either the gate lives upstream (the menu machinery disabling the
+command? `ilagrangepoint.SetUsable` from a script?) or the report conflates
+it with the L-points' usable/known state. Find it before adding one.
+
 ### icGasBallAvatar's alpha pass source alpha
 
 The gas ball Draw (`iwar2.dll @ 0x100bddb0`) runs its second, depth-sorted

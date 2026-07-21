@@ -1061,9 +1061,13 @@ func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, flags := 0,
 	# strip's damage/power PAIR, how one 9x18 chevron caps both ends of a rail,
 	# and how one 85x85 cell makes the whole 170x170 menu reticle.
 	var t: CanvasItem = self if ci == null else ci
-	if _sprites == null or not SPR.has(id):
+	if _sprites == null:
 		return
-	var s: Array = SPR[id]
+	# the menu-screen cells (ZOOM IN/OUT 36/37, CANCEL 31...) live in
+	# HudScreens.SPR2; the starmap's command boxes borrow this blitter
+	var s: Array = SPR.get(id, HudScreens.SPR2.get(id, []))
+	if s.is_empty():
+		return
 	var sz := Vector2(float(s[2]), float(s[3]))
 	var off := Vector2(-float(s[4]), -float(s[5]))
 	var src := Rect2(float(s[0]), float(s[1]), sz.x, sz.y)

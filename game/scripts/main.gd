@@ -182,7 +182,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	# axis to the pilot at all (mouse is the director's, in configs/default.ini),
 	# so this is ours. It carries the yoke's two real behaviours: the zoom factor
 	# divides it, and RollYawToggleHold swaps its X channel from yaw to roll.
-	if event is InputEventMouseMotion and not demo and docked_at == "":
+	# ...but NOT while a menu page owns the pointer: on the starmap the mouse
+	# is the map cursor, and its right button is ZOOM OUT
+	var page_up: bool = hud != null and hud.screen != ""
+	if event is InputEventMouseMotion and not demo and docked_at == "" \
+			and not page_up:
 		var sh: ShipFlight = piloted()  # the remote vessel while linked (#1)
 		var mx: float = event.relative.x * 0.003 / zoom_factor
 		var my: float = event.relative.y * 0.003 / zoom_factor
@@ -195,7 +199,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	# original's only binding is joystick button 2; on a mouse yoke the right
 	# button is its natural home.
 	if event is InputEventMouseButton \
-			and event.button_index == MOUSE_BUTTON_RIGHT:
+			and event.button_index == MOUSE_BUTTON_RIGHT and not page_up:
 		roll_yaw_swap = event.pressed
 	# conversation choices: number keys answer comms questions
 	if comms != null and comms.choosing() and event is InputEventKey \

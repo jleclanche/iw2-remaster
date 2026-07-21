@@ -145,15 +145,19 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2(16, 16), Vector2(size.x - 32.0, 32.0)), band_green)
 	hud._ea = fade
 	_glow_text(2, Vector2(20, 19), caption, MAP_TEXT_BRIGHT)
-	# the page's green scan band sweeping top to bottom, capture-matched
-	# (~40 px, peak ~0.12 over the wash, ~3 s period -- the renderer is
-	# untraced, like the wash; the GUI's own sweep law is menu.gd SWEEP_*)
+	# The page's green scan band, sweeping top to bottom. Row-profiled from
+	# the 2026-07-21 capture (rows 446..483): alpha ramps LINEARLY from 0 at
+	# the band's top edge to full at its bottom, then cuts hard -- the MFD
+	# scan-band law (FUN_10102490) at page scale, 38 px tall, peaking at
+	# additive green x 0.145 (+19,+37 over the wash). The renderer's address
+	# is untraced, like the wash. Drawn in the wash+green/2 composite so a
+	# normal alpha blend lands on the measured pixels.
 	var sweep := fposmod(Time.get_ticks_msec() / 3000.0, 1.0) \
-			* (size.y + 40.0) - 40.0
-	for i in 8:
-		var la := (1.0 - absf(float(i) - 3.5) / 4.0) * 0.12 * fade
-		draw_rect(Rect2(0.0, sweep + i * 5.0, size.x, 5.0),
-				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, la))
+			* (size.y + 38.0) - 38.0
+	for i in 10:
+		var la := (float(i) + 1.0) / 10.0 * 0.29 * fade
+		draw_rect(Rect2(0.0, sweep + i * 3.8, size.x, 3.8),
+				Color(0.69, 0.73, 0.05, la))
 	# NO open flash: the scanline burst _DAT_1011d814 times belongs to the
 	# LDSi-disruption effect, not to a page opening -- the original opens
 	# its pages clean (user capture review, issue #35)
@@ -198,15 +202,19 @@ const SPR2 := {
 	36: [198, 125, 32, 32, 16, 16],   # legend/indicator: ZOOM IN  (id 0x24)
 	37: [198, 158, 32, 32, 16, 16],   # legend/indicator: ZOOM OUT (id 0x25)
 	45: [66, 59, 32, 32, 16, 16],     # the TRI marker (a ragged ring)
+	47: [99, 92, 32, 32, 16, 16],     # iiSim default glyph (ctor type 4)
 	53: [198, 59, 32, 32, 16, 16],    # roundel: ring + disc (header glyph backing)
-	# the four discs at atlas (0,125)/(33,125)/(0,158)/(33,158). Read out of the
-	# table builder at 0x100e7783..0x100e7859 (`mov edi, 0x101741b0 + id*0x24`)
-	# and eyeballed on the sheet:
-	54: [33, 125, 32, 32, 16, 16],    # spoked disc  -- a STAR (type table [1] = 54)
+	# The map glyph cells, DECODED from the table builder (FUN_100e6c60's
+	# FUN_100ee6b0 fill run, `mov edi, 0x101741b0 + id*0x24` + arg pushes --
+	# no longer eyeballed; slot 60's known-good cell validates the decode):
+	54: [33, 125, 32, 32, 16, 16],    # sun with rays -- a STAR (type table [1] = 54)
 	55: [0, 125, 32, 32, 16, 16],     # large plain disc
 	56: [0, 158, 32, 32, 16, 16],     # ringed planet
 	57: [33, 158, 32, 32, 16, 16],    # small plain disc
+	58: [99, 158, 32, 32, 16, 16],    # asteroid-built station (the rock blob)
+	59: [66, 158, 32, 32, 16, 16],    # standard station (crossed panels)
 	60: [231, 226, 24, 24, 12, 12],   # L-point icon (type table [5] = 60)
+	61: [165, 158, 32, 32, 16, 16],   # named settlement habitat (rock cluster)
 	66: [99, 191, 32, 32, 16, 16],    # ship glyph: TRI axis 0, and the map's YOU-ARE-HERE
 	67: [132, 191, 32, 32, 16, 16],   # TRI axis 1 -- ship + two beams firing
 	68: [165, 191, 32, 32, 16, 16],   # TRI axis 2 -- ship + deflecting arc
@@ -238,7 +246,8 @@ func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, scale := 1.0) -> void:
 ## Godot's canvas draws alpha-blended; the halo pass underneath approximates
 ## the additive bloom.
 func _spr_glow(pos: Vector2, id: int, col: Color) -> void:
-	_spr(pos, id, Color(col.r, col.g, col.b, col.a * 0.35), 0.0, 1.8)
+	# a TIGHT halo: the reference bloom spreads only a few pixels
+	_spr(pos, id, Color(col.r, col.g, col.b, col.a * 0.4), 0.0, 1.25)
 	_spr(pos, id, col)
 
 # additive full green over the wash, from the reference capture: the page
@@ -1279,13 +1288,14 @@ func _kids_of(i: int) -> Array:
 ## 673-697; revealed e.g. iact2mission24.pog:17-21). Only the player's own
 ## system has live records; a foreign system draws everything.
 func _geo_visible(g: Dictionary) -> bool:
-	if _geo_stem != main.system_stem:
-		return true
 	var want := str(g["name"])
-	for o: Dictionary in main.objects:
-		if str(o["name"]) == want:
-			return bool(o.get("map_visible", true))
-	return true
+	if _geo_stem == main.system_stem:
+		for o: Dictionary in main.objects:
+			if str(o["name"]) == want:
+				return bool(o.get("map_visible", true))
+	# a foreign system has no live records; the persistent store still knows
+	# (a ForeignRef write -- Dante's Marauder stations hidden from anywhere)
+	return bool(main.entity_flag(_geo_stem, want, "map_visible", true))
 
 ## The per-frame lookup the renderers use (name -> visible).
 func _vis_map() -> Dictionary:
@@ -1293,6 +1303,10 @@ func _vis_map() -> Dictionary:
 	if _geo_stem == main.system_stem:
 		for o: Dictionary in main.objects:
 			vis[str(o["name"])] = bool(o.get("map_visible", true))
+	else:
+		for g: Dictionary in _geo:
+			var n := str(g["name"])
+			vis[n] = bool(main.entity_flag(_geo_stem, n, "map_visible", true))
 	return vis
 
 ## A chart link hides while the local interstellar L-point that charters it
@@ -1587,12 +1601,14 @@ func _map_cmd(cmd: int) -> void:
 						_map_snd(true)
 				4:      # COMMIT (case 4 @ 0x100fd130): arm the L-point with the
 					# chosen waypoint (its +0x204 <- the original index; ours is
-					# the live route cursor the J key reads) and SetUserNavTarget
-					# on the L-point. The view stays in the list, as the original
-					# does.
+					# the live route cursor the J key reads), SetUserNavTarget
+					# on the L-point (0x100fd20a), and CLOSE the map -- the
+					# handler ends in FUN_100df520(host, 0) @ 0x100fd214, same
+					# as the state-2 commit. (An earlier pass claimed the view
+					# stays; the disassembly says otherwise.)
 					if not _lps.is_empty() and _lp_of >= 0:
 						main.jump_sel = _lp_sel
-						_map_select(_lp_of, false)
+						_map_select(_lp_of)
 
 # --- the mouse (host tick @ 0x100e0700 -> element vtable +0x3c/+0x40) ---------
 # Left click dispatches to the element's own handler (0x100fbce0), right click
@@ -1686,9 +1702,22 @@ func _map_click(at: Vector2) -> void:
 				_map_snd(true)
 
 func _can_jump(i: int) -> bool:
-	# FUN_10100d20: an L-point that has known jump waypoints.
+	# FUN_10100d20: an L-point that has known jump waypoints. The routes are
+	# read through the LIVE record: ilagrangepoint.SetUsable parks them there
+	# (natives/entities.gd), and the static JSON list would resurrect
+	# story-locked routes (the Dante gate).
+	return str(_geo[i]["cat"]) == "lpoint" and not _lp_jumps(i).is_empty()
+
+func _lp_jumps(i: int) -> Array:
 	var g: Dictionary = _geo[i]
-	return str(g["cat"]) == "lpoint" and not Array(g["jumps"]).is_empty()
+	if _geo_stem == main.system_stem:
+		var want := str(g["name"])
+		for o: Dictionary in main.objects:
+			if str(o["name"]) == want:
+				return o.get("jumps", [])
+	if not bool(main.entity_flag(_geo_stem, str(g["name"]), "usable", true)):
+		return []
+	return g["jumps"]
 
 ## cmd 4 SELECT -- icPlayerContactList::SetUserNavTarget @ 0x100abf00: the
 ## selection becomes the player's nav target (added to the contact list if it
@@ -1723,11 +1752,12 @@ func _route_geo() -> int:
 	return -1
 
 func _open_jump_list(i: int) -> void:
-	# FUN_100fca90
+	# FUN_100fca90 -- only the LIVE routes (IsKnown-filtered in the original;
+	# SetUsable-parked in our records)
 	map_state = 4
 	_lp_of = i
 	_lps = []
-	for dest: String in _geo[i]["jumps"]:
+	for dest: String in _lp_jumps(i):
 		_lps.append(str(dest))
 	_lp_sel = 0
 
@@ -2070,10 +2100,18 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 	hud._ea = alpha
 
 	# the player, sprite 66 -- only when the player is in the system being
-	# viewed, and in the route red (0x100fda70 sets DAT_10176018 before it)
+	# viewed, and in the route red (0x100fda70 sets DAT_10176018 before it).
+	# With a nav target plotted, the ROUTE LINE runs from the player to it in
+	# the same red (the this+0x154 route list; ours is the one hop that can
+	# exist -- only the loaded system's objects are targetable).
 	if _geo_stem == main.system_stem:
 		var pp := centre + (Vector2(main.px, -main.pz) - _sys_cam) * scale
-		_spr_glow(pp, 66, Color(MAP_ROUTE.r, MAP_ROUTE.g, MAP_ROUTE.b, alpha))
+		var rc := Color(MAP_ROUTE.r, MAP_ROUTE.g, MAP_ROUTE.b, alpha)
+		if route_i >= 0 and route_i < _geo.size():
+			var tp: Vector2 = centre \
+					+ (Vector2(_geo[route_i]["pos"]) - _sys_cam) * scale
+			draw_line(pp, tp, rc, 1.0, true)
+		_spr_glow(pp, 66, rc)
 
 # --- icHUDLog / icHUDObjectives / icHUDScore ---------------------------------
 # @element icHUDLog
