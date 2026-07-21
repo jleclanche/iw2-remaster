@@ -3014,7 +3014,10 @@ class StatusLights extends Control:
 	func _process(_d: float) -> void:
 		queue_redraw()
 	func _draw() -> void:
-		if hud != null and hud.hud_up():
+		# gated on screen == "" like the rest of the flight HUD: an open
+		# menu page replaces it all (issue #35), and this strip lives on
+		# its own canvas layer, so hud._draw's early-out never covered it
+		if hud != null and hud.hud_up() and hud.screen == "":
 			hud.draw_ship_status(self)
 
 var _status_fx: StatusLights

@@ -61,9 +61,25 @@ func _uicheck(_delta: float) -> void:
 			m.ship.input_thrust.z = 1.0
 			if demo_t > 3.0:
 				_shot("ui_chase")
-				# teleport to Lucrecia's Base and dock for the interior shot
+				# the full-screen HUD mode screens (#35): engineering, then
+				# the starmap, one settled shot each
 				m.ship.input_thrust.z = 0.0
 				m.ship.set_speed = 0.0
+				m.hud._menu_open("hud_menu_eng")
+				demo_phase = 21
+				demo_t = 0.0
+		21:
+			if demo_t > 1.5:
+				_shot("ui_hud_engineering")
+				m.hud.screen = ""
+				m.hud._menu_open("hud_menu_map")
+				demo_phase = 22
+				demo_t = 0.0
+		22:
+			if demo_t > 1.5:
+				_shot("ui_hud_starmap")
+				m.hud.screen = ""
+				# teleport to Lucrecia's Base and dock for the interior shot
 				m.ship.velocity = Vector3.ZERO
 				for a in m.ai_ships:
 					a.queue_free()

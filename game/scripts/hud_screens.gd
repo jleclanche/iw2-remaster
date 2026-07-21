@@ -43,7 +43,6 @@ extends Control
 
 var hud: Hud
 var main: Node3D
-const OPEN_FLASH_T := 0.5   # _DAT_1011d814
 const FADE_T := 1.0         # _DAT_1011e330 / _DAT_1011e180
 const PAGE := Vector2(640, 480)   # 0x280 x 0x1e0, from the eng body draw
 var _open_t := 10.0
@@ -92,9 +91,12 @@ func _draw() -> void:
 	if hud == null or main == null or hud.screen == "":
 		return
 	var size := get_viewport_rect().size
-	# ours: dim the scene so the green text stays readable over bright space
-	# (the original relies on its opaque body panels instead)
-	draw_rect(Rect2(Vector2.ZERO, size), Color(0, 0.03, 0, 0.72))
+	# the original washes the whole scene in the menu family's amber while a
+	# page is up -- the issue #35 reference captures read ~#8a5a20 over dark
+	# space, the world reduced to silhouettes (tint approximated from those
+	# captures; the wash colour's own address is unread). Opacity high enough
+	# that a bright scene cannot outshine the page elements.
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.55, 0.35, 0.11, 0.85))
 	# the element's one-second fade-in (icHUDEngineering this+0x58)
 	var fade := clampf(_open_t / FADE_T, 0.0, 1.0)
 	# the caption band (FUN_100f1920): chartreuse quad (16,16)-(w-16,48) at
@@ -107,16 +109,18 @@ func _draw() -> void:
 		"hud_menu_score_table": "STATISTICS",      # hud_score_sheet_caption
 	}
 	var caption := str(captions.get(hud.screen, ""))
+	# band + caption in the menu family's AMBER, not the flight HUD's green:
+	# the issue #35 reference captures show the whole page uniform amber, so
+	# the earlier "chartreuse" reading of FUN_100f1920's quad colour was the
+	# wrong constant (or pre-modulation)
 	draw_rect(Rect2(Vector2(16, 16), Vector2(size.x - 32.0, 32.0)),
-			Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.25 * fade))
+			Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, 0.25 * fade))
 	draw_string(hud._font, Vector2(20, 19 + hud.FONT_SIZE), caption,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.FONT_SIZE,
-			Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade))
-	# the open flash: full-screen noise scanlines for the first 0.5 s
-	var flash := 1.0 - _open_t / OPEN_FLASH_T
-	if flash > 0.0:
-		hud.scanlines(self, Rect2(Vector2.ZERO, size), flash,
-				Color(Hud.GREEN.r * 0.9, Hud.GREEN.g * 0.9, Hud.GREEN.b * 0.9, 1.0))
+			Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, fade))
+	# NO open flash: the scanline burst _DAT_1011d814 times belongs to the
+	# LDSi-disruption effect, not to a page opening -- the original opens
+	# its pages clean (user capture review, issue #35)
 	match hud.screen:
 		"hud_menu_eng":
 			_draw_engineering(fade)
@@ -125,7 +129,7 @@ func _draw() -> void:
 		_:
 			var body := Rect2(Vector2(60, 90), size - Vector2(120, 150))
 			draw_rect(Rect2(body.position - Vector2(8, 34), body.size + Vector2(16, 42)),
-					Hud.GREEN * Color(1, 1, 1, 0.5 * fade), false, 1.0)
+					Hud.AMBER * Color(1, 1, 1, 0.5 * fade), false, 1.0)
 			match hud.screen:
 				"hud_menu_log":
 					_draw_list(body, _log_entries())
@@ -544,13 +548,14 @@ func _draw_engineering(fade: float) -> void:
 	if not _tri_loaded:
 		_tri_loaded = true
 		_tri_tex = Hud._load_mask(main._base(), "tri.png")
-	# scale-to-window: the engine renders the page in its 640x480 virtual
-	# canvas and the device transform stretches it with the screen (the body
-	# draw's own dev-mode check @ 0x10105d75 compares against 0x280 x 0x1e0);
-	# uniform scale, centred
-	var vp := get_viewport_rect().size
-	var k := minf(vp.x / PAGE.x, vp.y / PAGE.y)
-	draw_set_transform(((vp - PAGE * k) * 0.5).floor(), 0.0, Vector2(k, k))
+	# 1:1, anchored top-left. The issue #35 reference captures (1897x1086)
+	# put every element at its RAW page coordinate -- sliders at x 10..250,
+	# the tri track at 270..410, the MW pill at 420..600 -- so the page is
+	# NOT scaled to the window; layouts authored against 640x480 keep their
+	# absolute pixel positions on larger screens, and only the bottom gauge
+	# row stretches with the width. (The 0x280 x 0x1e0 compare @ 0x10105d75
+	# is a dev-mode check, not a scaling rule -- the earlier scale-to-window
+	# reading over-interpreted it.)
 	var o := Vector2.ZERO
 	# the whole screen is the menu family's AMBER (DAT_10174fb0), not the
 	# flight HUD's green -- see the reference shots on issue #35
@@ -709,7 +714,6 @@ func _draw_engineering(fade: float) -> void:
 			amber if hot5 else col)
 
 	_eng_bottom_row(o, amber, col, t)
-	draw_set_transform_matrix(Transform2D.IDENTITY)
 
 ## The four wide status pills across the page bottom (FUN_10105ef0, called
 ## with x 35, y 421, w = page_w - 70): each pill (w - 96)/4 wide on a 32 px
@@ -729,7 +733,9 @@ static func eng_bottom_rects() -> Array:
 
 func _eng_bottom_row(o: Vector2, amber: Color, col: Color, t: float) -> void:
 	var s: ShipSystems = _sys()
-	var total := PAGE.x - 70.0
+	# the one width-relative row on the page: the reference captures show the
+	# four gauges spanning the full window width, not the 640 page width
+	var total := get_viewport_rect().size.x - 70.0
 	var pw := (total - 96.0) * 0.25
 	var hull_f: float = s.hull / maxf(s.hull_max, 1.0) if s != null else 1.0
 	var heat_f: float = clampf((s.heat + s.heat_external) * 0.75 \
