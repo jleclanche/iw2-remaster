@@ -1334,6 +1334,28 @@ func _kids_of(i: int) -> Array:
 			out.append(int(g["i"]))
 	return out
 
+## FUN_10100330 -- the command list rebuilt on every focus change. A NON-ROOT
+## focus seeds ITSELF as entry 0 (`list[0] = param_1`), then its visible
+## children follow; the root's list is just the top-level nodes. The focus
+## being entry 0 is what makes a focused body (a planet, an inner-system
+## node) selectable and what keeps PREV/NEXT alive on single-child levels.
+func _list_of(i: int) -> Array:
+	var out: Array = []
+	if i != 0:
+		out.append(i)
+	out.append_array(_kids_of(i))
+	return out
+
+## FUN_10100ce0 -- the descend gate: a node with visible-on-map children
+## (FUN_101005a0) accepts the dive ONLY while `sel != 0 or focus == root`.
+## With the focus sitting at entry 0, that means: select first, dive second
+## -- and a click on the focused centre falls through to the commit instead
+## of re-descending forever.
+func _can_descend(i: int) -> bool:
+	if _kids_of(i).is_empty():
+		return false
+	return _sel != 0 or _focus == 0
+
 ## imapentity.SetMapVisibility lands on the live sim record (entities.gd);
 ## istartsystem.HideMapLocations keeps the Dante route and the unrevealed
 ## story stations off the map until the plot shows them (istartsystem.pog:
@@ -1442,7 +1464,7 @@ func _enter_system(stem: String) -> void:
 	map_state = 2
 	_load_geo(stem)
 	_focus = 0
-	_kids = _kids_of(0)
+	_kids = _list_of(0)
 	_sel = 0
 	_refresh_system()
 	# the system starts 1000x zoomed OUT of its target and eases in
@@ -1489,7 +1511,7 @@ func _map_open() -> void:
 			bd = d
 			best = int(g["i"])
 	_focus = int(_geo[best]["parent"]) if best != 0 else 0
-	_kids = _kids_of(_focus)
+	_kids = _list_of(_focus)
 	_sel = maxi(0, _kids.find(best))
 	_refresh_system()
 	_sys_zoom = _sys_zoom_to
@@ -1606,14 +1628,16 @@ func _map_cmd(cmd: int) -> void:
 					if _can_jump(s):
 						_map_snd(true)
 						_open_jump_list(s)          # FUN_100fca90 -> state 4
-					elif not _kids_of(s).is_empty():
-						_focus = s                  # descend
-						_kids = _kids_of(_focus)
+					elif _can_descend(s):
+						_focus = s                  # descend; sel 0 = the focus
+						_kids = _list_of(_focus)
 						_sel = 0
 						_refresh_system()
 						_map_snd(true)
 					else:
-						_map_snd(false)             # nothing to descend into
+						# a leaf, or the focused centre itself (FUN_10100ce0
+						# refuses the dive while sel == 0 off the root)
+						_map_snd(false)
 				1:      # ZOOM OUT (always beeps valid, FUN_100fce60 case 1)
 					_map_snd(true)
 					if _focus == 0:
@@ -1625,7 +1649,7 @@ func _map_cmd(cmd: int) -> void:
 					else:
 						var was := _focus
 						_focus = int(_geo[_focus]["parent"])
-						_kids = _kids_of(_focus)
+						_kids = _list_of(_focus)
 						_sel = maxi(0, _kids.find(was))
 						_refresh_system()
 				2:
@@ -1726,9 +1750,12 @@ func _map_click(at: Vector2) -> void:
 			if pick < 0:
 				_map_snd(false)
 				return
-			if not _kids_of(pick).is_empty() and not _can_jump(pick):
+			# 0x100fbd08: the descend gate runs FIRST -- so the flow is click
+			# to select, click again to dive, and a click on the focused
+			# centre (sel 0) falls through to the commit below
+			if _can_descend(pick):
 				_focus = pick
-				_kids = _kids_of(_focus)
+				_kids = _list_of(_focus)
 				_sel = 0
 				_refresh_system()
 				_map_snd(true)
@@ -1736,7 +1763,7 @@ func _map_click(at: Vector2) -> void:
 				_map_cmd(4)
 			else:
 				_focus = int(_geo[pick]["parent"])
-				_kids = _kids_of(_focus)
+				_kids = _list_of(_focus)
 				_sel = maxi(0, _kids.find(pick))
 				_refresh_system()
 				_map_snd(true)
@@ -1963,7 +1990,9 @@ func _draw_map_menu(fade: float) -> void:
 				var s: int = _kids[_sel]
 				if _can_jump(s):
 					items.append([36, "JUMP DESTINATION", 0, "up", Hud.GREEN])
-				elif not _kids_of(s).is_empty():
+				elif _can_descend(s):
+					# mirrors the command gate: no dive is offered on the
+					# focused centre itself (FUN_10100ce0)
 					items.append([36, "ZOOM IN", 0, "up", Hud.GREEN])
 			items.append([37, "ZOOM OUT", 1, "down", Hud.GREEN])
 			items.append([34, "PREV", 2, "left", Hud.GREEN])
