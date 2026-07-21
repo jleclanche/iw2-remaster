@@ -664,6 +664,18 @@ func _open_interior() -> void:
 	# this manager, so each one swings the camera to its own diorama.
 	if main.pog_rt != null:
 		main.pog_rt.native("gui.setscreen", ["icSPPlayerBaseScreen"])
+		# the engine runs "<act package>.BaseMain" when the player-base
+		# screen raises -- the ".Main"/".BaseMain" dispatch-string pair in
+		# iwar2.dll (file 0x159b7d) against icSPMasterScreen::m_act_package.
+		# The act's BASE master is the whole on-base story machinery:
+		# iActOne.BaseMain starts the BaseMessageChecker that fires the
+		# story elements (character intros, S1.x), and every act routes
+		# imissiongenerator.BaseMain through it. Without this dispatch the
+		# act 1 mid-act chain (intros -> JAFS -> piracy -> Stepsons -> m02)
+		# never started (#4).
+		var pkg: String = main.pog_rt.gameapi.act_package
+		if pkg != "":
+			main.pog_rt.ui.dispatch(pkg + ".BaseMain")
 	set_diorama(_screen_diorama())
 	main.hud.log_msg("DOCKED: %s" % BASE_NAME.to_upper())
 

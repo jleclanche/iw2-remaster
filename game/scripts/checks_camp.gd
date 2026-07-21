@@ -377,7 +377,74 @@ func _campcheck_port() -> void:
 					"a1_m01_objective_find_base", {})
 			if fb.get("done", false):
 				print("CAMPCHECK(port): act 1 m01 COMPLETE (find_base done)",
-					" — advancing to act 2")
+					" — the mission docks the base itself (local_10548)")
+				demo_phase = 32
+		32:
+			# the on-base story machinery (#4): docking the player base runs
+			# "<act>.BaseMain" (the iwar2 ".BaseMain" dispatch), whose
+			# BaseMessageChecker starts ONE waiting story element per visit
+			# -- a1m01 armed g_story_1.10/1.30/1.20 (iact1mission01.pog:568)
+			# and S1.10 has the top priority. The gate observes the whole
+			# chain: dispatch -> checker -> element started (int flips 1->2)
+			# -> its conversation (comms.fast) drained.
+			# a1m01's completion branch runs its own base-arrival cutscene
+			# (local_10548: dolly, conversation, then ibacktobase.
+			# DockingCutscene) and ends with gui.SetScreen("icSPPlayer-
+			# BaseScreen"). In demo mode checks.step owns the frame and
+			# main's autopilot never processes, so the check PLAYS the
+			# fly-in: snap the ship onto the bay waypoint the cutscene is
+			# polling (sim.DistanceBetween(player, v4) < 50, the waypoint
+			# placed 1800 inside the base).
+			m.pog_rt.current_seq = -1  # keep the breadcrumbs clean
+			var bi: BaseInterior = m.base_iface
+			if bi != null and not bi.inside and not bi.open:
+				var luc3 := _object_index("Lucrecia's Base")
+				if luc3 >= 0:
+					var bl: Dictionary = m.objects[luc3]
+					var bp := Vector3(bl["x"], bl["y"], bl["z"])
+					var best := -1
+					var bd := 3000.0
+					for oi in m.objects.size():
+						if str(m.objects[oi]["name"]) != "waypoint":
+							continue
+						var od: Dictionary = m.objects[oi]
+						var wd := Vector3(od["x"], od["y"], od["z"]) \
+								.distance_to(bp)
+						if wd < bd:
+							bd = wd
+							best = oi
+					if best >= 0:
+						var ow: Dictionary = m.objects[best]
+						m.px = ow["x"]
+						m.py = ow["y"]
+						m.pz = ow["z"]
+						m.ship.velocity = Vector3.ZERO
+			var s110 := int(m.pog_rt.native("global.int", ["g_story_1.10"]))
+			if int(demo_t) % 20 == 0 and int(demo_t) != _kprobe_t:
+				_kprobe_t = int(demo_t)
+				var near0: Dictionary = m._nearest("station")
+				var rec0: Dictionary = bi.base_rec() if bi != null else {}
+				var mst: Variant = m.pog_rt.std.states.get(
+						"iact1mission01.mission_handler")
+				print("CAMPCHECK probe: base inside=", bi.inside if bi != null
+					else "?", " open=", bi.open if bi != null else "?",
+					" cut=", bi.cut if bi != null else "?",
+					" s110=", s110, " conv=",
+					m.pog_rt.gameapi.in_conversation,
+					" near=", near0.get("name", "-"), "@",
+					"%.0f" % float(near0.get("dist", -1.0)),
+					" rec_empty=", rec0.is_empty(),
+					" hidden=", rec0.get("sensor_hidden", "?"),
+					" docked_at=", m.docked_at,
+					" m01_prog=", mst.progress if mst != null else "?",
+					" states=", m.pog_rt.std.states.keys())
+				for tline in m.pog_rt.dump_tasks():
+					print("  task: ", tline)
+			if bi != null and bi.open and s110 == 2 \
+					and not m.pog_rt.gameapi.in_conversation:
+				print("CAMPCHECK(port): base story element S1.10 ran off ",
+					"BaseMain (g_story_1.10 == 2) — advancing to act 2")
+				bi.leave()
 				m.pog_rt.native("igame.nextact", ["iActTwo"])
 				demo_phase = 4
 		4:

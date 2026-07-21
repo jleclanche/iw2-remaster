@@ -637,6 +637,17 @@ func _set_screen(_t, a: Array) -> Variant:
 	if name == "icSpaceFlightScreen" and game != null \
 			and game.get("base_iface") != null and game.base_iface.inside:
 		game.base_iface.leave.call_deferred()
+	# the ENTRY mirror: a mission that ends inside the base does it by
+	# setting this screen itself -- a1m01's find-base completion runs
+	# gui.SetScreen("icSPPlayerBaseScreen") then PlayMovie("/movies/
+	# PB_Beauty") (iact1mission01.pog:577) -- so route it into the interior
+	# machinery: enter (park, blackout) then open (diorama, act BaseMain).
+	# _open_interior re-issues this SetScreen; the inside guard stops the
+	# recursion.
+	if name == "icSPPlayerBaseScreen" and game != null \
+			and game.get("base_iface") != null and not game.base_iface.inside:
+		game.base_iface.enter.call_deferred()
+		game.base_iface._open_interior.call_deferred()
 	return 0
 
 # @native gui.PushScreen
