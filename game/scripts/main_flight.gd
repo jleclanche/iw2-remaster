@@ -291,7 +291,10 @@ func _try_dock() -> void:
 	ship.velocity = Vector3.ZERO
 	ship.set_speed = 0.0
 	audio.play("audio/sfx/dock.wav", -4.0)
-	audio.music("ambient")
+	if not music_monitor_active():
+		# station docks stay in space mode -- the monitor keeps the score;
+		# only debug sessions without it fall back to a static mood
+		audio.music("ambient")
 	hud.log_msg("DOCKED: %s" % str(near["name"]).to_upper())
 	# only THE base raises the hangar interior (the old substring test also
 	# matched every "...Base" station in the map)

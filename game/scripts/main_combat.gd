@@ -24,7 +24,10 @@ func spawn_hostile(at: Vector3) -> AiShip:
 	ai.position = at
 	add_child(ai)
 	ai_ships.append(ai)
-	audio.music("action")
+	if not music_monitor_active():
+		# with the ported imusic monitor running, hostile proximity drives the
+		# mood (imusic.pog local_1866); this is the debug-session fallback
+		audio.music("action")
 	hud.warn("HOSTILE CONTACT", 3.0)
 	audio.play("audio/hud/klaxon.wav", -6.0)
 	return ai
@@ -143,7 +146,7 @@ func kill_ai(ai: AiShip) -> void:
 			# velocity and tumbles until the reactor goes
 			ai.assist = false
 			ai.angular_velocity = DeathSequence.tumble(ai.velocity)
-	if not _hostiles_alive():
+	if not _hostiles_alive() and not music_monitor_active():
 		audio.music("ambient")
 
 func _finish_kill(ai: AiShip) -> void:

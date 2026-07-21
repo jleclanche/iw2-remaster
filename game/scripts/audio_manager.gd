@@ -14,6 +14,7 @@ var lds_player: AudioStreamPlayer
 var music_a: AudioStreamPlayer
 var music_b: AudioStreamPlayer
 var music_current: AudioStreamPlayer
+var sting_player: AudioStreamPlayer   # imusic PlayEvent's channel 1 (cymbal/timpani)
 var current_mood := ""
 var current_track := ""       # a one-off stream (the credits' badlands), not a mood
 var base_path := ""
@@ -89,6 +90,9 @@ func _ready() -> void:
 	add_child(music_a)
 	add_child(music_b)
 	music_current = music_a
+	sting_player = AudioStreamPlayer.new()
+	sting_player.bus = "Music"
+	add_child(sting_player)
 
 func _load_wav(rel: String) -> AudioStreamWAV:
 	if rel in sfx_cache:
@@ -168,6 +172,10 @@ func set_engine_level(level: float) -> void:
 func set_thruster_level(level: float) -> void:
 	thruster_player.volume_db = linear_to_db(clampf(level, 0.0, 1.0) * 0.4 + 0.001)
 
+# Fallback mood player for sessions without the ported imusic monitor (debug
+# starts, front end). In the campaign the monitor (pog/gen/imusic.gd, started
+# per scripts.ini [Space] enter[]=iMusic.Initialise) owns the score and drives
+# play_track() through the stream natives instead.
 func music(mood: String) -> void:
 	if mood == current_mood and current_track.is_empty():
 		return
@@ -184,7 +192,10 @@ func music(mood: String) -> void:
 # mood back in when the screen pops.
 
 func play_track(stem: String, loop := true) -> void:
-	if current_track == stem:
+	# a finished one-shot may be replayed (imusic's monitor re-issues the same
+	# mood track when it ends and nothing changed) -- only a still-audible
+	# duplicate is a no-op
+	if current_track == stem and music_current != null and music_current.playing:
 		return
 	if current_track.is_empty():
 		_mood_before_track = current_mood
@@ -203,6 +214,45 @@ func restore_music() -> void:
 		music(mood)
 	else:
 		music_current.stop()
+
+## stream.Stop on the score channel stops the music outright -- imusic's
+## local_0 stops channels 0/1/2 on Initialise/Terminate and nothing plays
+## until a new track is started. A short fade stands in for the engine's
+## stream fade-out flag.
+func stop_track() -> void:
+	current_track = ""
+	current_mood = ""
+	_mood_before_track = ""
+	if music_current != null and music_current.playing:
+		var fading := music_current
+		var tw := create_tween()
+		tw.tween_property(fading, "volume_db", -60.0, 1.0)
+		tw.tween_callback(fading.stop)
+
+## End-of-track probe for stream.IsPlaying(0)/IsPlayingURL(0, ...): imusic's
+## monitor polls it to know when a one-shot mood finished (only the ambient
+## mood loops -- imusic.pog:494 plays with loop = (mood == 1)).
+func track_playing(stem: String) -> bool:
+	return current_track == stem \
+		and music_current != null and music_current.playing
+
+## imusic.PlayEvent's stings (short/long_cymbal, soft/loud_timpani -- MP3s in
+## the music dir) play on stream channel 1 ALONGSIDE the score; they must not
+## displace the channel-0 track.
+func play_sting(stem: String) -> void:
+	var path := GAME_DIR.path_join("streams/audio/music").path_join(
+		"%s.mp3" % stem)
+	if not FileAccess.file_exists(path):
+		return
+	var f := FileAccess.open(path, FileAccess.READ)
+	var stream := AudioStreamMP3.new()
+	stream.data = f.get_buffer(f.get_length())
+	sting_player.stream = stream
+	sting_player.volume_db = -8.0
+	sting_player.play()
+
+func sting_playing() -> bool:
+	return sting_player != null and sting_player.playing
 
 func _crossfade(file: String, loop: bool) -> void:
 	var path := GAME_DIR.path_join("streams/audio/music").path_join(file)

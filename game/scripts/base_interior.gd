@@ -654,6 +654,10 @@ func _open_interior() -> void:
 		return
 	open = true
 	_hide_world()
+	# scripts.ini [Space] exit[]=iMusic.Terminate: the flight score dies with
+	# the space session; the base screen's own builder then starts
+	# base_ambient_1/2 (ibasegui SPBaseScreen)
+	main.music_stop()
 	# gui.SetScreen("icSPPlayerBaseScreen"). PogUi's AUTO_OVERLAY raises the
 	# overlay manager's hosted menu, icSPBaseScreen, on top of it -- which is
 	# what the manager itself does at 0x10024cca -- and the menu is built by the
@@ -732,9 +736,10 @@ func _launch() -> void:
 	main.cam_mode = 0
 	main.cam_view = 0
 	main._apply_view()
-	# the base_ambient track ends with the visit; the flight mood it
-	# interrupted fades back in
-	main.audio.restore_music()
+	# scripts.ini [Space] enter[]=iMusic.Initialise: undocking re-enters space,
+	# which restarts the music monitor -- its first tick replays the
+	# system-entry pick (theme/discovery), killing base_ambient with it
+	main.music_start()
 	main.clock_start = Time.get_ticks_msec()
 	main.hud.log_msg("LAUNCHED")
 

@@ -227,6 +227,34 @@ var use_pog := false
 var pog_rt: PogRuntime
 var use_port := false
 
+# --- dynamic music -----------------------------------------------------------
+# The engine brackets each flight session with iMusic.Initialise/Terminate on
+# the [Space] enter/exit lists (data/ini/scripts.ini:47,56): every undock
+# restarts the monitor (which replays the system-entry theme/discovery pick)
+# and every base visit kills it before ibasegui starts base_ambient_1/2.
+
+func music_monitor_active() -> bool:
+	return pog_rt != null and pog_rt.std != null \
+		and pog_rt.std.globals.has("g_music_monitor")
+
+func music_start() -> void:
+	if pog_rt != null:
+		var mus: PogScript = pog_rt.script("imusic")
+		if mus != null:
+			if music_monitor_active():
+				mus.terminate()  # never two monitors: kill a stale one first
+			mus.initialise()
+			return
+	audio.music("ambient")  # no ported runtime (debug starts): static mood
+
+func music_stop() -> void:
+	if music_monitor_active():
+		var mus: PogScript = pog_rt.script("imusic")
+		if mus != null:
+			mus.terminate()
+			return
+	audio.stop_track()
+
 var px := 0.0
 var py := 0.0
 var pz := 0.0

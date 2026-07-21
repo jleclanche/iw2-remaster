@@ -379,23 +379,29 @@ func _mod_enable(_t, a: Array) -> Variant:
 
 
 # ---------------------------------------------------------------- stream
-# Play(channel, url, a, b) / Stop(channel, b) / IsPlayingURL(channel, url): a
-# handful of audio channels the scripts drive directly for ambience (the base
-# hum, the alien loop). The channel bookkeeping is exact, and a channel plays for
-# real when its url resolves to one of the extracted wavs. A MUSIC url is one of
-# the GOG MP3 streams and goes to the AudioManager's one-off track player --
-# the base menu's own builder starts base_ambient_1/2 this way (ibasegui
-# SPBaseScreen, 50/50 random), which is the base's real interior music.
+# Play(channel, url, fade, loop) / Stop(channel, fade) / IsPlayingURL(channel,
+# url): the numbered stream channels the scripts drive directly. Channel 0 is
+# THE score channel (imusic's monitor, ibasegui's base_ambient_1/2); channel 1
+# is imusic.PlayEvent's sting channel, which plays alongside the score;
+# channel 2+ carry ambient wavs (the alien loop). A MUSIC url is one of the
+# GOG MP3 streams; other urls resolve to extracted wavs. The loop flag
+# matters: imusic plays with loop = (mood == ambient) and polls IsPlaying(0)
+# to hear a one-shot mood end (imusic.pog:494), so the music channels report
+# REAL playback state, not just bookkeeping.
 
 # @native stream.Play
 func _stream_play(_t, a: Array) -> Variant:
 	var ch := int(a[0])
 	var url := PogStd._s(a[1])
+	var loop: bool = a.size() > 3 and int(a[3]) == 1
 	channels[ch] = url
 	if game == null or game.audio == null:
 		return 0
 	if "/music/" in url.replace("\\", "/"):
-		game.audio.play_track(url.get_file())
+		if ch == 0:
+			game.audio.play_track(url.get_file(), loop)
+		else:
+			game.audio.play_sting(url.get_file())
 		return 0
 	var rel := PogUi.sound_path(url)
 	if FileAccess.file_exists(game.audio.base_path.path_join(rel)):
@@ -404,20 +410,33 @@ func _stream_play(_t, a: Array) -> Variant:
 
 # @native stream.Stop
 func _stream_stop(_t, a: Array) -> Variant:
-	var url: String = channels.get(int(a[0]), "")
-	channels.erase(int(a[0]))
-	if game != null and game.audio != null \
+	var ch := int(a[0])
+	var url: String = channels.get(ch, "")
+	channels.erase(ch)
+	if game != null and game.audio != null and ch == 0 \
 			and "/music/" in url.replace("\\", "/"):
-		game.audio.restore_music()
+		game.audio.stop_track()
 	return 0
 
 # @native stream.IsPlaying
 func _stream_is_playing(_t, a: Array) -> Variant:
-	return 1 if channels.has(int(a[0])) else 0
+	var ch := int(a[0])
+	if not channels.has(ch):
+		return 0
+	var url: String = channels[ch]
+	if game != null and game.audio != null \
+			and "/music/" in url.replace("\\", "/"):
+		if ch == 0:
+			return 1 if game.audio.track_playing(url.get_file()) else 0
+		return 1 if game.audio.sting_playing() else 0
+	return 1
 
 # @native stream.IsPlayingURL
 func _stream_is_playing_url(_t, a: Array) -> Variant:
-	return 1 if channels.get(int(a[0]), "") == PogStd._s(a[1]) else 0
+	var ch := int(a[0])
+	if channels.get(ch, "") != PogStd._s(a[1]):
+		return 0
+	return _stream_is_playing(_t, [ch])
 
 
 # ---------------------------------------------------------------- imultiplay

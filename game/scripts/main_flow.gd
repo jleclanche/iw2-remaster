@@ -59,6 +59,12 @@ func _port_boot() -> void:
 	await ss.startup_new_game()
 	await ss.startup_session()
 	await ss.startup_space()
+	# scripts.ini [Space] enter[]=iMusic.Initialise (data/ini/scripts.ini:47)
+	# runs between StartupSpace and StartupSystem: it starts the dynamic-music
+	# monitor, whose first tick sees the system change and plays the entry
+	# pick (50% theme / 50% discovery, imusic.pog:376-383). FinalSetup's
+	# suspend-all parks it during the launch cutscene like any other task.
+	music_start()
 	await ss.startup_system()
 	var prelude: PogScript = pog_rt.script("iprelude")
 	if prelude != null:
@@ -608,7 +614,8 @@ func _end_movie(then: Callable) -> void:
 ## Only once the last movie has played: handing the view back mid-sequence would
 ## flash the world between two cinematics.
 func _after_movies() -> void:
-	audio.music("ambient")
+	if not music_monitor_active():
+		audio.music("ambient")  # front end / debug; in-campaign the monitor owns the score
 	if uicheck:
 		menu.open()
 	elif demo:
@@ -621,6 +628,14 @@ func _after_movies() -> void:
 		menu.close()  # straight into flight after a campaign cinematic
 	else:
 		menu.open()   # MOVIES replay returns to the front end
+
+## A session swap (igame.LoadGame) drops every queued cinematic unplayed:
+## their `then` continuations belong to the replaced session and must not run.
+func flush_movies() -> void:
+	_movie_queue.clear()
+	if movie != null:
+		movie.queue_free()
+		movie = null
 
 ## Skip the movie on screen. Only that one: the rest of the queue still plays,
 ## and a script waiting on a later movie must not be told its one has ended.
