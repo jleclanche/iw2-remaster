@@ -257,12 +257,17 @@ func _ms_lds_drop(_delta: float) -> void:
 		m.py = _mech_home.y
 		m.pz = _mech_home.z
 		m.ship.velocity = Vector3.ZERO
-		var near: Dictionary = m._nearest("station")
-		for i in m.objects.size():
-			if m.objects[i] == near:
-				m.target_idx = i
-				m.target_ai = null
-		m._set_autopilot(1)
+		# the approach engage is SETUP for the two --mechslow ap checks; the
+		# fast suite skips those, and an engaged autopilot must not leak into
+		# the missile checks -- the order latches its target (0x100afbc0), so
+		# it keeps flying to this station while they re-aim the live contact
+		if m.mechslow:
+			var near: Dictionary = m._nearest("station")
+			for i in m.objects.size():
+				if m.objects[i] == near:
+					m.target_idx = i
+					m.target_ai = null
+			m._set_autopilot(1)
 		_mech_next()
 
 func _ms_ap_approach(_delta: float) -> void:
@@ -345,6 +350,12 @@ func _ms_seeker_cross(_delta: float) -> void:
 		m._select_secondary(i)
 		if "SEEKER" in m.secondary_name.to_upper():
 			break
+	# missile-kill spam-fires this same magazine, and how many of its 5
+	# rounds it eats is a race on kill time -- reload, so this check proves
+	# GUIDANCE, not the leftover ammo count (the reported flake)
+	if m.secondary_idx >= 0 and m.secondary_idx < m.player_mags.size():
+		m.player_mags[m.secondary_idx]["ammo"] = 5
+		m._select_secondary(m.secondary_idx)
 	_mech_v0 = Vector3.ZERO
 	_mech_next()
 
@@ -361,8 +372,19 @@ func _ms_seeker_cross_assert(_delta: float) -> void:
 			"off-axis kill in %.0f s (tracked=%d)" % [demo_t, int(_mech_v0.x)])
 		_mech_next()
 	elif demo_t > 45.0:
-		_mech("seeker-cross", false, "target alive after %.0f s (tracked=%d)"
-			% [demo_t, int(_mech_v0.x)])
+		# name the launch gate that ate the shot, not just the outcome
+		var states: Array = []
+		for rec: Dictionary in m.missiles.missiles:
+			states.append(int(rec["state"]))
+		var ammo := -1
+		if m.secondary_idx >= 0 and m.secondary_idx < m.player_mags.size():
+			ammo = int(m.player_mags[m.secondary_idx].get("ammo", -1))
+		_mech("seeker-cross", false,
+			"target alive after %.0f s (tracked=%d live=%d states=%s sec=%s ammo=%d heat=%.0f+%.0f)"
+			% [demo_t, int(_mech_v0.x), m.missiles.missiles.size(), str(states),
+			m.secondary_name, ammo,
+			m.sys.heat if m.sys != null else -1.0,
+			m.sys.heat_external if m.sys != null else -1.0])
 		_mech_reap(m.target_ai)
 		m.target_ai = null
 		_mech_next()
