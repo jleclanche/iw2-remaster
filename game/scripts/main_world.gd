@@ -910,6 +910,7 @@ func _fold_motion() -> void:
 	for sw in _shockwaves:
 		sw["pos"] = (sw["pos"] as Vector3) - p
 	space_fx.shift_world(p)  # the stored contrail points (FUN_100e5280)
+	fields.shift_world(p)    # this tick's rock placements ride the rebase
 
 ## The body's terminator, from TRUE map positions -- the impostor's own
 ## position is a fiction (pulled to IMPOSTOR_DIST), so it cannot be used.

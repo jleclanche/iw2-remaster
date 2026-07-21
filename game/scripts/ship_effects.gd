@@ -683,6 +683,21 @@ func _flameshot_tick(delta: float) -> void:
 		print("FLAMESHOT: done")
 		get_tree().quit()
 
+## The flare quads and jet beams are WORLD-anchored: ShipEffects is a plain
+## Node, so its Node3D children sit outside the ship's 3D transform chain and
+## do not ride the hull. They are placed at RENDER cadence, after the
+## post-integration world fold (main.late_physics), reading the same folded
+## nozzle transforms the hull is drawn with. Placing them from
+## _physics_process left them a full tick's travel ahead of the folded hull
+## -- kilometres per frame during the LDS ramp (the "thruster lights run
+## ahead" regression; mechcheck lds-flare-anchored read 2e9 m).
+func _process(_delta: float) -> void:
+	if ship == null:
+		return
+	_update_jet_beams()
+	_update_engine_flares()
+
+
 func _physics_process(delta: float) -> void:
 	if ship == null:
 		return
@@ -788,8 +803,6 @@ func _physics_process(delta: float) -> void:
 		var b := Basis(q).scaled_local(
 			(entry["s0"] as Vector3).lerp(entry["s1"], t))
 		n.transform = Transform3D(b, (entry["p0"] as Vector3).lerp(entry["p1"], t))
-	_update_jet_beams()
-	_update_engine_flares()
 	# icSignAvatar flip: frac(t_seconds / fps) <= 0.5 -> texture, else
 	# texture_2 (Draw @ 0x100d047f..0x100d04d7 -- see _add_sign)
 	_sign_t += delta

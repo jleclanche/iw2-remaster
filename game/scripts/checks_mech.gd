@@ -75,6 +75,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_field_cull",
 	&"_ms_belt_enter",
 	&"_ms_belt_assert",
+	&"_ms_belt_lds",
 	&"_ms_tri_weights",
 	&"_ms_tri_drive",
 	&"_ms_tow_dock",
@@ -227,6 +228,20 @@ func _ms_lds_speed(_delta: float) -> void:
 		_mech("lds-render-origin", m.ship.global_position.length() < 1.0,
 			"off=%.1f m at v=%s/s" % [m.ship.global_position.length(),
 			m._fmt_dist(spd)])
+		# the engine flares are WORLD-anchored (ShipEffects is a plain Node,
+		# so its quads sit outside the ship's 3D chain): they must be placed
+		# at render cadence, post-fold, or they sit a full tick's travel
+		# ahead of the folded hull -- the thruster-lights-ahead-in-LDS
+		# regression. Here (pre-integration) quad == nozzle when placement
+		# is render-time; physics-time placement reads ~v*dt.
+		var fxo := -1.0
+		if m.ship.fx != null and not m.ship.fx._engine_flares.is_empty():
+			var ef: Dictionary = m.ship.fx._engine_flares[0]
+			if is_instance_valid(ef["quad"]) and is_instance_valid(ef["node"]):
+				fxo = (ef["quad"] as Node3D).global_position.distance_to(
+						(ef["node"] as Node3D).global_position)
+		_mech("lds-flare-anchored", fxo >= 0.0 and fxo < 1.0,
+			"quad-nozzle=%s m at v=%s/s" % [str(fxo), m._fmt_dist(spd)])
 		m._toggle_lds()
 		_mech_next()
 
@@ -632,8 +647,35 @@ func _ms_belt_assert(_delta: float) -> void:
 			vis += 1
 	_mech("belt-spawn", not live.is_empty() and vis == live.size(),
 		"live=%d visible=%d after %.1f s" % [live.size(), vis, demo_t])
-	m.py += 1.0e8  # strand the rocks; the cull loop reaps them as we go
+	# stay in the belt and light the LDS drive for the astern guard
+	m.target_idx = -1
+	m.target_ai = null
+	m._toggle_lds()
 	_mech_next()
+
+func _ms_belt_lds(_delta: float) -> void:
+	# The #50/#51 fix-review regression: at shell-per-frame LDS speeds the
+	# field flushes and respawns EVERY tick against the PRE-fold focus; the
+	# post-integration fold must carry the rock nodes astern before the
+	# frame renders, or each tick flashes the whole respawned field around
+	# the ship (the reported asteroid strobing). Sampled pre-tick: every
+	# live rock must sit far astern, never on screen.
+	if m.lds_state == 2 and m.ship.velocity.length() > 1.0e8:
+		var live: Array = m.fields.asteroid.live
+		var nearest := INF
+		for rk in live:
+			nearest = minf(nearest, (rk["node"] as Node3D).position.length())
+		_mech("belt-lds-astern", not live.is_empty() and nearest > 1.0e6,
+			"live=%d nearest=%s m at v=%s/s" % [live.size(), str(nearest),
+			m._fmt_dist(m.ship.velocity.length())])
+		m._toggle_lds()
+		m.ship.velocity = Vector3.ZERO
+		m.py += 1.0e8  # strand the rocks; the cull loop reaps them as we go
+		_mech_next()
+	elif demo_t > 20.0:
+		_mech("belt-lds-astern", false, "never reached cruise (state=%d v=%s)"
+			% [m.lds_state, str(m.ship.velocity.length())])
+		_mech_next()
 
 func _ms_tri_weights(_delta: float) -> void:
 	# --- the TRI (task #60) -------------------------------------------

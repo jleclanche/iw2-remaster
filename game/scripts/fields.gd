@@ -168,8 +168,17 @@ func clear_system() -> void:
 	_show_dust(debris, false)
 
 
-func shift_world(_offset: Vector3) -> void:
-	pass  # rocks re-fold from absolute coordinates every tick
+## The world fold is post-integration (main.late_physics, #51), and this tick
+## placed the rock nodes against the PRE-fold focus -- so they must ride the
+## rebase or they render one tick's travel off. At LDS shell-per-frame speeds
+## that painted the whole per-tick respawned field around the ship for one
+## frame each tick (the asteroid strobing regression; mechcheck
+## belt-lds-astern). The absolute ax/ay/az are untouched: next tick's cull
+## loop re-folds from them regardless.
+func shift_world(offset: Vector3) -> void:
+	for f: Field in [asteroid, debris]:
+		for rk in f.live:
+			(rk["node"] as Node3D).position -= offset
 
 
 # --- zone tests --------------------------------------------------------------
