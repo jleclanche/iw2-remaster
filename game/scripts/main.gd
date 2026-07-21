@@ -249,12 +249,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				_undock()
 			KEY_Z:  # ToggleZoom -- gated on hardware, see _enable_zoom
 				_enable_zoom(not zoomed)
-			KEY_COMMA:  # CycleContactUp
-				_cycle_contact(-1)
-				_arm_key_repeat(KEY_COMMA)
-			KEY_PERIOD:  # CycleContactDown
-				_cycle_contact(1)
-				_arm_key_repeat(KEY_PERIOD)
+			KEY_TAB:  # CycleContactDown / CycleContactUp (remaster default:
+				# Tab / Shift+Tab; the original shipped comma / period in
+				# configs/default.ini)
+				_cycle_contact(-1 if event.shift_pressed else 1)
+				_arm_key_repeat(KEY_TAB)
 			KEY_HOME:
 				_target_contact_index(0)
 			KEY_END:
@@ -355,10 +354,9 @@ func _tick_key_repeat(delta: float) -> void:
 	while _repeat_t <= 0.0:
 		_repeat_t += KEY_REPEAT_PERIOD
 		match _repeat_key:
-			KEY_COMMA:
-				_cycle_contact(-1)
-			KEY_PERIOD:
-				_cycle_contact(1)
+			KEY_TAB:
+				_cycle_contact(-1 if Input.is_key_pressed(KEY_SHIFT)
+						else 1)
 
 func _physics_process(delta: float) -> void:
 	# reload_current_scene() does not stop the outgoing scene immediately: this
