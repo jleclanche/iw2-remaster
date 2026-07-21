@@ -1837,19 +1837,21 @@ func _menu_select() -> void:
 		menu_active = false
 		menu_focus = MENU_ROOT
 
-func _spr_ret(pos: Vector2, id: int, col: Color, rot := 0.0, flags := 0) -> void:
+func _spr_ret(pos: Vector2, id: int, col: Color, rot := 0.0, flags := 0,
+		ci: CanvasItem = null) -> void:
 	# the same blit as _spr, against reticle.png (texture 2)
 	if _reticle_tex == null or not SPR_RET.has(id):
 		return
+	var t: CanvasItem = ci if ci != null else self
 	var s: Array = SPR_RET[id]
 	var sz := Vector2(float(s[2]), float(s[3]))
 	var off := Vector2(-float(s[4]), -float(s[5]))
 	var src := Rect2(float(s[0]), float(s[1]), sz.x, sz.y)
 	var sc := Vector2(-1.0 if (flags & 1) != 0 else 1.0,
 			-1.0 if (flags & 2) != 0 else 1.0)
-	draw_set_transform(pos, rot, sc)
-	draw_texture_rect_region(_reticle_tex, Rect2(off, sz), src, col)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	t.draw_set_transform(pos, rot, sc)
+	t.draw_texture_rect_region(_reticle_tex, Rect2(off, sz), src, col)
+	t.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 func _menu_key_down() -> int:
 	# icHUD+0x1bc / +0x1c0: which menu input is being HELD, in the input mapper's
@@ -1994,7 +1996,7 @@ func _draw_menu_reticle(c: Vector2) -> void:
 				int(link["icon"]), link["col"], int(MENU_ALIGN[i]), held == i)
 
 func _menu_node_box(anchor: Vector2, text: String, icon: int, col: Color,
-		align: int, hi: bool) -> void:
+		align: int, hi: bool, ci: CanvasItem = null) -> void:
 	# FUN_100ea830 @ 0x100ea830 -> FUN_100ea900 @ 0x100ea900. A menu node is not
 	# a rectangle with a label in it: it is the rail primitive (FUN_100eaf90 with
 	# cap sprite 40 and rail sprite 41 -- 32px tall, 16px chevrons) sized to the
@@ -2016,6 +2018,7 @@ func _menu_node_box(anchor: Vector2, text: String, icon: int, col: Color,
 	# the same measure, FUN_100ebd70(1, ...)), which trims both side bearings --
 	# five pixels narrower than a raw advance sum on a three-letter label, and
 	# the rail is cut to it.
+	var t: CanvasItem = ci if ci != null else self
 	var a: float = 1.0 if hi else 0.5
 	var tw: float = _text_w(1, text)
 	var w: float = tw + (MENU_ICON_PAD if icon != 0 else 0.0) - MENU_TEXT_TRIM
@@ -2026,19 +2029,19 @@ func _menu_node_box(anchor: Vector2, text: String, icon: int, col: Color,
 		x -= w
 	x = floor(x) - 1.0
 	var y: float = floor(anchor.y)
-	_hbar(self, x, y, w, MENU_BOX_CAP, MENU_BOX_RAIL,
+	_hbar(t, x, y, w, MENU_BOX_CAP, MENU_BOX_RAIL,
 			Color(col.r, col.g, col.b, a))
 	var tx: float = x - MENU_TEXT_BACK
 	var tcol := col
 	if icon != 0:
 		var ip := Vector2(tx + MENU_ICON_STEP, y)
 		if hi:
-			_spr(ip, 51, Color(col.r, col.g, col.b, 1.0))  # the roundel backing
-		_spr(ip, icon, Color(col.r, col.g, col.b, 1.0))
+			_spr(ip, 51, Color(col.r, col.g, col.b, 1.0), 0.0, 0, t)  # roundel backing
+		_spr(ip, icon, Color(col.r, col.g, col.b, 1.0), 0.0, 0, t)
 		tx = ip.x + MENU_TEXT_TRIM
 		tcol = GREEN
 	if text != "":
-		_hud_text(1, 1 if hi else 0, Vector2(tx, y), text, 0, 2, tcol)
+		_hud_text(1, 1 if hi else 0, Vector2(tx, y), text, 0, 2, tcol, t)
 
 # --- FUN_100eb270: the one call every string on the HUD goes through ---------
 # FUN_100eb270(font, style, x, y, str, halign, valign) @ 0x100eb270 -- 47 call
@@ -2194,9 +2197,10 @@ func _text_w(fi: int, text: String) -> float:
 	return _text_metrics(fi, text).x
 
 func _hud_text(fi: int, style: int, p: Vector2, text: String, halign: int,
-		valign: int, rgb: Color) -> void:
+		valign: int, rgb: Color, ci: CanvasItem = null) -> void:
 	# The face carries the HUD's letter spacing (HUD_KERN), so Godot's own pen
-	# reproduces the engine's: (lx1 - lx0) + spacing per glyph.
+	# reproduces the engine's: (lx1 - lx0) + spacing per glyph. `ci` lets the
+	# menu pages (hud_screens) borrow the renderer onto their own canvas.
 	var f: Font = _hud_draw_font(fi)
 	if f == null or text == "":
 		return
@@ -2219,7 +2223,8 @@ func _hud_text(fi: int, style: int, p: Vector2, text: String, halign: int,
 	x -= m.z
 	var a: float = TEXT_ALPHA[clampi(style, 0, 2)] * _ea
 	var size: int = _hud_font_size(fi)
-	draw_string(f, Vector2(floor(x), floor(y) + f.get_ascent(size)), text,
+	var t: CanvasItem = ci if ci != null else self
+	t.draw_string(f, Vector2(floor(x), floor(y) + f.get_ascent(size)), text,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(rgb.r, rgb.g, rgb.b, a))
 
 # --- dev: `-- --menushot` -----------------------------------------------------

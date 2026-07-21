@@ -574,8 +574,11 @@ func _player_control(delta: float) -> void:
 	# free flight: N toggles, LeftCtrl / NumPad5 holds (FreeToggle/FreeHold)
 	sh.assist = not (free_toggle or Input.is_physical_key_pressed(KEY_CTRL)
 		or Input.is_physical_key_pressed(KEY_KP_5))
-	if (Input.is_key_pressed(KEY_SPACE)
-			or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) \
+	# a raised menu page (starmap etc.) owns the mouse: its clicks pick map
+	# nodes, they must not reach the trigger
+	var mouse_fire: bool = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) \
+			and (hud == null or hud.screen == "")
+	if (Input.is_key_pressed(KEY_SPACE) or mouse_fire) \
 			and lds_state == 0 and fire_lock <= 0.0:
 		# CurrentWeaponFire fires the SELECTED weapon (iiWeapon::
 		# AttemptToActivateWeapon 0x1003ccb0 only lets the magazine whose id

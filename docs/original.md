@@ -2057,6 +2057,23 @@ cluster**, **`0x100fda70` system**.
 - **Sprite passes are additive**: `FcGraphicsEngine::SetBlend(2)` precedes the
   map's `FUN_100e9de0` runs -- the glow in reference captures is additive
   blending, not an art asset.
+- **Node labels sit CENTRED UNDER their glyph** (reference captures: "The
+  Effrit" under the diamond, "Lucrecia's Base" under the station icon), in
+  the small face, mixed case -- not to the icon's right.
+- **Plot-gated map content**: `imapentity.SetMapVisibility` writes the flag
+  `icHUDStarmap` honours per entity. `istartsystem.pog HideMapLocations`
+  (673-697) hides the Dante Interstellar L-Point (and disables it,
+  `ilagrangepoint.SetUsable 0`), the Marauder stations, the Dainn L-points
+  and the unrevealed Lucrecia's Bases at campaign start; `iact2mission24.pog:
+  17-21` reveals the Dante route in Act 2 (`iact2mission22.pog:56-66` the
+  Dainn pair). The known-jump side is `icLagrangePointWaypoint::Is/Set(Un)-
+  Known @ 0x1006b440/0x1006b3f0/0x1006b3a0` -> `icSaveGame::Is/SetKnown @
+  0x100b7c80/0x100b7a60`, a per-save set the jump-destination list (state 4)
+  filters by (`0x100fca90`).
+- The page also runs a **green scan band** sweeping top to bottom
+  (capture-matched ~40 px, peak ~ +0.12 green over the wash; renderer
+  untraced like the wash -- the GUI's own extracted sweep law is menu.gd's
+  4 px @ 0.30 x 3 s).
 
 ---
 

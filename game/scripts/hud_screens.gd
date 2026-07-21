@@ -143,9 +143,17 @@ func _draw() -> void:
 	var caption := str(Hud.MENU.get(hud.screen, {}).get("label", ""))
 	var band_green := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.25 * fade)
 	draw_rect(Rect2(Vector2(16, 16), Vector2(size.x - 32.0, 32.0)), band_green)
-	draw_string(hud._font_head, Vector2(20, 19 + hud.head_size), caption,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.head_size,
-			Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade))
+	hud._ea = fade
+	_glow_text(2, Vector2(20, 19), caption, MAP_TEXT_BRIGHT)
+	# the page's green scan band sweeping top to bottom, capture-matched
+	# (~40 px, peak ~0.12 over the wash, ~3 s period -- the renderer is
+	# untraced, like the wash; the GUI's own sweep law is menu.gd SWEEP_*)
+	var sweep := fposmod(Time.get_ticks_msec() / 3000.0, 1.0) \
+			* (size.y + 40.0) - 40.0
+	for i in 8:
+		var la := (1.0 - absf(float(i) - 3.5) / 4.0) * 0.12 * fade
+		draw_rect(Rect2(0.0, sweep + i * 5.0, size.x, 5.0),
+				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, la))
 	# NO open flash: the scanline burst _DAT_1011d814 times belongs to the
 	# LDSi-disruption effect, not to a page opening -- the original opens
 	# its pages clean (user capture review, issue #35)
@@ -232,6 +240,24 @@ func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, scale := 1.0) -> void:
 func _spr_glow(pos: Vector2, id: int, col: Color) -> void:
 	_spr(pos, id, Color(col.r, col.g, col.b, col.a * 0.35), 0.0, 1.8)
 	_spr(pos, id, col)
+
+# additive full green over the wash, from the reference capture: the page
+# text reads bright yellow-green, and the glyphs bloom (the font atlas's
+# baked halo under additive blending)
+const MAP_TEXT_BRIGHT := Color(0.95, 1.0, 0.1)
+
+## Page text through the HUD's own renderer (FUN_100eb270 port: kerned face,
+## engine metrics/styles), with faint offset passes standing in for the
+## additive glyph bloom Godot's alpha blend loses.
+func _glow_text(fi: int, p: Vector2, text: String, col: Color,
+		halign := 0) -> void:
+	var ea: float = hud._ea
+	hud._ea = ea * 0.3
+	for off: Vector2 in [Vector2(1, 0), Vector2(-1, 0),
+			Vector2(0, 1), Vector2(0, -1)]:
+		hud._hud_text(fi, 1, p + off, text, halign, 0, col, self)
+	hud._ea = ea
+	hud._hud_text(fi, 1, p, text, halign, 0, col, self)
 
 # --- icHUDEngineering: the TRI ------------------------------------------------
 # @element icHUDEngineering
@@ -1085,7 +1111,6 @@ const LABEL_FULL := 60.0       # _DAT_1011e1c4
 const LP_STUB_K := 2.1         # _DAT_1011e230
 const MAP_A_VISITED := 0.7     # _DAT_101191e8
 const MAP_A_UNSEEN := 0.3      # _DAT_1011c034
-const MAP_LABEL_DX := 16.0     # _DAT_101184a0
 const MAP_BODY := Color(1.0, 0.592, 0.0)    # DAT_10174fb0 (init FUN_100e6750)
 const MAP_ROUTE := Color(1.0, 0.07, 0.0)    # DAT_10176018 (init FUN_100e68d0)
 const MAP_LINE := Color(0.5, 1.0, 0.0)      # DAT_10176038 -- orbit/stub green
@@ -1243,9 +1268,49 @@ func _glyph_id(g: Dictionary) -> int:
 func _kids_of(i: int) -> Array:
 	var out: Array = []
 	for g: Dictionary in _geo:
-		if int(g["parent"]) == i and int(g["i"]) != i:
+		if int(g["parent"]) == i and int(g["i"]) != i \
+				and _geo_visible(g):
 			out.append(int(g["i"]))
 	return out
+
+## imapentity.SetMapVisibility lands on the live sim record (entities.gd);
+## istartsystem.HideMapLocations keeps the Dante route and the unrevealed
+## story stations off the map until the plot shows them (istartsystem.pog:
+## 673-697; revealed e.g. iact2mission24.pog:17-21). Only the player's own
+## system has live records; a foreign system draws everything.
+func _geo_visible(g: Dictionary) -> bool:
+	if _geo_stem != main.system_stem:
+		return true
+	var want := str(g["name"])
+	for o: Dictionary in main.objects:
+		if str(o["name"]) == want:
+			return bool(o.get("map_visible", true))
+	return true
+
+## The per-frame lookup the renderers use (name -> visible).
+func _vis_map() -> Dictionary:
+	var vis: Dictionary = {}
+	if _geo_stem == main.system_stem:
+		for o: Dictionary in main.objects:
+			vis[str(o["name"])] = bool(o.get("map_visible", true))
+	return vis
+
+## A chart link hides while the local interstellar L-point that charters it
+## is plot-hidden (the Dante route, istartsystem.pog:678-679, revealed by
+## iact2mission24.pog:20). Only the player's own system has live records to
+## consult; a foreign-to-foreign link draws as authored.
+func _link_visible(a: String, b: String) -> bool:
+	var here := str(main.system_stem)
+	var far := b if a == here else (a if b == here else "")
+	if far.is_empty() or _geo_stem != here:
+		return true
+	for g: Dictionary in _geo:
+		if str(g["cat"]) != "lpoint":
+			continue
+		for d: String in g["jumps"]:
+			if str(d).to_lower() == far and not _geo_visible(g):
+				return false
+	return true
 
 func _is_descendant(i: int, of: int) -> bool:
 	# FUN_100ffe20
@@ -1570,7 +1635,7 @@ func _map_pick_geo(at: Vector2) -> int:
 	var best := -1
 	var bd := PICK_R
 	for g: Dictionary in _geo:
-		if int(g["i"]) == 0:
+		if int(g["i"]) == 0 or not _geo_visible(g):
 			continue
 		var p: Vector2 = centre + (Vector2(g["pos"]) - _sys_cam) * scale
 		var d := p.distance_to(at)
@@ -1712,11 +1777,13 @@ func _draw_starmap(fade: float) -> void:
 
 	# the two header indicators, absolute (36,126) and (72,126), drawn after the
 	# projection is popped: sprite 53 backs both, then the live one blinks over.
+	# The capture shows them BRIGHT with bloom -- the additive sprite path.
 	var t: float = Time.get_ticks_msec()
 	var blink: float = (absf(fposmod(t * 0.0005, 1.0) - 0.5) * 1.8 + 0.1) * fade
-	var dim := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade * 0.5)
-	_spr(Vector2(36, 126), 53, dim)
-	_spr(Vector2(72, 126), 53, dim)
+	var backing := Color(MAP_TEXT_BRIGHT.r, MAP_TEXT_BRIGHT.g, MAP_TEXT_BRIGHT.b,
+			fade * 0.9)
+	_spr_glow(Vector2(36, 126), 53, backing)
+	_spr_glow(Vector2(72, 126), 53, backing)
 	var bc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, blink)
 	if not is_equal_approx(_sys_zoom, _sys_zoom_to) \
 			or not is_equal_approx(_clu_zoom, _clu_zoom_to):
@@ -1731,7 +1798,6 @@ func _draw_starmap(fade: float) -> void:
 	# state 2: "SYSTEM VIEW: <system>" / "SELECTED: <selection>"; state 4: the
 	# L-point type line / "SELECTED: <destination>". Names print in their
 	# localised mixed case (hud.csv hud_map_* keys + Field lookups).
-	var tc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
 	var l0 := "CLUSTER VIEW"
 	var l1 := "SELECTED: %s" % str(c[map_sel]["name"])
 	if map_state == 2 or map_state == 1 or map_state == 3:
@@ -1749,10 +1815,9 @@ func _draw_starmap(fade: float) -> void:
 		l0 = "INTERSTELLAR L-POINT" if inter else "LOCAL L-POINT"
 		l1 = "SELECTED: %s" % (_lp_display(_lps[_lp_sel])
 				if not _lps.is_empty() else "NONE")
-	draw_string(hud._font_menu, Vector2(20, 60), l0,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size, tc)
-	draw_string(hud._font_menu, Vector2(20, 80), l1,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size, tc)
+	hud._ea = fade
+	_glow_text(1, Vector2(20, 60), l0, MAP_TEXT_BRIGHT)
+	_glow_text(1, Vector2(20, 80), l1, MAP_TEXT_BRIGHT)
 	_draw_map_menu(fade)
 
 func _geo_name(i: int) -> String:
@@ -1775,15 +1840,13 @@ func _lp_display(stem: String) -> String:
 	return str(stem).replace("_", " ")
 
 # --- the centre menu (FUN_100fd2b0 / FUN_100fd440 / FUN_100fd5a0) -------------
-# The map's commands are MENU nodes: the reticle menu stays on screen with the
+# The map's commands ARE menu nodes: the reticle menu stays on screen with the
 # element's command list hung around the centre ring -- PREV left, NEXT right,
 # ZOOM OUT below, ZOOM IN above (menu offsets MENU_OFF, alignment table
-# 0x1011dec8), exactly as the reference capture shows. Commands that would be
-# rejected are simply not offered (FUN_100fd2b0 rebuilds the list per state).
-const MAP_RETICLE_R := 75.0
-# additive full green / amber over the flat wash, from the reference capture
-const MAP_MENU_GREEN := Color(0.92, 1.0, 0.05)
-
+# 0x1011dec8). Drawn with the SAME machinery as the flight arrow menu
+# (hud._menu_node_box / _spr_ret against reticle.png), not a look-alike.
+# Commands that would be rejected are simply not offered (FUN_100fd2b0
+# rebuilds the list per state).
 var _menu_pills: Array = []    # [[Rect2, cmd], ...] rebuilt each draw
 
 func _draw_map_menu(fade: float) -> void:
@@ -1791,63 +1854,60 @@ func _draw_map_menu(fade: float) -> void:
 	if map_state == 1 or map_state == 3:
 		return                                  # FUN_100fd380 clears it
 	var centre := (get_viewport_rect().size * 0.5).floor()
-	var col := Color(MAP_MENU_GREEN.r, MAP_MENU_GREEN.g, MAP_MENU_GREEN.b, fade)
-	# the reticle ring with its cardinal ticks
-	draw_arc(centre, MAP_RETICLE_R, 0, TAU, 96, col, 1.0, true)
-	for k in 4:
-		var dir := Vector2.RIGHT.rotated(TAU * k / 4.0)
-		draw_line(centre + dir * (MAP_RETICLE_R - 5.0),
-				centre + dir * (MAP_RETICLE_R + 5.0), col, 1.0, true)
-	var items: Array = []                       # [sprite, text, cmd, dir, red]
+	hud._ea = fade
+	var green := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade)
+	# the menu reticle: sprite 91 mirrored into the full ring, the four
+	# spinning quadrants at half alpha (FUN_100f1d60)
+	for f in 4:
+		hud._spr_ret(centre, 91, green, 0.0, f, self)
+	for i in 4:
+		hud._spr_ret(centre, 93,
+				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.5 * fade),
+				hud._menu_spin + PI / 2.0 * i, 0, self)
+	var items: Array = []                       # [sprite, text, cmd, dir, col]
+	var red := Color(1, 0.25, 0.25)
 	match map_state:
 		0:
-			items = [[36, "ZOOM IN", 0, "up", false],
-					[34, "PREV", 2, "left", false],
-					[35, "NEXT", 3, "right", false]]
+			items = [[36, "ZOOM IN", 0, "up", Hud.GREEN],
+					[34, "PREV", 2, "left", Hud.GREEN],
+					[35, "NEXT", 3, "right", Hud.GREEN]]
 		2:
 			if not _kids.is_empty():
 				var s: int = _kids[_sel]
 				if _can_jump(s):
-					items.append([36, "JUMP DESTINATION", 0, "up", false])
+					items.append([36, "JUMP DESTINATION", 0, "up", Hud.GREEN])
 				elif not _kids_of(s).is_empty():
-					items.append([36, "ZOOM IN", 0, "up", false])
-			items.append([37, "ZOOM OUT", 1, "down", false])
-			items.append([34, "PREV", 2, "left", false])
-			items.append([35, "NEXT", 3, "right", false])
+					items.append([36, "ZOOM IN", 0, "up", Hud.GREEN])
+			items.append([37, "ZOOM OUT", 1, "down", Hud.GREEN])
+			items.append([34, "PREV", 2, "left", Hud.GREEN])
+			items.append([35, "NEXT", 3, "right", Hud.GREEN])
 		4:
-			items = [[31, "CANCEL", 1, "down", true],
-					[34, "PREV", 2, "left", false],
-					[35, "NEXT", 3, "right", false]]
+			items = [[31, "CANCEL", 1, "down", red],
+					[34, "PREV", 2, "left", Hud.GREEN],
+					[35, "NEXT", 3, "right", Hud.GREEN]]
+	var dir_keys := {"up": KEY_UP, "down": KEY_DOWN,
+			"left": KEY_LEFT, "right": KEY_RIGHT}
 	for it: Array in items:
-		var c: Color = Color(1, 0.25, 0.25, fade) if bool(it[4]) else col
-		var text := str(it[1])
-		var tw: float = hud._font_menu.get_string_size(text,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size).x
-		var pw := tw + 44.0
-		var ph := 22.0
-		var anchor: Vector2 = centre + Hud.MENU_OFF[str(it[3])]
-		var r := Rect2(anchor - Vector2(pw * 0.5, ph * 0.5), Vector2(pw, ph))
-		match str(it[3]):   # alignment table: side boxes hang outwards
-			"left":
-				r.position.x = anchor.x - pw
-			"right":
-				r.position.x = anchor.x
-		_pill(r, c)
-		_spr(r.position + Vector2(14.0, ph * 0.5), int(it[0]), c)
-		draw_string(hud._font_menu,
-				r.position + Vector2(28.0, ph * 0.5 + hud.menu_size * 0.35),
-				text, HORIZONTAL_ALIGNMENT_LEFT, -1, hud.menu_size, c)
-		_menu_pills.append([r, int(it[2])])
-
-func _pill(r: Rect2, col: Color) -> void:
-	# a stadium outline: two half-circle caps joined by rails
-	var rad := r.size.y * 0.5
-	var lc := Vector2(r.position.x + rad, r.position.y + rad)
-	var rc := Vector2(r.end.x - rad, r.position.y + rad)
-	draw_arc(lc, rad, PI * 0.5, PI * 1.5, 12, col, 1.0, true)
-	draw_arc(rc, rad, -PI * 0.5, PI * 0.5, 12, col, 1.0, true)
-	draw_line(Vector2(lc.x, r.position.y), Vector2(rc.x, r.position.y), col, 1.0, true)
-	draw_line(Vector2(lc.x, r.end.y), Vector2(rc.x, r.end.y), col, 1.0, true)
+		var dir := str(it[3])
+		var di: int = Hud.MENU_DIRS.find(dir)
+		var anchor: Vector2 = centre + Hud.MENU_OFF[dir]
+		var held: bool = Input.is_physical_key_pressed(int(dir_keys[dir]))
+		var label := str(it[1])
+		var icon := int(it[0])
+		hud._menu_node_box(anchor, label, icon, it[4],
+				int(Hud.MENU_ALIGN[di]), held, self)
+		# the click hit box mirrors _menu_node_box's rail geometry (32px tall,
+		# 16px chevron caps beyond the rail width)
+		var w: float = hud._text_w(1, label) \
+				+ (Hud.MENU_ICON_PAD if icon != 0 else 0.0) - Hud.MENU_TEXT_TRIM
+		var x: float = anchor.x
+		match int(Hud.MENU_ALIGN[di]):
+			2:
+				x -= w * 0.5
+			1:
+				x -= w
+		_menu_pills.append([Rect2(x - 16.0, anchor.y - 16.0, w + 32.0, 32.0),
+				int(it[2])])
 
 func _menu_click(at: Vector2) -> bool:
 	for p: Array in _menu_pills:
@@ -1875,6 +1935,11 @@ func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
 			if drawn.has(k):
 				continue
 			drawn[k] = true
+			# a route whose chartering interstellar L-point the plot has
+			# hidden (SetMapVisibility 0) is not on the chart: the Dante
+			# link stays dark until iact2mission24 reveals it
+			if not _link_visible(a, b):
+				continue
 			var pa: Vector2 = pos[a]
 			var pb: Vector2 = pos[b]
 			var mid := (pa + pb) * 0.5
@@ -1903,12 +1968,13 @@ func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
 		var node := Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, a * alpha)
 		_spr_glow(p, int(c[i]["spr"]), node)
 		# style 2 (the selection) is amber, 0 and 1 are green; the localised
-		# display name (clusters.csv), in its own mixed case
-		var lc: Color = node if style == 2 else \
-				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, a * alpha)
-		draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
-				str(c[i]["name"]), HORIZONTAL_ALIGNMENT_LEFT,
-				-1, hud.num_size, lc)
+		# display name (clusters.csv) in its own mixed case, CENTRED UNDER
+		# the node (reference capture), small face
+		var lc: Color = Hud.AMBER if style == 2 else Hud.GREEN
+		hud._ea = a * alpha
+		hud._hud_text(0, 1, p + Vector2(0.0, 10.0), str(c[i]["name"]),
+				2, 0, lc, self)
+	hud._ea = alpha
 	# the cluster labels (clusters.ini label[n] / label_coords[n])
 	for l: Dictionary in _cluster_labels:
 		var p := centre + (Vector2(l["pos"]) - _clu_cam) * scale
@@ -1924,6 +1990,10 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 	var half_diag: float = (size * 0.5).length()
 	var sel_i: int = _kids[_sel] if not _kids.is_empty() and _sel < _kids.size() else -1
 	var route_i := _route_geo()
+	# plot-hidden entities (SetMapVisibility 0) simply do not exist here
+	var vis := _vis_map()
+	# the cursor pick hovers a node to full alpha, like the cluster view
+	var hov := _map_pick_geo(_cursor) if _cursor_on else -1
 
 	# pass 1: the orbit circles, about each body's PARENT -- in the body AMBER
 	# (the renderer parks DAT_10174fb0 in the colour register at its head; the
@@ -1931,7 +2001,8 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 	for g: Dictionary in _geo:
 		var i: int = int(g["i"])
 		var par: int = int(g["parent"])
-		if i == par or str(g["cat"]) == "lpoint":
+		if i == par or str(g["cat"]) == "lpoint" \
+				or not bool(vis.get(str(g["name"]), true)):
 			continue
 		var pc: Vector2 = centre + (Vector2(_geo[par]["pos"]) - _sys_cam) * scale
 		var r: float = (Vector2(g["pos"]) - Vector2(_geo[par]["pos"])).length() * scale
@@ -1947,7 +2018,8 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 	# pass 2: the L-point stubs, toward the partner geography (entity+0x20c),
 	# clipped to 2.1 * half-diagonal, alpha 0.3, in the same amber
 	for g: Dictionary in _geo:
-		if str(g["cat"]) != "lpoint":
+		if str(g["cat"]) != "lpoint" \
+				or not bool(vis.get(str(g["name"]), true)):
 			continue
 		var pt: int = int(g["partner"])
 		if pt < 0 or pt >= _geo.size():
@@ -1969,10 +2041,12 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 	for g: Dictionary in _geo:
 		var i: int = int(g["i"])
 		var par: int = int(g["parent"])
+		if not bool(vis.get(str(g["name"]), true)):
+			continue
 		var p: Vector2 = centre + (Vector2(g["pos"]) - _sys_cam) * scale
 		var r: float = 0.0 if i == par else \
 				(Vector2(g["pos"]) - Vector2(_geo[par]["pos"])).length() * scale
-		var hot: bool = i == sel_i or i == _focus
+		var hot: bool = i == sel_i or i == _focus or i == hov
 		var ga: float = 1.0 if hot else \
 				clampf((r - GLYPH_ON) / (GLYPH_FULL - GLYPH_ON), 0.0, 1.0)
 		var la: float = 1.0 if hot else \
@@ -1988,11 +2062,12 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 				# second FUN_100e9de0 call, id 51)
 				_spr_glow(p, 51, col)
 		if la > 0.0:
-			# the localised name, in its own mixed case (the reference capture
-			# prints "Lucrecia's Base", not an upper-cased copy)
-			draw_string(hud._font_num, p + Vector2(MAP_LABEL_DX, 5),
-					str(g["name"]), HORIZONTAL_ALIGNMENT_LEFT, -1,
-					hud.num_size, Color(col.r, col.g, col.b, col.a * la))
+			# the localised name in its own mixed case, CENTRED UNDER the
+			# glyph (reference capture), in the small face (font 0)
+			hud._ea = alpha * la
+			hud._hud_text(0, 1, p + Vector2(0.0, 10.0), str(g["name"]),
+					2, 0, base, self)
+	hud._ea = alpha
 
 	# the player, sprite 66 -- only when the player is in the system being
 	# viewed, and in the route red (0x100fda70 sets DAT_10176018 before it)
