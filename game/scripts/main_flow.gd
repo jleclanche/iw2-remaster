@@ -71,6 +71,46 @@ func _port_boot() -> void:
 		await prelude.main()
 	await ss.final_setup()
 
+## The load-time session re-entry (igame.LoadGame, #46): the engine replaces
+## the whole session, so a load runs the same enter lists a session start
+## does -- scripts.ini [Session] (iCargoScript.Initialise,
+## iStartSystem.StartupSession), [Space] (StartupSpace, iMusic.Initialise),
+## [System] (StartupSystem), then the act master's Main (the
+## icSPMasterScreen::m_act_package re-dispatch; its resume path re-arms from
+## the restored globals/states) and [Space] final_setup. NOT StartupNewGame
+## and NOT iPrelude -- those are [Game]/new-game only. The save stays the
+## truth for where the player is and what they fly: the act masters' resume
+## path recreates the player at the base, so position, hull and the fitted
+## extras are re-applied from the snapshot afterwards.
+func load_reenter(d: Dictionary) -> void:
+	if not use_port or pog_rt == null:
+		return
+	pog_rt.current_seq = 0  # the boot chain: the seq the enter lists ran under
+	var ss: PogScript = pog_rt.script("istartsystem")
+	if ss == null:
+		return
+	var cargo: PogScript = pog_rt.script("icargoscript")
+	if cargo != null:
+		await cargo.initialise()
+	await ss.startup_session()
+	await ss.startup_space()
+	music_start()  # [Space] enter[]=iMusic.Initialise (scripts.ini:47)
+	await ss.startup_system()
+	var act := String(d.get("act", ""))
+	if not act.is_empty():
+		var acts: PogScript = pog_rt.script(act.to_lower())
+		if acts != null:
+			await acts.main()
+	await ss.final_setup()
+	# the snapshot's truth, re-applied over the act master's base-anchored
+	# player rebuild
+	var p: Array = d.get("pos", [px, py, pz])
+	px = float(p[0])
+	py = float(p[1])
+	pz = float(p[2])
+	hull = float(d.get("hull", hull_max))
+	restore_extras(d)
+
 func _build_pog() -> void:
 	# The POG virtual machine, running the game's original mission bytecode.
 	# The natives are the only part we supply; everything above them -- the

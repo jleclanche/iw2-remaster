@@ -968,6 +968,17 @@ var blackout := false
 ## game currently never restarts its act master.
 var act_package := ""
 
+## The act package as the DRIVING runtime saw it: igame.NextAct runs on the
+## ported runtime's gameapi in a --port session, but a save can be issued
+## through either instance.
+func _driving_act_package() -> String:
+	if not act_package.is_empty():
+		return act_package
+	if game != null and "pog_rt" in game and game.pog_rt != null \
+			and game.pog_rt.gameapi != null:
+		return game.pog_rt.gameapi.act_package
+	return ""
+
 # @native igame.NextAct
 func _g_next_act(_t, a: Array) -> Variant:
 	# igame.dll @ 0x10001230: store the ACT PACKAGE NAME into the static
@@ -1026,6 +1037,11 @@ func _g_save(_t, a: Array) -> Variant:
 		"globals": std.globals,
 		"states": states,
 		"objectives": game.mission.objectives if game.mission != null else {},
+		# icSPMasterScreen::m_act_package: which act master the load-time
+		# session re-entry re-dispatches (#46). Read off the DRIVING
+		# runtime's gameapi -- a save issued through the other instance must
+		# not lose the act.
+		"act": _driving_act_package(),
 	}
 	# the world snapshot the story state does not cover: hull fit, subsim
 	# damage, magazines, inventory, live ships (main.save_extras)
@@ -1059,6 +1075,17 @@ func _g_load(_t, a: Array) -> Variant:
 	f.close()
 	if d == null:
 		return 0
+	# The engine's load REPLACES the session: no task of the old one survives
+	# it. Halt every live ported-runtime task first -- each dies at its next
+	# await (#46) -- the caller included: the load screen's own task ends
+	# right after this native returns, exactly as the engine tears the
+	# screen's script down with the session. The scripted regions (LDSi,
+	# traffic lanes) are session state too; the re-entry recreates them.
+	var rt = game.pog_rt if "pog_rt" in game else null
+	if rt != null:
+		rt.halt_tasks()
+		if rt.ents != null:
+			rt.ents.regions.clear()
 	std.globals = d.get("globals", {})
 	# A campaign save always carries g_current_act (istartsystem.StartupNewGame
 	# creates it before anything can save), so a snapshot without it is a
@@ -1102,7 +1129,20 @@ func _g_load(_t, a: Array) -> Variant:
 		game.pog_api.reset_director()
 	if "hud" in game and game.hud != null:
 		game.hud.clear_transients()
-	if game.has_method("music_start"):
+	# A campaign save re-enters the session the way the engine does --
+	# scripts.ini [Session]/[Space]/[System] enter lists, the act master's
+	# resume path, FinalSetup -- re-arming the reactive scripts from the
+	# restored globals/states (#46). Deferred: this native runs inside a task
+	# that halt_tasks just killed, and the re-entry must run as the boot
+	# chain, not under a dead seq. Non-campaign saves (act -1: debug/free
+	# flight) had no scripts driving them; only the music restarts.
+	var reenter: bool = rt != null and "use_port" in game and game.use_port \
+			and int(std.globals.get("g_current_act", -1)) >= 0
+	if reenter:
+		if rt.gameapi != null:
+			rt.gameapi.act_package = String(d.get("act", ""))
+		game.call_deferred("load_reenter", d)
+	elif game.has_method("music_start"):
 		game.music_start()
 	# In the engine the load ends with the flight screen replacing the whole
 	# GUI stack (the reloaded session comes up on icSpaceFlightScreen); the POG

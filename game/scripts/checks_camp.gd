@@ -666,11 +666,47 @@ func _campcheck_port() -> void:
 			var rdv: Dictionary = m.mission.objectives.get(
 					"a3_m01_objectives_redezvous", {})
 			if rdv.get("done", false):
+				print("CAMPCHECK(port): a1m01 and a2m01-protect COMPLETE, ",
+					"a3m01 rendezvous reached; objectives=",
+					m.mission.objectives.size())
+				demo_phase = 60
+				demo_t = 0.0
+		60:
+			# issue #46: the in-place load must SILENCE the session it
+			# replaces. Save here, then start a conversation task that keeps
+			# talking -- the mid-Say loop the bug report is about.
+			m.pog_rt.native("igame.savegame", [13, "loadswap-probe"])
+			var ss2: PogScript = m.pog_rt.script("istartsystem")
+			ss2._pog_spawn(_swap_chatter.bind(ss2))
+			demo_phase = 61
+			demo_t = 0.0
+		61:
+			# prove-it-can-fail: the chatter must be HEARD before the load,
+			# or the post-load silence assertion is vacuous
+			if m.comms.speaking() or m.comms.subtitle != "" \
+					or not m.comms.queue.is_empty():
+				print("CAMPCHECK(port): chatter task talking — loading the ",
+					"save mid-line (igame.LoadGame, #46)")
+				m.pog_rt.native("igame.loadgame", [13])
+				demo_phase = 62
+				demo_t = 0.0
+			elif demo_t > 10.0:
+				print("CAMPCHECK(port): FAIL — the chatter task never spoke")
+				get_tree().quit(1)
+		62:
+			# the halted chatter re-queued its next line within 2 s when the
+			# load left it alive; 10 s of silence proves the teardown
+			if m.comms.speaking() or m.comms.subtitle != "" \
+					or not m.comms.queue.is_empty():
+				print(("CAMPCHECK(port): FAIL — a Say landed %.1f s after "
+					+ "the load: the old session is still talking (#46)")
+					% demo_t)
+				get_tree().quit(1)
+			elif demo_t > 10.0:
 				var ck := _checkpoint_check()
 				var sg := _stub_gate(_known_stubs())
-				print("CAMPCHECK(port): PASS — a1m01 and a2m01-protect ",
-					"COMPLETE, a3m01 rendezvous reached; objectives=",
-					m.mission.objectives.size())
+				print("CAMPCHECK(port): PASS — load silences the replaced ",
+					"session (10 s, no Say); campaign suite complete")
 				get_tree().quit(0 if ck and sg else 1)
 	# 600 s: the Kompira leg alone carries the 40 s system-cutscene tour,
 	# the Oman intercept ladder and the initiation conversations (all at
@@ -701,6 +737,17 @@ func _campcheck_port() -> void:
 			" queue=", m.comms.queue.size(),
 			" ai=", ships)
 		get_tree().quit(1)
+
+
+## The #46 probe's conversation stand-in: a task mid-Say loop, exactly the
+## shape of a mission dialogue task. Runs under the task machinery (spawned
+## via _pog_spawn on a live script), so igame.LoadGame's halt_tasks must kill
+## it -- if the load leaves it alive, it re-queues a line within 2 s.
+func _swap_chatter(ss: PogScript) -> void:
+	while true:
+		m.pog_rt.native("icomms.shout",
+			[0, "name_clay", "a2_m25_dialogue_clay_nice_fleet"])
+		await ss._pog_wait(2.0)
 
 
 func _object_index(name: String) -> int:

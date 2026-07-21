@@ -493,3 +493,42 @@ five native gaps, now fixed:
 The player can also haul a pod personally: tow it (see Docking, towing and
 mass) to LUCRECIA'S BASE and dock -- _deliver_towed_pod does the same
 iinventory.Add read CollectPods would. Other stations credit nothing.
+
+## Loading a save: the session is REPLACED, not patched (#46)
+
+The engine's load tears the whole session down and re-enters it; nothing
+transient survives. `scripts.ini` says so in its own comments: the
+`[Session]` enter list runs "when the player starts a new game **or loads a
+saved game**" (data/ini/scripts.ini:20-27), and the act masters carry
+explicit resume paths for exactly this re-entry -- `iActOne.Main` checks
+`g_current_act < 1` and, when resuming, skips initialisation and recreates
+the player at Lucrecia's Base (istartsystem-era saves are base-anchored;
+`icSPMasterScreen::m_act_package` is the act the engine re-dispatches,
+igame.dll @ 0x10001230).
+
+The port's `igame.LoadGame` (`gameapi.gd _g_load`) implements that model:
+
+1. **Teardown.** `PogRuntime.halt_tasks()` halts every live ported task
+   (each dies at its next await -- the caller, the load screen's own task,
+   included); the scripted regions (LDSi, traffic) are cleared; comms,
+   queued movies, both directors, HUD transients are reset (76bcdda).
+2. **Restore.** Globals and story states land in both runtimes' stores; the
+   save carries the act package (`"act"`, from `igame.NextAct`'s
+   m_act_package mirror).
+3. **Re-entry** (`main_flow.load_reenter`, campaign saves only --
+   `g_current_act >= 0`): `iCargoScript.Initialise` +
+   `iStartSystem.StartupSession` (`[Session]`), `StartupSpace` +
+   `iMusic.Initialise` (`[Space]`), `StartupSystem` (`[System]`), the act
+   master's `Main` (its resume path), then `FinalSetup` -- re-arming the
+   reactive scripts (the base dock watcher local_207, the range/traffic/
+   station monitors, the music monitor) from the restored globals/states.
+4. **Snapshot fix-up.** The act master's resume path parks the player at
+   the base; the save is the truth, so position, hull and the fitted
+   extras are re-applied from the snapshot after the chain settles.
+
+Scope: the ported runtime (`--port`) only. The bytecode VM path keeps the
+bare in-place swap -- it is the differential oracle, not the shipped
+runtime. Proven by the campcheck(port) tail probe: a task mid-Say loop is
+started, the save is loaded mid-line, and 10 s of comms silence is
+asserted (the chatter is required to be HEARD before the load, so the
+assertion cannot pass vacuously).

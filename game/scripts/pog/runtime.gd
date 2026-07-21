@@ -77,6 +77,18 @@ var halted := false
 func halt() -> void:
 	halted = true
 
+## The in-place session swap (igame.LoadGame, #46): every live task dies at
+## its next await, but the runtime itself stays up so the load-time re-entry
+## (main_flow.load_reenter) can spawn the new session's tasks. This is halt()
+## per task instead of per world -- the engine's load replaces the whole
+## session, and a surviving conversation task re-queued its next Say into the
+## freshly cleared comms.
+func halt_tasks() -> void:
+	for key in scripts:
+		for h in (scripts[key] as PogScript)._tasks:
+			h.halted = true
+	resume_all()
+
 func is_suspended(seq: int) -> bool:
 	return suspend_below >= 0 and seq <= suspend_below and seq != suspend_exempt
 
