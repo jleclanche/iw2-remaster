@@ -43,6 +43,8 @@ extends Control
 
 var hud: Hud
 var main: Node3D
+var _add: Control = null       ## the SetBlend(2) additive layer (issue #47)
+var _t: CanvasItem = null      ## current draw target: self, or _add
 const FADE_T := 1.0         # _DAT_1011e330 / _DAT_1011e180
 const PAGE := Vector2(640, 480)   # 0x280 x 0x1e0, from the eng body draw
 var _open_t := 10.0
@@ -55,6 +57,22 @@ func _ready() -> void:
 	# 17..21 and the reticle at 11, so icHUD::Draw draws a menu screen OVER the
 	# flight HUD. Our Hud is a sibling that draws after us, so lift us above it.
 	z_index = 1
+	_t = self
+	# The ADDITIVE layer (issue #47): the engine runs SetBlend(2) before every
+	# map sprite/line/text batch, so the starmap content and the shared page
+	# chrome (grid, caption text, scan band, cursor) draw on this child with
+	# real additive blending -- the extracted colours (GREEN DAT_10176038,
+	# AMBER DAT_10174fb0) then land on the reference captures' pixels without
+	# the old composite stand-ins. Additive draws commute, so order inside
+	# the layer is free.
+	_add = Control.new()
+	_add.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_add.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_add.material = mat
+	add_child(_add)
+	_add.draw.connect(_draw_additive)
 
 func _page() -> Vector2:
 	# top-left of the 640x480 authoring page, centred in the viewport
@@ -97,6 +115,8 @@ func _process(d: float) -> void:
 		_eng_step(d)
 	_hudshot_step(d)
 	queue_redraw()
+	if _add != null:
+		_add.queue_redraw()
 
 # Returns true when the key was consumed by the open screen.
 func handle_key(key: int) -> bool:
@@ -120,52 +140,25 @@ const GRID_A := 0.04
 func _draw() -> void:
 	if hud == null or main == null or hud.screen == "":
 		return
+	_t = self
 	var size := get_viewport_rect().size
 	draw_rect(Rect2(Vector2.ZERO, size), WASH)
-	var grid := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, GRID_A)
-	var gx := GRID_STEP
-	while gx < size.x:
-		draw_line(Vector2(gx, 0), Vector2(gx, size.y), grid, 1.0)
-		gx += GRID_STEP
-	var gy := GRID_STEP
-	while gy < size.y:
-		draw_line(Vector2(0, gy), Vector2(size.x, gy), grid, 1.0)
-		gy += GRID_STEP
 	# the element's one-second fade-in (icHUDEngineering this+0x58)
 	var fade := clampf(_open_t / FADE_T, 0.0, 1.0)
 	# The caption band (FUN_100f1920): quad (16,16)-(w-16,48) in the HUD's
 	# general colour (DAT_10176038, the same register the body text uses) at
-	# alpha 0.25 (_DAT_101191ec). The band text is the MENU NODE's own label
-	# drawn through the node member at (20,19) (F1920 tail, member+0x24
-	# vfunc(1, 20.0, 19.0)) -- the reference capture shows "STARMAP", the
-	# hud_menu_map label, in the large OCR-B face, not the hud_map_caption
-	# string.
-	var caption := str(Hud.MENU.get(hud.screen, {}).get("label", ""))
+	# alpha 0.25 (_DAT_101191ec).
 	var band_green := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.25 * fade)
 	draw_rect(Rect2(Vector2(16, 16), Vector2(size.x - 32.0, 32.0)), band_green)
-	hud._ea = fade
-	_glow_text(2, Vector2(20, 19), caption, MAP_TEXT_BRIGHT)
-	# The page's green scan band, sweeping top to bottom. Row-profiled from
-	# the 2026-07-21 capture (rows 446..483): alpha ramps LINEARLY from 0 at
-	# the band's top edge to full at its bottom, then cuts hard -- the MFD
-	# scan-band law (FUN_10102490) at page scale, 38 px tall, peaking at
-	# additive green x 0.145 (+19,+37 over the wash). The renderer's address
-	# is untraced, like the wash. Drawn in the wash+green/2 composite so a
-	# normal alpha blend lands on the measured pixels.
-	var sweep := fposmod(Time.get_ticks_msec() / 3000.0, 1.0) \
-			* (size.y + 38.0) - 38.0
-	for i in 10:
-		var la := (float(i) + 1.0) / 10.0 * 0.29 * fade
-		draw_rect(Rect2(0.0, sweep + i * 3.8, size.x, 3.8),
-				Color(0.69, 0.73, 0.05, la))
 	# NO open flash: the scanline burst _DAT_1011d814 times belongs to the
 	# LDSi-disruption effect, not to a page opening -- the original opens
 	# its pages clean (user capture review, issue #35)
 	match hud.screen:
 		"hud_menu_eng":
+			hud._ea = fade
 			_draw_engineering(fade)
 		"hud_menu_map":
-			_draw_starmap(fade)
+			pass  # drawn wholly on the additive layer (_draw_additive)
 		_:
 			var body := Rect2(Vector2(60, 90), size - Vector2(120, 150))
 			draw_rect(Rect2(body.position - Vector2(8, 34), body.size + Vector2(16, 42)),
@@ -177,16 +170,59 @@ func _draw() -> void:
 					_draw_objectives(body)
 				"hud_menu_score_table":
 					_draw_list(body, _score_entries())
+
+## The SetBlend(2) content, on the additive child. The engine's own colours
+## draw here unmodified and land on the reference captures: e.g. the cursor's
+## GREEN (0.5, 1.0, 0) at 0.5 alpha adds onto the wash composite
+## (112, 61, 13) to give exactly the captured (176, 189, 12).
+func _draw_additive() -> void:
+	if hud == null or main == null or hud.screen == "":
+		return
+	_t = _add
+	var size := get_viewport_rect().size
+	var fade := clampf(_open_t / FADE_T, 0.0, 1.0)
+	# the 16 px grid: additive HUD green at 0.04 (measured +(7, 10, 0) over
+	# the wash; the draw's address is still an open question, docs/original.md)
+	var grid := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, GRID_A)
+	var gx := GRID_STEP
+	while gx < size.x:
+		_add.draw_line(Vector2(gx, 0), Vector2(gx, size.y), grid, 1.0)
+		gx += GRID_STEP
+	var gy := GRID_STEP
+	while gy < size.y:
+		_add.draw_line(Vector2(0, gy), Vector2(size.x, gy), grid, 1.0)
+		gy += GRID_STEP
+	# The band text is the MENU NODE's own label drawn through the node
+	# member at (20,19) (FUN_100f1920 tail, member+0x24 vfunc(1, 20.0, 19.0))
+	# -- the reference capture shows "STARMAP", the hud_menu_map label, in
+	# the large OCR-B face, not the hud_map_caption string.
+	var caption := str(Hud.MENU.get(hud.screen, {}).get("label", ""))
+	hud._ea = fade
+	_glow_text(2, Vector2(20, 19), caption, Hud.GREEN)
+	# The page's green scan band, sweeping top to bottom. Row-profiled from
+	# the 2026-07-21 capture (rows 446..483): alpha ramps LINEARLY from 0 at
+	# the band's top edge to full at its bottom, then cuts hard -- the MFD
+	# scan-band law (FUN_10102490) at page scale, 38 px tall, peaking at
+	# additive green x 0.145 (+19,+37 over the wash). The renderer's address
+	# is untraced, like the wash.
+	var sweep := fposmod(Time.get_ticks_msec() / 3000.0, 1.0) \
+			* (size.y + 38.0) - 38.0
+	for i in 10:
+		var la := (float(i) + 1.0) / 10.0 * 0.145 * fade
+		_add.draw_rect(Rect2(0.0, sweep + i * 3.8, size.x, 3.8),
+				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, la))
+	if hud.screen == "hud_menu_map":
+		_draw_starmap(fade)
 	# FUN_100f1400 (element vtable +0x24, shared by all five pages): with the
-	# host cursor armed, full-screen hairlines cross at the cursor in HUD green
-	# at 0.5 alpha, ADDITIVE (SetBlend path) -- over the flat wash that
-	# composites to (0.69, 0.74, 0.05), the reference capture's (176, 189, 12)
-	# -- and sprite 3 is stamped on the crossing (FUN_100e9de0(x, y, 3, 0, 0)).
+	# host cursor armed, full-screen hairlines cross at the cursor in HUD
+	# green at 0.5 alpha, ADDITIVE (SetBlend path), and sprite 3 is stamped
+	# on the crossing (FUN_100e9de0(x, y, 3, 0, 0)).
 	if _cursor_on:
-		var cc := Color(0.69, 0.74, 0.05, fade)
-		draw_line(Vector2(_cursor.x, 0), Vector2(_cursor.x, size.y), cc, 1.0)
-		draw_line(Vector2(0, _cursor.y), Vector2(size.x, _cursor.y), cc, 1.0)
+		var cc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.5 * fade)
+		_add.draw_line(Vector2(_cursor.x, 0), Vector2(_cursor.x, size.y), cc, 1.0)
+		_add.draw_line(Vector2(0, _cursor.y), Vector2(size.x, _cursor.y), cc, 1.0)
 		_spr(_cursor, 3, Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade))
+	_t = self
 
 # --- the sprite atlas --------------------------------------------------------
 # hud.gd's SPR only carries the cells the flight HUD needs. These are the extra
@@ -235,31 +271,28 @@ func _spr(pos: Vector2, id: int, col: Color, rot := 0.0, scale := 1.0) -> void:
 	var off := Vector2(-float(s[4]), -float(s[5])) * scale
 	var src := Rect2(float(s[0]), float(s[1]), float(s[2]), float(s[3]))
 	if is_zero_approx(rot):
-		draw_texture_rect_region(tex, Rect2(pos + off, sz), src, col)
+		_t.draw_texture_rect_region(tex, Rect2(pos + off, sz), src, col)
 		return
-	draw_set_transform(pos, rot, Vector2.ONE)
-	draw_texture_rect_region(tex, Rect2(off, sz), src, col)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	_t.draw_set_transform(pos, rot, Vector2.ONE)
+	_t.draw_texture_rect_region(tex, Rect2(off, sz), src, col)
+	_t.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 ## The engine draws the map sprites ADDITIVELY (SetBlend(2) before every
-## FUN_100e9de0 run), which is where the reference capture's glow comes from.
-## Godot's canvas draws alpha-blended; the halo pass underneath approximates
-## the additive bloom.
+## FUN_100e9de0 run). The map path draws on the additive child (_t == _add),
+## so this is one real additive pass -- the capture's glow is the atlas
+## cell's soft edge under additive blending, no halo stand-in needed.
 func _spr_glow(pos: Vector2, id: int, col: Color) -> void:
-	# a TIGHT halo: the reference bloom spreads only a few pixels
-	_spr(pos, id, Color(col.r, col.g, col.b, col.a * 0.4), 0.0, 1.25)
 	_spr(pos, id, col)
 
-# additive full green over the wash, from the reference capture: the page
-# text reads bright yellow-green, and the glyphs bloom (the font atlas's
-# baked halo under additive blending)
-const MAP_TEXT_BRIGHT := Color(0.95, 1.0, 0.1)
-
 ## Page text through the HUD's own renderer (FUN_100eb270 port: kerned face,
-## engine metrics/styles), with faint offset passes standing in for the
-## additive glyph bloom Godot's alpha blend loses.
+## engine metrics/styles). On the additive layer a single pass IS the
+## engine's draw; on the alpha layers (the eng page) the faint offset passes
+## still stand in for the additive glyph bloom.
 func _glow_text(fi: int, p: Vector2, text: String, col: Color,
 		halign := 0) -> void:
+	if _t != self:
+		hud._hud_text(fi, 1, p, text, halign, 0, col, _t)
+		return
 	var ea: float = hud._ea
 	hud._ea = ea * 0.3
 	for off: Vector2 in [Vector2(1, 0), Vector2(-1, 0),
@@ -1810,8 +1843,7 @@ func _draw_starmap(fade: float) -> void:
 	# The capture shows them BRIGHT with bloom -- the additive sprite path.
 	var t: float = Time.get_ticks_msec()
 	var blink: float = (absf(fposmod(t * 0.0005, 1.0) - 0.5) * 1.8 + 0.1) * fade
-	var backing := Color(MAP_TEXT_BRIGHT.r, MAP_TEXT_BRIGHT.g, MAP_TEXT_BRIGHT.b,
-			fade * 0.9)
+	var backing := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, fade * 0.9)
 	_spr_glow(Vector2(36, 126), 53, backing)
 	_spr_glow(Vector2(72, 126), 53, backing)
 	var bc := Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, blink)
@@ -1846,8 +1878,8 @@ func _draw_starmap(fade: float) -> void:
 		l1 = "SELECTED: %s" % (_lp_display(_lps[_lp_sel])
 				if not _lps.is_empty() else "NONE")
 	hud._ea = fade
-	_glow_text(1, Vector2(20, 60), l0, MAP_TEXT_BRIGHT)
-	_glow_text(1, Vector2(20, 80), l1, MAP_TEXT_BRIGHT)
+	_glow_text(1, Vector2(20, 60), l0, Hud.GREEN)
+	_glow_text(1, Vector2(20, 80), l1, Hud.GREEN)
 	_draw_map_menu(fade)
 
 func _geo_name(i: int) -> String:
@@ -1889,11 +1921,11 @@ func _draw_map_menu(fade: float) -> void:
 	# the menu reticle: sprite 91 mirrored into the full ring, the four
 	# spinning quadrants at half alpha (FUN_100f1d60)
 	for f in 4:
-		hud._spr_ret(centre, 91, green, 0.0, f, self)
+		hud._spr_ret(centre, 91, green, 0.0, f, _t)
 	for i in 4:
 		hud._spr_ret(centre, 93,
 				Color(Hud.GREEN.r, Hud.GREEN.g, Hud.GREEN.b, 0.5 * fade),
-				hud._menu_spin + PI / 2.0 * i, 0, self)
+				hud._menu_spin + PI / 2.0 * i, 0, _t)
 	var items: Array = []                       # [sprite, text, cmd, dir, col]
 	var red := Color(1, 0.25, 0.25)
 	match map_state:
@@ -1925,7 +1957,7 @@ func _draw_map_menu(fade: float) -> void:
 		var label := str(it[1])
 		var icon := int(it[0])
 		hud._menu_node_box(anchor, label, icon, it[4],
-				int(Hud.MENU_ALIGN[di]), held, self)
+				int(Hud.MENU_ALIGN[di]), held, _t)
 		# the click hit box mirrors _menu_node_box's rail geometry (32px tall,
 		# 16px chevron caps beyond the rail width)
 		var w: float = hud._text_w(1, label) \
@@ -1975,9 +2007,9 @@ func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
 			var mid := (pa + pb) * 0.5
 			var aa: float = 1.0 if _map_visited.has(a) else MAP_A_UNSEEN
 			var ab: float = 1.0 if _map_visited.has(b) else MAP_A_UNSEEN
-			draw_line(pa, mid, Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b,
+			_t.draw_line(pa, mid, Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b,
 					aa * alpha * 0.6), 1.0, true)
-			draw_line(mid, pb, Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b,
+			_t.draw_line(mid, pb, Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b,
 					ab * alpha * 0.6), 1.0, true)
 	# the nodes: sprite 55 for a hub (>2 links), 57 otherwise. The cursor pick
 	# hovers a node to full alpha exactly like the selection (0x100ff0a0 tests
@@ -2003,12 +2035,12 @@ func _draw_map_cluster(centre: Vector2, c: Array, alpha: float) -> void:
 		var lc: Color = Hud.AMBER if style == 2 else Hud.GREEN
 		hud._ea = a * alpha
 		hud._hud_text(0, 1, p + Vector2(0.0, 10.0), str(c[i]["name"]),
-				2, 0, lc, self)
+				2, 0, lc, _t)
 	hud._ea = alpha
 	# the cluster labels (clusters.ini label[n] / label_coords[n])
 	for l: Dictionary in _cluster_labels:
 		var p := centre + (Vector2(l["pos"]) - _clu_cam) * scale
-		draw_string(hud._font, p, str(l["text"]), HORIZONTAL_ALIGNMENT_LEFT,
+		_t.draw_string(hud._font, p, str(l["text"]), HORIZONTAL_ALIGNMENT_LEFT,
 				-1, hud.FONT_SIZE,
 				Color(Hud.AMBER.r, Hud.AMBER.g, Hud.AMBER.b, 0.35 * alpha))
 
@@ -2041,7 +2073,7 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		var oa: float = clampf((r - ORBIT_ON) / (ORBIT_FULL - ORBIT_ON), 0.0, 1.0)
 		if r > ORBIT_MAX_K * half_diag:
 			continue
-		draw_arc(pc, r, 0, TAU, maxi(24, mini(192, int(r * 0.5))),
+		_t.draw_arc(pc, r, 0, TAU, maxi(24, mini(192, int(r * 0.5))),
 				Color(MAP_BODY.r, MAP_BODY.g, MAP_BODY.b, alpha * oa * 0.5),
 				1.0, true)
 
@@ -2060,7 +2092,7 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		var lim := LP_STUB_K * half_diag
 		if dv.length() > lim:
 			dv = dv.normalized() * lim
-		draw_line(p, p + dv,
+		_t.draw_line(p, p + dv,
 				Color(MAP_BODY.r, MAP_BODY.g, MAP_BODY.b, alpha * MAP_A_UNSEEN),
 				1.0, true)
 
@@ -2096,7 +2128,7 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 			# glyph (reference capture), in the small face (font 0)
 			hud._ea = alpha * la
 			hud._hud_text(0, 1, p + Vector2(0.0, 10.0), str(g["name"]),
-					2, 0, base, self)
+					2, 0, base, _t)
 	hud._ea = alpha
 
 	# the player, sprite 66 -- only when the player is in the system being
@@ -2110,7 +2142,7 @@ func _draw_map_system(centre: Vector2, alpha: float) -> void:
 		if route_i >= 0 and route_i < _geo.size():
 			var tp: Vector2 = centre \
 					+ (Vector2(_geo[route_i]["pos"]) - _sys_cam) * scale
-			draw_line(pp, tp, rc, 1.0, true)
+			_t.draw_line(pp, tp, rc, 1.0, true)
 		_spr_glow(pp, 66, rc)
 
 # --- icHUDLog / icHUDObjectives / icHUDScore ---------------------------------
