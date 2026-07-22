@@ -36,7 +36,7 @@ inverse` is "`=` speeds up, `-` slows down".
 |---|---|---|
 | `icPlayerPilot.Yaw` | **NumPad4** / **NumPad6** | JoyXAxis |
 | `icPlayerPilot.Pitch` | **NumPad2** / **NumPad8** | JoyYAxis, `inverse` |
-| `icPlayerPilot.Roll` | **NumPad1** / **NumPad3** | JoyRZAxis (twist) |
+| `icPlayerPilot.Roll` | **Z** / **X** (also NumPad1 / NumPad3) | JoyRZAxis (twist) |
 | `icPlayerPilot.RollYawToggleHold` | -- (unbound) | JoyButton2 |
 | `icPlayerPilot.LateralX` | **A** / **D** | JoyXAxis + ALT |
 | `icPlayerPilot.LateralY` | -- (unbound) | JoyYAxis + ALT |
@@ -190,7 +190,7 @@ per-camera recentre tunable -- the reset is code-driven.)
 | `NextWeapon` / `NextPrimaryWeapon` / `NextSecondaryWeapon` | `]` / Return / Backspace |
 | `ToggleWeaponLinkingMode` | F |
 | `ToggleAimAssist` | X |
-| `ToggleZoom` | Z |
+| `ToggleZoom` | **Shift+Z** (default.ini shipped plain Z; the remaster gives Z/X to roll) |
 | `LDSIQuickFire` | I |
 | `ToggleLDS` | L |
 | `Undock` | U |
@@ -228,6 +228,7 @@ RemotePilot**. Note it is *not* the F5..F9 order.
 | The mouse is a yoke: X yaws, Y pitches, right button is `RollYawToggleHold`, and the zoom factor divides it | Bound **no** mouse axis to the pilot at all -- the mouse is the director's camera, and flight is stick or numpad | A 2001 game could assume a joystick. The mouse carries the real yoke's two behaviours (the zoom divisor and the roll/yaw swap) so it is the same control, on a different device. |
 | `LateralY` unbound on the keyboard | the same | Neither shipped config binds it. We will not invent a key. |
 | No `RollYawToggleHold` key | Joystick button 2 only | Same reason; it is on the right mouse button instead. |
+| Roll on **Z / X** (Z left, X right); `ToggleZoom` bumped to **Shift+Z** | Roll was NumPad1/3, `ToggleZoom` plain Z | A mouse+keyboard pilot flies with the left hand on WASD (thrusters) and wants roll under the same hand, not across on the numpad. NumPad1/3 still roll. Z/X are ignored while Shift is held so the Shift+Z zoom press does not also roll. |
 
 ---
 

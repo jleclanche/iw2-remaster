@@ -247,8 +247,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				_toggle_lds()
 			KEY_U:  # Undock
 				_undock()
-			KEY_Z:  # ToggleZoom -- gated on hardware, see _enable_zoom
-				_enable_zoom(not zoomed)
+			KEY_Z:  # ToggleZoom -- moved to Shift+Z now that plain Z/X roll.
+				# Still gated on hardware, see _enable_zoom.
+				if event.shift_pressed:
+					_enable_zoom(not zoomed)
 			KEY_TAB:  # CycleContactDown / CycleContactUp (remaster default:
 				# Tab / Shift+Tab; the original shipped comma / period in
 				# configs/default.ini)
@@ -577,7 +579,13 @@ func _player_control(delta: float) -> void:
 		# DirectInput Y is positive when the stick is pushed forward.
 		var yaw := _key(KEY_KP_6) - _key(KEY_KP_4)
 		var pitch := _key(KEY_KP_8) - _key(KEY_KP_2)
+		# Roll: keyboard_only.ini binds NumPad1 / NumPad3; the remaster adds
+		# Z / X as the primary roll keys for a mouse+keyboard pilot -- Z rolls
+		# left, X rolls right. Gated on SHIFT being up because ToggleZoom moved
+		# to Shift+Z (see the key handler), so a zoom press does not also roll.
 		var roll := _key(KEY_KP_3) - _key(KEY_KP_1)
+		if not Input.is_physical_key_pressed(KEY_SHIFT):
+			roll += _key(KEY_X) - _key(KEY_Z)
 		# RollYawToggleHold swaps the yaw and roll channels
 		if roll_yaw_swap:
 			var t := yaw
@@ -588,9 +596,14 @@ func _player_control(delta: float) -> void:
 			sh.input_rotate.y = -yaw / zoom_factor
 		if absf(pitch) > 0.0:
 			sh.input_rotate.x = -pitch / zoom_factor
-		sh.input_rotate.z = -roll
+		# Roll decays on release like yaw/pitch instead of hard-zeroing, so the
+		# right-button roll/yaw swap (mouse X -> input_rotate.z) is no longer
+		# clobbered to 0 every frame when no roll key is held.
+		if absf(roll) > 0.0:
+			sh.input_rotate.z = -roll
 		sh.input_rotate.x = move_toward(sh.input_rotate.x, 0.0, delta * 1.5)
 		sh.input_rotate.y = move_toward(sh.input_rotate.y, 0.0, delta * 1.5)
+		sh.input_rotate.z = move_toward(sh.input_rotate.z, 0.0, delta * 1.5)
 	# free flight: N toggles, LeftCtrl / NumPad5 holds (FreeToggle/FreeHold)
 	sh.assist = not (free_toggle or Input.is_physical_key_pressed(KEY_CTRL)
 		or Input.is_physical_key_pressed(KEY_KP_5))
