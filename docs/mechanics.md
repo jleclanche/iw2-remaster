@@ -14,6 +14,22 @@ m/s²; z = fore/aft is always the big axis). Rotation: `pitch/yaw/roll_rate`
 directly — velocity drifts, rotation gets `angular_speed_boost`.
 Validated: tug reaches its 850 m/s in 850/150 s exactly.
 
+**Rotation is rate-demand fly-by-wire, and the angular ramp is authored, not
+snappy.** `iiThrusterSim::Load` (`0x1007ddf0`) computes, from the hull box and
+mass (`m = w*h*l*0.001`), a `max_torque` = MOI × (`*_accel` · deg2rad) at
+`+0x230..0x238` (MOI is the box tensor `m/12`) and a `max_angular_speed` =
+(`*_rate` · deg2rad) at `+0x23c..0x244`. `FiSim::Integrate` applies
+torque/MOI, so an **undocked** ship's net angular acceleration is exactly the
+authored `*_accel` in deg/s² — the moment of inertia cancels and only re-enters
+when a pod is docked (added child inertia, `tow_torque_scale`). The yoke is a
+rate demand: the flight computer accelerates toward the commanded rate (capped
+at `*_rate`) at `*_accel`. So the "weight" of a ship is the **ramp time** its
+authored `*_accel`/`*_rate` imply — the tug's 30 deg/s² to a 60 deg/s rate is a
+2 s spin-up; a fighter (50/100) is faster, an alien (700/700) instant. This is
+the "force feedback" feel of the original yoke. `ship_flight.gd` implements the
+rate-demand model directly; a prior `*8.0` accel fudge (collapsing the ramp to
+~0.25 s and tracking the reticle ~1:1) was removed as invented.
+
 ## LDS — Linear Displacement System (in-system FTL-lite)
 
 - Engaged like a drive mode; ship covers interplanetary distances.

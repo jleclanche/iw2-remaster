@@ -114,11 +114,22 @@ func _integrate_rotation(delta: float) -> void:
 		input_rotate.z * deg_to_rad(turn_rate.z)) * boost
 	var accel := Vector3(deg_to_rad(turn_accel.x), deg_to_rad(turn_accel.y),
 			deg_to_rad(turn_accel.z)) * boost * tow_torque_scale
-	# IW2 rotation is snappy: angular accel limits are generous relative to
-	# rates; move toward target with per-axis accel cap
-	angular_velocity.x = move_toward(angular_velocity.x, target_w.x, accel.x * delta * 8.0)
-	angular_velocity.y = move_toward(angular_velocity.y, target_w.y, accel.y * delta * 8.0)
-	angular_velocity.z = move_toward(angular_velocity.z, target_w.z, accel.z * delta * 8.0)
+	# Rate-demand fly-by-wire: the yoke commands a target angular velocity
+	# (capped at pitch/yaw/roll_rate) and the flight computer accelerates
+	# toward it at the authored angular accel. iiThrusterSim::Load (0x1007ddf0)
+	# stores max_torque = MOI * (*_accel * deg2rad) (+0x230..0x238, MOI = the
+	# box tensor m/12) and max_angular_speed = (*_rate * deg2rad) (+0x23c..0x244);
+	# FiSim::Integrate then applies torque/MOI, so an UNDOCKED ship's net
+	# angular acceleration is exactly the authored *_accel (deg/s^2) -- MOI
+	# cancels, and only re-enters through tow_torque_scale when a pod is docked.
+	# The tug's 30 deg/s^2 climb to its 60 deg/s rate is a 2 s ramp; that
+	# build-up (heavier on bigger hulls, per each ship's authored *_accel) is
+	# the "force feedback" of the original yoke. (An earlier pass multiplied
+	# accel by 8x for "snappiness" -- that collapsed the ramp to 0.25 s and
+	# tracked the reticle ~1:1; it was invented, not extracted.)
+	angular_velocity.x = move_toward(angular_velocity.x, target_w.x, accel.x * delta)
+	angular_velocity.y = move_toward(angular_velocity.y, target_w.y, accel.y * delta)
+	angular_velocity.z = move_toward(angular_velocity.z, target_w.z, accel.z * delta)
 	rotate_object_local(Vector3.RIGHT, angular_velocity.x * delta)
 	rotate_object_local(Vector3.UP, angular_velocity.y * delta)
 	rotate_object_local(Vector3.BACK, angular_velocity.z * delta)
