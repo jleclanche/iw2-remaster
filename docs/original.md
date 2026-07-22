@@ -245,8 +245,13 @@ feeds the HUD roundel.
 Any model that derives an inhibition radius from a body's size is wrong in kind.
 
 ### LDS obstacle avoidance
-`icAITarget::CheckLDSAvoidance`: avoidance radius =
+`icAITarget::CheckLDSAvoidance` (`0x1005bd87`): avoidance radius =
 `(icPlanet::HeatDistanceAsRadiusMultiplier() + 1.1) x FiSim::Radius()`.
+`icSolarSystem::LDSObstacles` (`this+0x640`) is populated at map parse -- every
+sun (`ParseSunInfo`), every `IeBodyType` 1..6 body (`ParseBodyInfo`), and the
+scene-28 station = Lucrecia's Base (`ParseLocationInfo`); the appends are
+`AddLDSObstacle` (`0x10006770`) compiled inline, so that export has no call
+sites despite being live. Full law: docs/lds.md.
 
 ---
 
@@ -343,6 +348,14 @@ Worked examples, with the player's tug at a ~60 m bounds radius:
 | a fighter | 60 m | **310 m** (`60 + 60 + 200`) |
 | a station | 1 100 m | **2 400 m** (avoidance dominates) |
 | a median body | 5.6e6 m | **1.8e7 m** (1.5x radius, then 1.75 x 1.25) |
+| any sun | **1e8 m -- forced** | **3.3e8 m** (`1.75 * Avoid(ship, 1.5e8)`) |
+
+A sun's radius is never the map value: `icSolarSystem::AddSim` (`0x1004cbe0`)
+calls `FiSim::SetRadius(sun, 1e8)` on its `icSun` branch the moment the
+load-loop admits the sun, overriding the authored radius (Hoffer's Wake
+Alpha's record says 1.75e11 m). Every sun in the game therefore approaches,
+avoids and renders as a 1e8 m object -- see docs/geography.md for the full
+story and docs/lds.md for the avoidance shell.
 
 ### The eAutopilot enum
 

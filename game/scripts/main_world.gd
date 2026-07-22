@@ -491,7 +491,8 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 			"x": float(o["pos"][0]), "y": float(o["pos"][1]),
 			"z": -float(o["pos"][2]),
 			# the f32 at record +0x138, i.e. what the engine hands to
-			# FiSim::SetRadius. Not a map zone, not clamped.
+			# FiSim::SetRadius at parse time. Not a map zone. For suns and
+			# L-points the engine then overwrites it -- see below.
 			"radius": float(o.get("radius", 0.0)),
 			"orientation": o.get("orientation", [1.0, 0.0, 0.0, 0.0]),
 			"avatar": str(o.get("avatar", "")),
@@ -506,6 +507,29 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 			"sun_colours": o.get("sun_colours", []),
 			"node": null,
 		}
+		# What the engine RUNS with is not always what the file says:
+		#  - a sun's radius is FORCED to 1e8 m the moment it is added to the
+		#    system: icSolarSystem::AddSim (iwar2 @ 0x1004cbe0) calls
+		#    SetRadius(1e8) on its icSun branch, discarding the authored value
+		#    (Alpha's record says 1.75e11 -- dead the same load-loop iteration
+		#    that read it). Flare envelope distance, the approach marker and
+		#    LDS avoidance all key off the 1e8.
+		#  - an L-point is created with SetRadius(500) (icSolarSystem::Load @
+		#    0x1004bb60, case 2) and its record's +0x138 is never read -- the
+		#    file bytes there are the writer's reused buffer, i.e. garbage.
+		if cat == "star":
+			rec["radius"] = 1.0e8
+		elif cat == "lpoint":
+			rec["radius"] = 500.0
+		# icSolarSystem::LDSObstacles (this+0x640) membership, decided at parse:
+		# every sun (ParseSunInfo @ 0x1004e5a0), every body whose IeBodyType is
+		# 1..6 (ParseBodyInfo @ 0x1004e040, `1 << type & 0x7e` -- excludes the
+		# type-0 centre/markers), and every station with scene 0x1c = 28, which
+		# in the shipped maps is exactly Lucrecia's Base (ParseLocationInfo @
+		# 0x1004e0a0). Nothing else routes LDS around itself (docs/lds.md).
+		rec["lds_obstacle"] = cat == "star" \
+				or (cat == "body" and int(o.get("body_type", 0)) in range(1, 7)) \
+				or (cat == "station" and int(o.get("scene", -1)) == 28)
 		objects.append(rec)
 		# a kind-4 belt record is a field ZONE, not a body: ParseAsteroidBeltInfo
 		# (iwar2 @ 0x1004e6b0) reads the ring radius from the record's +0x134
@@ -967,8 +991,9 @@ func _stream_objects() -> void:
 				# always visible: drawn at capped distance, scaled to keep
 				# the correct angular size (the camera far plane is 600 km)
 				var dist := sqrt(maxf(d2, 1.0))
-				# the record's own FiSim radius. No floor, no clamp: the map
-				# says what size the body is.
+				# the record's runtime FiSim radius: for a body the map value
+				# (no floor, no clamp), for a sun the 1e8 the engine forces in
+				# AddSim (_load_system stamps it at build)
 				var r: float = o["radius"]
 				var k := minf(IMPOSTOR_DIST / dist, 1.0)
 				# never fill the screen: cap apparent radius vs draw distance

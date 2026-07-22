@@ -130,9 +130,18 @@ Sanity, from the shipped maps:
 The suns are **genuinely enormous** in the authored data and that is not a
 decode error: `Hoffer's Wake Alpha` really is 1.75e11 m (251 solar radii, class
 11 = red), while its companion `Hoffer's Wake Beta` is 1.81e8 m (a plausible
-star). The engine takes the number at face value -- `icSun::CreateAvatar` builds
-an `FcSphereCollider` of that radius and scales the sun avatar to it. So a few
-IW2 stars are hypergiants by design. We render what the map says.
+star). **But the engine does NOT run with the authored sun value.** The parse
+(`ParseSunInfo`) stores it, and then -- in the SAME load-loop iteration --
+`icSolarSystem::AddSim` (`0x1004cbe0`) hits its `icSun` branch and calls
+`FiSim::SetRadius(sun, 1e8)`: every sun's runtime radius is a hardcoded
+**1e8 m** (100,000 km), and the authored value is dead before anything else can
+read it. (`AddSim` also snapshots the sun -- position, post-override radius,
+`icSun::PickColour(class)` -- into a per-system table at `+0x618`, 0x30-stride.)
+Everything downstream -- the `CreateAvatar` sphere collider, `UpdateAvatar`'s
+distance-in-radii envelope, `InnerMarkerRadius`'s 1.5x approach marker,
+`CheckLDSAvoidance`'s 1.6x shell -- sees 1e8. Body radii are NOT overridden;
+only suns (and L-points, hardcoded 500 m at creation). `_load_system`
+(main_world.gd) mirrors the override at record build.
 
 **Only bodies with `1 < IeBodyType < 5` are drawn at all.** `icPlanet::CreateAvatar`
 (`0x10067fe0`) gates on exactly that, which is why the system-centre record
@@ -264,26 +273,33 @@ the envelope value and is then sized by the `node+0xe8` flag byte:
   anamorphic streak (`m_anamorphic_streak_width_ratio`) when `node+0xe8 & 2` or
   the global distortion is high.
 
-Which bit the sun's pushed mode-0 flare sets is the remaining unknown, and it is
-the crux: distance mode -> constant screen size (brightness-only bloom); screen
-mode -> size proportional to radius, which would make Alpha render a vastly
-larger flare than Beta at the same envelope. That one bit decides the
-Alpha-at-spawn look and needs an in-engine comparison against an original
-capture to settle.
+The sun's flares take the DISTANCE branch: the `FcLensFlareNode` ctor zeroes
+`+0xe8`, `icSun::CreateAvatar` leaves flare[0]'s untouched and gives flare[1]
+only `1 | (class <= 2 ? 2 : 0)` -- bits `0x1`/`0x2`, never `0x8`. So both sun
+flares hold a constant SCREEN size and only brightness rides the envelope;
+radius never enters the flare's size. Combined with the 1e8 runtime radius
+(above), the sun render story is closed: every sun is a fixed-size sprite whose
+glow starts building inside 12.5M km.
 
 **Alpha's radius is NOT a decode error -- verified.** `ParseSunInfo` reads the
 radius from record `+0x138` (byte `+0x134` is the class), exactly what
 `map_decoder` extracts. Huge primary-star radii are the NORM, not an anomaly:
 across the 30 authored stars, 9 exceed 1e10 m -- New_Bavaria I is 1.34e11,
-Firefrost I 3.93e10, Drake I 3.90e10. Alpha at 1.75e11 m is an ordinary primary;
-**Beta at 1.81e8 m is the exception, because it is a COMPANION** (`index 127,
-parent 1`), not a system primary. So at the campaign spawn (3.7e11 m from Alpha
-= 2.1 radii) Alpha genuinely subtends `arcsin(1.75e11 / 3.7e11)` ~ 28 deg and
-its envelope is a flat 1.0 out to 125 radii = 2.19e13 m (21.9 billion km, larger
-than the whole system) -- it is authored to fill the sky everywhere in Hoffer's
-Wake. The "only starts growing at ~20 million km" behaviour is therefore Beta's
-(companion, 22.6M-km onset), not Alpha's. The remaining render delta is the
-size-law flag above, NOT the radius.
+Firefrost I 3.93e10, Drake I 3.90e10; **Beta at 1.81e8 m is the exception,
+because it is a COMPANION** (`index 127, parent 1`), not a system primary.
+
+**And the authored value is IRRELEVANT at runtime** -- this was the missing
+piece behind every "Alpha is too big/bright/instant-completes" symptom.
+`icSolarSystem::AddSim` (`0x1004cbe0`) forces every sun's radius to **1e8 m**
+(see section 2), so for EVERY sun in the game: envelope onset = 125 x 1e8 =
+**1.25e10 m = 12.5 million km** (the observed "starts growing at ~20M km"),
+approach marker = 1.5 x 1e8 = **1.5e8 m** (no instant-complete from Lucrecia's
+base, which orbits well outside it), LDS avoidance shell = 1.6 x 1e8 =
+**1.6e8 m** (routes around a sun only when the destination sits behind it).
+An earlier revision of this paragraph, written before the AddSim override was
+found, concluded Alpha "fills the sky by design" and attributed the 20M-km
+onset to Beta -- both wrong: with the override, Alpha and Beta behave
+identically at 1e8.
 
 **The sun-avatar draw holes, now disassembled** (`disasm.py`, Ghidra dropped
 them):
