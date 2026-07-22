@@ -293,6 +293,9 @@ var objects: Array = []
 # {cx, cy, cz, radius, depth, colour}. main_world._update_nebula_fog drives the
 # WorldEnvironment fog from these each frame -- see icSolarSystem::Render.
 var nebulae: Array = []
+# <fill> energy at scene load, so the in-nebula fade scales from the authored
+# value rather than compounding frame to frame.
+var _neb_base_fill_e := 0.0
 var ai_ships: Array = []
 var target_idx := -1
 var target_ai: AiShip = null

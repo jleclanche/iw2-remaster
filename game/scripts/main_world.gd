@@ -73,6 +73,13 @@ func _update_nebula_fog() -> void:
 		if op > best_op:
 			best_op = op
 			best = neb
+	# The <fill> DISTANT light does NOT survive into a dense nebula: the original
+	# base underside inside The Effrit measures a UNIFORM dark nebula hue (g/r
+	# ~0.42, the fog colour) -- the fill-facing faces are dark, not fill-lit,
+	# and the fog paints them. So fade <fill> from its authored energy to 0 at
+	# full immersion; the <star> stays (close geometry like the ship must still
+	# take a key light -- fading both blacks it out where fog cannot reach).
+	fill_sun.light_energy = _neb_base_fill_e * (1.0 - best_op)
 	if best_op <= 0.0:
 		env_ref.fog_enabled = false
 		return
@@ -142,6 +149,7 @@ func _setup_sky(stem: String) -> void:
 						# double-shadowed faces stay black like the original
 						fill_sun.light_color = col
 						fill_sun.light_energy = float(n.get("intensity", 1.0))
+						_neb_base_fill_e = fill_sun.light_energy
 						_aim_distant_light(fill_sun, n)
 					_:
 						if int(n.get("light_type", 0)) == 1 \
