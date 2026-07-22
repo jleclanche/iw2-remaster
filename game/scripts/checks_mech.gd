@@ -56,6 +56,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_lds_engage",
 	&"_ms_lds_speed",
 	&"_ms_lds_drop",
+	&"_ms_sun_radius",
+	&"_ms_lds_routearound",
 	&"_ms_ap_approach",
 	&"_ms_ap_dock",
 	&"_ms_dock_null",
@@ -276,6 +278,79 @@ func _ms_lds_drop(_delta: float) -> void:
 					m.target_ai = null
 			m._set_autopilot(1)
 		_mech_next()
+
+func _ms_sun_radius(_delta: float) -> void:
+	# icSolarSystem::AddSim (iwar2 @ 0x1004cbe0) forces every icSun's radius to
+	# 1e8 m, discarding the authored map value (Alpha's record says 1.75e11).
+	# Everything downstream -- flare envelope distance, the 1.5x approach
+	# marker, the 1.6x LDS avoidance shell -- keys off the 1e8, so a star
+	# record that kept its file radius instant-completes approaches and blinds
+	# the sky. Assert every loaded star record carries the override and sits in
+	# the LDS obstacle list, and that Lucrecia's Base (scene 28) does too;
+	# report the star count so an empty system cannot pass vacuously
+	# (hoffers_wake has 2).
+	var stars := 0
+	var bad := ""
+	var base_flagged := false
+	for o in m.objects:
+		if str(o["name"]) == BaseInterior.BASE_NAME:
+			base_flagged = bool(o.get("lds_obstacle", false))
+		if str(o["category"]) != "star":
+			continue
+		stars += 1
+		if absf(float(o["radius"]) - 1.0e8) > 1.0 \
+				or not bool(o.get("lds_obstacle", false)):
+			bad = "%s=%.3g" % [str(o["name"]), float(o["radius"])]
+	_mech("sun-radius", stars > 0 and bad == "" and base_flagged,
+		"%d stars in %s, base-obstacle=%s%s" % [stars, m.system_stem,
+			str(base_flagged), "" if bad == "" else ", bad " + bad])
+	_mech_next()
+
+func _ms_lds_routearound(_delta: float) -> void:
+	# LDS route-around (icAITarget::CheckLDSAvoidance @ 0x1005bd87): a mass in
+	# the LDS obstacle list must bend the transit heading so the path grazes
+	# its 1.6x-radius shell, never bores through it -- and a record NOT in the
+	# list (a type-0 marker, an ordinary station) must not deflect at all
+	# (docs/lds.md). Pure-function assert on _lds_avoid_waypoint with synthetic
+	# blockers -- deterministic, no real-time flight. State is swapped in and
+	# fully restored in-frame.
+	var saved_obj: Array = m.objects
+	var saved_p := Vector3(m.px, m.py, m.pz)
+	var sun_r := 1.0e8    # the AddSim runtime sun radius (0x1004cbe0)
+	var shell := sun_r * float(m.LDS_AVOID_SHELL)
+	var big := 4.0 * sun_r          # blocker at -4R, destination beyond it
+	m.px = 0.0
+	m.py = 0.0
+	m.pz = 0.0
+	m.objects = [{"name": "sun", "category": "star", "radius": sun_r,
+			"lds_obstacle": true, "x": 0.0, "y": 0.0, "z": -big}]
+	var dest := Vector3(0.0, 0.0, -2.0 * big)
+	# direct route (routing OFF) bores dead through the centre -- prove-can-fail
+	var direct_off := (Vector3(0.0, 0.0, -big)
+			- dest.normalized() * big).length()
+	var wp: Vector3 = m._lds_avoid_waypoint(dest)
+	# closest approach of the ship->waypoint corridor to the blocker centre
+	var c := Vector3(0.0, 0.0, -big)
+	var wd := wp.normalized()
+	var routed_off := (c - wd * c.dot(wd)).length()
+	# the same mass OUTSIDE the obstacle list must not deflect
+	m.objects = [{"name": "marker", "category": "body", "radius": sun_r,
+			"lds_obstacle": false, "x": 0.0, "y": 0.0, "z": -big}]
+	var non_wp: Vector3 = m._lds_avoid_waypoint(dest)
+	# and with no blocker at all the waypoint is the raw destination
+	m.objects = []
+	var clear_wp: Vector3 = m._lds_avoid_waypoint(dest)
+	m.objects = saved_obj
+	m.px = saved_p.x
+	m.py = saved_p.y
+	m.pz = saved_p.z
+	_mech("lds-routearound",
+		direct_off < shell and routed_off >= shell * 0.7
+			and non_wp == dest and clear_wp == dest,
+		"direct=%.0f routed=%.0f shell=%.0f nonobstacle=%s clear=%s"
+			% [direct_off, routed_off, shell,
+				str(non_wp == dest), str(clear_wp == dest)])
+	_mech_next()
 
 func _ms_ap_approach(_delta: float) -> void:
 	# autopilot approach: arrive ON the marker sphere and stop

@@ -180,12 +180,12 @@ func _lds_clearance() -> float:
 
 func _lds_avoidance() -> float:
 	# A DIAGNOSTIC metric only (the demo autoplay logs/gates on it) -- NOT a drive
-	# gate and NOT used in the flight path. The original has no LDS mass handling
-	# at all: the drive breaks out on the inhibit counter alone (icLDSDrive::
-	# Simulate @ 0x10037040) and there is no route-around (LDSObstacles is never
-	# populated -- docs/lds.md). Returns the signed clearance to the nearest mass
-	# shell the ship is CLOSING on, shell = 1.5x radius + 200 m (InnerMarkerRadius
-	# @ 0x100560d0, m_heat_radius_multiplier 0.5 @ 0x1011af58, 0x10119470).
+	# gate. The drive itself has no mass handling: it breaks out on the inhibit
+	# counter alone (icLDSDrive::Simulate @ 0x10037040). Routing around the LDS
+	# obstacle list is _lds_avoid_waypoint (docs/lds.md). Returns the signed
+	# clearance to the nearest mass shell the ship is CLOSING on, shell =
+	# 1.5x radius + 200 m (InnerMarkerRadius @ 0x100560d0,
+	# m_heat_radius_multiplier 0.5 @ 0x1011af58, 0x10119470).
 	var best := INF
 	var vel: Vector3 = ship.velocity
 	for o in objects:
@@ -203,6 +203,62 @@ func _lds_avoidance() -> float:
 		var margin := float(o["radius"]) * mult + 200.0
 		best = minf(best, rel.length() - margin)
 	return best
+
+## LDS_AVOID_SHELL: the route-around break-off shell, (m_heat_radius_multiplier +
+## 1.1) x radius = (0.5 + 1.1) x = 1.6x. m_heat_radius_multiplier 0.5 @
+## 0x1011af58, the 1.1 addend @ 0x10119e94 (icAITarget::CheckLDSAvoidance
+## @ 0x1005bd87, icPlanet::HeatDistanceAsRadiusMultiplier @ 0x10006ef0).
+const LDS_AVOID_SHELL := 1.6
+
+## Where an LDS transit points its nose: straight at `dest`, unless a mass in
+## the obstacle list blocks the direct corridor, then a waypoint grazing that
+## mass's avoidance shell. Port of icAITarget::CheckLDSAvoidance (iwar2 @
+## 0x1005bd87). The list it walks (icSolarSystem::LDSObstacles, this+0x640) is
+## populated at map parse and holds exactly: every sun (ParseSunInfo @
+## 0x1004e5a0 -- the append is AddLDSObstacle @ 0x10006770 compiled INLINE,
+## which is why that function has no call sites), every body of IeBodyType 1..6
+## (ParseBodyInfo @ 0x1004e040), and the scene-28 station, Lucrecia's Base
+## (ParseLocationInfo @ 0x1004e0a0) -- _load_system stamps `lds_obstacle`.
+## A qualifying obstacle is AHEAD (0 <= along), NEARER than the destination
+## (dist < range AND along - radius <= range), and the straight path enters its
+## 1.6x shell (perp^2 <= shell^2); the NEAREST one wins and the steer tangents
+## its shell. We aim at the nearest shell point instead of the engine's
+## asin-tangent, an equivalent grazing steer. Radii are the RUNTIME values:
+## suns 1e8 m (AddSim @ 0x1004cbe0), so a sun's shell is 1.6e8 m -- tiny at
+## system scale, which is why a transit only visibly routes around a sun the
+## destination sits behind. `dest` and the return are player-relative (metres).
+func _lds_avoid_waypoint(dest: Vector3) -> Vector3:
+	if dest == Vector3.INF:
+		return dest
+	var dir := dest.normalized()
+	var dlen := dest.length()
+	var block_rel := Vector3.INF
+	var block_shell := 0.0
+	var best_dist := INF
+	for o in objects:
+		if not bool(o.get("lds_obstacle", false)):
+			continue
+		var rel := Vector3(o["x"] - px, o["y"] - py, o["z"] - pz)
+		var dist := rel.length()
+		var ahead := rel.dot(dir)
+		var radius := float(o["radius"])
+		if ahead <= 0.0 or dist >= dlen or ahead - radius > dlen:
+			continue    # behind us, or beyond the destination
+		var shell := radius * LDS_AVOID_SHELL
+		var off := (rel - dir * ahead).length()   # perp distance to the corridor
+		if off < shell and dist < best_dist:
+			best_dist = dist
+			block_rel = rel
+			block_shell = shell
+	if block_rel == Vector3.INF:
+		return dest
+	# graze: aim at the shell point nearest the corridor, on the ship's side
+	var perp := dir * block_rel.dot(dir) - block_rel   # blocker -> nearest route pt
+	if perp.length() < 1.0:                             # dead centre: pick a side
+		perp = dir.cross(Vector3.UP)
+		if perp.length() < 0.5:
+			perp = dir.cross(Vector3.RIGHT)
+	return block_rel + perp.normalized() * block_shell
 
 
 func inhibit_charge() -> float:

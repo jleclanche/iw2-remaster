@@ -354,11 +354,13 @@ func _lds_corridor_clear(rel: Vector3) -> bool:
 			return false
 	return true
 
-## Where the demo pilot points the nose: straight at the target. The original
-## has no LDS mass avoidance (LDSObstacles is never populated), so the demo flies
-## direct; its destination pick already screens for a clear corridor.
+## Where the demo pilot points the nose: the shared LDS route-around
+## (main._lds_avoid_waypoint, the CheckLDSAvoidance port) -- straight at the
+## target unless an LDS obstacle's 1.6x-radius shell blocks the corridor
+## (suns / type-1..6 bodies / Lucrecia's Base, docs/lds.md), then abeam the
+## blocker.
 func _demo_aim() -> Vector3:
-	return m._target_pos()
+	return m._lds_avoid_waypoint(m._target_pos())
 
 func _demo(_delta: float) -> void:
 	if demo_t > 500.0:

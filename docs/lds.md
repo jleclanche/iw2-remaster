@@ -70,36 +70,48 @@ km out.
   thing it checks is the inhibit counter. Avoidance lives in the AI/autopilot and
   in the cruise brake, not in the drive's engage test.
 
-### The AI route-around — `icAITarget::CheckLDSAvoidance` — is INERT (#56)
+### The AI route-around — `icAITarget::CheckLDSAvoidance` — is ARMED (#56)
 
-There **is** a route-around subsystem in the binary, but the shipped game never
-arms it, so it does nothing at runtime. The player's LDS — and the AI's — flies
-**straight** past a mass, never around it. Verified conclusively:
+The route-around is real and armed. An earlier revision of this section declared
+it inert because `AddLDSObstacle` has no call sites; that inference was WRONG —
+the compiler **inlined** the append at every populate site (the identical
+grow-and-store on `+0x640/+0x644/+0x648` appears verbatim inside them), which is
+why `0x10006770` itself is referenced only by the export table. The corrected
+extraction:
 
-- `icAITarget::CheckLDSAvoidance` — `iwar2.dll @ 0x1005bd87` — IS called (from
-  the icAITarget flight code). Each tick it walks `icSolarSystem::LDSObstacles`
-  — `0x10006730`, a `FcCompactArray<icGeography*>` at `this+0x640` — and, for the
-  nearest obstacle that is ahead, nearer than the target, and whose 1.6×-radius
-  shell the straight path enters, would build an auxiliary target that tangents
-  the shell (`operator_new(0x70)` cData, flags `0x400`/`8`/`0x20000000`; the
-  shell is `(HeatDistanceAsRadiusMultiplier 0.5 @ 0x1011af58 + 1.1 @ 0x10119e94)
-  × radius`; `IsLDSAvoiding @ 0x100033b0` reports the state).
-- **But that list is only ever written by `AddLDSObstacle` — `0x10006770` — and
-  `AddLDSObstacle` has ZERO callers.** The 4-byte value `0x10006770` appears
-  nowhere in `iwar2.dll`, `EdgeOfChaos.exe`, or any POG package — not as a
-  `call`, not as a `mov`/`push` immediate, not in any vtable or data table. The
-  only reference is the DLL export table (RVA `0x6770`), i.e. it is a public API
-  the shipped campaign never invokes (editor/tooling, presumably). Nothing else
-  touches `+0x640`, and the ctor zeroes it.
-- So `LDSObstacles` is **always empty**, `CheckLDSAvoidance` iterates zero
-  obstacles, and no auxiliary avoidance target is ever created. Confirmed by
-  observation: from the Hoffer's Wake spawn the original autopilots **straight**
-  to Griffon, never routing around the primary star.
+- `icAITarget::CheckLDSAvoidance` — `iwar2.dll @ 0x1005bd87` — is called from
+  `ComputeLateralLDSControl` (`0x1005d911`) each LDS control tick (when no aux
+  avoidance target is already set, flag `0x80`). It walks
+  `icSolarSystem::LDSObstacles` — accessor `0x10006730`, a
+  `FcCompactArray<icGeography*>` at `this+0x640` — and, for the nearest obstacle
+  that is ahead, nearer than the target, and whose 1.6×-radius shell the
+  straight path enters, builds an auxiliary target that tangents the shell
+  (`operator_new(0x70)` cData, flags `0x400`/`8`/`0x20000000`; the shell is
+  `(HeatDistanceAsRadiusMultiplier 0.5 @ 0x1011af58 + 1.1 @ 0x10119e94) ×
+  radius`; `IsLDSAvoiding @ 0x100033b0` reports the state).
+- The list is populated at map parse, by three appends and nothing else:
+  * every **sun** — `ParseSunInfo @ 0x1004e5a0`;
+  * every **body of `IeBodyType` 1..6** — `ParseBodyInfo @ 0x1004e040`
+    (`1 << type & 0x7e`, excluding the type-0 system-centre/marker records);
+  * every **station with scene `0x1c` = 28** — `ParseLocationInfo @ 0x1004e0a0`
+    — which in the shipped maps is exactly **Lucrecia's Base** (its three
+    per-system instances and nothing else).
+  L-points, belts, nebulae and ordinary stations are **not** LDS obstacles.
+- The radius the check reads is the LIVE `FiSim::Radius`, and for suns that is
+  **1e8 m** — `icSolarSystem::AddSim` (`0x1004cbe0`) forces `SetRadius(1e8)` on
+  every sun it admits, discarding the authored map value (docs/geography.md) —
+  so a sun's avoidance shell is **1.6e8 m** (160,000 km), not the 2.8e11 m
+  Alpha's file radius implies. That is why the original from the Hoffer's Wake
+  spawn flies effectively straight to Griffon (Alpha's shell is tiny at system
+  scale) yet visibly routes around the sun when the selected destination sits
+  behind it.
 
-The remaster must match this: no route-around, no mass brake, no mass dropout.
-A star in the corridor is flown straight past. The only thing that stops you
-short of a body is that body being your *destination* — the approach order's own
-marker sphere (`InnerMarkerRadius`), handled in `_autopilot_tick`, not here.
+The remaster matches this: `_load_system` stamps `lds_obstacle` per the three
+parse-time appends, `_lds_avoid_waypoint` (main_targeting.gd) walks flagged
+records and grazes the 1.6× shell; there is still no mass brake and no mass
+dropout. What stops you short of a body is that body being your *destination* —
+the approach order's marker sphere (`InnerMarkerRadius`), handled in
+`_autopilot_tick`, not here.
 
 ## What changed in the remaster
 
@@ -108,21 +120,23 @@ marker sphere (`InnerMarkerRadius`), handled in `_autopilot_tick`, not here.
   feeds the LDSi **fence** (`_update_ldsi_fence`), the HUD **roundel**
   (`inhibit_charge`), and the LDS-engage inhibition test (`_lds_clearance`), so
   all three agree.
-- The drive has **no mass interaction at all** — no dropout, no brake, no
-  steer. `_lds_process` brakes only on the DESTINATION distance (`icLDSDrive::
-  Simulate` case 2's target-relative cap `this+0x90`) and drops out only on
-  region inhibition or arrival (`icLDSDrive::Simulate @ 0x10037040`). Manual LDS
-  near a star re-engages cleanly and flies straight past it. Two earlier
-  stand-ins are gone: an invented mass **dropout** (which wedged the drive into
-  a spool/break loop, since every L-point sits inside its planet's shell —
-  Alexander's is 132,000 km deep), and an invented mass **brake + route-around**
-  (which, near a huge primary like Hoffer's Wake Alpha, shell 2.8e8 km, crawled
-  the drive to a stop and swung the autopilot on a giant detour — reported as
-  "rotated around HWA, LDS stuck at 2 km/s"). Both were absent from the original.
-- The autopilot (`_autopilot_tick`) faces the destination directly and engages
-  LDS once the nose is on it — no waypoint steering. `main.gd::_lds_avoidance()`
-  survives only as a diagnostic metric the demo autoplay reads; it feeds nothing
-  in the flight path.
+- The **drive** has no mass interaction — no dropout, no brake. `_lds_process`
+  brakes only on the DESTINATION distance (`icLDSDrive::Simulate` case 2's
+  target-relative cap `this+0x90`) and drops out only on region inhibition or
+  arrival (`icLDSDrive::Simulate @ 0x10037040`). Manual LDS near a star
+  re-engages cleanly. Two earlier stand-ins are gone: an invented mass
+  **dropout** (which wedged the drive into a spool/break loop, since every
+  L-point sits inside its planet's shell — Alexander's is 132,000 km deep), and
+  an invented mass **brake** plus a route-around keyed to the AUTHORED radii
+  (which, against Alpha's file value 1.75e11 — shell 2.8e8 km — crawled the
+  drive to a stop and swung the autopilot on a giant detour; reported as
+  "rotated around HWA, LDS stuck at 2 km/s"). The real radii story is the 1e8
+  AddSim override above.
+- The autopilot (`_autopilot_tick`) steers at `_lds_avoid_waypoint(p)` — the
+  raw destination unless a flagged obstacle's 1.6×-radius shell blocks the
+  corridor — and engages LDS once the nose is on that steer heading.
+  `main.gd::_lds_avoidance()` survives only as a diagnostic metric the demo
+  autoplay reads; it feeds nothing in the flight path.
 - `entities.gd::nearest_ldsi(p)` (new) is the region query helper.
 
 ## The render fold at LDS magnitudes (issue #51)

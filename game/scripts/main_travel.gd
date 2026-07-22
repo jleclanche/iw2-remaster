@@ -249,12 +249,13 @@ func _autopilot_tick(delta: float) -> void:
 		_disengage_autopilot()   # the target went away under us
 		return
 	var dist := p.length()
-	# fly STRAIGHT at the destination. The original has no LDS mass avoidance:
-	# icSolarSystem::LDSObstacles is never populated (AddLDSObstacle @ 0x10006770
-	# has zero callers anywhere), so icAITarget::CheckLDSAvoidance iterates an
-	# empty list and never routes around anything. A star in the corridor is
-	# flown straight past, not around (docs/lds.md).
-	_face_target()
+	# route around the LDS obstacle list (icAITarget::CheckLDSAvoidance @
+	# 0x1005bd87): suns at their 1e8 runtime radius, type-1..6 bodies, and
+	# Lucrecia's Base (docs/lds.md) -- the nose tracks a grazing waypoint when
+	# an obstacle's 1.6x-radius shell blocks the corridor, and the raw
+	# destination otherwise.
+	var steer := _lds_avoid_waypoint(p)
+	_face_dir(steer)
 	# The player's autopilot IS the AI order system: icPlayerPilot::
 	# EngageAutopilotApproach (0x100afbc0) calls icAIServices::DefaultApproach
 	# and pushes an "AutopilotApproach" order onto the player's own icAIPilot.
@@ -263,11 +264,14 @@ func _autopilot_tick(delta: float) -> void:
 	# kilometre or two, a planet thousands of kilometres out.
 	var marker := _target_marker()
 	# approach/dock autopilots engage LDS for long transits once the nose is on
-	# the target. The only engage gate is region inhibition; the drive has no
-	# mass gate (docs/lds.md), so a mass in the way neither blocks nor drops it.
+	# the STEER heading (the sun route-around waypoint when one is active --
+	# LDS stays engaged while curving around a sun, CheckLDSAvoidance being an
+	# LDS-cruise feature). The only engage gate is region inhibition; the drive
+	# has no mass gate (docs/lds.md), so a mass in the way neither blocks nor
+	# drops it.
 	if ap_mode in [1, 3] and lds_state == 0 and jump_state == 0 \
 			and dist > 8.0e4 and _lds_clearance() > 1000.0 \
-			and (-ship.global_transform.basis.z).angle_to(p.normalized()) < 0.05:
+			and (-ship.global_transform.basis.z).angle_to(steer.normalized()) < 0.05:
 		_toggle_lds()
 	match ap_mode:
 		1:  # approach: fly to the marker sphere and stop on it
