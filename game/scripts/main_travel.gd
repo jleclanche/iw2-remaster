@@ -249,11 +249,12 @@ func _autopilot_tick(delta: float) -> void:
 		_disengage_autopilot()   # the target went away under us
 		return
 	var dist := p.length()
-	# route around masses in the corridor (icAITarget::CheckLDSAvoidance): the
-	# nose tracks a grazing waypoint, not the raw destination, so the transit
-	# curves clear of a star/planet in the way instead of boring into it
-	var steer := _lds_avoid_waypoint(p)
-	_face_dir(steer)
+	# fly STRAIGHT at the destination. The original has no LDS mass avoidance:
+	# icSolarSystem::LDSObstacles is never populated (AddLDSObstacle @ 0x10006770
+	# has zero callers anywhere), so icAITarget::CheckLDSAvoidance iterates an
+	# empty list and never routes around anything. A star in the corridor is
+	# flown straight past, not around (docs/lds.md).
+	_face_target()
 	# The player's autopilot IS the AI order system: icPlayerPilot::
 	# EngageAutopilotApproach (0x100afbc0) calls icAIServices::DefaultApproach
 	# and pushes an "AutopilotApproach" order onto the player's own icAIPilot.
@@ -261,16 +262,12 @@ func _autopilot_tick(delta: float) -> void:
 	# derived from the TARGET -- a fighter breaks off at ~300 m, a station at a
 	# kilometre or two, a planet thousands of kilometres out.
 	var marker := _target_marker()
-	# like the original: approach/dock autopilots engage LDS for long transits
-	# once the nose is on the STEER heading (the route-around waypoint, not the
-	# raw destination -- LDS stays engaged while curving around a mass, matching
-	# CheckLDSAvoidance being an LDS-cruise feature). The only engage gate is
-	# region inhibition; the drive has no mass gate (docs/lds.md), so an old
-	# mass-clearance term here just wedged the drive into a charge/drop loop when
-	# departing inside a body's shell (#56).
+	# approach/dock autopilots engage LDS for long transits once the nose is on
+	# the target. The only engage gate is region inhibition; the drive has no
+	# mass gate (docs/lds.md), so a mass in the way neither blocks nor drops it.
 	if ap_mode in [1, 3] and lds_state == 0 and jump_state == 0 \
 			and dist > 8.0e4 and _lds_clearance() > 1000.0 \
-			and (-ship.global_transform.basis.z).angle_to(steer.normalized()) < 0.05:
+			and (-ship.global_transform.basis.z).angle_to(p.normalized()) < 0.05:
 		_toggle_lds()
 	match ap_mode:
 		1:  # approach: fly to the marker sphere and stop on it

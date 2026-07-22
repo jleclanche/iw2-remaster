@@ -148,28 +148,21 @@ func _lds_process(delta: float) -> void:
 	lds_speed = minf(lds_speed * pow(LDS_RAMP, delta * wd), LDS_MAX)
 	var clear := _lds_clearance()     # LDS inhibition (icLDSIRegion), region-based
 	var tdist := _target_distance()
-	var avoid := _lds_avoidance()     # clearance to the nearest CLOSING mass shell
-	# brake as we close on the destination -- icLDSDrive::Simulate case 2
+	# brake as we close on the DESTINATION -- icLDSDrive::Simulate case 2
 	# (0x10037040) caps the cruise speed at the pilot target's break-off
 	# (this+0x90 = target_marker x max_speed @ 0x10037596), so the drive settles
-	# onto its destination rather than overshooting it
+	# onto its destination rather than overshooting it. There is NO mass brake:
+	# the only speed cap is the target's, so a star in the way does not slow you.
 	if tdist < lds_speed * 1.5 and tdist < INF:
 		lds_speed = maxf(tdist * 1.5, LDS_BASE)
-	# and brake near a mass in the way -- the cruise speed cap is proximity-based,
-	# so the drive slows to round a body instead of blasting past it. This is a
-	# BRAKE ONLY, never a dropout: without it the route-around overshoots a huge
-	# shell (Alpha's is 2.8e8 km) at the LDS ceiling and flings the ship off-course
-	# until its destination culls and the autopilot silently drops (#56).
-	if avoid < lds_speed * 1.5 and avoid < INF:
-		lds_speed = maxf(avoid * 1.5, LDS_BASE)
 	lds_speed = minf(lds_speed, LDS_MAX)
 	ship.velocity = -ship.global_transform.basis.z * lds_speed
 	# drop out ONLY on inhibition or arrival. icLDSDrive::Simulate breaks the
 	# ship out at 0x100376xx solely when the inhibit counter iiThrusterSim+0x251
-	# is non-zero (docs/lds.md) -- there is NO mass gate in the drive. Flying
-	# near/into a mass is a BRAKE (above) and the AI route-around, never a
-	# dropout; a mass dropout here wedged manual re-engage near a star into a
-	# spool/break loop (#56).
+	# is non-zero (docs/lds.md) -- there is NO mass gate in the drive, and no
+	# mass avoidance anywhere (icSolarSystem::LDSObstacles is never populated --
+	# AddLDSObstacle @ 0x10006770 has zero callers -- so CheckLDSAvoidance is
+	# inert). Masses in the path do not slow, steer or drop the drive.
 	if clear < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
 		_drop_out_of_lds()
 

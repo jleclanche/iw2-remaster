@@ -70,34 +70,36 @@ km out.
   thing it checks is the inhibit counter. Avoidance lives in the AI/autopilot and
   in the cruise brake, not in the drive's engage test.
 
-### The AI route-around — `icAITarget::CheckLDSAvoidance` (#56)
+### The AI route-around — `icAITarget::CheckLDSAvoidance` — is INERT (#56)
 
-The AI genuinely steers *around* masses on an LDS leg, and it is NOT in
-`DefaultApproach` (which only builds a target + a break-off radius). It lives in
-the target-following flight code:
+There **is** a route-around subsystem in the binary, but the shipped game never
+arms it, so it does nothing at runtime. The player's LDS — and the AI's — flies
+**straight** past a mass, never around it. Verified conclusively:
 
-- The system keeps a per-`icSolarSystem` list of obstacle geographies:
-  `icSolarSystem::LDSObstacles` — `iwar2.dll @ 0x10006730` — a
-  `FcCompactArray<icGeography*>` at `this+0x640`, filled by
-  `AddLDSObstacle` — `0x10006770`. Only masses (stars/planets, `icGeography`)
-  register; stations are sims, not geography, and never appear.
-- `icAITarget::CheckLDSAvoidance` — `iwar2.dll @ 0x1005bd87` — each tick walks
-  that list and, for the **nearest** obstacle that is
-  - **ahead** (its forward component `local_98 >= 0`),
-  - **nearer than the target** (`local_98 - radius <= target range`, `this+0xc8`),
-  - and whose **shell the straight path enters**
-    (`local_9c² + local_a0² <= shell²`, the perpendicular offset to the corridor),
+- `icAITarget::CheckLDSAvoidance` — `iwar2.dll @ 0x1005bd87` — IS called (from
+  the icAITarget flight code). Each tick it walks `icSolarSystem::LDSObstacles`
+  — `0x10006730`, a `FcCompactArray<icGeography*>` at `this+0x640` — and, for the
+  nearest obstacle that is ahead, nearer than the target, and whose 1.6×-radius
+  shell the straight path enters, would build an auxiliary target that tangents
+  the shell (`operator_new(0x70)` cData, flags `0x400`/`8`/`0x20000000`; the
+  shell is `(HeatDistanceAsRadiusMultiplier 0.5 @ 0x1011af58 + 1.1 @ 0x10119e94)
+  × radius`; `IsLDSAvoiding @ 0x100033b0` reports the state).
+- **But that list is only ever written by `AddLDSObstacle` — `0x10006770` — and
+  `AddLDSObstacle` has ZERO callers.** The 4-byte value `0x10006770` appears
+  nowhere in `iwar2.dll`, `EdgeOfChaos.exe`, or any POG package — not as a
+  `call`, not as a `mov`/`push` immediate, not in any vtable or data table. The
+  only reference is the DLL export table (RVA `0x6770`), i.e. it is a public API
+  the shipped campaign never invokes (editor/tooling, presumably). Nothing else
+  touches `+0x640`, and the ctor zeroes it.
+- So `LDSObstacles` is **always empty**, `CheckLDSAvoidance` iterates zero
+  obstacles, and no auxiliary avoidance target is ever created. Confirmed by
+  observation: from the Hoffer's Wake spawn the original autopilots **straight**
+  to Griffon, never routing around the primary star.
 
-  builds an auxiliary target (`operator_new(0x70)` cData, flags `0x400`/`8`/
-  `0x20000000`, `SetTargetSim(obstacle)`) that **tangents the shell** — an
-  asin-based rotation of the target bearing (`FUN_10061a90` = asin) placed to
-  graze the obstacle, then resumes to the real target once past. `IsLDSAvoiding`
-  — `0x100033b0` — reports this auxiliary-target state.
-- The shell is `(HeatDistanceAsRadiusMultiplier + 1.1) × radius`
-  (`icPlanet::HeatDistanceAsRadiusMultiplier @ 0x10006ef0` =
-  `m_heat_radius_multiplier` 0.5 @ `0x1011af58`; the 1.1 addend @ `0x10119e94`),
-  i.e. **1.6 × radius** — the same "graze a mass" break-off `icAIServices` uses,
-  a touch wider than `InnerMarkerRadius`'s 1.5×.
+The remaster must match this: no route-around, no mass brake, no mass dropout.
+A star in the corridor is flown straight past. The only thing that stops you
+short of a body is that body being your *destination* — the approach order's own
+marker sphere (`InnerMarkerRadius`), handled in `_autopilot_tick`, not here.
 
 ## What changed in the remaster
 
@@ -106,29 +108,21 @@ the target-following flight code:
   feeds the LDSi **fence** (`_update_ldsi_fence`), the HUD **roundel**
   (`inhibit_charge`), and the LDS-engage inhibition test (`_lds_clearance`), so
   all three agree.
-- `main.gd::_lds_avoidance()` now feeds a **BRAKE ONLY**, never a dropout. The
-  cruise still slows near a closing mass (proximity speed cap, faithful to
-  `icLDSDrive::Simulate` case 2's target-relative cap `this+0x90`), so the drive
-  rounds a body instead of blasting past it -- but it no longer DROPS OUT on a
-  mass. The drive breaks out on the inhibit region alone
-  (`icLDSDrive::Simulate @ 0x10037040`), so manual LDS near a star re-engages
-  cleanly instead of spool/break-looping (#56, the reported "can't restart near
-  a star" bug). The invented dropout was the whole fault: every L-point sits
-  inside its planet's shell (Alexander's is 132,000 km deep), so "inside the
-  shell = dropout" wedged the drive into a spool/breakout loop the moment bodies
-  got their real radii. (Dropping the brake too was worse: without it the
-  route-around overshoots a huge shell at the LDS ceiling and flings the ship
-  off-course until its destination culls and the autopilot silently drops.)
-- `main.gd::_lds_avoid_waypoint(dest)` (new) is the route-around: the port of
-  `CheckLDSAvoidance`. It returns the nose heading for an LDS transit — straight
-  at `dest` unless a mass's 1.6×-radius shell blocks the corridor, then the
-  shell point nearest the corridor (a grazing steer, equivalent to the engine's
-  asin-tangent). The autopilot (`_autopilot_tick`) faces this, not the raw
-  destination, and keeps LDS engaged while curving around, matching
-  CheckLDSAvoidance being an LDS-cruise feature. Manual flight has no
-  auto-avoidance — the player steers, exactly as in the original. `mechcheck
-  lds-routearound` proves it: a mass in the corridor bends the heading so the
-  path grazes its shell (FAILS if routing returns the raw destination).
+- The drive has **no mass interaction at all** — no dropout, no brake, no
+  steer. `_lds_process` brakes only on the DESTINATION distance (`icLDSDrive::
+  Simulate` case 2's target-relative cap `this+0x90`) and drops out only on
+  region inhibition or arrival (`icLDSDrive::Simulate @ 0x10037040`). Manual LDS
+  near a star re-engages cleanly and flies straight past it. Two earlier
+  stand-ins are gone: an invented mass **dropout** (which wedged the drive into
+  a spool/break loop, since every L-point sits inside its planet's shell —
+  Alexander's is 132,000 km deep), and an invented mass **brake + route-around**
+  (which, near a huge primary like Hoffer's Wake Alpha, shell 2.8e8 km, crawled
+  the drive to a stop and swung the autopilot on a giant detour — reported as
+  "rotated around HWA, LDS stuck at 2 km/s"). Both were absent from the original.
+- The autopilot (`_autopilot_tick`) faces the destination directly and engages
+  LDS once the nose is on it — no waypoint steering. `main.gd::_lds_avoidance()`
+  survives only as a diagnostic metric the demo autoplay reads; it feeds nothing
+  in the flight path.
 - `entities.gd::nearest_ldsi(p)` (new) is the region query helper.
 
 ## The render fold at LDS magnitudes (issue #51)
