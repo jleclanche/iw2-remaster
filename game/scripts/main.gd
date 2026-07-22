@@ -513,6 +513,7 @@ func late_physics(delta: float) -> void:
 	_stream_objects()
 	_update_grid()
 	_update_ldsi_fence()
+	_update_nebula_fog()
 	_chase_camera(delta)
 	if sky_anchor != null:
 		sky_anchor.global_position = cam.global_position

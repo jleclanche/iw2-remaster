@@ -289,6 +289,10 @@ var system_map_url := ""  # "map:/geog/<cluster>/<stem>" -- the engine's
 							# world identity, what ActiveWorld answers
 var system_name := ""
 var objects: Array = []
+# icNebula fog volumes in the current system (icGeography sims, IeBodyType 40):
+# {cx, cy, cz, radius, depth, colour}. main_world._update_nebula_fog drives the
+# WorldEnvironment fog from these each frame -- see icSolarSystem::Render.
+var nebulae: Array = []
 var ai_ships: Array = []
 var target_idx := -1
 var target_ai: AiShip = null

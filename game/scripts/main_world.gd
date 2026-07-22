@@ -3,6 +3,16 @@
 # main_state.gd for the scheme. Same node, same class.
 extends "main_collision.gd"
 
+# --- icNebula distance fog (icSolarSystem, iwar2 @ 0x1004d150) ---------------
+# Inside a nebula the engine enables linear fog toward the nebula colour. The
+# fog NEAR is a fixed 100 m (icSolarSystem::Render); the FAR is the visibility
+# `depth` when fully immersed, lerped out to the far clip as the opacity falls.
+# Opacity is a radial ramp about the nebula centre (FUN_10067990 @ 0x10067990):
+# 1.0 inside 0.75 R, linear to 0 at R. Everything cited in docs/original.md.
+const NEBULA_FOG_NEAR := 100.0  # icSolarSystem::Render local "100.0"
+const NEBULA_INNER_FRAC := 0.75  # _DAT_10117d8c: opacity core radius fraction
+const NEBULA_FAR_CLIP := 200000.0  # icSolarSystem::m_far_clip @ 0x1015c048
+
 func _build_environment() -> void:
 	# The original lights a system with exactly the geog LWS's two DISTANT
 	# lights, <star> and <fill> (FcScene's LWS parser registers LightColor /
@@ -36,6 +46,48 @@ func _build_environment() -> void:
 	env_ref = e
 	add_child(env)
 	_build_grid()
+
+## Drive the WorldEnvironment's linear depth fog from the nebula the player is
+## inside, reproducing icSolarSystem::Render (iwar2 @ 0x1004d150). The engine
+## keeps ONE fog block, so when the player straddles overlapping clouds the
+## densest (highest-opacity) one wins -- match that by taking the max. Fog off
+## when outside every nebula. World glTF geometry (ships, stations, asteroids)
+## is what fogs; the sky/backdrop layers opt out via `fog_disabled`.
+func _update_nebula_fog() -> void:
+	if env_ref == null:
+		return
+	var best_op := 0.0
+	var best: Dictionary = {}
+	for neb: Dictionary in nebulae:
+		var r: float = neb["radius"]
+		if r <= 0.0:
+			continue
+		var dist := Vector3(px - neb["cx"], py - neb["cy"],
+				pz - neb["cz"]).length()
+		var inner := r * NEBULA_INNER_FRAC
+		var op := 0.0
+		if dist <= inner:
+			op = 1.0
+		elif dist < r:
+			op = (r - dist) / (r - inner)
+		if op > best_op:
+			best_op = op
+			best = neb
+	if best_op <= 0.0:
+		env_ref.fog_enabled = false
+		return
+	# fog FAR = op*depth + (1-op)*far_clip: dense `depth` visibility when fully
+	# immersed, opening out to the far clip as the nebula thins at its edge.
+	var fog_far: float = best_op * float(best["depth"]) \
+			+ (1.0 - best_op) * NEBULA_FAR_CLIP
+	env_ref.fog_enabled = true
+	env_ref.fog_mode = Environment.FOG_MODE_DEPTH
+	env_ref.fog_light_color = best["colour"]
+	env_ref.fog_light_energy = 1.0
+	env_ref.fog_depth_begin = NEBULA_FOG_NEAR
+	env_ref.fog_depth_end = fog_far
+	env_ref.fog_depth_curve = 1.0  # linear, as D3DFOG_LINEAR
+	env_ref.fog_sky_affect = 0.0  # the additive backdrop IS the nebula already
 
 func _setup_sky(stem: String) -> void:
 	# per-system sky from the original geog/*.lws: nebula backdrop model,
@@ -191,7 +243,7 @@ func _additive_backdrop_shader() -> Shader:
 	backdrop_shader = Shader.new()
 	backdrop_shader.code = """
 shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled;
+render_mode unshaded, blend_add, cull_disabled, fog_disabled;
 uniform sampler2D albedo_tex : filter_linear, repeat_enable;
 void fragment() {
 	// gamma-space bilinear result, then icNebulaAvatar's forced alpha 0.99
@@ -432,7 +484,7 @@ func _starfield_shader() -> Shader:
 	starfield_shader = Shader.new()
 	starfield_shader.code = """
 shader_type spatial;
-render_mode unshaded, blend_add;
+render_mode unshaded, blend_add, fog_disabled;
 void vertex() {
 	POINT_SIZE = 1.0;
 }
@@ -453,6 +505,7 @@ func _clear_system() -> void:
 		if o["node"] != null:
 			o["node"].queue_free()
 	objects.clear()
+	nebulae.clear()
 	for a in ai_ships:
 		a.queue_free()
 	ai_ships.clear()
@@ -531,6 +584,20 @@ func _load_system(stem: String, entry_name := "", from_stem := "") -> void:
 				or (cat == "body" and int(o.get("body_type", 0)) in range(1, 7)) \
 				or (cat == "station" and int(o.get("scene", -1)) == 28)
 		objects.append(rec)
+		# icNebula (IeBodyType 40) is a fog VOLUME, not drawn geometry: the map
+		# entity carries `depth` (visibility distance in nebula), `nebula_colour`
+		# and a `radius` sphere. icSolarSystem drives distance fog from it -- see
+		# _update_nebula_fog. `pos` uses the same Z-flip as every other record.
+		if cat == "nebula":
+			var neb_c: Array = o.get("nebula_colour", [0.6745098, 0.2784314,
+					0.0823529])
+			nebulae.append({
+				"cx": float(o["pos"][0]), "cy": float(o["pos"][1]),
+				"cz": -float(o["pos"][2]),
+				"radius": float(o.get("radius", 0.0)),
+				"depth": float(o.get("depth", 30000.0)),
+				"colour": Color(neb_c[0], neb_c[1], neb_c[2]),
+			})
 		# a kind-4 belt record is a field ZONE, not a body: ParseAsteroidBeltInfo
 		# (iwar2 @ 0x1004e6b0) reads the ring radius from the record's +0x134
 		# (our JSON `info_f`), the width from +0x138 (our `radius`), and centres
@@ -693,7 +760,7 @@ func _planet_shader() -> Shader:
 	planet_shader = Shader.new()
 	planet_shader.code = """
 shader_type spatial;
-render_mode cull_back, depth_draw_never;
+render_mode cull_back, depth_draw_never, fog_disabled;
 uniform sampler2D albedo_tex : source_color;
 uniform vec4 tint : source_color;
 uniform vec3 star_dir;   // world space, body -> its primary
