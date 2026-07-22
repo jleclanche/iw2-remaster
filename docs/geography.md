@@ -266,11 +266,24 @@ the envelope value and is then sized by the `node+0xe8` flag byte:
 
 Which bit the sun's pushed mode-0 flare sets is the remaining unknown, and it is
 the crux: distance mode -> constant screen size (brightness-only bloom); screen
-mode -> size proportional to radius, which would make Alpha (radius 1.75e11 m,
-~1000x Beta) render a vastly larger flare than Beta at the same envelope. That
-one bit, plus a check that Alpha's authored radius is read right, decides the
+mode -> size proportional to radius, which would make Alpha render a vastly
+larger flare than Beta at the same envelope. That one bit decides the
 Alpha-at-spawn look and needs an in-engine comparison against an original
 capture to settle.
+
+**Alpha's radius is NOT a decode error -- verified.** `ParseSunInfo` reads the
+radius from record `+0x138` (byte `+0x134` is the class), exactly what
+`map_decoder` extracts. Huge primary-star radii are the NORM, not an anomaly:
+across the 30 authored stars, 9 exceed 1e10 m -- New_Bavaria I is 1.34e11,
+Firefrost I 3.93e10, Drake I 3.90e10. Alpha at 1.75e11 m is an ordinary primary;
+**Beta at 1.81e8 m is the exception, because it is a COMPANION** (`index 127,
+parent 1`), not a system primary. So at the campaign spawn (3.7e11 m from Alpha
+= 2.1 radii) Alpha genuinely subtends `arcsin(1.75e11 / 3.7e11)` ~ 28 deg and
+its envelope is a flat 1.0 out to 125 radii = 2.19e13 m (21.9 billion km, larger
+than the whole system) -- it is authored to fill the sky everywhere in Hoffer's
+Wake. The "only starts growing at ~20 million km" behaviour is therefore Beta's
+(companion, 22.6M-km onset), not Alpha's. The remaining render delta is the
+size-law flag above, NOT the radius.
 
 **The sun-avatar draw holes, now disassembled** (`disasm.py`, Ghidra dropped
 them):
