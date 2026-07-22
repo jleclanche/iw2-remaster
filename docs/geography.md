@@ -143,6 +143,16 @@ distance-in-radii envelope, `InnerMarkerRadius`'s 1.5x approach marker,
 only suns (and L-points, hardcoded 500 m at creation). `_load_system`
 (main_world.gd) mirrors the override at record build.
 
+The override is best read as the original PAPERING OVER its own data: the
+authored primary radii are unusable as physical sizes (planets orbit inside
+them), and rather than fix 30 map records the engine flattens every sun to the
+same 1e8 m -- a red hypergiant and a dwarf companion get identical flare
+onset, approach marker and avoidance shell. The remaster mirrors this exactly
+for parity; a deliberate treatment (per-class physical radii, or a considered
+reinterpretation of the authored values) is future work, tracked with an
+explicit done-state in issue #57. The authored radius and class survive
+untouched in `data/json/systems` for that purpose.
+
 **Only bodies with `1 < IeBodyType < 5` are drawn at all.** `icPlanet::CreateAvatar`
 (`0x10067fe0`) gates on exactly that, which is why the system-centre record
 (type 0) and the four type-6 records are invisible. Distribution of

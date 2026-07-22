@@ -1001,9 +1001,11 @@ the *next* record's kind and why L-points appeared to have no orientation.
 (`0x1004e5a0`). It is a physical radius in meters; there is no map-zone field and
 no derivation. Median body 5.6e6 m, gas giants 3.2e7-2.6e8 m, stars 2e7-1.75e11 m.
 (Yes, 1.75e11: `Hoffer's Wake Alpha` is authored as a 251-solar-radius red
-hypergiant, and the engine takes it at face value -- it builds an
-`FcSphereCollider` of exactly that radius.) We had been reading the right float
-all along and then **clamping it to an arbitrary `8e7`**; the clamp was the bug.
+hypergiant -- but the engine does NOT run with it: `icSolarSystem::AddSim`
+(`0x1004cbe0`) forces every sun to 1e8 m as the load loop admits it; see
+section 4a and docs/geography.md. Body radii ARE taken at face value.) We had
+been reading the right float all along and then **clamping it to an arbitrary
+`8e7`**; the clamp was the bug.
 
 **A record's fields are only valid for the kinds that write them.** The writer
 reused one 360-byte buffer, so a station's `+0x138` is its parent body's radius.
