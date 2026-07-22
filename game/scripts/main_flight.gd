@@ -148,22 +148,25 @@ func _lds_process(delta: float) -> void:
 	lds_speed = minf(lds_speed * pow(LDS_RAMP, delta * wd), LDS_MAX)
 	var clear := _lds_clearance()     # LDS inhibition (icLDSIRegion), region-based
 	var tdist := _target_distance()
-	# brake as we close on the DESTINATION -- icLDSDrive::Simulate case 2
-	# (0x10037040) caps the cruise speed at the pilot target's break-off
-	# (this+0x90 = target_marker x max_speed @ 0x10037596), so the drive settles
-	# onto its destination rather than overshooting it. There is NO mass brake:
-	# the only speed cap is the target's, so a star in the way does not slow you.
-	if tdist < lds_speed * 1.5 and tdist < INF:
-		lds_speed = maxf(tdist * 1.5, LDS_BASE)
+	# arrive on the target's MARKER SPHERE, not its centre -- icLDSDrive::Simulate
+	# case 2 (0x10037040) caps the cruise speed at the pilot target's break-off
+	# (this+0x90 = target_marker x max_speed @ 0x10037596). togo is the distance
+	# to that sphere (InnerMarkerRadius), so a big planet -- Griffon's marker is
+	# 13,500 km, far outside its 4,120 km body -- stops you clear of it instead of
+	# a fixed 40 km, which was deep INSIDE the planet. There is NO mass brake: the
+	# only speed cap is the target's, so a star in the way does not slow you.
+	var togo := tdist - _target_marker() if tdist < INF else INF
+	if togo < lds_speed * 1.5 and togo < INF:
+		lds_speed = maxf(togo * 1.5, LDS_BASE)
 	lds_speed = minf(lds_speed, LDS_MAX)
 	ship.velocity = -ship.global_transform.basis.z * lds_speed
-	# drop out ONLY on inhibition or arrival. icLDSDrive::Simulate breaks the
-	# ship out at 0x100376xx solely when the inhibit counter iiThrusterSim+0x251
-	# is non-zero (docs/lds.md) -- there is NO mass gate in the drive, and no
-	# mass avoidance anywhere (icSolarSystem::LDSObstacles is never populated --
-	# AddLDSObstacle @ 0x10006770 has zero callers -- so CheckLDSAvoidance is
-	# inert). Masses in the path do not slow, steer or drop the drive.
-	if clear < 0.0 or (tdist < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
+	# drop out ONLY on inhibition or arrival (reaching the marker sphere).
+	# icLDSDrive::Simulate breaks the ship out at 0x100376xx solely when the
+	# inhibit counter iiThrusterSim+0x251 is non-zero (docs/lds.md) -- there is NO
+	# mass gate in the drive, and no mass avoidance anywhere (LDSObstacles is
+	# never populated -- AddLDSObstacle @ 0x10006770 has zero callers -- so
+	# CheckLDSAvoidance is inert). Masses in the path do not slow, steer or drop.
+	if clear < 0.0 or (togo < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
 		_drop_out_of_lds()
 
 func _drop_out_of_lds() -> void:

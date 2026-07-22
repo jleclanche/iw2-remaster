@@ -278,6 +278,8 @@ func _autopilot_tick(delta: float) -> void:
 			# min(marker*0.05, 0.5) m of it; we arrive rather than settle, so the
 			# slop is floored at icAITarget::m_waypoint_approach_distance (20 m)
 			if togo <= maxf(PogWorld.completion_tolerance(marker), 20.0):
+				if lds_state != 0:
+					_drop_out_of_lds()   # stop on the sphere, don't coast in
 				ship.set_speed = 0.0
 				_set_autopilot(0)
 				hud.log_msg("APPROACH COMPLETE")
