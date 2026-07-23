@@ -357,6 +357,53 @@ Alpha's record says 1.75e11 m). Every sun in the game therefore approaches,
 avoids and renders as a 1e8 m object -- see docs/geography.md for the full
 story and docs/lds.md for the avoidance shell.
 
+### The orientation controller -- why the autopilot arrives exact, not wobbling
+
+The same `icAITarget` that drives the position approach also steers the nose,
+and the player autopilot and every AI pilot share it (`SetYoke @ 0x10054e10`
+copies `icAITarget`'s angular yoke into the pilot yoke, which then feeds the
+ordinary `iiThrusterSim` rate-demand ramp -- the AI fights the *same* "force
+feedback" angular-accel weight the manual stick does). Two stages:
+
+**1. Decompose the heading error into euler axes --
+`icAITarget::ComputeAnglesForDirection` (`0x1005dc75`).** With the target
+direction `(x, y, z)` in the ship's body frame (`+z` forward, engine chirality):
+
+```
+yaw_err   = atan2(x, z)                 ; +/-pi, the FULL azimuth (icEuler[0])
+pitch_err = atan2(-y, sqrt(x*x + z*z))  ; +/-pi/2 elevation      (icEuler[1])
+```
+
+The pitch denominator is the **horizontal magnitude**, not the signed forward
+component. That is the whole trick: a target off to the side or behind the nose
+resolves as a large *yaw* with a bounded pitch, so the two axes never fight.
+(A decomposition that divides pitch by `z` alone -- what our port originally did
+-- inflates pitch toward +/-90 deg as `z` shrinks and flips past +/-90 deg for
+rear targets, so the ship pitches up into a turn it should yaw through, then
+unwinds: the "not-exact" wobble the autopilot showed.) Above
+`m_minimum_roll_angle` the engine additionally banks
+(`ComputeAnglesForNormal @ 0x1005de9e` writes `icEuler[2]`); our port leaves
+roll at 0, which is the remaining source of a small residual on hard slews.
+`atan2` is `FUN_100619e0 @ 0x100619e0` (tail-calls the CRT at `0x10114e7e`).
+
+**2. Brake each axis time-optimally --
+`ComputeJourneyComponent` (`0x10058f6e`) + `ComputeAngularYoke` (`0x1005e0ed`).**
+Per axis, from the current rate `w` and the authored angular accel `a` (symmetric
+`+/-|a|`, `GetAngularConstraints @ 0x1005e04a` reads `iiThrusterSim::
+AngularAcceleration`), solve the peak rate of an accel-then-decel profile that
+reaches the heading with zero residual rate,
+`vp = sqrt((w^2 + 2*a*|e|) / 2)` (the `2` is `_DAT_10119ec8`), then emit it as
+the yoke fraction `vp / (boost * vmax)` clamped to the stops. So the flight
+computer commands "spin up to `vp`" then "brake to zero," easing off *before* the
+nose reaches the mark. Inside `m_angular_damping_distance` (0.05 rad) the accel
+scales down for the soft landing; within `m_angular_completion_distance`
+(0.002 rad ~= 0.11 deg) *and* `m_angular_completion_velocity` (0.017 rad/s) the
+axis is complete and the yoke releases -- that tolerance *is* how "exact" the
+settle is. All three are exported statics at `0x1015c3c4..cc`.
+
+Ported to `ShipFlight.aim_angles` (stage 1) and `ShipFlight.angular_yoke`
+(stage 2); both `main._face_dir` and `AiShip._steer_toward` route through them.
+
 ### The eAutopilot enum
 
 `icPlayerPilot::SetAutopilot` (`0x100af930`): **0 Off, 1 Formate, 2 Approach,

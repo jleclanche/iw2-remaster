@@ -301,13 +301,12 @@ func _face_target() -> void:
 	_face_dir(p)
 
 func _face_dir(p: Vector3) -> void:
-	# icAITarget::ComputeAngularControl (0x1005e32c): steer each euler axis with
-	# the time-optimal braking controller so the nose arrives ON the heading with
-	# zero residual rate instead of overshooting and ping-ponging back (the naive
-	# pitch*2 proportional steer had no brake against the flight model's angular
-	# ramp). ship.angular_yoke carries the extracted law.
-	var local := p * ship.global_transform.basis
-	var pitch := atan2(local.y, -local.z)
-	var yaw := atan2(-local.x, -local.z)
-	ship.input_rotate.x = ship.angular_yoke(pitch, ship.angular_velocity.x, 0)
-	ship.input_rotate.y = ship.angular_yoke(yaw, ship.angular_velocity.y, 1)
+	# icAITarget::ComputeAngularControl (0x1005e32c): decompose the heading error
+	# into (pitch, yaw) the way the engine does (ship.aim_angles /
+	# ComputeAnglesForDirection), then steer each euler axis with the time-optimal
+	# braking controller so the nose arrives ON the heading with zero residual rate
+	# instead of overshooting and ping-ponging back. ship.angular_yoke carries the
+	# extracted brake law.
+	var ang := ship.aim_angles(p * ship.global_transform.basis)
+	ship.input_rotate.x = ship.angular_yoke(ang.x, ship.angular_velocity.x, 0)
+	ship.input_rotate.y = ship.angular_yoke(ang.y, ship.angular_velocity.y, 1)

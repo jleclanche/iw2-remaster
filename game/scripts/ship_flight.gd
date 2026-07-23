@@ -196,6 +196,25 @@ const AI_ANG_DAMP_DIST := 0.05    # m_angular_damping_distance @ 0x1015c3cc (rad
 const AI_ANG_DONE_DIST := 0.002   # m_angular_completion_distance @ 0x1015c3c8 (rad)
 const AI_ANG_DONE_VEL := 0.017    # m_angular_completion_velocity @ 0x1015c3c4 (rad/s)
 
+## Decompose a body-frame target direction into the (pitch, yaw) heading errors
+## the AI/autopilot nulls, per icAITarget::ComputeAnglesForDirection
+## (iwar2.dll @ 0x1005dc75). The engine builds an icEuler = (yaw, pitch, roll):
+## yaw = atan2(x, z) is the FULL azimuth (+/-pi), and pitch = atan2(-y, hypot(x,z))
+## is the elevation clamped to +/-pi/2 by construction (the denominator is the
+## horizontal magnitude, never the signed forward component). That split is the
+## whole point: a target off to the side or behind the nose turns on YAW, while
+## pitch reads the true elevation instead of blowing up as the forward component
+## shrinks -- so the two axes don't fight and the ship arcs cleanly onto heading.
+## `local` is the target direction in the ship's local frame (Godot: -z forward);
+## the atan2 (FUN_100619e0 @ 0x10114e7e) is scale-invariant, so `local` need not
+## be normalised. Returns Vector2(pitch, yaw) in our sign convention (the engine's
+## negated on both axes, matching input_rotate's mapping to angular_velocity).
+func aim_angles(local: Vector3) -> Vector2:
+	var horiz := sqrt(local.x * local.x + local.z * local.z)
+	var pitch := atan2(local.y, horiz)
+	var yaw := atan2(-local.x, -local.z)
+	return Vector2(pitch, yaw)
+
 ## One euler axis of the AI/autopilot orientation controller, ported from
 ## icAITarget::ComputeJourneyComponent (iwar2.dll @ 0x10058f6e) and its yoke
 ## conversion ComputeAngularYoke (0x1005e0ed). Both the player autopilot
