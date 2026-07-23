@@ -281,6 +281,54 @@ func angular_yoke(e: float, w: float, axis: int) -> float:
 	# ComputeAngularYoke: target rate / max rate, clamped to the stops
 	return clampf(w_cmd / vmax, -1.0, 1.0)
 
+const AI_LAT_DAMP_DIST := 6.0    # m_lateral_damping_distance @ 0x1015c3a4 (m)
+
+## The LINEAR twin of angular_yoke: icAITarget::ComputeJourneyComponent
+## (0x10058f6e) run on the FORWARD translation axis instead of a euler axis --
+## the same accel-then-brake peak-velocity law the verified rotation controller
+## uses (ComputeLateralControl 0x1005b3f4 drives it per axis, GetLateral
+## constraints 0x1005a301 feeds the thruster accels and max speed). Replaces the
+## uncited `togo/8` proportional stand-in: the approach now holds max speed, then
+## brakes on the ship's OWN reverse thrust to stop crisply on the marker instead
+## of asymptoting to a single-digit crawl. `d` is the signed distance to go
+## (range - marker, > 0 ahead), `v0` the current forward speed. Returns the
+## commanded forward speed (-> ship.set_speed), capped at the ship's rated
+## forward speed; the caller layers the traffic-control cap on top. Static target
+## (target velocity 0), skill/efficiency 1 (the player-autopilot defaults).
+func journey_speed(d: float, v0: float) -> float:
+	var a := max_accel.z * mass_scale()
+	var vmax := max_speed.z
+	if a <= 0.0 or vmax <= 0.0:
+		return 0.0
+	var dt := get_physics_process_delta_time()
+	# a8 = accel in the closing sense, a10 = the opposing decel (thrust is
+	# symmetric: MaxNegativeAccel = -MaxPositiveAccel), picked by the sign of d
+	var a8 := a if d >= 0.0 else -a
+	var a10 := -a if d >= 0.0 else a
+	# soft landing inside the damping distance (floored at 0.01 of the accel)
+	if absf(d) < AI_LAT_DAMP_DIST:
+		var s := maxf(absf(d) / AI_LAT_DAMP_DIST, 0.01)
+		a8 *= s
+		a10 *= s
+	# peak speed of the accel/brake profile that arrives with zero residual --
+	# vp = sqrt((v0^2 + 2*a*|d|)/2) in the symmetric case (2 = _DAT_10119ec8)
+	var peak := sqrt(maxf((v0 * v0 * a10 + 2.0 * a8 * a10 * d) / (a10 - a8), 0.0))
+	var v_peak := peak if d >= 0.0 else -peak
+	var t_acc := (v_peak - v0) / a8   # time to accelerate from v0 up to the peak
+	var v_cmd: float
+	if t_acc >= dt:
+		v_cmd = v_peak               # still accelerating for the whole frame
+	elif t_acc <= 0.0:
+		v_cmd = 0.0                  # past the peak: brake to the arrival velocity
+	else:
+		# the peak lands mid-frame: average the accel and brake sub-steps
+		var v_at_peak := a8 * t_acc + v0
+		var t_rem := dt - t_acc
+		var avg := (v_at_peak + v0) * 0.5
+		v_cmd = 2.0 * (avg * t_acc + a10 * 0.5 * t_rem * t_rem
+			+ v_at_peak * t_rem) / dt - v0
+	return clampf(v_cmd, -vmax, vmax)
+
 func thrusting() -> bool:
 	return input_thrust.length() > 0.05
 

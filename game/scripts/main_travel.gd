@@ -277,7 +277,11 @@ func _autopilot_tick(delta: float) -> void:
 		1:  # approach: fly to the marker sphere and stop on it
 			var togo := dist - marker
 			if lds_state == 0:
-				ship.set_speed = clampf(togo / 8.0, 0.0, ship.max_speed.z)
+				# the ComputeJourneyComponent brake law (ship.journey_speed):
+				# hold rated speed, then decelerate on the ship's own reverse
+				# thrust to stop on the sphere. A traffic-control region caps
+				# this to its speed limit separately (entities._region_tick).
+				ship.set_speed = ship.journey_speed(togo, ship.forward_speed())
 			# the engine settles onto the sphere and completes within
 			# min(marker*0.05, 0.5) m of it; we arrive rather than settle, so the
 			# slop is floored at icAITarget::m_waypoint_approach_distance (20 m)

@@ -404,6 +404,24 @@ settle is. All three are exported statics at `0x1015c3c4..cc`.
 Ported to `ShipFlight.aim_angles` (stage 1) and `ShipFlight.angular_yoke`
 (stage 2); both `main._face_dir` and `AiShip._steer_toward` route through them.
 
+**The SAME `ComputeJourneyComponent` drives the LINEAR (translation) approach.**
+`icAITarget::ComputeLateralControl` (`0x1005b3f4`) runs it once per translation
+axis (the target-frame distance-to-go from `ComputeTargetVector 0x10058708`, the
+current velocity, and the target's velocity), with the per-axis accels and the
+rated max speed from `GetLateralConstraints` (`0x1005a301`) --
+`iiThrusterSim::MaxPositiveAcceleration` (`+0x1d8`), its negation for reverse,
+and `iiThrusterSim::MaxSpeed(true)` = the *uncapped* rated speed. So the forward
+peak is `vp = sqrt((v0^2 + 2*a*d)/2)` clamped to the rated speed, `a` = the
+ship's own thrust accel: the autopilot holds rated speed, then brakes on its
+reverse thrust to arrive with zero residual -- it does NOT asymptote. Soft
+landing inside `m_lateral_damping_distance` (6 m, `0x1015c3a4`). The
+traffic-control speed limit (`icTrafficControlRegion`, 250 m/s within 10 km of a
+station) is an **independent** clamp applied to the actual thruster velocity, on
+top of the approach law's rated-speed ceiling -- the two do not interact.
+Ported to `ShipFlight.journey_speed`, called from the mode-1 approach in
+`main_travel.gd` (replacing an uncited `togo/8` proportional stand-in); the
+traffic cap stays in `entities._region_tick`.
+
 ### The eAutopilot enum
 
 `icPlayerPilot::SetAutopilot` (`0x100af930`): **0 Off, 1 Formate, 2 Approach,
