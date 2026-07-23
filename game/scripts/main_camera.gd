@@ -47,6 +47,7 @@ func _set_camera(group: int) -> void:
 	# icDirector::ChangeCamera commits the new camera through its Reset
 	# (icChaseCamera's @ 0x100d4bf0): the follow state re-seeds, no carry-over
 	chase_snap = true
+	_ffb_reset()
 	cam.fov = FOV_INTERNAL if cam_mode == 0 and cam_view <= 1 else FOV_EXTERNAL
 	audio.play("audio/gui/camera_change.wav", -10.0)
 	_apply_view()
@@ -85,13 +86,21 @@ func _chase_camera(delta: float) -> void:
 	# iiSim::CalculateRadius (0x1007ccf0). Fixed-metre offsets framed the
 	# turret fighter fine and put the camera INSIDE the tug's silhouette.
 	var r: float = piloted().radius
+	# advance the icInternalCamera neck springs once for the frame; the cockpit
+	# eye rides them so it lags the ship's motion (icInternalCamera::Update)
+	_ffb_step(target.basis, delta)
 	match cam_name():
-		"cockpit", "no_cockpit":  # rigid at the pilot's eye (the crew null)
-			cam.global_transform = target.translated_local(eye)
-		"arcade":  # icArcadeCamera: hull-following, range 4 (defaults.ini)
-			var pos := target.origin \
-				+ target.basis * (Vector3(0, 0.21, 0.98) * 4.0 * r)
-			cam.global_transform = Transform3D(target.basis, pos)
+		"cockpit", "no_cockpit":  # the pilot's eye (the crew null) on the neck
+			cam.global_transform = _ffb_look(target.translated_local(eye))
+		"arcade":  # icArcadeCamera::Update (0x100d3a00): trails the hull, easing
+			# BOTH the eye offset and the up/roll quat toward the ship pose at a
+			# hard-coded k = clamp(2.5*dt) (rate @ 0x101620f0) -- the same pose
+			# ease as the chase camera (its speed*max_range/range is 2.5 at the
+			# default range), framed from 4x size behind. That trailing is the
+			# arcade force-feedback: the hull rotates/slides in-frame, then the
+			# camera catches up. Distance 4.0*size @ 0x101620f4, look at the hull.
+			var want_off := target.basis * (Vector3(0, 0.21, 0.98) * 4.0 * r)
+			_chase_follow(target, want_off, target.origin, delta)
 		"tactical":  # icChaseCamera: initial_range 4
 			var want_off := target.basis * (Vector3(0, 0.24, 0.97) * 4.0 * r)
 			var focus := target.origin + target.basis * Vector3(0, 0.075 * r,
@@ -214,6 +223,70 @@ func _chase_follow(target: Transform3D, want_off: Vector3, focus: Vector3,
 	var pos := target.origin + chase_offset
 	cam.global_transform = Transform3D(Basis.IDENTITY, pos).looking_at(
 		focus, chase_quat * Vector3.UP)
+
+
+## The icInternalCamera neck spring (icInternalCamera::Update @ 0x100db3f0).
+## Advances the two persistent springs from the piloted ship's state each frame;
+## _ffb_look then applies them so the eye lags the ship's rotation and leans on
+## its linear acceleration -- the visible "force feedback" as hull and camera
+## diverge. Call once per camera frame BEFORE reading ffb_neck / ffb_lean.
+func _ffb_step(basis: Basis, delta: float) -> void:
+	if delta <= 0.0:
+		return
+	var pil := piloted()
+	# Rotational neck: target = per-axis angular yoke x its ratio (roll negated,
+	# fchs @ 0x100db658), spring toward it at neck_stiffness (loop @ 0x100db661).
+	# The AngularYoke the original reads (icPlayerPilot vtable +0x40) is our
+	# ship.input_rotate: x pitch, y yaw, z roll.
+	var yoke: Vector3 = pil.input_rotate
+	var neck_target := Vector3(
+		FFB_NECK_RATIO.x * yoke.x,
+		FFB_NECK_RATIO.y * yoke.y,
+		-FFB_NECK_RATIO.z * yoke.z)
+	ffb_neck += (neck_target - ffb_neck) * FFB_NECK_STIFFNESS * delta
+	# Lateral lean: body-frame linear acceleration ((v - v_prev)/dt @ 0x100db6de,
+	# rotated into the hull frame), scaled and clamped to +/-1 (0x100db8ba /
+	# 0x100db934), weighted by lateral_ratio, sprung at acceleration_stiffness
+	# (loop @ 0x100db9d1). accel_scale 0.01 keeps the normal thrust range inside
+	# the clamp instead of pinning it.
+	var vel: Vector3 = pil.velocity
+	if not ffb_seeded:
+		ffb_prev_vel = vel
+		ffb_seeded = true
+	var accel_body := ((vel - ffb_prev_vel) / delta) * basis  # world -> local
+	ffb_prev_vel = vel
+	var lean_in := Vector3(
+		clampf(accel_body.x * FFB_ACCEL_SCALE, -1.0, 1.0),
+		clampf(accel_body.y * FFB_ACCEL_SCALE, -1.0, 1.0),
+		clampf(accel_body.z * FFB_ACCEL_SCALE, -1.0, 1.0))
+	var lean_target := FFB_LATERAL_RATIO * lean_in
+	ffb_lean += (lean_target - ffb_lean) * FFB_ACCEL_STIFFNESS * delta
+
+## Build the neck-sprung eye transform from a rigid mount `mount` (eye or arcade
+## seat, already in world space with the hull's basis). The neck rotates the LOOK
+## about a focal point focal_length ahead (0x100dbb8e builds the offset quat,
+## 0x100d4620 commits eye->look); the lean shifts the eye in the hull frame.
+func _ffb_look(mount: Transform3D) -> Transform3D:
+	# Negated: a spring-mounted eye LAGS the turn (looks where the nose just was),
+	# and the original builds its neck quat in LightWave's left-handed +Z-forward
+	# frame -- the opposite chirality to Godot -- so the extracted +neck flips to
+	# -neck here. Magnitude/direction is the one bit that wants an eyes-on confirm.
+	var neck := Basis.from_euler(-ffb_neck)
+	var fwd := mount.basis * (neck * Vector3(0, 0, -1))
+	var up := mount.basis * (neck * Vector3(0, 1, 0))
+	# focal point stays on the rigid mount; the eye leans under G -- so the lean
+	# reads as parallax against a fixed convergence point (the original commits
+	# eye = base + lean, look = base + focal*neck_forward @ 0x100dbd4b/0x100d4620)
+	var look := mount.origin + fwd * FFB_FOCAL
+	var pos := mount.origin + mount.basis * ffb_lean
+	return Transform3D(Basis.IDENTITY, pos).looking_at(look, up)
+
+## Zero the neck springs on a camera cut so the new view does not inherit the old
+## lag (the camera Reset @ 0x100d4bf0 re-seeds; chase_snap already flags cuts).
+func _ffb_reset() -> void:
+	ffb_neck = Vector3.ZERO
+	ffb_lean = Vector3.ZERO
+	ffb_seeded = false
 
 
 func _face_target() -> void:

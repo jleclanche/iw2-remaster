@@ -176,6 +176,24 @@ const CHASE_RANGE := 4.0
 var chase_offset := Vector3.ZERO
 var chase_quat := Quaternion.IDENTITY
 var chase_snap := true  # camera Reset @ 0x100d4bf0 re-seeds offset + quat
+# icInternalCamera force-feedback neck (icInternalCamera::Update @ iwar2.dll
+# 0x100db3f0; flux.ini [icInternalCamera] constants). Two springs the eye rides:
+# a rotational "neck" that lags the ship's turn, and a lateral lean the linear
+# acceleration shoves. Persistent state (the camera object's +0x8c/+0x74/+0x80).
+var ffb_neck := Vector3.ZERO       # smoothed neck angles (pitch, yaw, roll) rad
+var ffb_lean := Vector3.ZERO       # smoothed eye offset, ship-local m
+var ffb_prev_vel := Vector3.ZERO   # piloted velocity last frame (for accel)
+var ffb_seeded := false
+# neck_stiffness 2, {yaw,pitch,roll}_ratio 0.25/0.4/0.25 (props @ 0x101627a8..bc);
+# acceleration_stiffness 1, acceleration_scale 0.01, lateral_ratio (-0.15,-0.2,
+# -0.2), focal_length 100 (flux.ini overrides the PE defaults for the two accel
+# knobs -- the PE ships stiffness 0.01 / scale 1, which the ini flips).
+const FFB_NECK_STIFFNESS := 2.0
+const FFB_NECK_RATIO := Vector3(0.4, 0.25, 0.25)   # pitch, yaw, roll
+const FFB_ACCEL_STIFFNESS := 1.0
+const FFB_ACCEL_SCALE := 0.01
+const FFB_LATERAL_RATIO := Vector3(-0.15, -0.2, -0.2)
+const FFB_FOCAL := 100.0
 var zoomed := false
 # icPlayerPilot: max_zoom_factor = 10, zoom_time = 0.5 (flux.ini). The zoom ramps
 # at max/time per second and DIVIDES the yaw and pitch yoke, which is what makes
