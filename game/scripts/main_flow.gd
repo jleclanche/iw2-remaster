@@ -531,28 +531,6 @@ func start_campaign() -> void:
 	# iprelude (which owns the prelude cinematic and dispatches iact0mission10).
 	_port_boot()
 
-func _spawn_npc(dname: String, fac: String, typ: String, avatar: String,
-		pos: Vector3, wps: Array) -> AiShip:
-	var ai := AiShip.new()
-	ai.main = self
-	ai.display_name = dname
-	ai.faction = fac
-	ai.ctype = typ
-	ai.avatar_path = avatar
-	ai.setup({"hit_points": 600, "speed": [80, 80, 200],
-		"acceleration": [30, 30, 50], "yaw_rate": 18, "pitch_rate": 18,
-		"roll_rate": 18})
-	var mdl := _load_gltf(avatar)
-	if mdl != null:
-		ai.add_child(mdl)
-		ShipEffects.attach(ai, mdl)
-	ai.position = pos
-	for w in wps:
-		ai.waypoints.append(w)
-	add_child(ai)
-	ai_ships.append(ai)
-	return ai
-
 func _setup_act0_scene() -> void:
 	# extracted from the iprelude + iact0mission10 bytecode:
 	# iutilities.CreatePlayer(comsec_prefitted, "Hoffer's Gap") — the player
@@ -600,24 +578,6 @@ func _setup_act0_scene() -> void:
 			"avatar": "avatars/reactor/setup.gltf",
 			"faction": "", "type": "UTIL",
 			"jumps": [], "colors": [], "node": null, "prop_collide": true})
-	var scopo := _spawn_npc("Scopo", "INDPT", "UTIL",
-		"data/avatars/avatars/utilityvessel/setup.gltf",
-		Vector3(-600, 100, -3950),
-		[Vector3(-600, 100, -3950), Vector3(2000, 300, -8000)])
-	_spawn_npc("Marengo", "GOVMT", "TRANS",
-		"data/avatars/avatars/freighter/setup.gltf",
-		Vector3(9000, 1500, -16400),
-		[Vector3(9000, 1500, -16400), Vector3(-14000, 800, -9000)])
-	for cfg in [["Brick", 9000.0], ["De - Ex", 12000.0],
-			["Swyddfa'r Post", 15000.0]]:
-		var d2: float = cfg[1]
-		_spawn_npc(str(cfg[0]), "INDPT", "TUG",
-			"data/avatars/avatars/utilityvessel/setup.gltf",
-			Vector3(d2, 200 + d2 * 0.02, -d2 * 0.6),
-			[Vector3(d2, 0, -3000), Vector3(-2000, 400, -d2)])
-	# the tutorial opens with the nearby tug already on target
-	target_ai = scopo
-	target_idx = -1
 
 # Movies play one at a time. Several scripts can ask for one at once -- the
 # launch cutscene and the mission's own opening both do -- and playing them on
