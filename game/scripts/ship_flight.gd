@@ -190,6 +190,78 @@ func _integrate_translation(delta: float) -> void:
 	velocity = b * v_local
 	global_position += velocity * delta
 
+# --- autopilot / AI angular controller (icAITarget) ---
+# Exported tuning statics in iwar2.dll (icAITarget::m_*), read from the PE:
+const AI_ANG_DAMP_DIST := 0.05    # m_angular_damping_distance @ 0x1015c3cc (rad)
+const AI_ANG_DONE_DIST := 0.002   # m_angular_completion_distance @ 0x1015c3c8 (rad)
+const AI_ANG_DONE_VEL := 0.017    # m_angular_completion_velocity @ 0x1015c3c4 (rad/s)
+
+## One euler axis of the AI/autopilot orientation controller, ported from
+## icAITarget::ComputeJourneyComponent (iwar2.dll @ 0x10058f6e) and its yoke
+## conversion ComputeAngularYoke (0x1005e0ed). Both the player autopilot
+## (main._face_dir) and the AI pilots (AiShip._steer_toward) run through
+## icAITarget::ComputeAngularControl (0x1005e32c) in the original -- the player's
+## autopilot IS an AutopilotApproach order on the player's OWN icAIPilot
+## (icPlayerPilot::EngageAutopilotApproach 0x100afbc0) -- so they share this.
+##
+## `e` is the signed angle error (rad) to null on this axis, `w` the ship's
+## current body rate (rad/s) about it (angular_velocity[axis]); `axis` picks
+## pitch/yaw/roll for the authored accel and rate. Returns the yoke fraction
+## (-1..1) to write to input_rotate[axis].
+##
+## The law: from the current rate, solve the peak rate of a symmetric
+## accelerate-then-decelerate profile that reaches the target heading with zero
+## residual rate -- vp = sqrt((w^2 + 2*a*|e|) / 2), the 2 is _DAT_10119ec8 -- and
+## command it, so the flight computer eases off BEFORE the mark and settles
+## instead of ping-ponging past it (the brake the replaced pitch*2 proportional
+## steer lacked). Inside m_angular_damping_distance the accel scales down for a
+## soft landing; within completion distance AND rate the axis is done and the
+## yoke releases. Modelled for a static target (target rate 0) with skill and
+## control authority 1 (the player-autopilot defaults); roll banking
+## (ComputeAnglesForNormal) is not modelled -- callers leave input_rotate.z at 0.
+func angular_yoke(e: float, w: float, axis: int) -> float:
+	var boost := 1.0 if assist else angular_speed_boost
+	var a := deg_to_rad(turn_accel[axis]) * boost * tow_torque_scale[axis]
+	var vmax := deg_to_rad(turn_rate[axis]) * boost
+	if a <= 0.0 or vmax <= 0.0:
+		return 0.0
+	# completion snap (target rate 0): both the rate and the angle within
+	# tolerance -> the axis is settled, release the yoke (ComputeAngularControl
+	# marks the axis complete and ComputeAngularYoke emits 0 for a zero command)
+	var rate_done := absf(w) < AI_ANG_DONE_VEL
+	if rate_done and absf(e) < AI_ANG_DONE_DIST:
+		return 0.0
+	var dt := get_physics_process_delta_time()
+	# local_8 = accel in the closing sense, local_10 = the opposing decel,
+	# picked by the sign of the error
+	var a8 := a if e >= 0.0 else -a
+	var a10 := -a if e >= 0.0 else a
+	# soft landing inside the damping distance (floored at 0.01 of the accel)
+	if absf(e) < AI_ANG_DAMP_DIST:
+		var s := maxf(absf(e) / AI_ANG_DAMP_DIST, 0.01)
+		a8 *= s
+		a10 *= s
+	# peak rate of the accel/decel profile, signed by the error
+	var peak := sqrt(maxf((w * w * a10 + 2.0 * a8 * a10 * e) / (a10 - a8), 0.0))
+	var v_peak := peak if e >= 0.0 else -peak
+	var t_acc := (v_peak - w) / a8   # time to accelerate from w up to the peak
+	var w_cmd: float
+	if t_acc >= dt:
+		w_cmd = v_peak               # still accelerating for the whole frame
+	elif t_acc <= 0.0:
+		# already at/past the peak: null the residual angle this frame if the
+		# rate is within completion, else coast to the target rate (0) -- braking
+		w_cmd = e / dt if rate_done else 0.0
+	else:
+		# the peak lands mid-frame: average the accel and decel sub-steps
+		var rate_at_peak := a8 * t_acc + w
+		var t_rem := dt - t_acc
+		var avg := (rate_at_peak + w) * 0.5
+		w_cmd = 2.0 * (avg * t_acc + a10 * 0.5 * t_rem * t_rem
+			+ rate_at_peak * t_rem) / dt - w
+	# ComputeAngularYoke: target rate / max rate, clamped to the stops
+	return clampf(w_cmd / vmax, -1.0, 1.0)
+
 func thrusting() -> bool:
 	return input_thrust.length() > 0.05
 

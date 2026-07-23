@@ -341,12 +341,14 @@ func _explicit_fire() -> void:
 
 func _steer_toward(point: Vector3, _delta: float) -> float:
 	# steer through the flight model's angular dynamics (input_rotate) so AI
-	# ships turn like ships, not turrets
+	# ships turn like ships, not turrets. icAITarget::ComputeAngularControl
+	# (0x1005e32c) via angular_yoke: brake onto the heading time-optimally rather
+	# than overshoot -- the same controller the player autopilot uses.
 	var local := (point - global_position) * global_transform.basis
 	var pitch := atan2(local.y, -local.z)
 	var yaw := atan2(-local.x, -local.z)
-	input_rotate.x = clampf(pitch * 2.0, -1.0, 1.0)
-	input_rotate.y = clampf(yaw * 2.0, -1.0, 1.0)
+	input_rotate.x = angular_yoke(pitch, angular_velocity.x, 0)
+	input_rotate.y = angular_yoke(yaw, angular_velocity.y, 1)
 	input_rotate.z = 0.0
 	return Vector2(pitch, yaw).length()
 
