@@ -152,7 +152,6 @@ const HULL_LAYER := 1 << 5   # a private physics layer; nothing else uses physic
 const SHIP_HULL_LAYER := 1 << 6  # AI ships' own hull trimeshes (see _collide_ai)
 
 var _hull_avatar_index := {}   # "avatars/x/setup.gltf" -> hull json path
-var _probe_shape: SphereShape3D
 
 func _hull_index() -> Dictionary:
 	if not _hull_avatar_index.is_empty():
@@ -306,11 +305,11 @@ func _player_box_support(n: Vector3) -> float:
 	return absf(nl.x) * h.x + absf(nl.y) * h.y + absf(nl.z) * h.z
 
 func _collide_hull(o: Dictionary) -> void:
-	# swept-sphere test of the player against the station's hull trimesh,
-	# answered with the same bounce/damage response as _collide_sphere
-	if _probe_shape == null:
-		_probe_shape = SphereShape3D.new()
-		_probe_shape.radius = 20.0   # the player hull's rough half-width
+	# the player's box proxy against the station's hull trimesh, answered with
+	# the FiSim::ProcessContact response. The box (not a sphere) is what lets the
+	# player REORIENT off a station: a sphere's contact normal is radial
+	# (r_a x n = 0, a pure central bounce -- the "ping-pong"), while the box's
+	# corner/face contact against the station surface normal is off-CoM.
 	var node: Node3D = o["node"]
 	# cheap reject: outside the record's own bounding radius + margin
 	var r := maxf(float(o.get("radius", 0.0)), 500.0)
@@ -322,8 +321,8 @@ func _collide_hull(o: Dictionary) -> void:
 	if world == null:
 		return
 	var params := PhysicsShapeQueryParameters3D.new()
-	params.shape = _probe_shape
-	params.transform = Transform3D(Basis(), ship.global_position)
+	params.shape = _player_box_probe()
+	params.transform = ship.global_transform
 	params.collision_mask = HULL_LAYER
 	var hit: Dictionary = world.direct_space_state.get_rest_info(params)
 	if hit.is_empty():
@@ -336,9 +335,10 @@ func _collide_hull(o: Dictionary) -> void:
 	var dv := _process_contact(point, n, null, Vector3.ZERO,
 			get_physics_process_delta_time())
 	_contact_feedback(dv.x, ship.velocity.length(), str(o["name"]).to_upper())
-	# port-side safety net: stay outside the surface our probe found
-	if (ship.global_position - point).dot(n) < _probe_shape.radius:
-		ship.global_position = point + n * (_probe_shape.radius + 0.5)
+	# port-side safety net: keep the player box off the surface our probe found
+	var pen := _player_box_support(n) - (ship.global_position - point).dot(n)
+	if pen > 0.0:
+		ship.global_position += n * (pen + 0.5)
 
 func _model_coll_spheres(model: Node3D) -> Array:
 	# one collision sphere per major mesh chunk (model-local), so sprawling

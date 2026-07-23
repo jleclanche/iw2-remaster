@@ -944,7 +944,11 @@ lazily on approach, `SHIP_HULL_LAYER`), so the surface point/normal sit off both
 CoMs and the impulse sheds into spin: both hulls tumble, then the flight
 computer's attitude-hold recovers (matching the engine's thruster torque-null).
 A hull-less partner (cargo pods) still falls back to the centre-line sphere.
-Guarded by the mechcheck steps ship-hull-attach / ship-reorient.
+The station path (`_collide_hull`) had the same defect -- a 20 m sphere proxy,
+radial normal, no player spin -- so a head-on station hit ping-ponged the ship
+off unturned; it now shares the box proxy, so the player tumbles off a station
+hull too. Guarded by the mechcheck steps ship-hull-attach / ship-reorient and
+station-hull-built / station-reorient.
 
 ---
 
