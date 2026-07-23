@@ -98,6 +98,51 @@ const CLAY_KEYS := [
 	[300, 0.01, 0.0, 0.037, 13.9, -2.4, 0.2],
 ]
 
+# D3D7-faithful head lighting. The original lights the head with the
+# fixed-function VERTEX pipeline: per-vertex (gouraud) diffuse =
+# clamp(ambient + sum(intensity x falloff x NdotL), 0..1), then the byte
+# framebuffer stores texture x diffuse -- the multiply happens on GAMMA
+# values (D3D7 has no linear pipeline). Godot's linear-space lighting
+# renders the same rig visibly brighter in the midtones (Clay's face read
+# pink instead of deep red), so the head materials use this unshaded
+# shader instead: raw-sample the texture (gamma bytes), gouraud-light in
+# gamma, decode once (the sky shaders' after-the-filter pattern).
+# Falloff is linear-to-range (the LWS lights' authored falloff; the
+# flux -> D3D attenuation conversion itself is not extracted --
+# reconstructed, matches the measured reference within a few percent).
+const HEAD_SHADER := """
+shader_type spatial;
+render_mode unshaded;
+uniform sampler2D base_tex : filter_linear_mipmap;
+uniform bool has_base = false;
+uniform vec4 base_color = vec4(1.0);
+uniform vec3 ambient = vec3(0.25);
+uniform vec3 l0_pos; uniform vec3 l0_col = vec3(1.0);
+uniform float l0_int = 0.0; uniform float l0_range = 1.0;
+uniform vec3 l1_pos; uniform vec3 l1_col = vec3(1.0);
+uniform float l1_int = 0.0; uniform float l1_range = 1.0;
+varying vec3 vdiff;
+void vertex() {
+	vec3 wp = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	vec3 wn = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+	vec3 d = ambient;
+	vec3 t = l0_pos - wp;
+	d += l0_col * (l0_int * max(1.0 - length(t) / l0_range, 0.0)
+			* max(dot(wn, normalize(t)), 0.0));
+	t = l1_pos - wp;
+	d += l1_col * (l1_int * max(1.0 - length(t) / l1_range, 0.0)
+			* max(dot(wn, normalize(t)), 0.0));
+	vdiff = min(d, vec3(1.0));  // D3D clamps the vertex colour
+}
+void fragment() {
+	vec3 g = has_base ? texture(base_tex, UV).rgb : base_color.rgb;
+	g *= vdiff;
+	ALBEDO = mix(g / 12.92, pow((g + vec3(0.055)) / 1.055, vec3(2.4)),
+			step(vec3(0.04045), g));
+}
+"""
+static var _head_shader: Shader = null
+
 var main: Node3D
 var queue: Array = []          # {key, speaker, text}
 var current: Dictionary = {}
@@ -110,7 +155,7 @@ var head_view: SubViewport
 var head_node: Node3D
 var beam_mats: Array = []
 var _rig_key := ""             # which speaker rig the viewport currently holds
-var _glow_light: OmniLight3D
+var _head_mats: Array = []     # the head's gamma-lit ShaderMaterials
 var _glow_amp := 0.0           # LWS intensity (peak, for flickering glows)
 var _glow_flicker := false
 var strings: Dictionary = {}
@@ -183,7 +228,7 @@ func _build_head_view(rig_key: String) -> void:
 		c.queue_free()
 	head_node = null
 	_head_mesh = null
-	_glow_light = null
+	_head_mats.clear()
 	beam_mats.clear()
 	var rig: Dictionary = RIGS[rig_key]
 	var cam := Camera3D.new()
@@ -191,35 +236,47 @@ func _build_head_view(rig_key: String) -> void:
 	cam.rotation_degrees.x = -float(rig["cam"][1])   # LWS pitch: + looks down
 	cam.fov = rad_to_deg(2.0 * atan(1.0 / float(rig["cam"][2])))
 	head_view.add_child(cam)
-	# ambient white 0.25 (every scene)
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color(0, 0, 0)
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(1, 1, 1)
-	env.ambient_light_energy = 0.25
 	cam.environment = env
-	# lights: energies map the LWS point intensities with the same factors the
-	# proven Clay rig used (white x0.9, glow x2.2 -- Godot omni attenuation vs
-	# LW linear falloff)
-	var wl: Array = rig["white"]
-	if not wl.is_empty():
-		var white := OmniLight3D.new()
-		white.position = wl[0]
-		white.light_energy = 0.9 * float(wl[1])
-		white.omni_range = float(wl[2])
-		head_view.add_child(white)
+	# lighting lives in HEAD_SHADER (ambient 0.25 + the two authored point
+	# lights, gamma-domain gouraud like the original's vertex pipeline) --
+	# no Godot lights, no invented energy factors
 	var gl: Array = rig["glow"]
-	_glow_light = OmniLight3D.new()
-	_glow_light.position = gl[0]
 	_glow_amp = float(gl[1])
 	_glow_flicker = bool(gl[4])
-	_glow_light.light_color = gl[3]
-	_glow_light.light_energy = 0.0 if _glow_flicker else 2.2 * _glow_amp
-	_glow_light.omni_range = float(gl[2]) + 0.1
-	head_view.add_child(_glow_light)
 	head_node = main._load_gltf(str(rig["gltf"]))
 	if head_node != null:
+		if _head_shader == null:
+			_head_shader = Shader.new()
+			_head_shader.code = HEAD_SHADER
+		var wl: Array = rig["white"]
+		for n in head_node.find_children("*", "MeshInstance3D", true, false):
+			var mi := n as MeshInstance3D
+			for si in mi.mesh.get_surface_count():
+				var src := mi.get_active_material(si)
+				if not (src is StandardMaterial3D):
+					continue
+				var std := src as StandardMaterial3D
+				var mat := ShaderMaterial.new()
+				mat.shader = _head_shader
+				if std.albedo_texture != null:
+					mat.set_shader_parameter("base_tex", std.albedo_texture)
+					mat.set_shader_parameter("has_base", true)
+				mat.set_shader_parameter("base_color", std.albedo_color)
+				if not wl.is_empty():
+					mat.set_shader_parameter("l0_pos", wl[0])
+					mat.set_shader_parameter("l0_int", float(wl[1]))
+					mat.set_shader_parameter("l0_range", float(wl[2]))
+				mat.set_shader_parameter("l1_pos", gl[0])
+				mat.set_shader_parameter("l1_col",
+						Vector3(gl[3].r, gl[3].g, gl[3].b))
+				mat.set_shader_parameter("l1_int",
+						0.0 if _glow_flicker else _glow_amp)
+				mat.set_shader_parameter("l1_range", float(gl[2]))
+				mi.set_surface_override_material(si, mat)
+				_head_mats.append(mat)
 		if rig_key == "clay":
 			head_node.position = Vector3(0.01, 0, 0.037)
 		head_node.scale = Vector3.ONE * 1.686
@@ -428,7 +485,7 @@ func _pose_head(t: float) -> void:
 func _tick_glow(t: float) -> void:
 	# the HeadupGlow flicker: shared 60-frame envelope at 25 fps, per-speaker
 	# amplitude (steady glows keep their constant energy)
-	if _glow_light == null or not _glow_flicker:
+	if _head_mats.is_empty() or not _glow_flicker:
 		return
 	var frame := fposmod(t * 25.0, 60.0)
 	var a: Array = GLOW_ENV[0]
@@ -440,7 +497,8 @@ func _tick_glow(t: float) -> void:
 			break
 	var span := maxf(float(b[0]) - float(a[0]), 1.0)
 	var lv := lerpf(float(a[1]), float(b[1]), (frame - float(a[0])) / span)
-	_glow_light.light_energy = 2.2 * _glow_amp * lv
+	for m in _head_mats:
+		(m as ShaderMaterial).set_shader_parameter("l1_int", _glow_amp * lv)
 
 ## The teleprinter's revealed slice of the current subtitle (the HUD draws
 ## this, never the whole line at once).
