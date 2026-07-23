@@ -1386,11 +1386,18 @@ channel (generated coords, see 0x1000ca20).
   dx7graph `FUN_1000ab30 @ 0x1000ab30` builds pattern names like "StMt"):
   - **slot 0** -> op1 `A` (opaque base; as a first pass blending is simply
     off, 'At' @ 0x1000b3ce) or op0 `R` when opacity < 1;
-  - **slot 1** -> op2 `M`, the **MODULATE lightmap** (single-pass
-    `D3DTOP_MODULATE`/`2X` stage, `FUN_1000c170 @ 0x1000c170`; multipass
-    fallback multiplies the framebuffer with SRCBLEND=ZERO /
-    DESTBLEND=SRCCOLOR, 'Mt' @ 0x1000b6b8). Never additive, never emissive.
-    Companion op3 `S` envmap layer at `m_shader_quality > 1`.
+  - **slot 1** -> the op3 `S` (envmap, texgen coords) + op2 `M` (the slot-1
+    texture) pair, created together at `m_shader_quality > 1` and **gated
+    on the slot-1 enable** (+0x58) -- an envmap alone never renders. The
+    layer string "AtStMt" greedy-matches as pass 1 `At` (the base) + pass 2
+    `StMt` (`FUN_1000c170 @ 0x1000c170`): stage 1 op `DAT_1001b44c` =
+    MODULATE**2X** on capable hardware ("Using D3DTOP_MODULATE2X for
+    spec", init 6513-6519), and as a later pass it blends **SRCALPHA/ONE**
+    (:5801-5802) -- the envmap x lightmap product is an **ADDITIVE
+    SPECULAR** over the lit base, not a darkening multiply. Only when the
+    envmap is EMPTY does the untextured `S` fail to match and the lone
+    `Mt` pass multiply the framebuffer (SRCBLEND=ZERO / DESTBLEND=SRCCOLOR
+    @ 0x1000b6b8) -- the true darkening lightmap case.
   - **slot 2** -> op1 `A` at `m_shader_quality > 0`, flags bit0 = UNLIT
     (pattern setups route unlit layers through `SetMaterial` with the tint
     in **emissive** — 0x100127d0 vs lit-diffuse 0x10012780; device vtable
@@ -1410,19 +1417,21 @@ lighting moves over it.
 
 Port consequence (the Lucrecia's-Base cyan bug, then #59): the export used
 to emit slot 1 as an emissive "mask" tinted by the discarded surface
-colour; the engine has neither. Since the whole layer product is static,
-the port now BAKES it offline (`tools/iw2/bake.py`): layered surfaces are
+colour; the engine has neither. Since the whole layer result is static,
+the port BAKES it offline (`tools/iw2/bake.py`): layered surfaces are
 unwrapped with xatlas into a per-model atlas pair -- albedo =
-`base x lightmap / 255`, then `min(x envmap x 2 / 255, 255)` formed on the
-STORED 8-bit values exactly like the original's texture stages (no sRGB
-decode in D3D7), emission = the slot-2 glow texture (white tint) -- and
-the glTFs are plain single-UV `StandardMaterial3D`s. Only the
-`<glow channel=EXPR>` emission ENERGY stays runtime-driven. Divergences:
-atlas resolution follows the median source texel density (capped 2048, so
-heavily tiled wrap surfaces lose repeat sharpness); the bake resamples
-bilinearly once; and Godot lights/filters the baked bytes in linear like
-any native texture, where the original also blended the lit result in
-gamma.
+`min(base + envmap x lightmap x 2 / 255, 255)` when an envmap rides the
+slot-1 layer (the additive spec pass above), `base x lightmap / 255` when
+it does not -- formed on the STORED 8-bit values exactly like the
+original's texture stages (no sRGB decode in D3D7); emission = the slot-2
+glow texture (white tint). Both original passes are modulated by the same
+lit vertex diffuse, so summing them pre-lighting is exact. The glTFs are
+plain single-UV `StandardMaterial3D`s; only the `<glow channel=EXPR>`
+emission ENERGY stays runtime-driven. Divergences: atlas resolution
+follows the median source texel density (capped 2048, so heavily tiled
+wrap surfaces lose repeat sharpness); the bake resamples bilinearly once;
+and Godot lights/filters the baked bytes in linear like any native
+texture, where the original also blended the lit result in gamma.
 
 ---
 

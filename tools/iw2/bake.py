@@ -1,18 +1,25 @@
 """Bake the SHDR layer stack into per-model texture atlases.
 
-The original renders each surface as up to four fixed layers (docs/
-original.md 7x): lit base texture, MODULATE lightmap, MODULATE2X envmap
-(static bounds projection -- the sheen never moves), and an unlit additive
-glow. Everything except the glow's channel-driven *energy* is static, so
-the whole albedo product and the glow texture can be baked offline into a
-godot-native single-UV material:
+The original renders each surface as fixed layers (docs/original.md 7x):
+a lit base pass, then -- only when slot 1 is enabled -- the envmap x
+lightmap pair as ONE extra pass, and an unlit additive glow. The pair's
+stage-1 op is MODULATE2X ("for spec", DAT_1001b44c) and the pass blends
+SRCALPHA/ONE over the base (FUN_1000c170's later-pass branch @ 0x1000c170)
+-- an ADDITIVE SPECULAR, not a darkening multiply. A slot-1 lightmap
+without an envmap draws as the 'Mt' ZERO/SRCCOLOR multiply pass; an envmap
+without slot 1 is never rendered (the S/M layer pair is gated on the
+slot-1 enable, CreateRenderSurface @ 0x10066600). Everything except the
+glow's channel-driven *energy* is static, so the albedo result and the
+glow texture bake offline into a godot-native single-UV material:
 
-    albedo_atlas = base x lightmap / 255, then min(x envmap x 2 / 255, 255)
-    emission_atlas = glow texture (white factor; energy stays runtime)
+    albedo = min(base + envmap x lightmap x 2 / 255, 255)   (envmap case)
+    albedo = base x lightmap / 255                          (no envmap)
+    emission = glow texture (white factor; energy stays runtime)
 
-The products are formed on the STORED 8-bit values, exactly the original's
-byte pipeline (no sRGB decode in D3D7's texture stages; MODULATE2X
-saturates in bytes).
+formed on the STORED 8-bit values, exactly the original's byte pipeline
+(no sRGB decode in D3D7's texture stages; ops saturate in bytes). Both
+passes are modulated by the same lit vertex diffuse in the original, so
+adding them pre-lighting is exact.
 
 Surfaces are unwrapped with xatlas into one atlas pair per .pso; base-only
 surfaces keep their original texture and UVs (baking them would only lose
@@ -180,9 +187,11 @@ def bake_for(pso_path: str, pso, textures_root: Path = Path("data/textures"),
     npz = out_base.parent / (out_base.name + ".npz")
     pso_dir = str(PurePosixPath(pso_path).parent)
 
+    # an envmap ALONE never renders (the S/M pair is gated on the slot-1
+    # enable @ 0x10066600), so only lightmap/glow surfaces need the bake
     baked_idx = [i for i, s in enumerate(pso.surfaces)
                  if s.texture and len(s.indices) >= 3
-                 and (s.texture2 or s.texture3 or s.envmap)]
+                 and (s.texture2 or s.texture3)]
     if not baked_idx:
         return None
 
@@ -304,16 +313,21 @@ def bake_for(pso_path: str, pso, textures_root: Path = Path("data/textures"),
             if base is not None and uv0 is not None:
                 out = _sample(base, lerp(uv0), _clamp_mode(s.tex_mode))
             if light is not None and uv1 is not None:
-                out = out * _sample(light, lerp(uv1),
-                                    _clamp_mode(s.tex2_mode)) / 255.0
-            if env is not None:
-                nm = (lerp(epos) - bb_min) * bb_inv
-                keep = [c for c in (0, 1, 2) if c != axis]
-                if axis == 0:
-                    keep = [2, 1]  # matches the shader's nm.zy pick
-                suv = nm[:, keep]
-                out = np.minimum(
-                    out * _sample(env, suv, False) * 2.0 / 255.0, 255.0)
+                lm = _sample(light, lerp(uv1), _clamp_mode(s.tex2_mode))
+                if env is not None:
+                    # the envmap x lightmap MODULATE2X pair, ADDED over the
+                    # base (SRCALPHA/ONE, FUN_1000c170's later-pass branch)
+                    nm = (lerp(epos) - bb_min) * bb_inv
+                    keep = [c for c in (0, 1, 2) if c != axis]
+                    if axis == 0:
+                        keep = [2, 1]  # matches the texgen's nm.zy pick
+                    suv = nm[:, keep]
+                    out = np.minimum(
+                        out + _sample(env, suv, False) * lm * 2.0 / 255.0,
+                        255.0)
+                else:
+                    # no envmap: the lone 'Mt' pass multiplies (ZERO/SRCCOLOR)
+                    out = out * lm / 255.0
             yi, xi = np.where(inside)
             alb[yi + y0, xi + x0] = out
             mask[yi + y0, xi + x0] = True
