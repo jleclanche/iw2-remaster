@@ -818,6 +818,11 @@ void fragment() {
 # reproduces the original's order.
 const PRIORITY_SKY := -40
 const PRIORITY_PLANET := -20
+# the per-body painter band (_order_body_depth, #66): nearest body draws last
+# (PRIORITY_PLANET_NEAR), farther bodies step down toward PRIORITY_PLANET_FAR --
+# all strictly between PRIORITY_SKY (-40) and the world (0).
+const PRIORITY_PLANET_NEAR := -12
+const PRIORITY_PLANET_FAR := -30
 
 func _planet_material(rec: Dictionary) -> ShaderMaterial:
 	# icPlanetAvatar's shader (FUN_100cdc50 @ 0x100cdc50): layer 0 is
@@ -1216,3 +1221,36 @@ func _stream_objects() -> void:
 						var lit: bool = near_lp.has("name") \
 							and near_lp["name"] == o["name"]
 						SpaceFx.update_lagrange_icon(o["node"], cam, lit)
+	_order_body_depth()
+
+## Painter-order the backdrop bodies (#66). Every body impostor is pulled to the
+## same IMPOSTOR_DIST and the planet shader is `depth_draw_never`, so two bodies
+## sit at the SAME render depth and the draw order is submission order -- a
+## FARTHER body (Samarakand) then paints over a nearer one (Griffon). Rank the
+## visible bodies by TRUE distance and give nearer bodies a higher
+## render_priority so they draw last, on top. The band stays strictly between
+## PRIORITY_SKY (-40) and the world (0), so bodies keep sitting behind ships and
+## in front of the cyclorama. depth_draw_never is untouched -- the flare-eating
+## fix (the reason it exists) still holds.
+func _order_body_depth() -> void:
+	var bodies: Array = []
+	for o: Dictionary in objects:
+		if str(o.get("category", "")) != "body":
+			continue
+		if o.get("node") == null:
+			continue
+		var mats: Array = o.get("lit_mats", [])
+		if mats.is_empty():
+			continue
+		var dx: float = o["x"] - px
+		var dy: float = o["y"] - py
+		var dz: float = o["z"] - pz
+		bodies.append({"d2": dx * dx + dy * dy + dz * dz, "mats": mats})
+	bodies.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return a["d2"] < b["d2"])  # nearest first
+	for i in bodies.size():
+		# nearest -> highest priority (drawn last); clamped into the planet band
+		var p := clampi(PRIORITY_PLANET_NEAR - i, PRIORITY_PLANET_FAR,
+				PRIORITY_PLANET_NEAR)
+		for mat: ShaderMaterial in bodies[i]["mats"]:
+			mat.render_priority = p
