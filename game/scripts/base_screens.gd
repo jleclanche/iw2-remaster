@@ -907,11 +907,16 @@ func _draw() -> void:
 					_bar_geo.append([_rect_of(w), true])
 		for g: Array in _bar_geo:
 			var br: Rect2 = g[0]
-			var full := br.size.x
-			var cur := minf(full, _bar_w_rhs if g[1] else _bar_w)
-			if g[1]:                   # the RHS column grows/contracts at its right
-				br.position.x += full - cur
-			br.size.x = cur
+			# Draw at the eased width DIRECTLY, not clamped to this screen's own
+			# bar: backing out of a wide screen (Load game's create_wide_shady_bar,
+			# ~600) to a narrow one (create_shady_bar, 240) must ease the drawer
+			# from 600 down to 240 -- clamping to the revealed 240 width snapped it.
+			if g[1]:                   # RHS column: anchored at its right edge
+				var right := br.end.x
+				br.size.x = maxf(_bar_w_rhs, 0.0)
+				br.position.x = right - br.size.x
+			else:                      # left column: anchored at its left edge
+				br.size.x = maxf(_bar_w, 0.0)
 			_draw_shady(br)
 	if scr != null:
 		var sc := _scale()
