@@ -153,7 +153,7 @@ class Assembler:
                     mesh = self.b.mesh_from_pso(
                         pso_path, pso,
                         lambda s: self.texture_uri(scene_dir, s.texture),
-                        lambda s: self.texture_uri(scene_dir, s.texture2))
+                        lambda s: self.texture_uri(scene_dir, s.texture3))
                 else:
                     self.missing_psos.append(pso_path)
             extras = None

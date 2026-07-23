@@ -150,6 +150,10 @@ func _scan(model: Node3D) -> void:
 				if not (src is StandardMaterial3D):
 					continue
 				var mat: StandardMaterial3D = src.duplicate()
+				var lay: Dictionary = ex.get("iw2_surface_layers", {})
+				if lay.has(str(idx)) \
+						and bool(lay[str(idx)].get("glow_uv2", false)):
+					mat.emission_on_uv2 = true
 				mi.set_surface_override_material(int(str(idx)), mat)
 				var gch := str(chans[idx])
 				glow_mats.append({"mat": mat, "channel": gch})
@@ -325,15 +329,15 @@ func _add_jet_beam(node: Node3D, ex: Dictionary) -> void:
 	add_child(mi)
 	_jet_beams.append({"node": node, "mi": mi})
 
-# The SHDR slot-1 lightmap layer (#16): 6729 of 9596 shipped materials
-# carry one. WRAP-addressed slots render as a MODULATE layer over the lit
-# base (CreateRenderSurface cLayer(2), flux.dll.c:100107-100119) -- Godot's
-# detail layer in MUL mode is that operation. DIVERGENCE, documented: the
-# original multiplies in 8-bit gamma space, Godot's detail blend runs in
-# linear -- midtone lightmaps land slightly brighter than the original.
-# (The clamp-addressed white-on-black masks already ship as emissive in the
-# export -- the multipass SRCALPHA/ONE path; the envmap name also carried
-# in these extras is #15, not yet consumed.)
+# The SHDR slot-1 lightmap layer (#16): a MODULATE layer over the lit base
+# (CreateRenderSurface cLayer(2) @ 0x10066600; multipass fallback multiplies
+# ZERO/SRCCOLOR, dx7graph 'Mt' @ 0x1000b6b8) -- Godot's detail layer in MUL
+# mode is that operation. DIVERGENCE, documented: the original multiplies
+# in 8-bit gamma space, Godot's detail blend runs in linear -- midtone
+# lightmaps land slightly brighter than the original. The slot-2 additive
+# glow layer ships as the material's emission (white factor); when both
+# slot 1 and slot 2 carry their own UV channel the export drops the
+# lightmap (Godot imports two UV sets) and flags glow_uv2 here.
 func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 	var base := ProjectSettings.globalize_path("res://").path_join("..")
 	for idx in lay:
@@ -341,6 +345,16 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 		var src := mi.get_active_material(int(str(idx)))
 		if not (src is StandardMaterial3D):
 			continue
+		if bool(d.get("glow_uv2", false)) \
+				and not (src as StandardMaterial3D).emission_on_uv2:
+			# the slot-2 glow layer samples its own UV channel (TEXCOORD_1)
+			var fixed: StandardMaterial3D = src.duplicate()
+			fixed.emission_on_uv2 = true
+			mi.set_surface_override_material(int(str(idx)), fixed)
+			for gm in glow_mats:
+				if gm["mat"] == src:
+					gm["mat"] = fixed
+			src = fixed
 		var ltex: Texture2D = null
 		if d.has("lightmap"):
 			ltex = ParticleFx.texture(base, str(d["lightmap"]))
@@ -349,10 +363,16 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 			var stem := str(d["envmap"]).get_basename().to_lower()
 			etex = ParticleFx.texture(base, "images/envmaps/" + stem)
 		if etex != null:
-			mi.set_surface_override_material(int(str(idx)),
-					_envmap_material(src as StandardMaterial3D, etex, ltex,
-						bool(d.get("uv2", false)), mi.mesh.get_aabb(),
-						_surface_axis(mi, int(str(idx)))))
+			var env_mat := _envmap_material(src as StandardMaterial3D, etex,
+					ltex, bool(d.get("uv2", false)),
+					bool(d.get("glow_uv2", false)), mi.mesh.get_aabb(),
+					_surface_axis(mi, int(str(idx))))
+			mi.set_surface_override_material(int(str(idx)), env_mat)
+			# a <glow channel> duplicate for this surface is now replaced by
+			# the shader -- repoint its driver at the shader's emis_energy
+			for gm in glow_mats:
+				if gm["mat"] == src:
+					gm["mat"] = env_mat
 		elif ltex != null:
 			var mat: StandardMaterial3D = src.duplicate()
 			mat.detail_enabled = true
@@ -362,6 +382,9 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 					else BaseMaterial3D.DETAIL_UV_1
 			mat.detail_albedo = ltex
 			mi.set_surface_override_material(int(str(idx)), mat)
+			for gm in glow_mats:
+				if gm["mat"] == src:
+					gm["mat"] = mat
 
 # The ENVMAP layer (#15): nearly every hull surface names one
 # (CastIron/Aluminium/SteelShiny/Chrome/...). FcModel's cLayer(3) is built
@@ -385,6 +408,10 @@ uniform sampler2D light_tex : source_color, filter_linear_mipmap, repeat_enable;
 uniform bool has_base = false;
 uniform bool has_light = false;
 uniform bool light_uv2 = false;
+uniform sampler2D emis_tex : source_color, filter_linear_mipmap, repeat_enable;
+uniform bool has_emis = false;
+uniform bool emis_uv2 = false;
+uniform float emis_energy = 1.0;
 uniform vec4 base_color = vec4(1.0);
 uniform float metal = 0.1;
 uniform float rough = 0.85;
@@ -412,6 +439,9 @@ void fragment() {
 		alb *= texture(light_tex, light_uv2 ? UV2 : UV).rgb;
 	}
 	ALBEDO = alb;
+	if (has_emis) {
+		EMISSION = texture(emis_tex, emis_uv2 ? UV2 : UV).rgb * emis_energy;
+	}
 	METALLIC = metal;
 	ROUGHNESS = rough;
 }
@@ -437,7 +467,8 @@ static func _surface_axis(mi: MeshInstance3D, idx: int) -> int:
 	return 2
 
 func _envmap_material(src: StandardMaterial3D, env: Texture2D,
-		lmap: Texture2D, uv2: bool, aabb: AABB, axis: int) -> ShaderMaterial:
+		lmap: Texture2D, uv2: bool, emis_uv2: bool, aabb: AABB,
+		axis: int) -> ShaderMaterial:
 	if _env_shader == null:
 		_env_shader = Shader.new()
 		_env_shader.code = ENV_SHADER
@@ -448,6 +479,14 @@ func _envmap_material(src: StandardMaterial3D, env: Texture2D,
 		mat.set_shader_parameter("has_base", true)
 	mat.set_shader_parameter("base_color", src.albedo_color)
 	mat.set_shader_parameter("env_tex", env)
+	if src.emission_enabled and src.emission_texture != null:
+		# the slot-2 additive glow layer rides the envmapped base pass
+		# (both live on the same surface in the original's multipass)
+		mat.set_shader_parameter("emis_tex", src.emission_texture)
+		mat.set_shader_parameter("has_emis", true)
+		mat.set_shader_parameter("emis_uv2", emis_uv2)
+		mat.set_shader_parameter("emis_energy",
+				src.emission_energy_multiplier)
 	if lmap != null:
 		mat.set_shader_parameter("light_tex", lmap)
 		mat.set_shader_parameter("has_light", true)
@@ -781,8 +820,12 @@ func _physics_process(delta: float) -> void:
 			gv = exprs[gch]["value"]
 		else:
 			gv = 0.0
-		(gm["mat"] as StandardMaterial3D).emission_energy_multiplier = \
-				clampf(gv, 0.0, 1.0)
+		if gm["mat"] is ShaderMaterial:
+			(gm["mat"] as ShaderMaterial).set_shader_parameter(
+					"emis_energy", clampf(gv, 0.0, 1.0))
+		else:
+			(gm["mat"] as StandardMaterial3D).emission_energy_multiplier = \
+					clampf(gv, 0.0, 1.0)
 	if _flameshot:
 		_flameshot_tick(delta)
 	for entry in anim_nodes:

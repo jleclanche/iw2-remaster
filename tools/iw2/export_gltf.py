@@ -114,8 +114,11 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
         if s.uvs:
             uv_v = add_view(struct.pack(f"<{len(s.uvs)}f", *s.uvs), 34962)
             attrs["TEXCOORD_0"] = add_accessor(uv_v, 5126, nv, "VEC2")
-        if s.uvs2:
-            uv2_v = add_view(struct.pack(f"<{len(s.uvs2)}f", *s.uvs2), 34962)
+        # glow (slot 2) UVs win TEXCOORD_1 over the lightmap's when both
+        # exist -- Godot imports only two UV sets (same rule as gltf_builder)
+        uv1 = s.uvs3 if (s.texture3 and s.uvs3) else s.uvs2
+        if uv1:
+            uv2_v = add_view(struct.pack(f"<{len(uv1)}f", *uv1), 34962)
             attrs["TEXCOORD_1"] = add_accessor(uv2_v, 5126, nv, "VEC2")
         iv = add_view(struct.pack(f"<{len(idx)}H", *idx), 34963)
         ia = add_accessor(iv, 5123, len(idx), "SCALAR")
@@ -137,10 +140,20 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
             mat["extras"]["lightmap"] = s.texture2
         if s.envmap:
             mat["extras"]["envmap"] = s.envmap
-        if "<glow" in s.name:
-            mat["emissiveFactor"] = [*s.color] if any(s.color) else [1.0, 1.0, 1.0]
+        # SHDR slot 2 = the additive glow layer, unlit WHITE tint (see
+        # pso.py; ReadPSOGeometry discards the authored colour on textured
+        # surfaces, flux.dll.c:99181)
+        glow_png = resolve_texture(tex_index, s.texture3, pso_dir)
+        if glow_png is not None:
+            mat["emissiveFactor"] = [1.0, 1.0, 1.0]
+            mat["emissiveTexture"] = {"index": add_image(glow_png),
+                                      "texCoord": 1 if s.uvs3 else 0}
+        elif "<glow" in s.name:
             if png is not None:
+                mat["emissiveFactor"] = [1.0, 1.0, 1.0]
                 mat["emissiveTexture"] = {"index": image_ids[png.as_posix()], "texCoord": 0}
+            else:
+                mat["emissiveFactor"] = [*s.color] if any(s.color) else [1.0, 1.0, 1.0]
         materials.append(mat)
         prim = {"attributes": attrs, "indices": ia, "material": len(materials) - 1}
         if n_targets:

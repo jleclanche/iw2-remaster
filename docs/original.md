@@ -1366,6 +1366,49 @@ HTML drawn into the movie window's TextView.
   `HeadupGlow` (255,255,204 @ 0.3) and ambient white 0.25, camera at
   (0, 0.0788, −1.115) pitch 6.6°, zoom 6.667.
 
+### 7x. The PSO surface: three texture slots, and the colour is discarded
+
+`FcModel::ReadPSOGeometry @ 0x100652e0` (flux.dll.c:99120-99347) reads each
+SHDR as: name, colour (3×f32), opacity (f32), then **THREE texture slots** of
+`{brightness f32, index i32, mode i32}`, then the envmap filename string, then
+`n_verts`/`n_uv_channels`. VERT UV channels are assigned to the **textured**
+slots in slot order (the set counter at :99174-99177); the envmap gets no VERT
+channel (generated coords, see 0x1000ca20).
+
+- **The authored surface colour never renders on a textured surface**: when
+  slot 0 has a texture the loader overwrites it with `FcColour::White()`
+  (flux.dll.c:99181-99184). LightWave's random per-surface authoring colours
+  (the freighter's cyans, the base's greens) are dead data.
+- `FcModel::CreateRenderSurface @ 0x10066600` builds one `FiShader::cLayer`
+  per slot; the ctor (0x67f10) defaults **Tint = white**, and no textured
+  layer ever gets a different tint (only untextured layers get
+  colour x brightness). Layer operators (enum letters via `"RAMSD"[op]`,
+  dx7graph `FUN_1000ab30 @ 0x1000ab30` builds pattern names like "StMt"):
+  - **slot 0** -> op1 `A` (opaque base; as a first pass blending is simply
+    off, 'At' @ 0x1000b3ce) or op0 `R` when opacity < 1;
+  - **slot 1** -> op2 `M`, the **MODULATE lightmap** (single-pass
+    `D3DTOP_MODULATE`/`2X` stage, `FUN_1000c170 @ 0x1000c170`; multipass
+    fallback multiplies the framebuffer with SRCBLEND=ZERO /
+    DESTBLEND=SRCCOLOR, 'Mt' @ 0x1000b6b8). Never additive, never emissive.
+    Companion op3 `S` envmap layer at `m_shader_quality > 1`.
+  - **slot 2** -> op1 `A` at `m_shader_quality > 0`, flags bit0 = UNLIT
+    (pattern setups route unlit layers through `SetMaterial` with the tint
+    in **emissive** — 0x100127d0 vs lit-diffuse 0x10012780; device vtable
+    +0x40 = `IDirect3DDevice7::SetMaterial`). As a later pass it draws
+    **SRCALPHA/ONE additive** ('At' @ 0x1000b442). This is the glow layer:
+    windows, engine lozenges; `<glow channel=EXPR>` surfaces drive its alpha
+    through `AddSurfaceChannel`.
+- `D3DRS_TEXTUREFACTOR` is set exactly once, to white (dx7graph.dll.c:10485)
+  — no colour ever arrives via TFACTOR.
+
+Port consequence (the Lucrecia's-Base cyan bug): the export used to emit
+slot 1 as an emissive "mask" tinted by the discarded surface colour. Fixed:
+slot 1 is always the modulate lightmap, slot 2 is the emission (white
+factor), `tools/iw2/pso.py` parses the true three-slot layout. Divergence:
+Godot imports two UV sets, so when slot 1 and slot 2 both carry their own
+channel the lightmap is dropped in favour of the glow (recorded by the
+exporter in `dropped_lightmaps`).
+
 ---
 
 ## 8. Data and text

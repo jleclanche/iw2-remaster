@@ -63,6 +63,9 @@ class GltfBuilder:
         # do not survive Godot's import; the caller folds these into the
         # instancing node's extras like the glow channels.
         self.surface_layers: dict[str, dict[int, dict]] = {}
+        # "mesh:surface" entries whose slot-1 lightmap lost the TEXCOORD_1
+        # contest to the slot-2 glow layer (Godot imports only two UV sets)
+        self.dropped_lightmaps: list[str] = []
 
     def _view(self, raw: bytes, target: int) -> int:
         while len(self.blob) % 4:
@@ -87,10 +90,12 @@ class GltfBuilder:
         return self._image_ids[uri]
 
     def material(self, surface, texture_uri: str | None,
-                 texture2_uri: str | None = None) -> int:
+                 glow_uri: str | None = None) -> int:
         mat = {
             "name": surface.name,
             "pbrMetallicRoughness": {
+                # the authored colour renders ONLY when slot 0 is untextured
+                # (ReadPSOGeometry forces White() otherwise, flux.dll.c:99181)
                 "baseColorFactor": [*surface.color, 1.0],
                 "metallicFactor": 0.1, "roughnessFactor": 0.85,
             },
@@ -100,29 +105,31 @@ class GltfBuilder:
             tex = self.image(texture_uri)
             mat["pbrMetallicRoughness"]["baseColorTexture"] = {"index": tex, "texCoord": 0}
             mat["pbrMetallicRoughness"]["baseColorFactor"] = [1, 1, 1, 1]
-        if texture2_uri:
-            # The SHDR's second slot is a LIGHTMAP layer; on period hardware
-            # it lands in a MULTIPASS SRCALPHA/ONE additive pass whenever the
-            # texture stages are exhausted, so the clamp-addressed
-            # white-on-black masks (stern engine lozenges, window strips)
-            # read as ADDITIVE light in the original. Emitting those as
-            # emissive-on-TEXCOORD_1 tinted by the surface colour reproduces
-            # that; the caller passes texture2_uri only for mask-like slots
-            # (distinct texture, CLAMP addressing) -- wrap-addressed slots
-            # repeating the base are true modulate lightmaps, not lights.
-            mat["emissiveFactor"] = \
-                list(surface.color) if any(surface.color) else [1, 1, 1]
-            mat["emissiveTexture"] = {
-                "index": self.image(texture2_uri),
-                "texCoord": 1 if surface.uvs2 else 0}
-        elif surface.texture2:
+        if surface.texture2:
             mat["extras"]["lightmap"] = surface.texture2
         if surface.envmap:
             mat["extras"]["envmap"] = surface.envmap
-        if "<glow" in surface.name:
-            mat["emissiveFactor"] = list(surface.color) if any(surface.color) else [1, 1, 1]
+        if glow_uri:
+            # SHDR slot 2: the engine's ADDITIVE glow layer -- unlit, drawn
+            # SRCALPHA/ONE as a later pass (dx7graph 'At' @ 0x1000b442) with
+            # a WHITE tint (textured layers keep the cLayer ctor tint,
+            # 0x10067f10; the authored surface colour is never applied).
+            # Emission with a white factor is the same math.
+            mat["emissiveFactor"] = [1, 1, 1]
+            mat["emissiveTexture"] = {
+                "index": self.image(glow_uri),
+                "texCoord": 1 if surface.uvs3 else 0}
+        elif "<glow" in surface.name:
+            # glow-channel surface whose slot-2 texture is absent or didn't
+            # resolve: textured -> reuse the base texture, white; untextured
+            # -> tint = authored colour (the untextured-layer path in
+            # CreateRenderSurface @ 0x10066600 keeps the colour)
             if texture_uri:
+                mat["emissiveFactor"] = [1, 1, 1]
                 mat["emissiveTexture"] = {"index": self._image_ids[texture_uri], "texCoord": 0}
+            else:
+                mat["emissiveFactor"] = \
+                    list(surface.color) if any(surface.color) else [1, 1, 1]
         self.doc["materials"].append(mat)
         return len(self.doc["materials"]) - 1
 
@@ -153,28 +160,36 @@ class GltfBuilder:
             if s.uvs:
                 attrs["TEXCOORD_0"] = self._accessor(
                     self._view(struct.pack(f"<{len(s.uvs)}f", *s.uvs), 34962), 5126, nv, "VEC2")
-            if s.uvs2:
+            # only two UV sets survive the Godot import; when both the slot-1
+            # lightmap and the slot-2 glow have their own channel, the glow
+            # wins TEXCOORD_1 (it is the visible, channel-driven layer) and
+            # the lightmap is dropped (recorded in dropped_lightmaps)
+            uv1 = s.uvs3 if (s.texture3 and s.uvs3) else s.uvs2
+            if uv1:
                 attrs["TEXCOORD_1"] = self._accessor(
-                    self._view(struct.pack(f"<{len(s.uvs2)}f", *s.uvs2), 34962), 5126, nv, "VEC2")
+                    self._view(struct.pack(f"<{len(uv1)}f", *uv1), 34962), 5126, nv, "VEC2")
             ia = self._accessor(self._view(struct.pack(f"<{len(idx)}H", *idx), 34963),
                                 5123, len(idx), "SCALAR")
-            # mask-like second slot: a DISTINCT texture with CLAMP addressing
-            # (low nibble 3/4 of the mode word, SetTextureMode @ 98806);
-            # tiling (WRAP) lightmaps and base-repeating slots are excluded
-            glow2 = (s.texture2 and s.texture2 != s.texture
-                     and (getattr(s, "tex2_mode", 0) & 0xf) in (3, 4))
-            uri2 = resolve_texture2(s) if resolve_texture2 and glow2 else None
+            # SHDR slot 2 is the engine's additive glow layer (see pso.py)
+            uri2 = resolve_texture2(s) if resolve_texture2 and s.texture3 else None
             m = re.search(r"<glow\s+channel=([^>]+)>", s.name)
             if m:
                 self.glow_channels.setdefault(key, {})[len(prims)] = \
                     m.group(1).strip()
             layer: dict = {}
-            if s.texture2 and s.texture2 != s.texture and not glow2:
-                # the WRAP-addressed modulate lightmap glTF drops (#16)
-                layer["lightmap"] = s.texture2
-                layer["uv2"] = bool(s.uvs2)
+            if s.texture2:
+                # SHDR slot 1: the MODULATE lightmap layer glTF drops (#16)
+                if s.uvs2 and s.texture3 and s.uvs3:
+                    self.dropped_lightmaps.append(f"{key}:{s.name}")
+                else:
+                    layer["lightmap"] = s.texture2
+                    layer["uv2"] = bool(s.uvs2)
             if s.envmap:
                 layer["envmap"] = s.envmap
+            if s.texture3 and s.uvs3:
+                # the emissive glow samples TEXCOORD_1; the runtime must set
+                # emission_on_uv2 (GLTFDocument ignores emissive texCoord)
+                layer["glow_uv2"] = True
             if layer:
                 self.surface_layers.setdefault(key, {})[len(prims)] = layer
             prims.append({"attributes": attrs, "indices": ia,
