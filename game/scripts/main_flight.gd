@@ -169,19 +169,6 @@ func _lds_process(delta: float) -> void:
 	if clear < 0.0 or (togo < 4.0e4 and lds_speed <= LDS_BASE * 2.0):
 		_drop_out_of_lds()
 
-func _drop_out_of_lds() -> void:
-	# icLDSDrive::BreakShipOutOfLDS (decompiled): zero the angular
-	# velocity and set linear velocity to facing x 1000 m/s flat
-	lds_state = 0
-	audio.lds_player.stop()
-	audio.play("audio/sfx/lds_rampdown.wav", -4.0)
-	ship.velocity = -ship.global_transform.basis.z * LDS_DROPOUT_SPEED
-	ship.angular_velocity = Vector3.ZERO
-	ship.input_rotate = Vector3.ZERO
-	# auto-deceleration (original option, default on): the flight computer
-	# zeroes the throttle wheel so the ship brakes instead of barreling on
-	ship.set_speed = 0.0
-
 # --- towing ------------------------------------------------------------------
 # icDockPort::OnDock (0x1002e540): docking rigidly attaches the LOWER
 # docking_priority sim as a CHILD of the higher (both +0x1c0, compared at

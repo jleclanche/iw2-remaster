@@ -462,13 +462,43 @@ func _set_autopilot(mode: int) -> void:
 ## the throttle, exactly like the original. (An earlier pass handed the
 ## wheel back at the current speed instead; that was invented.) Every path
 ## that drops the autopilot goes through here.
+##
+## It also drops the ship out of LDS. DisengageAutopilot clears BOTH the
+## pilot's LDS-engaged flag (this[0x80] = 0) and the autopilot mode
+## (this[0x308] = 0). icPlayerPilot::LDSEngaged (0x100af8d0) reads the AI
+## order's demand while autopilot runs and this[0x80] otherwise, so with both
+## zeroed it reports FALSE -- and the next icLDSDrive::Simulate tick
+## (0x10037040 case 2) sees the pilot no longer wants LDS and calls
+## BreakShipOutOfLDS. So an autopilot that had engaged LDS drops the ship out
+## on disengage instead of handing a live cruise to manual control. The clear
+## is guarded by `if (this[0x308] != 0)` in the original: a manual LDS cruise
+## with no autopilot running is untouched, mirrored by the ap_mode gate here.
 func _disengage_autopilot() -> void:
+	var was_engaged := ap_mode != 0
 	ap_mode = 0
 	ap_target_idx = -1
 	ap_target_ai = null
+	if was_engaged and lds_state != 0:
+		_drop_out_of_lds()
 	ship.set_speed = 0.0
 	ship.input_thrust = Vector3.ZERO
 	ship.input_rotate = Vector3.ZERO
+
+## icLDSDrive::BreakShipOutOfLDS (decompiled): zero the angular velocity and set
+## linear velocity to facing x 1000 m/s flat. Lives here (not with the other LDS
+## flight code in main_flight.gd) because _disengage_autopilot -- two layers down
+## the extends chain -- is the base-most caller; the derived _toggle_lds /
+## _lds_process / _autopilot_tick still reach it.
+func _drop_out_of_lds() -> void:
+	lds_state = 0
+	audio.lds_player.stop()
+	audio.play("audio/sfx/lds_rampdown.wav", -4.0)
+	ship.velocity = -ship.global_transform.basis.z * LDS_DROPOUT_SPEED
+	ship.angular_velocity = Vector3.ZERO
+	ship.input_rotate = Vector3.ZERO
+	# auto-deceleration (original option, default on): the flight computer
+	# zeroes the throttle wheel so the ship brakes instead of barreling on
+	ship.set_speed = 0.0
 
 ## The PogSim handle for whatever the player has targeted, so the marker maths
 ## can see its class (planet / star / nebula / belt) and its radius.
