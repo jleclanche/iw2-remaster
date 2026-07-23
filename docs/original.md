@@ -946,9 +946,14 @@ computer's attitude-hold recovers (matching the engine's thruster torque-null).
 A hull-less partner (cargo pods) still falls back to the centre-line sphere.
 The station path (`_collide_hull`) had the same defect -- a 20 m sphere proxy,
 radial normal, no player spin -- so a head-on station hit ping-ponged the ship
-off unturned; it now shares the box proxy, so the player tumbles off a station
-hull too. Guarded by the mechcheck steps ship-hull-attach / ship-reorient and
-station-hull-built / station-reorient.
+off unturned. Here the detector STAYS the 20 m sphere: a large box query tunnels
+sparse open frames (Hoffer's Gap is a ~6 km, 548-triangle shell) and the box's
+metre-scale depenetration snaps a ship clean through a far wall (issue #33). The
+reorientation instead comes from WHERE the impulse lands: not the sphere's
+radial surface point but the ship's own box CORNER toward the station (`-n`
+support), which is off the CoM (`r_a x n != 0`) -- so the hull tumbles without
+disturbing the solidity geometry. Guarded by the mechcheck steps
+ship-hull-attach / ship-reorient and station-hull-built / station-reorient.
 
 ---
 

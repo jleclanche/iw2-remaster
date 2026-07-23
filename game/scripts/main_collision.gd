@@ -152,6 +152,7 @@ const HULL_LAYER := 1 << 5   # a private physics layer; nothing else uses physic
 const SHIP_HULL_LAYER := 1 << 6  # AI ships' own hull trimeshes (see _collide_ai)
 
 var _hull_avatar_index := {}   # "avatars/x/setup.gltf" -> hull json path
+var _probe_shape: SphereShape3D
 
 func _hull_index() -> Dictionary:
 	if not _hull_avatar_index.is_empty():
@@ -304,12 +305,26 @@ func _player_box_support(n: Vector3) -> float:
 	var h := (ship.dims if ship.dims.length() > 1.0 else Vector3(40, 40, 40)) * 0.5
 	return absf(nl.x) * h.x + absf(nl.y) * h.y + absf(nl.z) * h.z
 
+func _box_corner_toward(d: Vector3) -> Vector3:
+	# world-frame offset from the CoM to the player box corner in world direction
+	# d -- the point of the ship's hull that leads a contact in that direction
+	var b := ship.global_transform.basis
+	var dl: Vector3 = d * b   # world -> local
+	var h := (ship.dims if ship.dims.length() > 1.0 else Vector3(40, 40, 40)) * 0.5
+	return b * Vector3(signf(dl.x) * h.x, signf(dl.y) * h.y, signf(dl.z) * h.z)
+
 func _collide_hull(o: Dictionary) -> void:
-	# the player's box proxy against the station's hull trimesh, answered with
-	# the FiSim::ProcessContact response. The box (not a sphere) is what lets the
-	# player REORIENT off a station: a sphere's contact normal is radial
-	# (r_a x n = 0, a pure central bounce -- the "ping-pong"), while the box's
-	# corner/face contact against the station surface normal is off-CoM.
+	# DETECTION + depenetration use the compact 20 m sphere -- the proven, open-
+	# frame-safe geometry (issue #33; a 6 km sparse frame like Hoffer's Gap
+	# tunnels a large box query and its metre-scale depenetration snaps a ship
+	# clean through a far wall). The REORIENTATION comes from where the impulse
+	# is applied, NOT the detector: a sphere contact is radial (r_a x n = 0, the
+	# central "ping-pong"), so instead of the radial surface point the response
+	# runs at the ship's own box CORNER toward the station -- off the CoM, so
+	# r_a x n != 0 and the hull tumbles, without touching the solidity geometry.
+	if _probe_shape == null:
+		_probe_shape = SphereShape3D.new()
+		_probe_shape.radius = 20.0   # the player hull's rough half-width
 	var node: Node3D = o["node"]
 	# cheap reject: outside the record's own bounding radius + margin
 	var r := maxf(float(o.get("radius", 0.0)), 500.0)
@@ -321,8 +336,8 @@ func _collide_hull(o: Dictionary) -> void:
 	if world == null:
 		return
 	var params := PhysicsShapeQueryParameters3D.new()
-	params.shape = _player_box_probe()
-	params.transform = ship.global_transform
+	params.shape = _probe_shape
+	params.transform = Transform3D(Basis(), ship.global_position)
 	params.collision_mask = HULL_LAYER
 	var hit: Dictionary = world.direct_space_state.get_rest_info(params)
 	if hit.is_empty():
@@ -332,13 +347,15 @@ func _collide_hull(o: Dictionary) -> void:
 	# orient the normal off the surface toward the ship
 	if n.dot(ship.global_position - point) < 0.0:
 		n = -n
-	var dv := _process_contact(point, n, null, Vector3.ZERO,
+	# apply the impulse at the ship's leading corner (toward the station, -n),
+	# not the sphere's radial point, so the contact torques the hull
+	var contact := ship.global_position + _box_corner_toward(-n)
+	var dv := _process_contact(contact, n, null, Vector3.ZERO,
 			get_physics_process_delta_time())
 	_contact_feedback(dv.x, ship.velocity.length(), str(o["name"]).to_upper())
-	# port-side safety net: keep the player box off the surface our probe found
-	var pen := _player_box_support(n) - (ship.global_position - point).dot(n)
-	if pen > 0.0:
-		ship.global_position += n * (pen + 0.5)
+	# port-side safety net: stay outside the surface our probe found
+	if (ship.global_position - point).dot(n) < _probe_shape.radius:
+		ship.global_position = point + n * (_probe_shape.radius + 0.5)
 
 func _model_coll_spheres(model: Node3D) -> Array:
 	# one collision sphere per major mesh chunk (model-local), so sprawling

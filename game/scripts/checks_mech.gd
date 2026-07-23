@@ -1076,20 +1076,22 @@ func _ms_station_reorient(_delta: float) -> void:
 	if node != null and is_instance_valid(node):
 		var centre: Vector3 = (node as Node3D).global_position
 		var rad: float = maxf(m._model_bounds_radius(node), 200.0)
-		# the hull is a triangle SHELL, not a solid, so the box must STRADDLE the
-		# surface to intersect it. Sweep in along an off-radial axis (rotated, so
-		# the corner contact is off-CoM) until the box crosses the shell.
+		# _collide_hull detects with a 20 m sphere, so sweep the SAME sphere in
+		# along an off-radial axis until the ship is in contact with the shell
+		# (step < the radius, so a thin shell is not tunnelled)
 		m.ship.rotation = Vector3(deg_to_rad(15.0), deg_to_rad(25.0), 0.0)
 		m.ship.angular_velocity = Vector3.ZERO
 		var dir := Vector3(0.62, 0.21, 0.11).normalized()
+		var probe := SphereShape3D.new()
+		probe.radius = 20.0
 		var params := PhysicsShapeQueryParameters3D.new()
-		params.shape = m._player_box_probe()
+		params.shape = probe
 		params.collision_mask = m.HULL_LAYER
 		var ss := m.get_world_3d().direct_space_state
 		var hit: Dictionary = {}
-		for i in range(44):
-			m.ship.global_position = centre + dir * (rad * 1.1 - i * rad * 0.05)
-			params.transform = m.ship.global_transform
+		for i in range(240):
+			m.ship.global_position = centre + dir * (rad * 1.15 - i * 12.0)
+			params.transform = Transform3D(Basis(), m.ship.global_position)
 			hit = ss.get_rest_info(params)
 			if not hit.is_empty():
 				break
