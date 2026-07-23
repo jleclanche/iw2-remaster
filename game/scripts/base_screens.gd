@@ -71,6 +71,15 @@ func _ready() -> void:
 	_fx.material = add_mat
 	_fx.draw.connect(_draw_shady_fx)
 	add_child(_fx)
+	# icShadyBar's black fill lands on its OWN child, drawn BEHIND the content, so
+	# the screen-open content fade (self_modulate, _anim_step) dims the hosted
+	# windows without ever dimming the bars.
+	_bar_fill = Control.new()
+	_bar_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bar_fill.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_bar_fill.show_behind_parent = true
+	_bar_fill.draw.connect(_draw_bar_fill)
+	add_child(_bar_fill)
 
 
 const SCROLL_SPEED := 50.0   ## px/s -- icCreditScreen's constant @ 0x10117be8
@@ -131,6 +140,7 @@ func _process(delta: float) -> void:
 	if visible:
 		# the flyby strips slide whether or not anything else changed
 		_shady.tick(delta, _scale() * 240.0, size.y)
+	_anim_step(delta, scr, bi)
 	if ui.dirty:
 		ui.dirty = false
 		_rebuild(scr)
@@ -141,9 +151,53 @@ func _process(delta: float) -> void:
 		_fx.visible = visible
 		if visible:
 			_fx.queue_redraw()
+	if _bar_fill != null:
+		_bar_fill.visible = visible
+		if visible:
+			_bar_fill.queue_redraw()
 	_credits_music(scr)
 	if visible and scr != null:
 		_advance_scrollers(scr, delta)
+
+
+## The screen-open reveal (icShadyBar SetTargetWidth + iiGUIOverlayManager
+## content fade). The bar widths chase gui.SetShadyBarWidth's targets at
+## 1500 px/s; once open, the content alpha ramps to 1.0 at 3.0/s, reset to 0 on
+## every screen raise/back so each transition re-fades. Flight/front-end screens
+## only (bi == null) -- a base interior would fade its diorama, which the engine
+## never modulates, so those keep the instant path.
+func _anim_step(delta: float, scr: PogUi.PogScreen, bi) -> void:
+	if bi != null or not visible or scr == null:
+		# Not animating (a base interior, or nothing up): keep the content solid
+		# and arm a fresh reveal for the next flight/front-end screen -- widths
+		# grow from 0 and _prev_top = null forces the first animating frame to
+		# reset the fade even if the screen was built a frame before it showed.
+		_content_alpha = 1.0
+		self_modulate.a = 1.0
+		_bar_w = 0.0
+		_bar_w_rhs = 0.0
+		_prev_top = null
+		return
+	var top: PogUi.PogScreen = ui.top_screen()
+	if top != _prev_top:
+		_prev_top = top
+		_content_alpha = 0.0        # a raise or a back re-fades the content
+	_bar_w = _approach(_bar_w, float(ui.shady_width), SHADY_GROW_PXPS * delta)
+	_bar_w_rhs = _approach(_bar_w_rhs, float(ui.shady_width_rhs),
+			SHADY_GROW_PXPS * delta)
+	var open: bool = is_equal_approx(_bar_w, float(ui.shady_width)) \
+			and is_equal_approx(_bar_w_rhs, float(ui.shady_width_rhs))
+	if open:
+		_content_alpha = minf(1.0, _content_alpha + CONTENT_FADE_PS * delta)
+	# self_modulate dims THIS node's own draws (the content windows) but not the
+	# _bar_fill / _fx children, so the bars stay solid while the content fades in.
+	self_modulate.a = _content_alpha
+
+
+static func _approach(cur: float, target: float, step: float) -> float:
+	if cur < target:
+		return minf(target, cur + step)
+	return maxf(target, cur - step)
 
 
 ## icCreditScreen's own soundtrack. The screen's ctor (iwar2.dll @ 0x10016180)
@@ -596,9 +650,24 @@ var _atlas: Texture2D
 var _alphamap: Texture2D
 ## icShadyBar, shared with the front end -- see shady_bar.gd.
 var _shady := ShadyBar.new()
-## The bars laid out this frame, replayed by the additive _fx child.
+## The bars laid out this frame, replayed by the _bar_fill (fill) and _fx (weave)
+## children.
 var _shady_rects: Array = []
 var _fx: Control
+var _bar_fill: Control
+
+## The screen-open animation, extracted from icShadyBar + iiGUIOverlayManager.
+## SetTargetWidth eases the bar width toward its target at 1500 px/s (icShadyBar
+## Tick @ iwar2 0x1010e710, m_width_speed @ 0x1011e7f4) -- the "drawer opening".
+## Once the bars finish, the overlay manager ramps the hosted content alpha 0->1
+## at 3.0/s (iiGUIOverlayManager Tick @ 0x10025d80, rate @ 0x10118974), reset to
+## 0 on every screen raise/back so each transition re-fades.
+const SHADY_GROW_PXPS := 1500.0
+const CONTENT_FADE_PS := 3.0
+var _bar_w := 0.0            ## eased current width of the left menu column
+var _bar_w_rhs := 0.0       ## eased current width of the RHS column
+var _content_alpha := 1.0
+var _prev_top: PogUi.PogScreen = null
 var _skin_fonts: Dictionary = {}
 
 
@@ -613,8 +682,19 @@ var _skin_fonts: Dictionary = {}
 ## than drawn straight through because _fx repeats the parent's fixed-pixel
 ## transform.
 func _draw_shady(r: Rect2) -> void:
+	# The fill is replayed by the _bar_fill child (behind the content) so the
+	# content fade never dims the bars; here we only record the laid-out rect.
 	_shady_rects.append(r)
-	_shady.draw_fill(self, r)
+
+
+func _draw_bar_fill() -> void:
+	if _shady_rects.is_empty():
+		return
+	var sc := _scale()
+	_bar_fill.draw_set_transform(_origin(), 0.0, Vector2(sc, sc))
+	for r: Rect2 in _shady_rects:
+		_shady.draw_fill(_bar_fill, r)
+	_bar_fill.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
 func _draw_shady_fx() -> void:
@@ -799,14 +879,25 @@ func _draw() -> void:
 		draw_set_transform(_origin(), 0.0, Vector2(sc, sc))
 		# 1. the shady bars -- the translucent columns the menus sit on, as wide
 		#    as gui.SetShadyBarWidth / SetRHSShadyBarWidth said, drawn with
-		#    icShadyBar's extracted recipe (fill + weave + edges).
+		#    icShadyBar's extracted recipe (fill + weave + edges). On the flight/
+		#    front-end screens the width eases open (the drawer, _anim_step).
+		var animate: bool = bi == null
 		for w in scr.windows:
-			if w.kind == "window" and w.art.is_empty() and w.title.is_empty() \
-					and w.text.is_empty() and not w.is_border \
-					and ((ui.shady_width > 0 and absi(w.w - ui.shady_width) <= 1)
-						or (ui.shady_width_rhs > 0
-							and absi(w.w - ui.shady_width_rhs) <= 1)):
-				_draw_shady(_rect_of(w))
+			if w.kind != "window" or not w.art.is_empty() \
+					or not w.title.is_empty() or not w.text.is_empty() \
+					or w.is_border:
+				continue
+			var br := _rect_of(w)
+			if ui.shady_width > 0 and absi(w.w - ui.shady_width) <= 1:
+				if animate:            # the left column grows from its left edge
+					br.size.x = minf(br.size.x, _bar_w)
+				_draw_shady(br)
+			elif ui.shady_width_rhs > 0 and absi(w.w - ui.shady_width_rhs) <= 1:
+				if animate:            # the RHS column grows from its right edge
+					var grown := minf(br.size.x, _bar_w_rhs)
+					br.position.x += br.size.x - grown
+					br.size.x = grown
+				_draw_shady(br)
 		# 2. the controls, each in its own art
 		for w in _rows(scr):
 			_draw_window(w)
