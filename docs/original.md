@@ -944,16 +944,18 @@ lazily on approach, `SHIP_HULL_LAYER`), so the surface point/normal sit off both
 CoMs and the impulse sheds into spin: both hulls tumble, then the flight
 computer's attitude-hold recovers (matching the engine's thruster torque-null).
 A hull-less partner (cargo pods) still falls back to the centre-line sphere.
-The station path (`_collide_hull`) had the same defect -- a 20 m sphere proxy,
-radial normal, no player spin -- so a head-on station hit ping-ponged the ship
-off unturned. Here the detector STAYS the 20 m sphere: a large box query tunnels
-sparse open frames (Hoffer's Gap is a ~6 km, 548-triangle shell) and the box's
-metre-scale depenetration snaps a ship clean through a far wall (issue #33). The
-reorientation instead comes from WHERE the impulse lands: not the sphere's
-radial surface point but the ship's own box CORNER toward the station (`-n`
-support), which is off the CoM (`r_a x n != 0`) -- so the hull tumbles without
-disturbing the solidity geometry. Guarded by the mechcheck steps
-ship-hull-attach / ship-reorient and station-hull-built / station-reorient.
+Guarded by the mechcheck steps ship-hull-attach / ship-reorient.
+
+The STATION path (`_collide_hull`) is deliberately NOT given this: it detects
+with a compact 20 m sphere (open-frame-safe, issue #33), and against a sphere
+the contact is radial (`r_a x n = 0`), so a station hit does not reorient the
+player. Torquing it off the ship's box corner was tried and reverted -- the weak
+linear impulse of a far-off-CoM contact let a ship creep through the coarse
+collision hull's real gaps (Hoffer's Gap is a genuinely OPEN ~6 km shell; its
+548-triangle hull matches the visible openings to ~0.5%, so ~6% of ram
+directions are the real gap you fly through). Faithful station reorientation
+needs the swept ship-hull-vs-station-hull narrowphase the original runs, not a
+point/sphere sample -- an open issue, not a constant.
 
 ---
 

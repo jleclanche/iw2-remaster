@@ -88,8 +88,6 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_contact_pair",
 	&"_ms_ship_reorient_arm",
 	&"_ms_ship_reorient",
-	&"_ms_station_reorient_arm",
-	&"_ms_station_reorient",
 	&"_ms_hull_solid",
 	&"_ms_hull_solid_assert",
 	&"_ms_hull_ghost",
@@ -1037,82 +1035,6 @@ func _ms_ship_reorient(_delta: float) -> void:
 	m.ship.rotation = _reorient_saved["rot"]
 	m.ship.velocity = _reorient_saved["vel"]
 	m.ship.angular_velocity = _reorient_saved["w"]
-	_mech_next()
-
-# --- station reorientation: _collide_hull tumbles the player too --------------
-# The station path had the same defect as ship-ship: a 20 m sphere proxy whose
-# contact normal is radial (r_a x n = 0) -- a head-on hit ping-ponged the player
-# off with no attitude change. _collide_hull now probes with the player's box, so
-# a corner/face contact against the station's surface normal is off-CoM and the
-# player tumbles. Two steps so the asteroid's freshly attached hull StaticBody is
-# registered in the physics space before the query.
-var _st_reorient_o: Dictionary = {}
-var _st_saved := {}
-
-func _ms_station_reorient_arm(_delta: float) -> void:
-	_st_saved = {"pos": m.ship.global_position, "rot": m.ship.rotation,
-		"vel": m.ship.velocity, "w": m.ship.angular_velocity}
-	var anchor: Vector3 = m.ship.global_position + Vector3(0, 0, -3000)
-	var o := {"name": "Reorient Rock", "key": "st_reorient", "category": "station",
-		"avatar": HULL_PROBE_AVATAR, "radius": 0.0,
-		"x": m.px + anchor.x, "y": m.py + anchor.y, "z": m.pz + anchor.z}
-	var model: Node3D = m._load_gltf("data/avatars/" + HULL_PROBE_AVATAR)
-	if model != null:
-		o["node"] = model
-		m.add_child(model)
-		model.global_position = anchor
-		m._attach_collision_hull(o, model)
-		o["radius"] = m._model_bounds_radius(model)
-	_st_reorient_o = o
-	_mech("station-hull-built",
-		bool(o.get("hull", false)) and o.get("node") != null,
-		"asteroid CollisionHull attached for the reorient probe")
-	_mech_next()
-
-func _ms_station_reorient(_delta: float) -> void:
-	var node: Variant = _st_reorient_o.get("node")
-	var wp := 0.0
-	var diag := "no model"
-	if node != null and is_instance_valid(node):
-		var centre: Vector3 = (node as Node3D).global_position
-		var rad: float = maxf(m._model_bounds_radius(node), 200.0)
-		# _collide_hull detects with a 20 m sphere, so sweep the SAME sphere in
-		# along an off-radial axis until the ship is in contact with the shell
-		# (step < the radius, so a thin shell is not tunnelled)
-		m.ship.rotation = Vector3(deg_to_rad(15.0), deg_to_rad(25.0), 0.0)
-		m.ship.angular_velocity = Vector3.ZERO
-		var dir := Vector3(0.62, 0.21, 0.11).normalized()
-		var probe := SphereShape3D.new()
-		probe.radius = 20.0
-		var params := PhysicsShapeQueryParameters3D.new()
-		params.shape = probe
-		params.collision_mask = m.HULL_LAYER
-		var ss := m.get_world_3d().direct_space_state
-		var hit: Dictionary = {}
-		for i in range(240):
-			m.ship.global_position = centre + dir * (rad * 1.15 - i * 12.0)
-			params.transform = Transform3D(Basis(), m.ship.global_position)
-			hit = ss.get_rest_info(params)
-			if not hit.is_empty():
-				break
-		if hit.is_empty():
-			diag = "no rest contact across the sweep"
-		else:
-			var nn: Vector3 = hit["normal"]
-			if nn.dot(m.ship.global_position - (hit["point"] as Vector3)) < 0.0:
-				nn = -nn
-			m.ship.velocity = -nn * 50.0
-			m._collide_hull(_st_reorient_o)
-			wp = m.ship.angular_velocity.length()
-			diag = "player spin %.4f rad/s off a station hull" % wp
-	_mech("station-reorient", wp > 1e-4, diag)
-	if node != null and is_instance_valid(node):
-		(node as Node3D).queue_free()
-	_st_reorient_o = {}
-	m.ship.global_position = _st_saved["pos"]
-	m.ship.rotation = _st_saved["rot"]
-	m.ship.velocity = _st_saved["vel"]
-	m.ship.angular_velocity = _st_saved["w"]
 	_mech_next()
 
 ## kill_ai now runs OnExplode's timed dramatic sequence for anything over
