@@ -807,15 +807,24 @@ func _planet_shader() -> Shader:
 	planet_shader.code = """
 shader_type spatial;
 render_mode cull_back, depth_draw_never, fog_disabled, unshaded;
-uniform sampler2D albedo_tex : source_color;
-uniform sampler2D albedo_tex2 : source_color;
-uniform vec4 tint : source_color;
-uniform vec4 tint2 : source_color;
+// Textures/tints are sampled RAW (no source_color): the whole composite runs in
+// GAMMA space, the way D3D7 did it (it multiplied and added gamma bytes straight
+// into a gamma framebuffer), then converts to linear ONCE at the end. Compositing
+// in linear -- decode, add, re-encode -- crushes the additive step: the red mean
+// dropped from 120 (gamma add, matches the original) to 97. See visualprobe skill.
+uniform sampler2D albedo_tex;
+uniform sampler2D albedo_tex2;
+uniform vec4 tint;
+uniform vec4 tint2;
 uniform float layer2;    // 1 = composite the second surface, 0 = base only
 uniform vec3 star_dir;   // world space, body -> its primary
 uniform vec3 star_color; // the primary's diffuse light colour (sun_colours[0])
 uniform float ambient;   // the night side is dim, never pure black
 uniform float alpha;
+vec3 srgb_to_linear(vec3 c) {
+	return mix(pow((c + 0.055) / 1.055, vec3(2.4)), c / 12.92,
+		lessThan(c, vec3(0.04045)));
+}
 void fragment() {
 	vec3 n = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	float lam = max(dot(n, normalize(star_dir)), 0.0);
@@ -833,7 +842,9 @@ void fragment() {
 	// sun (sun_colours[0] = (1,0.3,0.05)); without this a two-layer body reads
 	// olive instead of the true orange (measured disc ~ (120,45,10)). star_color
 	// defaults white, so single bodies / untinted suns are unchanged.
-	ALBEDO = surf * star_color * (ambient + (1.0 - ambient) * lam);
+	vec3 lit = surf * star_color * (ambient + (1.0 - ambient) * lam);
+	// hand Godot linear so its linear->sRGB output reproduces the gamma result
+	ALBEDO = srgb_to_linear(clamp(lit, 0.0, 1.0));
 	ALPHA = t.a * alpha;
 }
 """
