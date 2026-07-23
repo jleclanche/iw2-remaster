@@ -340,23 +340,76 @@ func _propagate_group_attack(victim: AiShip) -> void:
 
 ## Player against another SHIP. The extracted law (the collide handler above
 ## iiSim::OnCollision @ 0x10078ab0): BOTH parties take the SAME damage --
-## ((|dv_a|/sweet)^2 m_a + (|dv_b|/sweet)^2 m_b) x factor, source 4 -- and
-## both feel the response. The old path damaged only the player and left the
-## other hull untouched at full speed. The 1.6 bounce stands in for the
-## engine's contact solve; the partner's share of it comes from momentum
-## against its own mass.
+## ((|dv_a|/sweet)^2 m_a + (|dv_b|/sweet)^2 m_b) x factor, source 4 -- and both
+## feel the FiSim::ProcessContact response (flux @ 0x100bd920). Contact geometry
+## is a narrowphase of the player's box proxy against the OTHER ship's real
+## CollisionHull trimesh (get_rest_info), so the surface point and normal sit
+## OFF both centres of mass -- r x n != 0 -- and the impulse sheds into spin:
+## both hulls reorient, matching the original's mesh-vs-mesh contact instead of
+## a central bounce. Ships without a hull (cargo pods, stand-ins) fall back to
+## the centre-to-centre sphere below.
 func _collide_ai(a: AiShip) -> void:
 	if a == null or not is_instance_valid(a) or a.dying:
 		return
 	var d := ship.global_position - a.global_position
-	var dist := d.length()
+	var dist2 := d.length_squared()
+	# broadphase: box reach + the other hull's sim radius, loose enough to also
+	# cover the sphere fallback's 95 m ring
+	var reach := ship.radius + a.radius + 120.0
+	if dist2 > reach * reach or dist2 < 0.01:
+		return
+	var body := _ensure_ship_hull(a)
+	if body == null:
+		_collide_ai_sphere(a, d, sqrt(dist2))
+		return
+	var world := get_world_3d()
+	if world == null:
+		return
+	var params := PhysicsShapeQueryParameters3D.new()
+	params.shape = _player_box_probe()
+	params.transform = ship.global_transform
+	params.collision_mask = SHIP_HULL_LAYER
+	var hit: Dictionary = world.direct_space_state.get_rest_info(params)
+	if hit.is_empty():
+		return
+	# attribute the contact to the nearest ship hull: two hulls overlapping the
+	# player at once is not a meaningful ram, and a's own call fires when a is
+	# the one the probe rests against
+	var cid: int = hit.get("collider_id", 0)
+	var owner: Object = instance_from_id(cid) if cid != 0 else null
+	if owner == null or not owner.has_meta("ai") or owner.get_meta("ai") != a:
+		return
+	var point: Vector3 = hit["point"]
+	var n: Vector3 = hit["normal"]
+	# orient the response normal off the surface toward the player
+	if n.dot(ship.global_position - point) < 0.0:
+		n = -n
+	var dv := _process_contact(point, n, a, Vector3.ZERO,
+			get_physics_process_delta_time())
+	_ship_contact_response(a, dv)
+	# port-side safety net: keep the player box off the other hull's surface
+	var pen := _player_box_support(n) - (ship.global_position - point).dot(n)
+	if pen > 0.0:
+		ship.global_position += n * (pen + 0.5)
+
+func _collide_ai_sphere(a: AiShip, d: Vector3, dist: float) -> void:
+	# fallback for a hull-less partner (a roundish cargo pod bounces centrally
+	# anyway): the 95 m ring is our detector's geometry, not a collider mesh, and
+	# the centre-line contact has r x n = 0, so this path does not reorient
 	if dist >= 95.0 or dist < 0.1:
 		return
 	var n := d / dist
-	# the contact point sits midway between the centres: the 95 m ring is our
-	# detector's geometry, not the original's collider mesh
 	var dv := _process_contact(a.global_position + n * (dist * 0.5), n, a,
 			Vector3.ZERO, get_physics_process_delta_time())
+	_ship_contact_response(a, dv)
+	d = ship.global_position - a.global_position
+	dist = d.length()
+	if dist < 95.0 and dist > 0.1:
+		ship.global_position = a.global_position + d / dist * 95.0
+
+func _ship_contact_response(a: AiShip, dv: Vector2) -> void:
+	# the shared damage/feedback tail: BOTH hulls take the one collision-damage
+	# number, source 4 (the collide handler above iiSim::OnCollision @ 0x10078ab0)
 	if dv.x > 0.05 or dv.y > 0.05:
 		var dmg := _collision_damage(dv.x, maxf(ship.mass, 1.0),
 				dv.y, maxf(a.mass, 1.0))
@@ -365,11 +418,6 @@ func _collide_ai(a: AiShip) -> void:
 			kill_ai(a)
 		audio.play("audio/sfx/collision.wav", -3.0)
 		audio.play("audio/sfx/ship_clatter.wav", -8.0)
-	# port-side safety net: never leave the pair interpenetrating
-	d = ship.global_position - a.global_position
-	dist = d.length()
-	if dist < 95.0 and dist > 0.1:
-		ship.global_position = a.global_position + d / dist * 95.0
 
 func _collisions() -> void:
 	# player_collision: leave() clears docked_at BEFORE the startup movie, but

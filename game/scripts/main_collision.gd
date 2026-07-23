@@ -149,6 +149,7 @@ func _collide_sphere(center: Vector3, radius: float, vel: Vector3,
 # one. The per-mesh sphere blobs below remain only as the fallback -- on
 # sprawling open frames like Hoffer's Gap they were solid in the wrong places.
 const HULL_LAYER := 1 << 5   # a private physics layer; nothing else uses physics
+const SHIP_HULL_LAYER := 1 << 6  # AI ships' own hull trimeshes (see _collide_ai)
 
 var _hull_avatar_index := {}   # "avatars/x/setup.gltf" -> hull json path
 var _probe_shape: SphereShape3D
@@ -172,20 +173,20 @@ func _hull_index() -> Dictionary:
 			_hull_avatar_index[av + ".gltf"] = "data/json/" + ch + ".json"
 	return _hull_avatar_index
 
-func _attach_collision_hull(o: Dictionary, model: Node3D) -> bool:
-	var hull_path: String = _hull_index().get(str(o.get("avatar", "")).to_lower(), "")
-	if hull_path.is_empty():
-		return false
+func _build_hull_body(hull_path: String, layer: int) -> StaticBody3D:
+	# Shared CollisionHull trimesh loader, used for stations (HULL_LAYER) and AI
+	# ships (SHIP_HULL_LAYER): a converted hull json -> two-sided
+	# ConcavePolygonShape3D StaticBody on a private layer, mask 0.
 	var f := FileAccess.open(_base().path_join(hull_path), FileAccess.READ)
 	if f == null:
-		return false
+		return null
 	var h: Variant = JSON.parse_string(f.get_as_text())
 	if not (h is Dictionary):
-		return false
+		return null
 	var pts: Array = h.get("points", [])
 	var tris: Array = h.get("triangles", [])
 	if pts.is_empty() or tris.is_empty():
-		return false
+		return null
 	var faces := PackedVector3Array()
 	faces.resize(tris.size() * 3)
 	var n := 0
@@ -207,14 +208,102 @@ func _attach_collision_hull(o: Dictionary, model: Node3D) -> bool:
 	# toward the ship anyway, so two-sided costs nothing.
 	shape.backface_collision = true
 	var body := StaticBody3D.new()
-	body.collision_layer = HULL_LAYER
+	body.collision_layer = layer
 	body.collision_mask = 0
 	var cs := CollisionShape3D.new()
 	cs.shape = shape
 	body.add_child(cs)
+	return body
+
+func _attach_collision_hull(o: Dictionary, model: Node3D) -> bool:
+	var hull_path: String = _hull_index().get(str(o.get("avatar", "")).to_lower(), "")
+	if hull_path.is_empty():
+		return false
+	var body := _build_hull_body(hull_path, HULL_LAYER)
+	if body == null:
+		return false
 	model.add_child(body)
 	o["hull"] = true
 	return true
+
+# --- AI ship collision hulls -------------------------------------------------
+# Ships carry the SAME authored CollisionHull as stations (ships.json
+# collision_hull:/, 134 records). Attached lazily -- only when a ship comes
+# within contact range -- so distant traffic costs nothing. Feeding _collide_ai
+# a REAL off-centre surface point + normal is what lets the response reorient a
+# hull: the old centre-to-centre contact had r x n = 0 (a purely central bounce
+# that could reorient neither party -- the "dumb bounce"). See docs/original.md
+# 5h and FiSim::ProcessContact (flux @ 0x100bd920).
+var _ship_hull_avatar_index := {}   # "cutter/setup" -> hull json path
+
+func _ship_hull_index() -> Dictionary:
+	if not _ship_hull_avatar_index.is_empty():
+		return _ship_hull_avatar_index
+	var f := FileAccess.open(_base().path_join("data/json/ships.json"),
+			FileAccess.READ)
+	if f == null:
+		_ship_hull_avatar_index["<none>"] = ""
+		return _ship_hull_avatar_index
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if parsed is Array:
+		for rec: Dictionary in parsed:
+			var av := str(rec.get("avatar", "")) \
+					.trim_prefix("lws:/avatars/").to_lower()
+			var ch := str(rec.get("collision_hull", "")) \
+					.trim_prefix("collision_hull:/").to_lower()
+			if av.is_empty() or ch.is_empty():
+				continue
+			_ship_hull_avatar_index[av] = "data/json/" + ch + ".json"
+	if _ship_hull_avatar_index.is_empty():
+		_ship_hull_avatar_index["<none>"] = ""
+	return _ship_hull_avatar_index
+
+func _ensure_ship_hull(a: AiShip) -> StaticBody3D:
+	# lazily attach a's hull trimesh to its node; cache the body (or a null
+	# sentinel for a hull-less / avatar-less ship) so the lookup runs once. The
+	# gltf model rides the AI node at identity, so the hull's model-frame json
+	# aligns with the node's own frame -- parent to the node so it tracks pose.
+	if a.has_meta("hull_body"):
+		var cached: Variant = a.get_meta("hull_body")
+		return cached if is_instance_valid(cached) else null
+	var key := a.avatar_path.trim_prefix("data/avatars/avatars/") \
+			.trim_suffix(".gltf").to_lower()
+	var hull_path: String = _ship_hull_index().get(key, "")
+	if hull_path.is_empty():
+		a.set_meta("hull_body", null)
+		return null
+	var body := _build_hull_body(hull_path, SHIP_HULL_LAYER)
+	if body == null:
+		a.set_meta("hull_body", null)
+		return null
+	body.set_meta("ai", a)
+	a.add_child(body)
+	a.set_meta("hull_body", body)
+	return body
+
+var _player_box: BoxShape3D
+var _player_box_dims := Vector3.ZERO
+
+func _player_box_probe() -> BoxShape3D:
+	# the player's contact proxy for ship-ship: the ship's AUTHORED bounding box
+	# (ini w/h/l) -- the very box the engine already models the hull as for mass
+	# and the diagonal inertia tensor (ship_flight.recalc_moi / iiThrusterSim::
+	# Load @ 0x1007ddf0). A sphere proxy can NEVER torque the player (a sphere's
+	# contact normal is radial, so r_a x n = 0); the box's corners produce the
+	# off-CoM contact the original's real hull does, so the player tumbles too.
+	var dims := ship.dims if ship.dims.length() > 1.0 else Vector3(40, 40, 40)
+	if _player_box == null or _player_box_dims != dims:
+		_player_box = BoxShape3D.new()
+		_player_box.size = dims
+		_player_box_dims = dims
+	return _player_box
+
+func _player_box_support(n: Vector3) -> float:
+	# half-extent of the player box along world normal n -- the penetration
+	# reference for the depenetration safety net
+	var nl: Vector3 = n * ship.global_transform.basis   # world -> local
+	var h := (ship.dims if ship.dims.length() > 1.0 else Vector3(40, 40, 40)) * 0.5
+	return absf(nl.x) * h.x + absf(nl.y) * h.y + absf(nl.z) * h.z
 
 func _collide_hull(o: Dictionary) -> void:
 	# swept-sphere test of the player against the station's hull trimesh,

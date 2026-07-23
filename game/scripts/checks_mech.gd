@@ -86,6 +86,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_contact_law",
 	&"_ms_nav_contact",
 	&"_ms_contact_pair",
+	&"_ms_ship_reorient_arm",
+	&"_ms_ship_reorient",
 	&"_ms_hull_solid",
 	&"_ms_hull_solid_assert",
 	&"_ms_hull_ghost",
@@ -113,6 +115,7 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_script_queries",
 	&"_ms_station_reactive",
 	&"_ms_cutscene_staging",
+	&"_ms_set_collision_on",
 	&"_ms_cutscene_staging_assert",
 	&"_ms_comms_overlay",
 	&"_ms_remote_link",
@@ -974,6 +977,64 @@ func _ms_contact_pair(_delta: float) -> void:
 		"mass 125 -> 250, MOI frozen until recalc, then x %.2f" % moi_ratio)
 	_mech_reap(pod)
 	m.ship.velocity = Vector3.ZERO
+	_mech_next()
+
+# --- ship-ship reorientation: the contact is fed REAL hull geometry ----------
+# The old centre-to-centre contact put the point on the line of centres
+# (r x n = 0), so a ship-ship hit could reorient neither hull -- a purely
+# central "dumb bounce". _collide_ai now narrowphases the player's box proxy
+# against the other ship's CollisionHull trimesh, so the surface point/normal
+# sit off both centres of mass and FiSim::ProcessContact sheds the impulse into
+# spin. Two steps: arm attaches the freshly built StaticBody a frame BEFORE the
+# query, so it is registered in the physics space when get_rest_info runs.
+var _reorient_enemy: AiShip = null
+var _reorient_saved := {}
+
+func _ms_ship_reorient_arm(_delta: float) -> void:
+	_reorient_saved = {"pos": m.ship.global_position, "rot": m.ship.rotation,
+		"vel": m.ship.velocity, "w": m.ship.angular_velocity}
+	m.ship.velocity = Vector3.ZERO
+	# overlap the player: both hulls are tens of metres, so a ~30 m offset keeps
+	# them interpenetrating for a guaranteed rest contact next frame
+	var e := _mech_spawn("Reorient Test", 5000.0,
+			m.ship.global_position + Vector3(28, 11, 6))
+	e.avatar_path = "data/avatars/avatars/cutter/setup.gltf"  # -> gangstership_hull
+	e.dims = Vector3(40, 40, 160)
+	e.mass = 600.0
+	e.recalc_moi()
+	e.velocity = Vector3.ZERO
+	e.angular_velocity = Vector3.ZERO
+	var body: StaticBody3D = m._ensure_ship_hull(e)
+	_reorient_enemy = e
+	_mech("ship-hull-attach", body != null,
+		"cutter avatar -> hull trimesh attached: %s" % (body != null))
+	_mech_next()
+
+func _ms_ship_reorient(_delta: float) -> void:
+	var e := _reorient_enemy
+	if e == null or not is_instance_valid(e):
+		_mech("ship-reorient", false, "enemy lost before contact")
+		_mech_next()
+		return
+	# yaw/pitch the player off the enemy's axes so its box contacts as a corner
+	# (r_a not parallel to n) -- the player must tumble too, not only the enemy
+	m.ship.rotation = Vector3(deg_to_rad(20.0), deg_to_rad(35.0), 0.0)
+	m.ship.velocity = (e.global_position - m.ship.global_position).normalized() * 60.0
+	m.ship.angular_velocity = Vector3.ZERO
+	e.velocity = Vector3.ZERO
+	e.angular_velocity = Vector3.ZERO
+	m._collide_ai(e)
+	var wp: float = m.ship.angular_velocity.length()
+	var we: float = e.angular_velocity.length()
+	_mech("ship-reorient", wp > 1e-4 and we > 1e-4,
+		"player spin %.4f rad/s, enemy spin %.4f rad/s (both > 0 = off-centre)"
+			% [wp, we])
+	_mech_reap(e)
+	_reorient_enemy = null
+	m.ship.global_position = _reorient_saved["pos"]
+	m.ship.rotation = _reorient_saved["rot"]
+	m.ship.velocity = _reorient_saved["vel"]
+	m.ship.angular_velocity = _reorient_saved["w"]
 	_mech_next()
 
 ## kill_ai now runs OnExplode's timed dramatic sequence for anything over
@@ -1910,32 +1971,41 @@ func _ms_remote_link(_delta: float) -> void:
 var _mech_burn: AiShip = null
 
 
+var _ghost_hostile: AiShip = null
+var _ghost_hsim: Variant = null
+var _ghost_hull0 := 0.0
+var _ghost_off_ok := false
+
 func _ms_cutscene_staging(_delta: float) -> void:
-	# sim.SetCollision (sim.dll @ 0x10005760): with collision off a staged
-	# overlap produces NO contact -- the player glides through; back on, the
-	# same geometry collides and damages. Driven through the runtime dispatch.
+	# sim.SetCollision (sim.dll @ 0x10005760): collision off -> a staged overlap
+	# produces NO contact (the player glides through); back on, the same geometry
+	# collides and damages. The OFF half is asserted here; the ON half runs next
+	# frame (_ms_set_collision_on) because _collide_ai now narrowphases the ship's
+	# real hull trimesh, and a freshly attached StaticBody only enters the physics
+	# space on the following tick.
 	var w: PogWorld = m.pog_rt.world
+	# just BEYOND the box's front half-length, so the two hulls overlap at a
+	# clean frontal contact -- engulfing the small hostile inside the long box
+	# makes get_rest_info return an ambiguous side/rear exit normal
+	var off: float = m.ship.dims.z * 0.5 + 8.0
 	var hostile: AiShip = m.spawn_hostile(
-			m.ship.global_position + Vector3(0, 0, -50))
+			m.ship.global_position - m.ship.global_transform.basis.z * off)
 	# a unique key, or _wrap_ship hands back the cached PogSim of the freed
 	# "Marauder Cutter" the brightness step spawned
 	hostile.sim_key = "mech_ghost"
+	hostile.behavior = "idle"          # freeze it across the two frames
+	hostile.velocity = Vector3.ZERO
+	m._ensure_ship_hull(hostile)       # attach the trimesh now; registers by N+1
 	var hsim = w._wrap_ship(hostile)
 	m.pog_rt.native("sim.setcollision", [hsim, 0])
 	var hull0: float = m.hull
-	m.ship.velocity = Vector3(0, 0, -10)
+	m.ship.velocity = -m.ship.global_transform.basis.z * 10.0
 	m._collisions()
-	var ghosted: bool = absf(m.hull - hull0) < 0.01
-	m.pog_rt.native("sim.setcollision", [hsim, 1])
-	m.ship.velocity = Vector3(0, 0, -10)
-	m._collisions()
-	var solid: bool = m.hull < hull0 - 0.01
+	_ghost_off_ok = absf(m.hull - hull0) < 0.01
 	m.ship.velocity = Vector3.ZERO
-	m.hull = m.hull_max
-	_mech("set-collision", ghosted and solid,
-		"off: no contact=%s, on: damaged=%s" % [ghosted, solid])
-	hostile.queue_free()
-	m.ai_ships.erase(hostile)
+	_ghost_hostile = hostile
+	_ghost_hsim = hsim
+	_ghost_hull0 = hull0
 	# isim.StartExplosion (0x1007c950: timer = FLT_MAX, the burn) +
 	# isim.StopExplosion (0x1007c970: cut to DoFinalExplosion, destroy=1)
 	_mech_burn = _mech_spawn("Burn Target", 500.0,
@@ -1948,6 +2018,45 @@ func _ms_cutscene_staging(_delta: float) -> void:
 			burning = true
 	m.pog_rt.native("isim.stopexplosion", [bsim, 0, 1])
 	_mech("start-explosion", burning, "staged burn present=%s" % burning)
+	_mech_next()
+
+
+func _ms_set_collision_on(_delta: float) -> void:
+	# the ON half of set-collision, a frame after the hostile's hull trimesh was
+	# attached, so the StaticBody is now registered in the physics space: the same
+	# staged overlap that ghosted with collision off must collide and damage now
+	var hostile := _ghost_hostile
+	var solid := false
+	var diag := "enemy lost"
+	if hostile != null and is_instance_valid(hostile):
+		m.pog_rt.native("sim.setcollision", [_ghost_hsim, 1])
+		m.ship.angular_velocity = Vector3.ZERO
+		# steer into the contact normal the narrowphase reports, so the staged
+		# overlap is unambiguously an APPROACH (the gate needs (vp_a-vp_b).n <
+		# 0.1); then let _collisions run the real response
+		var params := PhysicsShapeQueryParameters3D.new()
+		params.shape = m._player_box_probe()
+		params.transform = m.ship.global_transform
+		params.collision_mask = m.SHIP_HULL_LAYER
+		var hit: Dictionary = m.get_world_3d().direct_space_state.get_rest_info(params)
+		if hit.is_empty():
+			diag = "no rest contact"
+		else:
+			var nn: Vector3 = hit["normal"]
+			if nn.dot(m.ship.global_position - (hit["point"] as Vector3)) < 0.0:
+				nn = -nn
+			m.ship.velocity = -nn * 40.0
+			var hull0: float = m.hull
+			m._collisions()
+			solid = m.hull < hull0 - 0.01
+			diag = "dhull=%.3f" % (hull0 - m.hull)
+		m.ship.velocity = Vector3.ZERO
+		m.hull = m.hull_max
+		hostile.queue_free()
+		m.ai_ships.erase(hostile)
+	_ghost_hostile = null
+	_mech("set-collision", _ghost_off_ok and solid,
+		"off: no contact=%s, on: damaged=%s (%s)" % [_ghost_off_ok, solid, diag])
 	_mech_next()
 
 

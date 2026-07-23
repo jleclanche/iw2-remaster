@@ -928,7 +928,23 @@ authoritative.
 
 Port: main_collision.gd `_process_contact` (+ the mechcheck steps
 contact-restitution / contact-angular / contact-pair / setmass-moi, which
-reproduce the formula's exact numbers).
+reproduce the formula's exact numbers). The impulse solver has always been
+faithful; what was missing was the CONTACT GEOMETRY it was fed. Stations
+narrowphase against their real `CollisionHull` trimesh (`_collide_hull`), but
+ship-ship and the sphere fallbacks used a centre-to-centre normal with the
+contact point ON the line of centres -- so `r x n = 0`, the angular admittance
+and `dL = r x j n` both vanish, and the response was a purely central bounce
+that could reorient NEITHER hull (the observable "dumb bounce"). The original
+never has this: `RespondToCollisions` consumes contacts whose point+normal come
+from the narrowphase between the two ships' real hulls, off both centres of
+mass. `_collide_ai` now matches that -- it narrowphases the player's authored
+bounding box (the same box the inertia tensor is built from) against the other
+ship's `CollisionHull` trimesh (ships.json carries one for 134 records; attached
+lazily on approach, `SHIP_HULL_LAYER`), so the surface point/normal sit off both
+CoMs and the impulse sheds into spin: both hulls tumble, then the flight
+computer's attitude-hold recovers (matching the engine's thruster torque-null).
+A hull-less partner (cargo pods) still falls back to the centre-line sphere.
+Guarded by the mechcheck steps ship-hull-attach / ship-reorient.
 
 ---
 
