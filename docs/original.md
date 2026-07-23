@@ -1328,7 +1328,12 @@ formatter is deliberately *different* from the reticle's: `7103m` in the list,
 `7.1km` in the reticle, for the same contact.
 
 **Brackets** are not geometry: four corner **sprites** on the target's projected
-bounding box, with a **0.35 s slam-in** from 70 px out.
+box, with a **0.35 s slam-in** from 70 px out. The box size is a per-class branch
+in `FUN_100e09e0` @ `0x100e09e0`: **icShip / icInertSim** wrap the full oriented
+bounding box (8 projected corners); **everything else -- icStation, icGeography --
+uses a screen SQUARE of the FiSim radius (`+0x1c`) x 0.7** (`_DAT_101191e8`),
+which is deliberately smaller than the model silhouette (Hoffer's Gap: radius 4000
+-> the brackets sit inside the rock). Full write-up in `docs/hud.md`.
 
 **Panels**: `iiHUDBlockElement` stacks blocks into the screen corners. Margin 6,
 border 4, gap 3, header 16, advance `h+11`. MFD **128x176**; weapons and shields

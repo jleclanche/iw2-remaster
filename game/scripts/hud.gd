@@ -2458,6 +2458,7 @@ func _navshot_pin() -> void:
 const BRK_ACQUIRE := 0.35   # DAT_1011d9dc: target-acquire animation length
 const BRK_SLAM := 70.0      # DAT_1011d9e0: how far outside the bracket starts
 const BRK_MIN := 2.0        # _DAT_10119ec8: bbox smaller than this collapses
+const BRK_RADIUS_SCALE := 0.7  # _DAT_101191e8: icStation/geography box radius factor
 
 var _brk_target := ""       # who the acquire animation is currently playing for
 var _brk_t := 0.0
@@ -2482,34 +2483,17 @@ func _corner_bracket(bb: Rect2, col: Color, sprite := 4) -> void:
 	_spr(Vector2(bb.end.x, bb.position.y), sprite, col, 0.0, 1)
 	_spr(bb.end, sprite, col, 0.0, 3)
 
-var _hud_aabb_cache: Dictionary = {}   # node instance id -> merged local AABB
-
-func _node_local_aabb(node: Node3D) -> AABB:
-	# merged model-space AABB of an instanced avatar -- the remaster's stand-in
-	# for the sim dims the INI loader stores at sim+0x1d8..0x1e0 (the engine
-	# derives them from the same model)
-	var key := node.get_instance_id()
-	if not _hud_aabb_cache.has(key):
-		var merged := AABB()
-		var first := true
-		var inv := node.global_transform.affine_inverse()
-		for mi in node.find_children("*", "MeshInstance3D", true, false):
-			var tb: AABB = (inv * (mi as Node3D).global_transform) \
-					* (mi as MeshInstance3D).get_aabb()
-			merged = tb if first else merged.merge(tb)
-			first = false
-		_hud_aabb_cache[key] = merged
-	return _hud_aabb_cache[key]
-
 func _bbox_project(xf: Transform3D, local: AABB) -> Rect2:
-	# The contact bbox law (icHUD update FUN_100e09e0 @ 0x100e0eb2..0x100e1230):
-	# the screen box is the min/max over the VIEWPORT PROJECTION of the 8
-	# corners of the sim's ORIENTED bounding box -- half extents = the sim dims
-	# (+0x1d8/+0x1dc/+0x1e0) * 0.5 (_DAT_10117738) along the sim's basis rows
-	# (+0xec / +0xf8 / +0x104), each corner TransformToViewport'd and min/max'd.
-	# So the brackets wrap the WHOLE projected object -- a station fills them.
-	# FUN_100e37f0 then floors all four edges and collapses either axis to its
-	# floored midpoint when it is under 2 px (_DAT_10119ec8 / _DAT_10117738).
+	# The icShip / icInertSim bbox law (icHUD update FUN_100e09e0 @ 0x100e09e0,
+	# the OBB branch): the screen box is the min/max over the VIEWPORT PROJECTION
+	# of the 8 corners of the sim's ORIENTED bounding box -- half extents = the
+	# sim dims (icShip +0x208, icInertSim +0x1d8) * 0.5 (_DAT_10117738) along the
+	# sim's basis rows (+0xec / +0xf8 / +0x104), each TransformToViewport'd and
+	# min/max'd. So for a SHIP the brackets wrap the whole projected hull.
+	# icStation / icGeography targets do NOT come here -- they take the smaller
+	# radius branch (see _bbox_radius_square). FUN_100e37f0 then floors all four
+	# edges and collapses either axis to its floored midpoint when it is under
+	# 2 px (_DAT_10119ec8 / _DAT_10117738).
 	var cam: Camera3D = main.cam
 	var x0 := INF
 	var y0 := INF
@@ -2545,17 +2529,64 @@ func _bbox_of_ship(a: AiShip) -> Rect2:
 	return _bbox_project(a.global_transform,
 			AABB(-a.half_dims, a.half_dims * 2.0))
 
+func _bbox_radius_square(world: Vector3, radius: float) -> Rect2:
+	# icStation / icGeography target box (FUN_100e09e0 @ 0x100e09e0, the radius
+	# branch): a screen-space SQUARE centred on the sim's projected origin,
+	# half-side = the projected length of a world offset of radius * 0.7
+	# (_DAT_101191e8) along the camera's screen-horizontal axis (this+0xe0/e4/e8).
+	# It is deliberately SMALLER than the model silhouette -- for Hoffer's Gap the
+	# authored radius 4000 -> 2800 world half-extent < the model's 3000/3500, so
+	# the brackets sit inside the hull. FUN_100e37f0 floors the edges and
+	# collapses an axis under 2 px (BRK_MIN).
+	var cam: Camera3D = main.cam
+	var c := cam.unproject_position(world)
+	var edge := cam.unproject_position(
+			world + cam.global_transform.basis.x * (radius * BRK_RADIUS_SCALE))
+	var half := absf(edge.x - c.x)
+	var x0: float = floor(c.x - half)
+	var y0: float = floor(c.y - half)
+	var x1: float = floor(c.x + half)
+	var y1: float = floor(c.y + half)
+	if x1 - x0 < BRK_MIN:
+		x0 = floor(c.x)
+		x1 = x0
+	if y1 - y0 < BRK_MIN:
+		y0 = floor(c.y)
+		y1 = y0
+	return Rect2(x0, y0, x1 - x0, y1 - y0)
+
+var _station_radius_db: Dictionary = {}   # avatar (lower, .gltf) -> FiSim radius
+
+func _station_authored_radius(avatar: String) -> float:
+	# The engine's FiSim radius is the station INI 'radius' field (FiSim::SetRadius
+	# @ 0x100bce40 -> sim+0x1c), NOT the model bounds the streamer stamps into
+	# o["radius"]. Cached from stations.json, keyed exactly like
+	# main_collision._hull_index so o["avatar"] resolves.
+	if _station_radius_db.is_empty():
+		_station_radius_db["<none>"] = 0.0
+		var f := FileAccess.open(
+				main._base().path_join("data/json/stations.json"), FileAccess.READ)
+		if f != null:
+			var parsed: Variant = JSON.parse_string(f.get_as_text())
+			if parsed is Array:
+				for rec: Dictionary in parsed:
+					var av := str(rec.get("avatar", "")).trim_prefix("lws:/").to_lower()
+					var props: Dictionary = rec.get("properties", {})
+					if not av.is_empty():
+						_station_radius_db[av + ".gltf"] = float(
+								props.get("radius", 0.0))
+	return float(_station_radius_db.get(avatar.to_lower(), 0.0))
+
 func _bbox_of_obj(o: Dictionary, world: Vector3) -> Rect2:
-	var node: Node3D = o["node"]
-	if node != null and is_instance_valid(node) and node.is_inside_tree():
-		var bb := _node_local_aabb(node)
-		if bb.size.length() > 0.0:
-			return _bbox_project(node.global_transform, bb)
-	# no avatar in the tree: an axis-aligned cube of the record's authored
-	# radius (FiSim::SetRadius) around the position stands in
-	var r: float = maxf(float(o.get("radius", 0.0)), 1.0)
-	return _bbox_project(Transform3D(Basis.IDENTITY, world),
-			AABB(Vector3(-r, -r, -r), Vector3(r, r, r) * 2.0))
+	# A contact object (icStation / icPlanet / icSun / icNebula, all icGeography)
+	# takes FUN_100e09e0's radius branch, not the 8-corner OBB (that path is
+	# icShip -- _bbox_of_ship -- and icInertSim only). Size it from the FiSim
+	# radius, preferring the authored INI radius over the mesh bounds the streamer
+	# stamps into o["radius"].
+	var r := _station_authored_radius(str(o.get("avatar", "")))
+	if r <= 0.0:
+		r = maxf(float(o.get("radius", 0.0)), 1.0)
+	return _bbox_radius_square(world, r)
 
 func _draw_target_marks() -> void:
 	var cam: Camera3D = main.cam

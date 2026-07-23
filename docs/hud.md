@@ -1029,10 +1029,31 @@ table itself is BSS at 0x101741b0, so tools/iw2/hud_sprites.py recovers all
 ## Target marks, the aim triangles and subtargeting (extracted exactly)
 
 - CONTACT / SELECTION BOXES (icHUDBrackets, FUN_100e37f0 @ 0x100e37f0):
-  four copies of ONE corner cell mirrored into the projected bounding box's
-  corners (flip flags 0/2/1/3). Contacts and the acquire animation use the
-  8x8 sprite 4; the settled selection switches to the 16x16 sprite 1
-  (177883). Below _DAT_10119ec8 = 2 px the box collapses to its midpoint.
+  four copies of ONE corner cell mirrored into the projected box's corners
+  (flip flags 0/2/1/3). Contacts and the acquire animation use the 8x8
+  sprite 4; the settled selection switches to the 16x16 sprite 1 (177883).
+  Below _DAT_10119ec8 = 2 px the box collapses to its midpoint.
+  **The box itself is sized in the update FUN_100e09e0 @ 0x100e09e0, and it
+  is NOT one law but a per-CLASS branch** (an earlier pass wrongly made every
+  target wrap its full OBB, so a station filled the screen):
+    - **icShip** -> the screen min/max of the 8 corners of the OBB, half
+      extents = ship dims (+0x208) x 0.5 (_DAT_10117738) along basis rows
+      +0xec/+0xf8/+0x104. The brackets wrap the whole projected hull.
+    - **icInertSim** (asteroid/debris) -> the same 8-corner OBB, dims at
+      +0x1d8.
+    - **everything else -- icStation, icGeography (icSun/icPlanet/icNebula)
+      -- takes the radius branch** (176164-176191): a screen-space SQUARE
+      centred on the projected origin, half-side = the projected length of a
+      world offset of **FiSim radius (+0x1c, FiSim::SetRadius @ 0x100bce40,
+      the INI `radius`) x 0.7** (_DAT_101191e8). For Hoffer's Gap radius 4000
+      -> 2800 m half-extent, SMALLER than the model half-extents 3000/3500,
+      so the amber brackets sit INSIDE the silhouette and the rock overflows
+      them (matches the original at 22.6 km; verified by re-shot). The
+      selected target's box (+0x150..0x15c) is a verbatim copy of the chosen
+      contact's box (176372-176375), so the lock uses the same per-class box.
+      Our port: icShip via `_bbox_of_ship` (OBB), objects via `_bbox_of_obj`
+      -> `_bbox_radius_square` on the AUTHORED INI radius (NOT the mesh-bounds
+      radius the streamer stamps into `o["radius"]`).
   Acquire: an outer box slams in from _DAT_1011d9e0 = 70 px over
   DAT_1011d9dc = 0.35 s, alpha ramping 0 -> 1 (_DAT_1011d9d8). Colours are
   the per-contact IFF colours. Category 4 (waypoint) draws sprite 47,
