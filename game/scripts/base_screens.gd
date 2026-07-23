@@ -818,10 +818,11 @@ func _draw() -> void:
 func _draw_window(w: PogUi.PogWindow) -> void:
 	var r := _rect_of(w)
 	if w.is_border:
-		# FcBorder: the amber outline box around list areas and button stacks.
-		# The avatar's real art (rounded caps out of the atlas) is not yet
-		# extracted; a 1 px outline in the GUI amber stands in.
-		draw_rect(r, AMBER_DIM, false, 1.0)
+		# FcBorder (FcBorder::AttachToWindow @ flux 0x77950): the rounded 7 px
+		# fancy-border frame around list areas and button stacks -- the same
+		# m_fancy_border atlas art the slider track draws
+		# (icWindowAvatar::DrawBorder @ 0x10112e20, width 7).
+		_draw_border(r, 7.0, FANCY_BORDER_CORNER, FANCY_BORDER_STRAIGHT)
 		return
 	if w.kind == "listbox":
 		_draw_listbox(w, r)
@@ -1030,8 +1031,8 @@ func _scroll_to(t: PogUi.PogWindow, pos: float) -> void:
 ## (m_minimum_thumb_width @ 0x10145f08), PositionOfNthStep = canvas.left +
 ## ThumbLength * 0.5 + n * pitch (@ 0x1007ea20).
 const SLIDER_STEPS := 11  # ftol((1 - 0) / 0.1) + 1: the option rows' range
-const SLIDER_TRACK_CORNER := Rect2(0, 28, 7, 7)     # m_fancy_border_corner
-const SLIDER_TRACK_STRAIGHT := Rect2(8, 28, 7, 1)   # m_fancy_border_straight
+const FANCY_BORDER_CORNER := Rect2(0, 28, 7, 7)     # m_fancy_border_corner
+const FANCY_BORDER_STRAIGHT := Rect2(8, 28, 7, 1)   # m_fancy_border_straight
 const SLIDER_PILL: Array = [Rect2(110, 13, 5, 20),  # ctor 0x10110190 cells
 		Rect2(116, 13, 1, 20), Rect2(118, 13, 5, 20)]
 const OPT_NEUTRAL := Color(0.6, 0.451, 0.0)   # FUN_1001c9f0 state colours
@@ -1092,7 +1093,7 @@ func _draw_slider(w: PogUi.PogWindow, r: Rect2) -> void:
 	draw_string(f, Vector2(r.position.x + 13.0, ty), w.title.to_upper(),
 			HORIZONTAL_ALIGNMENT_LEFT, int(r.size.x * 0.5 - 13.0), fs, col)
 	var sr := _slider_rect(r)
-	_draw_border(sr, 7.0, SLIDER_TRACK_CORNER, SLIDER_TRACK_STRAIGHT)
+	_draw_border(sr, 7.0, FANCY_BORDER_CORNER, FANCY_BORDER_STRAIGHT)
 	var canvas_l := sr.position.x + 3.0
 	var canvas_w := sr.size.x - 6.0
 	var pitch := canvas_w / float(SLIDER_STEPS)
