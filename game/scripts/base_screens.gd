@@ -127,6 +127,10 @@ func _process(delta: float) -> void:
 	var scr: PogUi.PogScreen = ui.visible_screen()
 	var bi := _base()
 	var want := (scr != null and not _rows(scr).is_empty()) or bi != null
+	# Play the drawer shut: when the last flight/front-end screen drops (bi ==
+	# null, no diorama), keep the node up until the bars have contracted to 0.
+	if not want and bi == null and (_bar_w > 0.5 or _bar_w_rhs > 0.5):
+		want = true
 	if want != visible:
 		visible = want
 		ui.dirty = true
@@ -167,8 +171,8 @@ func _process(delta: float) -> void:
 ## only (bi == null) -- a base interior would fade its diorama, which the engine
 ## never modulates, so those keep the instant path.
 func _anim_step(delta: float, scr: PogUi.PogScreen, bi) -> void:
-	if bi != null or not visible or scr == null:
-		# Not animating (a base interior, or nothing up): keep the content solid
+	if bi != null or not visible:
+		# Not animating (a base interior, or fully hidden): keep the content solid
 		# and arm a fresh reveal for the next flight/front-end screen -- widths
 		# grow from 0 and _prev_top = null forces the first animating frame to
 		# reset the fade even if the screen was built a frame before it showed.
@@ -178,16 +182,21 @@ func _anim_step(delta: float, scr: PogUi.PogScreen, bi) -> void:
 		_bar_w_rhs = 0.0
 		_prev_top = null
 		return
+	# Flight/front-end: the bars chase the live target -- the screen's
+	# SetShadyBarWidth while it is up, or 0 once it has popped (scr == null), so
+	# the drawer contracts shut on close (_process holds the node up until done).
+	var tw: float = float(ui.shady_width) if scr != null else 0.0
+	var tw_rhs: float = float(ui.shady_width_rhs) if scr != null else 0.0
 	var top: PogUi.PogScreen = ui.top_screen()
 	if top != _prev_top:
 		_prev_top = top
-		_content_alpha = 0.0        # a raise or a back re-fades the content
-	_bar_w = _approach(_bar_w, float(ui.shady_width), SHADY_GROW_PXPS * delta)
-	_bar_w_rhs = _approach(_bar_w_rhs, float(ui.shady_width_rhs),
-			SHADY_GROW_PXPS * delta)
-	var open: bool = is_equal_approx(_bar_w, float(ui.shady_width)) \
-			and is_equal_approx(_bar_w_rhs, float(ui.shady_width_rhs))
-	if open:
+		if scr != null:             # a raise or a back re-fades the content in
+			_content_alpha = 0.0
+	_bar_w = _approach(_bar_w, tw, SHADY_GROW_PXPS * delta)
+	_bar_w_rhs = _approach(_bar_w_rhs, tw_rhs, SHADY_GROW_PXPS * delta)
+	if scr == null:
+		_content_alpha = 0.0        # content already gone; only the drawer closes
+	elif is_equal_approx(_bar_w, tw) and is_equal_approx(_bar_w_rhs, tw_rhs):
 		_content_alpha = minf(1.0, _content_alpha + CONTENT_FADE_PS * delta)
 	# self_modulate dims THIS node's own draws (the content windows) but not the
 	# _bar_fill / _fx children, so the bars stay solid while the content fades in.
@@ -668,6 +677,9 @@ var _bar_w := 0.0            ## eased current width of the left menu column
 var _bar_w_rhs := 0.0       ## eased current width of the RHS column
 var _content_alpha := 1.0
 var _prev_top: PogUi.PogScreen = null
+## The bar rects captured from the live screen, [[Rect2 full, bool rhs], ...].
+## Retained through a close so the drawer can contract after the screen popped.
+var _bar_geo: Array = []
 var _skin_fonts: Dictionary = {}
 
 
@@ -874,30 +886,45 @@ func _draw() -> void:
 	# stale entries here stacks another additive pass per frame and whites the
 	# column out within a second -- and survives a screen change.
 	_shady_rects.clear()
+	var animate: bool = bi == null
+	# 1. the shady bars -- the translucent columns the menus sit on, as wide as
+	#    gui.SetShadyBarWidth / SetRHSShadyBarWidth said, icShadyBar's recipe
+	#    (fill + weave + edges). On the flight/front-end screens the width eases
+	#    open (the drawer, _anim_step); the geometry is captured from the live
+	#    screen and REPLAYED at the eased width so the bars can contract shut
+	#    after the screen has popped (scr == null during a close).
+	if animate:
+		if scr != null:
+			_bar_geo.clear()
+			for w in scr.windows:
+				if w.kind != "window" or not w.art.is_empty() \
+						or not w.title.is_empty() or not w.text.is_empty() \
+						or w.is_border:
+					continue
+				if ui.shady_width > 0 and absi(w.w - ui.shady_width) <= 1:
+					_bar_geo.append([_rect_of(w), false])
+				elif ui.shady_width_rhs > 0 and absi(w.w - ui.shady_width_rhs) <= 1:
+					_bar_geo.append([_rect_of(w), true])
+		for g: Array in _bar_geo:
+			var br: Rect2 = g[0]
+			var full := br.size.x
+			var cur := minf(full, _bar_w_rhs if g[1] else _bar_w)
+			if g[1]:                   # the RHS column grows/contracts at its right
+				br.position.x += full - cur
+			br.size.x = cur
+			_draw_shady(br)
 	if scr != null:
 		var sc := _scale()
 		draw_set_transform(_origin(), 0.0, Vector2(sc, sc))
-		# 1. the shady bars -- the translucent columns the menus sit on, as wide
-		#    as gui.SetShadyBarWidth / SetRHSShadyBarWidth said, drawn with
-		#    icShadyBar's extracted recipe (fill + weave + edges). On the flight/
-		#    front-end screens the width eases open (the drawer, _anim_step).
-		var animate: bool = bi == null
-		for w in scr.windows:
-			if w.kind != "window" or not w.art.is_empty() \
-					or not w.title.is_empty() or not w.text.is_empty() \
-					or w.is_border:
-				continue
-			var br := _rect_of(w)
-			if ui.shady_width > 0 and absi(w.w - ui.shady_width) <= 1:
-				if animate:            # the left column grows from its left edge
-					br.size.x = minf(br.size.x, _bar_w)
-				_draw_shady(br)
-			elif ui.shady_width_rhs > 0 and absi(w.w - ui.shady_width_rhs) <= 1:
-				if animate:            # the RHS column grows from its right edge
-					var grown := minf(br.size.x, _bar_w_rhs)
-					br.position.x += br.size.x - grown
-					br.size.x = grown
-				_draw_shady(br)
+		if not animate:
+			# base interior: bars at full width from the live windows, no reveal
+			for w in scr.windows:
+				if w.kind == "window" and w.art.is_empty() and w.title.is_empty() \
+						and w.text.is_empty() and not w.is_border \
+						and ((ui.shady_width > 0 and absi(w.w - ui.shady_width) <= 1)
+							or (ui.shady_width_rhs > 0
+								and absi(w.w - ui.shady_width_rhs) <= 1)):
+					_draw_shady(_rect_of(w))
 		# 2. the controls, each in its own art
 		for w in _rows(scr):
 			_draw_window(w)
