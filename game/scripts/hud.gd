@@ -1776,7 +1776,7 @@ func _menu_process(dt: float) -> void:
 func _unhandled_input(e: InputEvent) -> void:
 	if main == null or main.ship == null:
 		return
-	if main.menu != null and main.menu.active:
+	if main.menu != null and main.menu.visible:
 		return
 	if not (e is InputEventKey and e.pressed and not e.echo):
 		return

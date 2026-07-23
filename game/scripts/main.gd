@@ -180,7 +180,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	if menu != null and menu.active:
+	if menu != null and menu.visible:
 		return  # the menu handles its own input (it runs while paused)
 	# The mouse stands in for the joystick yoke -- the original binds no mouse
 	# axis to the pilot at all (mouse is the director's, in configs/default.ini),
@@ -367,7 +367,7 @@ func _tick_key_repeat(delta: float) -> void:
 	if _repeat_key < 0:
 		return
 	if not Input.is_physical_key_pressed(_repeat_key) \
-			or (menu != null and menu.active) or docked_at != "" \
+			or (menu != null and menu.visible) or docked_at != "" \
 			or not _repeat_fire.is_valid():
 		_repeat_key = -1
 		return
@@ -435,7 +435,7 @@ func _physics_process(delta: float) -> void:
 		# the base's own docking cutscene flies the ship; the player does not
 		ship.input_rotate = Vector3.ZERO
 		ship.input_thrust = Vector3.ZERO
-	elif docked_at == "" and not menu.active and movie == null:
+	elif docked_at == "" and not menu.visible and movie == null:
 		_player_control(delta)
 		if ap_mode > 0:
 			_autopilot_process(delta)

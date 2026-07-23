@@ -149,16 +149,6 @@ var _bust_t := 0.0
 ## then the buttons (the _top layer) fade in at 3.0/s. Reset by open().
 var _bar_w := 0.0
 var _content_alpha := 1.0
-## Closing animation (in flight): the drawer contracts and the buttons fade out
-## while the menu is already logically DOWN. `active` -- what main.gd/hud.gd gate
-## ship control and input on -- is true only while shown and NOT mid-close, so
-## the ship is flyable the instant close() fires, the contraction playing on.
-## Force-hides (visible = false) and the cosmetic readers keep using .visible and
-## follow this for free.
-var _closing := false
-var active: bool:
-	get:
-		return visible and not _closing
 var dossier_lines: Array = []  # {text, bold}
 var _scroll := 0.0
 var _char := ""
@@ -356,10 +346,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	# the menu owns its input: it must keep working while the tree is paused
 	if main.movie != null or main.demo:
 		return
-	# while the close animation plays the menu is no longer "up" -- let the input
-	# fall through to flight/HUD, which are already reading .active, not .visible
-	if _closing:
-		return
 	# While one of the original GUI screens is overlaid (SAVE/LOAD GAME raise
 	# icSPPDASaveScreen/icSPPDALoadScreen), that screen owns the input --
 	# exactly as the original PDA menu sat inert under its overlays. Its own
@@ -384,7 +370,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func open() -> void:
 	visible = true
-	_closing = false
 	_bar_w = 0.0             # the drawer opens from nothing each time
 	_content_alpha = 0.0
 	mode = "main"
@@ -401,27 +386,17 @@ func open() -> void:
 			p.stream_paused = true
 
 func close() -> void:
-	if not visible or _closing:
-		return
-	# Contract the drawer shut (the reverse of open's reveal). The menu stays
-	# VISIBLE so its own bar and buttons animate out, but it stops counting as up
-	# at once (active == visible and not _closing) -- ship control and input,
-	# which main.gd/hud.gd gate on .active, resume immediately; only the visual
-	# lingers. _finish_close hides it once the drawer is shut. Rest is unchanged.
-	_closing = true
+	# Resume/close is instant -- the original plays no animation dismissing the
+	# pause menu (the drawer reveal is on the RAISED screens, base_screens.gd).
+	visible = false
 	_drop_pda()
+	bust_movie.stop()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	get_tree().paused = false
 	for p in [main.audio.engine_player, main.audio.thruster_player,
 			main.audio.lds_player]:
 		p.stream_paused = false
 	main.fire_lock = 0.3  # the confirming click must not fire the PBC
-
-
-func _finish_close() -> void:
-	_closing = false
-	visible = false
-	bust_movie.stop()
 
 ## Is one of the original GUI screens overlaid above us right now?
 func _pog_screen_up() -> bool:
@@ -885,26 +860,16 @@ func _process(delta: float) -> void:
 		_pda_up = false
 		close()
 		return
-	# The drawer + button fade, the same reveal the raised screens play
-	# (base_screens.gd _anim_step): open grows the bar then fades the buttons in;
-	# close (in flight) fades the buttons out then contracts the bar, hiding once
-	# shut. The rate is the extracted 1500 px/s / 3.0/s at the fixed-pixel
-	# reference, scaled to the live height so the duration holds across resolutions.
+	# The drawer opens and the buttons fade in -- the same reveal the raised
+	# screens play (base_screens.gd _anim_step): the bar grows at 1500 px/s, then
+	# the button layer fades in at 3.0/s, scaled to the live height so the duration
+	# holds across resolutions. Closing (resume) is instant -- see close().
 	var grow: float = BaseScreens.SHADY_GROW_PXPS \
 			* get_viewport_rect().size.y / REF_H
-	var fade: float = BaseScreens.CONTENT_FADE_PS * delta
-	if _closing:
-		if _content_alpha > 0.01:
-			_content_alpha = move_toward(_content_alpha, 0.0, fade)
-		else:
-			_bar_w = move_toward(_bar_w, 0.0, grow * delta)
-			if is_zero_approx(_bar_w):
-				_finish_close()
-				return
-	else:
-		_bar_w = move_toward(_bar_w, _strip_w(), grow * delta)
-		if is_equal_approx(_bar_w, _strip_w()):
-			_content_alpha = minf(1.0, _content_alpha + fade)
+	_bar_w = move_toward(_bar_w, _strip_w(), grow * delta)
+	if is_equal_approx(_bar_w, _strip_w()):
+		_content_alpha = minf(1.0,
+				_content_alpha + BaseScreens.CONTENT_FADE_PS * delta)
 	_top.modulate.a = _content_alpha
 	_bust_t += delta
 	# dossier scroll: 18 px/s at native res (DAT_10117d40, icMovie::Tick),
