@@ -14,6 +14,11 @@ $env:PATH = "$jdk\bin;$env:PATH"
 
 $proj = Join-Path $root "build\ghidra-proj"
 $out = Join-Path $root "data\decomp"
+# The knowledge layer (per-binary function/name/type maps that make each pass
+# strictly better) is versioned in its OWN repo, never in iw2-remaster -- it is
+# a map of the copyrighted binary. Clone/keep it here; the export no-ops without
+# it. See docs/decompile.md and build\ghidra-knowledge\README.md.
+$know = Join-Path $root "build\ghidra-knowledge"
 # Ghidra's launcher .bat breaks on paths containing parentheses, and the GOG
 # install lives under "Program Files (x86)" — stage the binaries somewhere clean
 $stage = Join-Path $root "build\bin"
@@ -30,7 +35,7 @@ foreach ($b in $Binaries) {
     & "$ghidra\support\analyzeHeadless.bat" $proj iw2 `
         -import $staged -overwrite `
         -scriptPath (Join-Path $root "tools\ghidra") `
-        -postScript ExportDecomp.java $out 2>&1 |
+        -postScript ExportDecomp.java $out $know 2>&1 |
         Select-String "DONE|decompiled |ERROR |Exception" |
         Select-Object -Last 6
 }

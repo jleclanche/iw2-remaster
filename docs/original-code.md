@@ -56,6 +56,16 @@ transcribe the law into GDScript with the address cited (main_camera.gd).
 `icAITarget::m_*` tuning constants). Binaries are staged into `build/bin/`
 because Ghidra breaks on the `Program Files (x86)` path.
 
+**Make the recovery permanent, don't just do it once.** Reading a hole with
+`disasm.py` is one-off; the next Ghidra pass drops it again. Add the recovered
+function's entry point to the **knowledge layer** (`functions.tsv`) so the pass
+force-creates it and the body lands in the `.c` for good. Likewise, once you
+know what a `FUN_xxxxxxxx` does, add a `names.tsv` rename; once you decode a
+struct offset, extend `types.h`. The knowledge layer lives in its own repo
+(`build/ghidra-knowledge/`, never versioned in iw2-remaster — it maps the
+copyrighted binary) and `ExportDecomp.java` applies it every run. Full workflow
+in `docs/decompile.md` § The knowledge layer.
+
 ## data/pogsrc/ — the decompiled scripts (114 packages)
 
 `tools/iw2/pogdec.py` output from the shipped bytecode; header says "review

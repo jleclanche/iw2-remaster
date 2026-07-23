@@ -11,6 +11,12 @@ install — see the doc index at the bottom before exploring by hand.
    `data/pogsrc/istartsystem.pog:775`, an LWS null, a localisation CSV.
    A number without a citation is a guess; put open questions in
    docs/original.md's Open questions, not plausible "facts" in code.
+   **The decomp `.c` is disposable Ghidra output — NEVER hand-edit it.** When
+   you recover a Ghidra-dropped function or identify a `FUN_`/struct offset,
+   deposit it in the knowledge layer (separate repo `build/ghidra-knowledge/`,
+   applied by `ExportDecomp.java` each pass) so regeneration is permanently
+   better — see docs/decompile.md § The knowledge layer. That map of the
+   copyrighted binary is versioned in its OWN repo, never in iw2-remaster.
 2. **Game data is copyrighted** (Particle Systems/Atari). `data/` and
    `build/` are generated from the local install and gitignored. NEVER
    commit them, NEVER publish their contents, NEVER `git add -A` / `git add .`

@@ -34,6 +34,32 @@ Output (gitignored, like every other derived asset):
 parentheses, and the GOG install is under `Program Files (x86)`. The
 script stages each binary into `build/bin/` first.
 
+## The knowledge layer — how the decomp improves over time
+
+The `.c` is disposable Ghidra output; **we never hand-edit it.** It improves
+only two ways: a better Ghidra, or our own accumulated analysis fed back into
+the pass. That analysis is the *knowledge layer*: `ExportDecomp.java` reads it
+(second arg, `build/ghidra-knowledge/`) and applies it BEFORE decompiling, so
+each regeneration is strictly better from the same binary. Per binary:
+
+- `functions.tsv` — `VA[⇥name]`: force-create a function at VA. This is how a
+  Ghidra-dropped body (`icPlanetAvatar` draw, `icSunAvatar` render) comes back
+  as real `.c` instead of needing `disasm.py` by hand every time.
+- `names.tsv` — `VA⇥name`: rename a `FUN_xxxxxxxx` once we know what it is.
+- `types.h` — decoded struct layouts (catalog now; auto-retyping is the next
+  enhancement, so the decomp prints named fields instead of `*(this+0x1e4)`).
+
+**The knowledge layer is a SEPARATE git repo** (gitignored here under
+`build/ghidra-knowledge/`, README there). It maps the copyrighted binary — same
+category as the decomp — and must never be versioned in iw2-remaster. The export
+no-ops gracefully if the directory is absent.
+
+**Process rule:** every extraction that lands a paragraph in `docs/original.md`
+should ALSO deposit a machine-readable entry (a recovered function address, a
+`FUN_` rename, a struct offset) into the knowledge repo. Recovering a hole by
+hand (`disasm.py`) is the one-off; adding its entry point to `functions.tsv` is
+what makes the recovery permanent.
+
 ## The binaries
 
 | binary | size | what's in it |
