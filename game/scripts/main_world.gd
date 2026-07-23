@@ -772,9 +772,13 @@ func _planet_shader() -> Shader:
 	if planet_shader != null:
 		return planet_shader
 	planet_shader = Shader.new()
+	# `unshaded` is load-bearing: without it Godot ALSO lights this backdrop
+	# sphere with the scene's `sun`/`fill` DISTANT lights, on top of its own
+	# primary term below -- and the green <fill> greened every planet. A body
+	# takes ONLY its primary's light (see _light_body_from_primary above).
 	planet_shader.code = """
 shader_type spatial;
-render_mode cull_back, depth_draw_never, fog_disabled;
+render_mode cull_back, depth_draw_never, fog_disabled, unshaded;
 uniform sampler2D albedo_tex : source_color;
 uniform vec4 tint : source_color;
 uniform vec3 star_dir;   // world space, body -> its primary
