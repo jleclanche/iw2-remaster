@@ -416,6 +416,7 @@ var muzzleshot := false  # fire the comsec light PBC and photograph it
 var contactcheck := false  # spawn into each menu system, print contact_list()
 var srgbprobe := false     # render known-value quads, verify colour pipeline
 var sunshot := false       # photograph each sun from the spawn point
+var sungallery := false    # build a row of suns (blue/yellow/red) and shoot each
 var fireprobe := false     # fire the primary once and report the weapon state
 var mechslow := false      # the full mech suite at real time (the slow
                            # autopilot steps included); --mechcheck is the

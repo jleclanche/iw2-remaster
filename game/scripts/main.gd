@@ -15,7 +15,8 @@ func _ready() -> void:
 	for f: String in ["motioncheck", "jumpcheck", "uicheck", "mechcheck",
 			"mechslow", "campcheck", "newgamecheck", "newgametest",
 			"geogcheck", "basecheck", "commshot", "muzzleshot",
-			"contactcheck", "srgbprobe", "sunshot", "fireprobe"]:
+			"contactcheck", "srgbprobe", "sunshot", "sungallery",
+			"fireprobe"]:
 		var on: bool = ("--" + f) in args
 		set(f, on)
 		if on:

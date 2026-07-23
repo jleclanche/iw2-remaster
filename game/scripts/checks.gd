@@ -16,6 +16,8 @@ func step(delta: float) -> void:
 		_contactcheck(delta)
 	elif m.sunshot:
 		_sunshot(delta)
+	elif m.sungallery:
+		_sungallery(delta)
 	elif m.srgbprobe:
 		_srgbprobe(delta)
 	elif m.muzzleshot:

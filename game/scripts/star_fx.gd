@@ -47,6 +47,13 @@ const DISC_SIZE_MUL := 1.4          # _DAT_1011a440, FUN_100d2910:167911
 # draws the corona first, then the disc over it).
 const DISC_RENDER_PRIORITY := -28
 const CORONA_RENDER_PRIORITY := -29
+# The corona billboard and the disc are both node-size x 1.4 in the engine, but
+# the disc is a MODEL (Planet_LOD) whose inherent sphere radius we have not
+# extracted, so their on-screen size ratio is not yet pinned. sun_halo's flame
+# arms live at ~0.5-0.9 of the billboard half-extent; sizing the corona a little
+# past the disc lets those arms radiate beyond the rim (the moving halo) instead
+# of hiding inside the disc silhouette. TUNING, not an extracted constant.
+const CORONA_SIZE_MUL := 1.6
 
 var d_radii := INF   # main._stream_objects feeds true distance / sun radius
 var disc_radius := 0.0  # world half-extent of the plasma disc, set by the caller
@@ -97,6 +104,23 @@ static func _sun_surface(stem: String, base: String) -> Texture2D:
 		return null
 	var img := Image.load_from_file(path)
 	return ImageTexture.create_from_image(img) if img != null else null
+
+
+# The corona texture, shared by every sun. icSunAvatar_Draw (0x100d2b80) binds
+# icPlanetProperties::m_p_instance + 0x14 into the billboard slot (gfx+0x1768);
+# LoadTextures (0x100cbc90:165960) loads it from texture:/images/planets/sun_halo.
+# It is a radial glow whose HOT corner is (1,1) -- exactly the corner Draw4x4
+# maps to the fan centre -- so the quadrant fan reads it as a symmetric halo.
+static var _halo: Texture2D = null
+static var _halo_tried := false
+
+
+static func _halo_texture(base: String) -> Texture2D:
+	if _halo_tried:
+		return _halo
+	_halo_tried = true
+	_halo = _sun_surface("sun_halo", base)
+	return _halo
 
 
 static func _pick_colour(pair: Array, seed_value: int) -> Color:
@@ -152,16 +176,18 @@ func setup(rec: Dictionary, base: String) -> void:
 		_disc.mesh = sph
 		add_child(_disc)
 
-		# The corona: two Draw4x4 quadrant-fan billboards (icSunAvatar::Render
-		# @ 0x100d2bc0), one per PickColour, additive, sharing a rotation angle
-		# that tracks the camera. The fan's corners reach ~sqrt2 past the disc,
-		# so its arms read as flames beyond the rim. Drawn behind the disc so the
-		# opaque disc covers the centre.
+		# The corona: two Draw4x4 quadrant-fan billboards (icSunAvatar_Draw
+		# @ 0x100d2b80), one per PickColour, additive, sharing a rotation angle
+		# that tracks the camera. Textured with sun_halo (NOT the plasma surface):
+		# a radial glow that reads as a soft halo around the disc, brightest at
+		# the rim and fading out. The second fan is 1.05x the first (FUN_10035e50)
+		# in a slightly different tint, a soft double edge. Drawn behind the disc.
 		var fan := StarFx.quadrant_fan_mesh()
-		for col in [_col_a, _col_b]:
+		var halo := StarFx._halo_texture(base)
+		for col in ([_col_a, _col_b] if halo != null else []):
 			var cmat := StandardMaterial3D.new()
 			cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-			cmat.albedo_texture = tex
+			cmat.albedo_texture = halo
 			cmat.albedo_color = col
 			cmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			cmat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
@@ -202,10 +228,12 @@ func _update_corona() -> void:
 	var pole := Vector3.UP
 	var ang := -atan2(cb.y.dot(pole), cb.x.dot(pole))
 	var basis := cb * Basis(Vector3(0.0, 0.0, 1.0), ang)
-	var s := maxf(disc_radius, 1.0)
-	for cm in _corona:
-		cm.visible = vis
-		cm.transform = Transform3D(basis.scaled(Vector3(s, s, s)), Vector3.ZERO)
+	var s := maxf(disc_radius, 1.0) * CORONA_SIZE_MUL
+	for i in _corona.size():
+		# the second fan is 1.05x the first (FUN_10035e50, icSunAvatar_Draw)
+		var m := s * (1.05 if i == 1 else 1.0)
+		_corona[i].visible = vis
+		_corona[i].transform = Transform3D(basis.scaled(Vector3(m, m, m)), Vector3.ZERO)
 
 
 static func _glow_intensity(d: float) -> float:
@@ -254,8 +282,8 @@ func _process(_delta: float) -> void:
 # (0.008, 0.008) and edge midpoints at the texture's other two corners --
 # one texture quadrant mirrored into all four.
 # icShockwaveAvatar draws through the very same routine, so ExplosionFx
-# shares this mesh. (icSunAvatar's corona also draws with it, but that node
-# sits beyond the far plane at any map range and is never built here.)
+# shares this mesh, and so does the sun corona above (two of these fans,
+# textured with sun_halo, tinted by the two PickColours).
 static func quadrant_fan_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
 	var uvs := PackedVector2Array()

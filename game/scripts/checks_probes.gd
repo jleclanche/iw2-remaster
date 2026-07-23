@@ -185,6 +185,80 @@ func _sunshot(_delta: float) -> void:
 	_ss_i += 1
 	_ss_aimed = false
 
+# --- sungallery: a controlled row of suns to eyeball the disc + corona --------
+# Builds one StarFx sun at a time, 4 km ahead of the camera, sized to ~47 deg
+# (the "320k km" view the reference screenshot was taken from: d = 3.2 sun
+# radii), across the three class bands (icSun::m_colours, SUN_COLOURS). Each is
+# photographed on its own so the disc, the sun_halo corona and the flares are
+# all visible. Run: <godot> --path game --resolution 1600x900 -- --sungallery
+
+var _sg_i := 0
+var _sg_frame := 0
+var _sg_hid := false
+var _sg_sun: StarFx = null
+
+# label, sun_texture band, and the class's two m_colours (PickColour LERP ends)
+const _SG_CONFIGS := [
+	["1_blue_c1", "sun_blue", [[0.30, 0.35, 1.00], [0.70, 0.80, 1.00]]],
+	["2_white_c2", "sun_blue", [[0.40, 0.60, 1.00], [1.00, 1.00, 1.00]]],
+	["3_yellow_c4", "sun_yellow", [[1.00, 1.00, 0.90], [1.00, 0.80, 0.05]]],
+	["4_orange_c8", "sun_red", [[1.00, 0.70, 0.30], [1.00, 0.30, 0.05]]],
+	["5_deepred_c10", "sun_red", [[1.00, 0.30, 0.05], [1.00, 0.05, 0.05]]],
+]
+
+
+func _sungallery(_delta: float) -> void:
+	if demo_t < 1.2:
+		return
+	if _sg_i >= _SG_CONFIGS.size():
+		print("SUNGALLERY done")
+		m.get_tree().quit()
+		return
+	m.hud.visible = false
+	m.cam_mode = 0
+	m.cam_view = 1   # internal, no cockpit dressing, no ship model
+	m._apply_view()
+	var cam := m.get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	# hide the real streamed sun/stars + the bright nebula/sky, so the additive
+	# corona reads against black instead of washing into the background
+	if not _sg_hid:
+		_sg_hid = true
+		for o in m.objects:
+			if o.get("node") != null:
+				(o["node"] as Node3D).visible = false
+		if m.space_fx != null:
+			m.space_fx.visible = false
+		if m.sky_anchor != null:
+			m.sky_anchor.visible = false
+	if _sg_sun == null:
+		var cfg: Array = _SG_CONFIGS[_sg_i]
+		var sun := StarFx.new()
+		sun.setup({"name": str(cfg[0]), "sun_texture": str(cfg[1]),
+			"sun_colours": cfg[2]}, m._base())
+		m.add_child(sun)
+		# huge d_radii drops the lens flares (glow/star/streak) so the disc and
+		# the sun_halo corona are shown on their own against black -- the corona
+		# is what this gallery is checking. In-game at d~3.2 the flares bloom over
+		# all of this; that is a separate, unchanged element.
+		sun.d_radii = 1.0e9
+		sun.disc_radius = 700.0
+		_sg_sun = sun
+		_sg_frame = 0
+	# re-pin the sun in front of the camera EVERY frame: the cockpit neck-spring
+	# keeps drifting, so a place-once sun slides out of frame on some iterations
+	var fwd := -cam.global_transform.basis.z
+	_sg_sun.global_position = cam.global_position + fwd * 4000.0
+	_sg_frame += 1
+	if _sg_frame < 6:
+		return
+	_shot("sungallery_%s" % str(_SG_CONFIGS[_sg_i][0]))
+	print("SUNGALLERY shot ", str(_SG_CONFIGS[_sg_i][0]))
+	_sg_sun.queue_free()
+	_sg_sun = null
+	_sg_i += 1
+
 # --- command-section muzzle: fire and photograph from the side ---------------
 
 func _muzzleshot(_delta: float) -> void:
