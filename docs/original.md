@@ -1637,6 +1637,43 @@ the sun-hue source are solid.
 
 ---
 
+## 7z-1. `icSunAvatar::Render` recovered (the disc + a rotating corona)
+
+Recovered 2026-07-24 by raw-disassembly -- Ghidra dropped the body. The avatar's
+vtable is `PTR_LAB_1011d1fc`; slot 16 (the same `Render`/draw slot as
+`icPlanetAvatar`'s `0x100ccc80`) is `0x100d2bc0`. Disassembled with
+`tools.ghidra.disasm`, it draws THREE things, in this order:
+
+1. **Two `FcBillBoard::Draw4x4` corona billboards** (the quadrant fan, the same
+   primitive `star_fx.gd:quadrant_fan_mesh` reproduces). One in colour
+   `node+0xc0`, one in `node+0xcc` -- the TWO `icSun::PickColour` draws that
+   `FUN_100d2910` stamped (167903-167910). Both are placed at the sun's world
+   position (`FindWorldPosition`, `node+0x74`) and share a base rotation ANGLE:
+   `Draw4x4` gets `angle +/- qword[node+0xe0]`, and `node+0xe0` is 0
+   (`FUN_100d2910:167864`), so both take the same angle.
+2. **The plasma disc**: `m_p_global_shader = node+0xd8` (the `FiShader` built by
+   `FUN_100d2910`, textured with the class surface `sun_red`), then
+   `FcModel::Render`. Drawn AFTER the corona, opaque -> it covers the corona's
+   centre, leaving the fan's corners as flames beyond the disc rim.
+
+**The angle is what moves.** Before the draws, `Render` takes the sun node's
+world orientation (`FindWorldOrientation`, `node+0x80..0x94`), projects an axis
+into the camera basis (`gfx+0xe0..0xf4`), and `fpatan`s the two view-space
+components into an angle, then `fchs` (negates) it (`0x100d2cef`). A sun's
+orientation is fixed, so the angle is the sun axis's roll ON SCREEN -- it turns
+as the CAMERA rolls/orbits, spinning the corona. That is the moving halo.
+
+Sizes: the disc/corona size is `radius x 1.4` (`_DAT_1011a440`, set on the node
+via `FUN_100d2910:167911`); the fan's corners reach ~sqrt2 of that, so the
+flames extend ~40% past the disc. NOT fully resolved: the exact corona texture
+bind (`gfx+0x1768`, set from `[eax+0x14]` in the misaligned prologue) -- `sun_red`
+is the reasoned choice (the sun's own surface), tinted by the two PickColours.
+
+`StarFx` builds the disc (sphere) and both corona fans; the angle is reproduced
+as the sun pole's screen-space roll under the live camera.
+
+---
+
 ## 8. Data and text
 
 - **`text.Field` (636 call sites) is where every line of dialogue comes from.**

@@ -42,8 +42,11 @@ const STREAK_WIDTH_RATIO := 0.166667  # m_anamorphic_streak_width_ratio
 const DISC_SIZE_MUL := 1.4          # _DAT_1011a440, FUN_100d2910:167911
 # draw the disc just over the nebula band (space_fx -30) and sky (-40) so a
 # near sun occludes them (the Effrit sits behind Hoffer's Wake Alpha), but under
-# the closer-planet band (main_world PRIORITY_PLANET_NEAR -12).
-const DISC_RENDER_PRIORITY := -29
+# the closer-planet band (main_world PRIORITY_PLANET_NEAR -12). The corona sits
+# one below the disc so the opaque disc covers its centre (icSunAvatar::Render
+# draws the corona first, then the disc over it).
+const DISC_RENDER_PRIORITY := -28
+const CORONA_RENDER_PRIORITY := -29
 
 var d_radii := INF   # main._stream_objects feeds true distance / sun radius
 var disc_radius := 0.0  # world half-extent of the plasma disc, set by the caller
@@ -51,8 +54,11 @@ var _glow: FlareQuad
 var _star: FlareQuad
 var _streak: FlareQuad
 var _disc: MeshInstance3D
+var _corona: Array[MeshInstance3D] = []   # the two Draw4x4 fan billboards
 var _glow_col: Color
 var _star_col: Color
+var _col_a: Color   # icSun::PickColour draw #1 (corona colour node+0xc0)
+var _col_b: Color   # icSun::PickColour draw #2 (corona colour node+0xcc)
 var _has_streak := false
 
 # FcLensFlareNode::m_tex_coords (@ 0x100ee420) styles, one atlas quadrant
@@ -113,6 +119,8 @@ func setup(rec: Dictionary, base: String) -> void:
 	# CreateAvatar calls PickColour once per flare: independent draws
 	var col_a := _pick_colour(pair, h)
 	var col_b := _pick_colour(pair, h / 1000)
+	_col_a = col_a
+	_col_b = col_b
 	# the render squares the colour components (FcColour at 0xe6100)
 	_glow_col = Color(col_a.r * col_a.r, col_a.g * col_a.g, col_a.b * col_a.b)
 	_star_col = Color(col_b.r * col_b.r, col_b.g * col_b.g, col_b.b * col_b.b)
@@ -144,6 +152,30 @@ func setup(rec: Dictionary, base: String) -> void:
 		_disc.mesh = sph
 		add_child(_disc)
 
+		# The corona: two Draw4x4 quadrant-fan billboards (icSunAvatar::Render
+		# @ 0x100d2bc0), one per PickColour, additive, sharing a rotation angle
+		# that tracks the camera. The fan's corners reach ~sqrt2 past the disc,
+		# so its arms read as flames beyond the rim. Drawn behind the disc so the
+		# opaque disc covers the centre.
+		var fan := StarFx.quadrant_fan_mesh()
+		for col in [_col_a, _col_b]:
+			var cmat := StandardMaterial3D.new()
+			cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			cmat.albedo_texture = tex
+			cmat.albedo_color = col
+			cmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			cmat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+			cmat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+			cmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+			cmat.disable_receive_shadows = true
+			cmat.render_priority = CORONA_RENDER_PRIORITY
+			var cm := MeshInstance3D.new()
+			cm.mesh = fan
+			cm.material_override = cmat
+			cm.custom_aabb = AABB(Vector3(-1, -1, -1), Vector3(2, 2, 2))
+			add_child(cm)
+			_corona.append(cm)
+
 	_glow = FlareQuad.create(_atlas[0])
 	_star = FlareQuad.create(_atlas[2])
 	_streak = FlareQuad.create(_atlas[0])
@@ -153,6 +185,27 @@ func setup(rec: Dictionary, base: String) -> void:
 	add_child(_glow)
 	add_child(_star)
 	add_child(_streak)
+
+
+func _update_corona() -> void:
+	# icSunAvatar::Render's rotation: the sun's fixed pole axis projected into the
+	# camera basis, angle = -atan2(view.y, view.x) (fpatan + fchs @ 0x100d2cef).
+	# A fixed axis under a moving camera => the corona rolls as the camera turns.
+	# Both fans (the two PickColours) share the angle (node+0xe0 = 0).
+	var vis := disc_radius > 0.0
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		for cm in _corona:
+			cm.visible = false
+		return
+	var cb := cam.global_transform.basis
+	var pole := Vector3.UP
+	var ang := -atan2(cb.y.dot(pole), cb.x.dot(pole))
+	var basis := cb * Basis(Vector3(0.0, 0.0, 1.0), ang)
+	var s := maxf(disc_radius, 1.0)
+	for cm in _corona:
+		cm.visible = vis
+		cm.transform = Transform3D(basis.scaled(Vector3(s, s, s)), Vector3.ZERO)
 
 
 static func _glow_intensity(d: float) -> float:
@@ -179,6 +232,8 @@ func _process(_delta: float) -> void:
 	if _disc != null:
 		_disc.scale = Vector3.ONE * maxf(disc_radius, 1.0)
 		_disc.visible = disc_radius > 0.0
+	if not _corona.is_empty():
+		_update_corona()
 	if _glow == null:
 		return
 	var gi := StarFx._glow_intensity(d_radii)
