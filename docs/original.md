@@ -1576,6 +1576,67 @@ Godot lights/filters in linear where the original blended gamma bytes.
 
 ---
 
+## 7z. The scene key light is the nearest sun's colour at the `<star>`'s brightness
+
+Extracted 2026-07-23. What lights a planet (and every ship/station) in a
+system is a SINGLE directional key light whose colour and direction the engine
+**recomputes every frame** from the system's suns. Nothing is lit by a fixed
+`<star>` colour, and the planet's `sun_colours` are only one input.
+
+**Setup -- `icSolarSystem::OnBecomeActive` (`0x1004c380`).** The cyclorama scene
+ships two DISTANT lights, `<star>` and `<fill>` (found by name, 66368/66379),
+kept at `this+0x5cc` / `this+0x5d0`. Their LWS colour x LgtIntensity is folded
+into two solar-system colours (66408-66419, 66434-66445):
+
+    base_ambient (this+0x5d4) = <star>.intensity x <star>.colour
+    fill_base    (this+0x5e0) = <fill>.intensity x <fill>.colour
+
+For Hoffer's Wake: `<star>` = `(255,204,128)/255 @ 1.5` -> base_ambient
+`(1.5, 1.2, 0.753)`; `<fill>` = `(92,172,34)/255 @ 0.75` -> fill_base
+`(0.271, 0.506, 0.100)`. (Defaults if no scene: white / magenta / white, 65539.)
+
+**Each sun carries a `PickColour`.** As bodies load, every `icSun` is stored in
+a `{position, radius, colour}` array at `this+0x618`/`+0x620` (0x30 stride,
+66700-66728). Its colour is `icSun::PickColour(class)` (`0x1006ac70`): a
+`rand()`-weighted LERP between the two colours of `icSun::m_colours[class]`
+(the 16-class table, static-init `FUN_10069f70 @ 0x10069f70` -- verified equal
+to `classify_map.py:SUN_COLOURS`). Hoffer's Wake Alpha is class 10:
+`[[1.0,0.30,0.05],[1.0,0.05,0.05]]`, so its light flickers around
+`(1.0, ~0.17, 0.05)`.
+
+**Per frame -- `icSolarSystem::Render` (`0x1004d150`).**
+1. Find the nearest sun / distance-weight all suns. Per-sun weight is a
+   falloff in **sun-radius units**: `w = clamp((d-5)/45, 0, 1)`,
+   `att = (1-w)^2` -- full weight within 5 radii, gone past 50
+   (`_DAT_1011a138=5`, `_DAT_1011a140=50`, `_DAT_1011a130=1/45`; 67152-67165).
+2. Key colour = LERP(base_ambient, sun_colour, att) (67166) -- a near sun
+   overrides the ambient, a far one leaves it.
+3. **Normalise** the key colour so its channel-sum equals base_ambient's
+   channel-sum `local_98` (67320-67327). This is the crux: brightness is pinned
+   to the `<star>` intensity while the HUE swings to the sun. For Hoffer's Wake
+   the sum is `1.5+1.2+0.753 = 3.45`, so a red sun `(1.0,0.17,0.05)` (sum 1.22)
+   scales x2.8 to an **overbright** `~(2.8, 0.49, 0.14)` -- red-orange, R well
+   above 1. This is the brightness our `star_color=(1,0.3,0.05)` was missing.
+4. LERP again by `this+0x5ec` (65541 default white), then write the result to
+   the `<star>` node's colour (`+0xf8`) and direction (`+0x38`) -- 67362-67365.
+   `<fill>` gets `fill_base` and the opposite direction -- 67383-67386.
+5. `<star>`, `<fill>`, the cyclorama, and the planets avatar (`DAT_10171e04`)
+   are all added to one scene graph and rendered together (67387-67411) -- so
+   the planet is lit by exactly these two lights, `<star>` dominating the lit
+   face.
+
+**Consequences.** (a) A planet's day side is the sun's HUE at the `<star>`'s
+BRIGHTNESS (overbright), not `tex x tint` clamped to 1 -- the "too dark" disc.
+(b) The static LWS `<star>` colour `(255,204,128)` is only the seed for
+base_ambient; the node's live colour is overwritten every frame. Our `sun`
+DirectionalLight uses the static value and never updates it, so **ships are lit
+peach where the original lights them red-orange** -- the same bug, system-wide.
+`FcColour::LERP`'s exact arg order and the `+0x5ec` second LERP are read
+loosely (Ghidra arg confusion); the normalise-to-`<star>`-brightness step and
+the sun-hue source are solid.
+
+---
+
 ## 8. Data and text
 
 - **`text.Field` (636 call sites) is where every line of dialogue comes from.**
