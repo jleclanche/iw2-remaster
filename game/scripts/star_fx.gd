@@ -6,8 +6,14 @@ extends Node3D
 # icSun::CreateAvatar (iwar2.dll @ 0x1006a960) attaches THREE things to an
 # icSun sim:
 #   1. an icSunAvatar scene node (ctor FUN_100d2910 @ 0x100d2910) -- the
-#      plasma surface, radius-sized. At map distances (1e11..1e13 m) it sits
-#      far beyond the 600 km far plane and is never seen; we do not build it.
+#      plasma-surface DISC. It IS seen: a sun's runtime radius is forced to
+#      1e8 m (SetRadius(1e8), OnBecomeActive @ 0x1004c380:66705) and the disc
+#      is sized to radius x 1.4 (_DAT_1011a440, FUN_100d2910:167911), so a sun
+#      at a few hundred thousand km fills much of the view (~47 deg at 320k km).
+#      It draws in the planets-avatar group (DAT_10171e04, depth off), textured
+#      with the class plasma texture (icPlanetProperties: class>=7 -> sun_red,
+#      3..6 -> sun_yellow, <3 -> sun_blue). We build it as an impostor sphere,
+#      like a planet, so the square plasma texture reads as a round disc.
 #   2. an FcLensFlareNode, style 0 (the soft glow quadrant of
 #      images/sfx/lens_flares), colour icSun::PickColour(class);
 #   3. a second FcLensFlareNode, style 2 (the 4-point star quadrant), flags
@@ -33,11 +39,18 @@ extends Node3D
 
 const INTENSITY_SCALE := 15.0       # FcLensFlareNode::m_intensity_scale
 const STREAK_WIDTH_RATIO := 0.166667  # m_anamorphic_streak_width_ratio
+const DISC_SIZE_MUL := 1.4          # _DAT_1011a440, FUN_100d2910:167911
+# draw the disc just over the nebula band (space_fx -30) and sky (-40) so a
+# near sun occludes them (the Effrit sits behind Hoffer's Wake Alpha), but under
+# the closer-planet band (main_world PRIORITY_PLANET_NEAR -12).
+const DISC_RENDER_PRIORITY := -29
 
 var d_radii := INF   # main._stream_objects feeds true distance / sun radius
+var disc_radius := 0.0  # world half-extent of the plasma disc, set by the caller
 var _glow: FlareQuad
 var _star: FlareQuad
 var _streak: FlareQuad
+var _disc: MeshInstance3D
 var _glow_col: Color
 var _star_col: Color
 var _has_streak := false
@@ -69,6 +82,17 @@ static func style_texture(style: int, base: String) -> Texture2D:
 	return _atlas[clampi(style, 0, 3)]
 
 
+static func _sun_surface(stem: String, base: String) -> Texture2D:
+	if stem.is_empty():
+		return null
+	var path := base.path_join(
+		"data/textures/images/planets/%s.png" % stem)
+	if not FileAccess.file_exists(path):
+		return null
+	var img := Image.load_from_file(path)
+	return ImageTexture.create_from_image(img) if img != null else null
+
+
 static func _pick_colour(pair: Array, seed_value: int) -> Color:
 	# icSun::PickColour: FcColour::LERP(a, b, rand()). One draw per star, so a
 	# stable per-star hash stands in for rand() -- the star must not shimmer.
@@ -95,6 +119,30 @@ func setup(rec: Dictionary, base: String) -> void:
 	# class < 3 renders the sun_blue surface (FUN_100d2910), and class <= 2 is
 	# also the flag-2 condition -- sun_texture IS the class band
 	_has_streak = str(rec.get("sun_texture", "")) == "sun_blue"
+
+	# The plasma disc (icSunAvatar): an unshaded sphere textured with the class
+	# surface (sun_red/yellow/blue), so the square texture reads as a round disc.
+	# Drawn in the backdrop band (depth off), opaque, so it occludes the sky.
+	var tex := _sun_surface(str(rec.get("sun_texture", "sun_red")), base)
+	if tex != null:
+		var sph := SphereMesh.new()
+		sph.radius = 1.0
+		sph.height = 2.0
+		sph.radial_segments = 48
+		sph.rings = 24
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_texture = tex
+		# TRANSPARENCY_ALPHA puts it in the priority-ordered queue (alpha stays 1)
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+		mat.cull_mode = BaseMaterial3D.CULL_BACK
+		mat.disable_receive_shadows = true
+		mat.render_priority = DISC_RENDER_PRIORITY
+		sph.material = mat
+		_disc = MeshInstance3D.new()
+		_disc.mesh = sph
+		add_child(_disc)
 
 	_glow = FlareQuad.create(_atlas[0])
 	_star = FlareQuad.create(_atlas[2])
@@ -128,6 +176,9 @@ static func _glow_intensity(d: float) -> float:
 func _process(_delta: float) -> void:
 	# icSun::UpdateAvatar's per-frame envelopes; FlareQuad does the sizing
 	# (15 x intensity x view depth, flux Render @ 0xe6100)
+	if _disc != null:
+		_disc.scale = Vector3.ONE * maxf(disc_radius, 1.0)
+		_disc.visible = disc_radius > 0.0
 	if _glow == null:
 		return
 	var gi := StarFx._glow_intensity(d_radii)

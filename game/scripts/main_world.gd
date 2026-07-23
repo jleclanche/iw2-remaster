@@ -1201,12 +1201,14 @@ func _stream_objects() -> void:
 					# Whether world+0x5d0 should drive a SECOND light for bodies
 					# is open -- see _light_body_from_primary, which currently
 					# approximates it from the nearest star record.
-					# A sun is NEVER seen as a disc: the far plane (600 km)
-					# cannot contain one at map distances (1e11..1e13 m). What
-					# the player sees is icSun's pair of FcLensFlareNodes, and
-					# StarFx sizes those itself (15 x intensity x depth, the
-					# constant-apparent-size branch of flux 0xe6100) from the
-					# distance in SUN RADII -- fed here with the engine's own
+					# A sun IS seen as a disc when close (the player flies to
+					# within a few hundred thousand km of it). Its runtime radius
+					# is forced to 1e8 m and the plasma disc is drawn at
+					# radius x 1.4 (_DAT_1011a440); pulled to IMPOSTOR_DIST and
+					# scaled like a planet, so StarFx.disc_radius = r*1.4*k.
+					# The FcLensFlareNodes (glow/star/streak) overlay it, sized
+					# by StarFx itself (15 x intensity x depth, flux 0xe6100)
+					# from the distance in SUN RADII -- fed here with the engine's
 					# approximate magnitude (max + 0.34375*mid + 0.25*min,
 					# iwar2 @ 0x1006b8xx via DAT_101191f0/DAT_101191ec).
 					var ax := absf(dx)
@@ -1215,8 +1217,13 @@ func _stream_objects() -> void:
 					var mx := maxf(ax, maxf(ay, az))
 					var mn := minf(ax, minf(ay, az))
 					var md := ax + ay + az - mx - mn
-					(o["node"] as StarFx).d_radii = \
+					var sfx := o["node"] as StarFx
+					sfx.d_radii = \
 						(mx + 0.34375 * md + 0.25 * mn) / maxf(r, 1.0)
+					# the plasma disc: radius x 1.4 (StarFx.DISC_SIZE_MUL),
+					# pulled in by the same k as a planet impostor
+					sfx.disc_radius = minf(r * StarFx.DISC_SIZE_MUL * k,
+						IMPOSTOR_DIST * 0.45)
 					o["node"].position = Vector3(dx, dy, dz) * k
 					o["node"].scale = Vector3.ONE
 					continue
