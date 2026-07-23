@@ -156,6 +156,7 @@ func _fit_player(ini_path: String, avatar: String) -> void:
 	# swap the player's hull: the campaign opens in the bare command
 	# section; the tug comes later at Lucrecia's Base
 	player_ship_ini = ini_path
+	player_avatar = avatar   # resolves the player's CollisionHull for _collide_hull
 	if ship_model != null:
 		ship_model.queue_free()
 	if ship.fx != null:

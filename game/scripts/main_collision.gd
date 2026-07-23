@@ -305,16 +305,65 @@ func _player_box_support(n: Vector3) -> float:
 	var h := (ship.dims if ship.dims.length() > 1.0 else Vector3(40, 40, 40)) * 0.5
 	return absf(nl.x) * h.x + absf(nl.y) * h.y + absf(nl.z) * h.z
 
+# The player's OWN collision-hull vertices (the FcHullCollider the original
+# collides with -- FiCollider::Create @ 0x100c9870: a sim with a CollisionHull
+# builds an FcHullCollider over that mesh, otherwise an FcSphereCollider). We
+# keep the compact 20 m sphere as the DETECTOR (solid, open-frame-safe) but take
+# the contact POINT from the real hull, so the response runs at the true contact
+# the way the engine's mesh-vs-mesh narrowphase does.
+var _player_hull_pts := PackedVector3Array()
+var _player_hull_key := "<unset>"
+
+func _player_hull_points() -> PackedVector3Array:
+	if _player_hull_key == player_avatar:
+		return _player_hull_pts
+	_player_hull_key = player_avatar
+	_player_hull_pts = PackedVector3Array()
+	var key := player_avatar.trim_prefix("data/avatars/avatars/") \
+			.trim_suffix(".gltf").to_lower()
+	var hull_path: String = _ship_hull_index().get(key, "")
+	if hull_path.is_empty():
+		return _player_hull_pts
+	var f := FileAccess.open(_base().path_join(hull_path), FileAccess.READ)
+	if f == null:
+		return _player_hull_pts
+	var h: Variant = JSON.parse_string(f.get_as_text())
+	if h is Dictionary:
+		for p: Array in h.get("points", []):
+			_player_hull_pts.append(Vector3(float(p[0]), float(p[1]), float(p[2])))
+	return _player_hull_pts
+
+func _player_hull_support(dir_world: Vector3) -> Vector3:
+	# world offset from the CoM to the hull vertex that LEADS a contact in world
+	# direction dir_world -- the ship point that touches the other surface, as
+	# FcHullCollider's contact would. A head-on hit leads with the near-centred
+	# nose (r almost parallel to n -> full linear bounce, solid); a glancing hit
+	# leads with an off-axis vertex (r x n != 0 -> the hull tumbles). No invented
+	# magnitude -- the tumble is whatever the real hull + ProcessContact give.
+	var b := ship.global_transform.basis
+	var pts := _player_hull_points()
+	if pts.is_empty():
+		# fall back to the authored box corner (the engine's mass/inertia box)
+		var dl0: Vector3 = dir_world * b
+		var hh := (ship.dims if ship.dims.length() > 1.0 else Vector3(40, 40, 40)) * 0.5
+		return b * Vector3(signf(dl0.x) * hh.x, signf(dl0.y) * hh.y, signf(dl0.z) * hh.z)
+	var dl: Vector3 = dir_world * b   # world dir -> local
+	var best := pts[0]
+	var bestd := best.dot(dl)
+	for i in range(1, pts.size()):
+		var dd := pts[i].dot(dl)
+		if dd > bestd:
+			bestd = dd
+			best = pts[i]
+	return b * best
+
 func _collide_hull(o: Dictionary) -> void:
-	# swept-sphere test of the player against the station's hull trimesh,
-	# answered with the same bounce/damage response as _collide_sphere. Kept a
-	# compact 20 m sphere: it is the open-frame-safe detector (issue #33). A
-	# station is immovable (null partner), and against a sphere probe the contact
-	# is radial (r_a x n = 0), so this path does NOT reorient the player -- an
-	# attempt to torque it off the ship's box corner cost solidity (the weak
-	# linear impulse let a ship creep through the coarse hull's real gaps) for no
-	# faithful gain. Real station reorientation needs the swept ship-hull-vs-hull
-	# narrowphase the original runs, not a point sample.
+	# swept-sphere test of the player against the station's hull trimesh. The
+	# compact 20 m sphere is the DETECTOR (solid, open-frame-safe, issue #33) and
+	# gives the station's real surface point + normal; the RESPONSE then runs at
+	# the ship's own leading hull vertex (_player_hull_support), so an off-centre
+	# hit torques the hull exactly as the engine's FcHullCollider mesh contact
+	# does -- solidity untouched (the sphere still owns detection/depenetration).
 	if _probe_shape == null:
 		_probe_shape = SphereShape3D.new()
 		_probe_shape.radius = 20.0   # the player hull's rough half-width
@@ -340,7 +389,10 @@ func _collide_hull(o: Dictionary) -> void:
 	# orient the normal off the surface toward the ship
 	if n.dot(ship.global_position - point) < 0.0:
 		n = -n
-	var dv := _process_contact(point, n, null, Vector3.ZERO,
+	# the response runs at the ship's own leading hull vertex (toward the station,
+	# -n), not the sphere's radial point -- a real off-CoM contact that tumbles
+	var contact := ship.global_position + _player_hull_support(-n)
+	var dv := _process_contact(contact, n, null, Vector3.ZERO,
 			get_physics_process_delta_time())
 	_contact_feedback(dv.x, ship.velocity.length(), str(o["name"]).to_upper())
 	# port-side safety net: stay outside the surface our probe found

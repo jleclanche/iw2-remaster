@@ -88,6 +88,8 @@ var _mech_steps: Array[StringName] = [
 	&"_ms_contact_pair",
 	&"_ms_ship_reorient_arm",
 	&"_ms_ship_reorient",
+	&"_ms_station_tumble_arm",
+	&"_ms_station_tumble",
 	&"_ms_hull_solid",
 	&"_ms_hull_solid_assert",
 	&"_ms_hull_ghost",
@@ -1035,6 +1037,86 @@ func _ms_ship_reorient(_delta: float) -> void:
 	m.ship.rotation = _reorient_saved["rot"]
 	m.ship.velocity = _reorient_saved["vel"]
 	m.ship.angular_velocity = _reorient_saved["w"]
+	_mech_next()
+
+# --- station tumble: a solid station hit torques the ship off its own hull ----
+# _collide_hull keeps the 20 m sphere DETECTION (solid) but runs the response at
+# the ship's real collision-hull vertex that leads the contact (FcHullCollider's
+# contact, FiCollider::Create @ 0x100c9870). An off-axis hit therefore tumbles
+# the hull (spin) yet still bounces back off the surface (v.n > 0 = solid, no
+# creep). Two steps so the freshly attached hull StaticBody is registered.
+var _tumble_o: Dictionary = {}
+var _tumble_saved := {}
+
+func _ms_station_tumble_arm(_delta: float) -> void:
+	_tumble_saved = {"pos": m.ship.global_position, "rot": m.ship.rotation,
+		"vel": m.ship.velocity, "w": m.ship.angular_velocity}
+	var anchor: Vector3 = m.ship.global_position + Vector3(0, 0, -3000)
+	var o := {"name": "Tumble Rock", "category": "station",
+		"avatar": HULL_PROBE_AVATAR, "radius": 0.0}
+	var model: Node3D = m._load_gltf("data/avatars/" + HULL_PROBE_AVATAR)
+	if model != null:
+		o["node"] = model
+		m.add_child(model)
+		model.global_position = anchor
+		m._attach_collision_hull(o, model)
+		o["radius"] = m._model_bounds_radius(model)
+	_tumble_o = o
+	_mech("station-hull-built",
+		bool(o.get("hull", false)) and o.get("node") != null,
+		"asteroid CollisionHull attached for the tumble probe")
+	_mech_next()
+
+func _ms_station_tumble(_delta: float) -> void:
+	var node: Variant = _tumble_o.get("node")
+	var wp := 0.0
+	var vn := -99.0
+	var diag := "no model"
+	if node != null and is_instance_valid(node):
+		var centre: Vector3 = (node as Node3D).global_position
+		var rad: float = maxf(m._model_bounds_radius(node), 200.0)
+		# off-axis orientation so the leading hull vertex is off-CoM (a head-on
+		# hit leads with the centred nose and would NOT tumble -- correct)
+		m.ship.rotation = Vector3(deg_to_rad(20.0), deg_to_rad(35.0), 0.0)
+		m.ship.angular_velocity = Vector3.ZERO
+		var dir := Vector3(0.62, 0.21, 0.11).normalized()
+		var probe := SphereShape3D.new()
+		probe.radius = 20.0
+		var params := PhysicsShapeQueryParameters3D.new()
+		params.shape = probe
+		params.collision_mask = m.HULL_LAYER
+		var ss := m.get_world_3d().direct_space_state
+		var hit: Dictionary = {}
+		for i in range(240):
+			m.ship.global_position = centre + dir * (rad * 1.15 - i * 12.0)
+			params.transform = Transform3D(Basis(), m.ship.global_position)
+			hit = ss.get_rest_info(params)
+			if not hit.is_empty():
+				break
+		if hit.is_empty():
+			diag = "no rest contact across the sweep"
+		else:
+			var pt: Vector3 = hit["point"]
+			var nn: Vector3 = hit["normal"]
+			if nn.dot(m.ship.global_position - pt) < 0.0:
+				nn = -nn
+			m.ship.velocity = -nn * 60.0   # ram straight into the surface
+			m._collide_hull(_tumble_o)
+			wp = m.ship.angular_velocity.length()
+			# held = the ship ends OUTSIDE the surface (the sphere depenetration
+			# snapped it clear); a glancing hit keeps inward velocity but pivots,
+			# so solidity is positional here, not a springy v.n reversal
+			vn = (m.ship.global_position - pt).dot(nn)
+			diag = "spin %.3f rad/s, held %+.1f m outside surface" % [wp, vn]
+	# tumbles (real off-CoM hull contact) AND stays solid (held clear)
+	_mech("station-tumble", wp > 0.01 and vn > 0.0, diag)
+	if node != null and is_instance_valid(node):
+		(node as Node3D).queue_free()
+	_tumble_o = {}
+	m.ship.global_position = _tumble_saved["pos"]
+	m.ship.rotation = _tumble_saved["rot"]
+	m.ship.velocity = _tumble_saved["vel"]
+	m.ship.angular_velocity = _tumble_saved["w"]
 	_mech_next()
 
 ## kill_ai now runs OnExplode's timed dramatic sequence for anything over

@@ -946,16 +946,30 @@ computer's attitude-hold recovers (matching the engine's thruster torque-null).
 A hull-less partner (cargo pods) still falls back to the centre-line sphere.
 Guarded by the mechcheck steps ship-hull-attach / ship-reorient.
 
-The STATION path (`_collide_hull`) is deliberately NOT given this: it detects
-with a compact 20 m sphere (open-frame-safe, issue #33), and against a sphere
-the contact is radial (`r_a x n = 0`), so a station hit does not reorient the
-player. Torquing it off the ship's box corner was tried and reverted -- the weak
-linear impulse of a far-off-CoM contact let a ship creep through the coarse
-collision hull's real gaps (Hoffer's Gap is a genuinely OPEN ~6 km shell; its
-548-triangle hull matches the visible openings to ~0.5%, so ~6% of ram
-directions are the real gap you fly through). Faithful station reorientation
-needs the swept ship-hull-vs-station-hull narrowphase the original runs, not a
-point/sphere sample -- an open issue, not a constant.
+**What the engine actually collides with** (`FiCollider::Create` @ 0x100c9870):
+a sim whose ini names a `CollisionHull` builds an **`FcHullCollider`** over that
+mesh; a sim without one gets an **`FcSphereCollider`** of its bounding radius.
+`FcWorld::CheckCollisions` (0x100c56b0) broadphases on bounding radii (`+0x20`)
+then calls each sim's narrowphase (`+0x6c`) -- the collider-vs-collider test that
+returns the contact **point** and **normal** stored into the contact record
+`RespondToCollisions` later solves. The player tug HAS a hull (`tug2_hull`), and
+so do stations, so a station scrape is a **mesh-vs-mesh** contact: the point sits
+on the ship's own hull surface, off its CoM, and THAT is what tumbles the ship.
+
+The STATION path (`_collide_hull`) reproduces this without giving up the compact
+20 m sphere DETECTOR (open-frame-safe, issue #33 -- a large query shape tunnels
+Hoffer's Gap, a genuinely OPEN ~6 km shell whose 548-triangle hull matches the
+visible openings to ~0.5%). Detection + depenetration stay the sphere; only the
+contact POINT the response runs at is taken from the ship's real collision hull
+-- `_player_hull_support(-n)` picks the hull vertex that leads toward the station
+(the FcHullCollider contact), off the CoM. The tumble is then whatever the real
+hull geometry + ProcessContact give, no invented magnitude: a HEAD-ON hit leads
+with the near-centred nose (`r` almost parallel to `n` -> full linear bounce,
+solid), a GLANCING hit leads with an off-axis vertex (`r x n != 0` -> the hull
+pivots). Guarded by mechcheck station-tumble (spin imparted AND the ship held
+clear of the surface). Ship-ship (`_collide_ai`) reaches the same off-CoM contact
+a different way -- the player's box proxy narrowphased against the other ship's
+hull trimesh -- and could later be unified onto the hull-support point.
 
 ---
 

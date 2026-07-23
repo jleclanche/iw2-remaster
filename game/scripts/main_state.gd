@@ -111,6 +111,7 @@ var ship: ShipFlight
 # iship.FindPlayerShip follow this ship and the own hull drifts.
 var remote_ai: AiShip = null
 var ship_model: Node3D
+var player_avatar := ""     # gltf path of the fitted hull -> its CollisionHull
 var player_ship_ini := ""  # sims/ships/player/*.ini path of the fitted hull
 var cockpit: Node3D
 var comms: Comms
