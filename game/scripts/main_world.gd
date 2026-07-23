@@ -784,16 +784,24 @@ func _planet_shader() -> Shader:
 	# sphere with the scene's `sun`/`fill` DISTANT lights, on top of its own
 	# primary term below -- and the green <fill> greened every planet. A body
 	# takes ONLY its primary's light (see _light_body_from_primary above).
-	# A body composites up to two layers on one shader (FUN_100cdc50): a base
-	# surface (tex0 x SurfaceTint(0)) and, when the record carries a second
-	# surface AND no atmosphere, a second (tex1 x SurfaceTint(1)) -- these two
-	# are mutually exclusive with the atmosphere shell (geography.md s4). We were
-	# rendering ONLY the base and dropping the second surface, which left every
-	# two-surface body (Griffon, Alexander, ...) dark and flat. The base layer
-	# carries cLayer Flags=2 and the overlay Flags=0; the exact D3D layer op is
-	# in the avatar draw Ghidra dropped (0x100ccc80, not disassembled), so the
-	# ADDITIVE composite here is a reading, not a bit-exact extraction -- flagged
-	# with the ring width / atmosphere blend in geography.md's NOT RECOVERED.
+	# A body composites up to two layers on one shader (FUN_100cdc50 @
+	# 0x100cdc50): a base surface (tex0 x SurfaceTint(0), cLayer Flags=2) and,
+	# when the record carries a second surface AND no atmosphere, a second
+	# (tex1 x SurfaceTint(1), Flags=0) -- mutually exclusive with the atmosphere
+	# shell (geography.md s4).
+	#
+	# The inter-layer op is now EXTRACTED, not guessed. Two textured layers on
+	# one FiShader route to the device's sole 2-texture pattern, dx7graph
+	# FUN_1000c170 (pattern table @ 0x10015424, the only entry with nTextures=2).
+	# It programs D3D7 texture stages:
+	#   material.diffuse = SurfaceTint(0) x SurfaceTint(1)   (SetMaterial, 0x10012780)
+	#   stage0: COLOROP=MODULATE, ARG1=TEXTURE, ARG2=DIFFUSE  -> tex0 . diffuse
+	#   stage1: COLOROP=MODULATE, ARG1=TEXTURE, ARG2=CURRENT  -> tex1 . stage0
+	# (COLOROP 4 = D3DTOP_MODULATE @ DAT_1001b44c; 5/MODULATE2X only when the
+	# spec-capability bit is set, not for planets.) So the composite is
+	# MULTIPLICATIVE:  tex0 . tex1 . tint0 . tint1 . lighting  -- NOT additive.
+	# (Commit 014879d read it as additive from the Ghidra-dropped avatar draw;
+	# the device disassembly above overrides that.)
 	planet_shader.code = """
 shader_type spatial;
 render_mode cull_back, depth_draw_never, fog_disabled, unshaded;
@@ -809,8 +817,11 @@ void fragment() {
 	vec3 n = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	float lam = max(dot(n, normalize(star_dir)), 0.0);
 	vec4 t = texture(albedo_tex, UV);
-	vec3 surf = t.rgb * tint.rgb
-		+ texture(albedo_tex2, UV).rgb * tint2.rgb * layer2;
+	// FUN_1000c170: the two diffuse layers MODULATE (multiply), they do not add.
+	// layer2=0 -> mix picks vec3(1.0), leaving the base pass untouched.
+	vec3 base = t.rgb * tint.rgb;
+	vec3 second = texture(albedo_tex2, UV).rgb * tint2.rgb;
+	vec3 surf = base * mix(vec3(1.0), second, layer2);
 	ALBEDO = surf * (ambient + (1.0 - ambient) * lam);
 	ALPHA = t.a * alpha;
 }

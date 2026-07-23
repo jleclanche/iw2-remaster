@@ -376,16 +376,32 @@ So:
   (so it is stable), and its colour is `SurfaceTint(0)`'s hue with value
   `FcRandom::Float(0.2, 0.8)`.
 
-**NOT RECOVERED:** the ring's *width*, the atmosphere shell's exact blend, and
-**the inter-layer blend of the two surface layers** -- the planet avatar's draw
-(`0x100ccbb0` / `0x100ccc60` / `0x100ccc80`) is left undisassembled.
-`atmosphere_height = 1.1` in `planets.ini` is the shell scale. What the setup
-(FUN_100cdc50) *does* give: the base surface layer carries `cLayer` Flags = 2,
-the second-surface / atmosphere overlay carries Flags = 0. `_planet_shader`
-composites the two surface layers **additively** (`surf = tex0*tint0 +
-tex1*tint1`) as a reading of "Flags 2 base + Flags 0 overlay"; the exact D3D
-layer op is what the undisassembled draw would pin. Rendering only layer 0 (the
-old behaviour) left every two-surface body dark and flat.
+**INTER-LAYER BLEND — RECOVERED (device disassembly).** The two surface layers
+**MODULATE (multiply)**, they do not add. A body's `FiShader` (FUN_100cdc50)
+carries two textured `cLayer`s (base Flags = 2, overlay Flags = 0); at draw
+time the device matches the shader's texture count to a *pattern* in the
+dx7graph table @ `0x10015424`, and the only entry with `nTextures = 2` is
+`FUN_1000c170`. That pattern programs D3D7 fixed-function stages:
+
+- `SetMaterial` (0x10012780): `material.diffuse = SurfaceTint(0) x SurfaceTint(1)`,
+  `material.diffuse.a = alpha0 x alpha1`, ambient/specular/emissive = 0.
+- stage 0: `COLOROP = D3DTOP_MODULATE`, `ARG1 = TEXTURE`, `ARG2 = DIFFUSE`
+  (`tex0 . diffuse`); same for the alpha channel.
+- stage 1: `COLOROP = DAT_1001b44c`, `ARG1 = TEXTURE`, `ARG2 = CURRENT`
+  (`tex1 . stage0`). `DAT_1001b44c = 4` (D3DTOP_MODULATE) on planet hardware;
+  it is 5 (MODULATE2X) only when the spec-capability bit `g_p_gd[0x28c] & 0x10`
+  is set (FUN_1000d1e0, "Using D3DTOP_MODULATE2X for spec").
+- stage 2: `COLOROP = ALPHAOP = DISABLE`.
+
+Net: `FINAL = tex0 . tex1 . tint0 . tint1 . lighting`. `_planet_shader` now
+multiplies (`base * mix(vec3(1.0), second, layer2)`); commit 014879d's additive
+reading is superseded. Rendering only layer 0 (the pre-014879d behaviour) left
+every two-surface body dark and flat.
+
+**STILL NOT RECOVERED:** the ring's *width* and the atmosphere shell's exact
+blend -- the planet avatar's draw (`0x100ccbb0` / `0x100ccc60` / `0x100ccc80`)
+is left undisassembled. `atmosphere_height = 1.1` in `planets.ini` is the shell
+scale.
 
 ---
 
