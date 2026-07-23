@@ -1156,13 +1156,16 @@ func _stream_objects() -> void:
 						o["coll_spheres"] = _model_coll_spheres(model)
 					# A station's map record carries no radius -- the byte at
 					# +0x138 belongs to its parent body (docs/geography.md), so
-					# the decoder zeroes it. The engine gets a station's
-					# FiSim::Radius the same way it gets any sim's: from the
-					# avatar. Everything that reasons about the station's size --
-					# above all the approach marker the autopilot breaks off at --
-					# needs it, so stamp it the moment the model exists.
+					# the decoder zeroes it. The engine's FiSim::Radius is the
+					# sim INI 'radius' (FiSim::SetRadius); everything that reasons
+					# about the station's size -- the target brackets, the approach
+					# marker the autopilot breaks off at, the collision sphere --
+					# reads that same value. Stamp the authored radius; the model
+					# bounding sphere only stands in when the ini carries none.
 					if float(o.get("radius", 0.0)) <= 0.0:
-						o["radius"] = _model_bounds_radius(model)
+						var ini_r := _station_ini_radius(str(o.get("avatar", "")))
+						o["radius"] = ini_r if ini_r > 0.0 \
+								else _model_bounds_radius(model)
 				elif o["node"] != null and sd2 > STREAM_OUT * STREAM_OUT:
 					o["node"].queue_free()
 					o["node"] = null

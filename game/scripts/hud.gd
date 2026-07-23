@@ -2555,38 +2555,17 @@ func _bbox_radius_square(world: Vector3, radius: float) -> Rect2:
 		y1 = y0
 	return Rect2(x0, y0, x1 - x0, y1 - y0)
 
-var _station_radius_db: Dictionary = {}   # avatar (lower, .gltf) -> FiSim radius
-
-func _station_authored_radius(avatar: String) -> float:
-	# The engine's FiSim radius is the station INI 'radius' field (FiSim::SetRadius
-	# @ 0x100bce40 -> sim+0x1c), NOT the model bounds the streamer stamps into
-	# o["radius"]. Cached from stations.json, keyed exactly like
-	# main_collision._hull_index so o["avatar"] resolves.
-	if _station_radius_db.is_empty():
-		_station_radius_db["<none>"] = 0.0
-		var f := FileAccess.open(
-				main._base().path_join("data/json/stations.json"), FileAccess.READ)
-		if f != null:
-			var parsed: Variant = JSON.parse_string(f.get_as_text())
-			if parsed is Array:
-				for rec: Dictionary in parsed:
-					var av := str(rec.get("avatar", "")).trim_prefix("lws:/").to_lower()
-					var props: Dictionary = rec.get("properties", {})
-					if not av.is_empty():
-						_station_radius_db[av + ".gltf"] = float(
-								props.get("radius", 0.0))
-	return float(_station_radius_db.get(avatar.to_lower(), 0.0))
-
 func _bbox_of_obj(o: Dictionary, world: Vector3) -> Rect2:
 	# A contact object (icStation / icPlanet / icSun / icNebula, all icGeography)
 	# takes FUN_100e09e0's radius branch, not the 8-corner OBB (that path is
 	# icShip -- _bbox_of_ship -- and icInertSim only). Size it from the FiSim
-	# radius, preferring the authored INI radius over the mesh bounds the streamer
-	# stamps into o["radius"].
-	var r := _station_authored_radius(str(o.get("avatar", "")))
+	# radius. Streamed-in stations carry the authored INI radius in o["radius"]
+	# (main_world stamps _station_ini_radius); fall back to the ini lookup for a
+	# station locked beyond stream range, whose record still reads 0.
+	var r: float = float(o.get("radius", 0.0))
 	if r <= 0.0:
-		r = maxf(float(o.get("radius", 0.0)), 1.0)
-	return _bbox_radius_square(world, r)
+		r = main._station_ini_radius(str(o.get("avatar", "")))
+	return _bbox_radius_square(world, maxf(r, 1.0))
 
 func _draw_target_marks() -> void:
 	var cam: Camera3D = main.cam

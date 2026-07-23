@@ -643,6 +643,30 @@ func _model_bounds_radius(model: Node3D) -> float:
 		first = false
 	return 0.0 if first else merged.size.length() * 0.5
 
+var _station_ini_radius_db: Dictionary = {}   # avatar (lower, .gltf) -> FiSim radius
+
+func _station_ini_radius(avatar: String) -> float:
+	# The engine's FiSim radius for a station is the sim INI 'radius'
+	# (FiSim::SetRadius @ 0x100bce40 -> sim+0x1c), NOT the model's bounding
+	# sphere -- verified against the original's Hoffer's Gap target brackets,
+	# which draw radius * 0.7: 4000 fits inside the hull, the ~5115 m mesh
+	# sphere does not. Cached from stations.json, keyed like
+	# main_collision._hull_index so o["avatar"] resolves. 0.0 if none authored.
+	if _station_ini_radius_db.is_empty():
+		_station_ini_radius_db["<none>"] = 0.0
+		var f := FileAccess.open(
+				_base().path_join("data/json/stations.json"), FileAccess.READ)
+		if f != null:
+			var parsed: Variant = JSON.parse_string(f.get_as_text())
+			if parsed is Array:
+				for rec: Dictionary in parsed:
+					var av := str(rec.get("avatar", "")).trim_prefix("lws:/").to_lower()
+					var props: Dictionary = rec.get("properties", {})
+					if not av.is_empty():
+						_station_ini_radius_db[av + ".gltf"] = float(
+								props.get("radius", 0.0))
+	return float(_station_ini_radius_db.get(avatar.to_lower(), 0.0))
+
 # --- Keybindings (the central table) ----------------------------------------
 # The rebindable flight axes and command keys live here, and ONLY here: the
 # flight axes are polled in main_flight (_physics_process), the command keys
