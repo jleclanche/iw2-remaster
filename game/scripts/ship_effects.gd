@@ -152,7 +152,7 @@ func _scan(model: Node3D) -> void:
 				var mat: StandardMaterial3D = src.duplicate()
 				var lay: Dictionary = ex.get("iw2_surface_layers", {})
 				if lay.has(str(idx)) \
-						and bool(lay[str(idx)].get("glow_uv2", false)):
+						and int(lay[str(idx)].get("glow_uv", 0)) == 1:
 					mat.emission_on_uv2 = true
 				mi.set_surface_override_material(int(str(idx)), mat)
 				var gch := str(chans[idx])
@@ -331,13 +331,14 @@ func _add_jet_beam(node: Node3D, ex: Dictionary) -> void:
 
 # The SHDR slot-1 lightmap layer (#16): a MODULATE layer over the lit base
 # (CreateRenderSurface cLayer(2) @ 0x10066600; multipass fallback multiplies
-# ZERO/SRCCOLOR, dx7graph 'Mt' @ 0x1000b6b8) -- Godot's detail layer in MUL
-# mode is that operation. DIVERGENCE, documented: the original multiplies
-# in 8-bit gamma space, Godot's detail blend runs in linear -- midtone
-# lightmaps land slightly brighter than the original. The slot-2 additive
-# glow layer ships as the material's emission (white factor); when both
-# slot 1 and slot 2 carry their own UV channel the export drops the
-# lightmap (Godot imports two UV sets) and flags glow_uv2 here.
+# ZERO/SRCCOLOR, dx7graph 'Mt' @ 0x1000b6b8). The slot-2 additive glow
+# ships as the material's emission (white factor) on its own UV channel:
+# extras glow_uv 1 = TEXCOORD_1 (emission_on_uv2), 2 = TEXCOORD_2, which
+# the import lands in CUSTOM0 and only the hull shader can sample (#59).
+# Surfaces routed to the hull shader multiply their layers in GAMMA space
+# like the original's byte pipeline; the lightmap-only route stays on the
+# MUL detail layer, which multiplies in linear -- that residual divergence
+# (midtones slightly bright) is documented in original.md 7x.
 func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 	var base := ProjectSettings.globalize_path("res://").path_join("..")
 	for idx in lay:
@@ -345,9 +346,11 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 		var src := mi.get_active_material(int(str(idx)))
 		if not (src is StandardMaterial3D):
 			continue
-		if bool(d.get("glow_uv2", false)) \
+		var glow_uv := int(d.get("glow_uv", 0))
+		if glow_uv == 1 \
 				and not (src as StandardMaterial3D).emission_on_uv2:
-			# the slot-2 glow layer samples its own UV channel (TEXCOORD_1)
+			# the slot-2 glow samples TEXCOORD_1 when it is the only extra
+			# channel; GLTFDocument ignores the emissive texCoord
 			var fixed: StandardMaterial3D = src.duplicate()
 			fixed.emission_on_uv2 = true
 			mi.set_surface_override_material(int(str(idx)), fixed)
@@ -362,11 +365,13 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 		if d.has("envmap"):
 			var stem := str(d["envmap"]).get_basename().to_lower()
 			etex = ParticleFx.texture(base, "images/envmaps/" + stem)
-		if etex != null:
+		if etex != null or glow_uv == 2:
+			# the hull shader: envmapped surfaces, and any surface whose
+			# glow sits on TEXCOORD_2 (imported as CUSTOM0 -- out of reach
+			# of StandardMaterial3D)
 			var env_mat := _envmap_material(src as StandardMaterial3D, etex,
-					ltex, bool(d.get("uv2", false)),
-					bool(d.get("glow_uv2", false)), mi.mesh.get_aabb(),
-					_surface_axis(mi, int(str(idx))))
+					ltex, bool(d.get("uv2", false)), glow_uv,
+					mi.mesh.get_aabb(), _surface_axis(mi, int(str(idx))))
 			mi.set_surface_override_material(int(str(idx)), env_mat)
 			# a <glow channel> duplicate for this surface is now replaced by
 			# the shader -- repoint its driver at the shader's emis_energy
@@ -403,14 +408,19 @@ func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
 const ENV_SHADER := """
 shader_type spatial;
 uniform sampler2D base_tex : source_color, filter_linear_mipmap, repeat_enable;
-uniform sampler2D env_tex : source_color, filter_linear_mipmap, repeat_enable;
-uniform sampler2D light_tex : source_color, filter_linear_mipmap, repeat_enable;
+// env/light are sampled RAW (gamma bytes): the original's MODULATE(2X)
+// stages multiply the STORED 8-bit values (D3D7 has no sRGB decode), so
+// the layer products are formed in gamma space and decoded once at the end
+// -- the same after-the-filter pattern as main_world's sky shaders
+uniform sampler2D env_tex : filter_linear_mipmap, repeat_enable;
+uniform sampler2D light_tex : filter_linear_mipmap, repeat_enable;
 uniform bool has_base = false;
+uniform bool has_env = false;
 uniform bool has_light = false;
 uniform bool light_uv2 = false;
 uniform sampler2D emis_tex : source_color, filter_linear_mipmap, repeat_enable;
 uniform bool has_emis = false;
-uniform bool emis_uv2 = false;
+uniform int emis_uv = 0; // 0=UV, 1=UV2, 2=CUSTOM0.xy (the TEXCOORD_2 import)
 uniform float emis_energy = 1.0;
 uniform vec4 base_color = vec4(1.0);
 uniform float metal = 0.1;
@@ -419,28 +429,39 @@ uniform vec3 bb_min = vec3(-1.0);
 uniform vec3 bb_inv = vec3(0.5);
 uniform int axis = 2;
 varying vec3 mpos;
+varying vec2 cuv;
 void vertex() {
 	mpos = VERTEX;
+	cuv = CUSTOM0.xy;
 }
 void fragment() {
 	vec4 b = base_color;
 	if (has_base) {
 		b *= texture(base_tex, UV);
 	}
-	vec3 nm = (mpos - bb_min) * bb_inv;
-	vec2 suv = nm.xy;
-	if (axis == 0) {
-		suv = nm.zy;
-	} else if (axis == 1) {
-		suv = nm.xz;
-	}
-	vec3 alb = b.rgb * texture(env_tex, suv).rgb * 2.0;
+	// encode the (linear) base back to sRGB, multiply the layers in gamma
+	// like the original's byte pipeline, decode once for the lit path
+	vec3 g = mix(b.rgb * 12.92, 1.055 * pow(b.rgb, vec3(1.0 / 2.4)) - 0.055,
+		step(vec3(0.0031308), b.rgb));
 	if (has_light) {
-		alb *= texture(light_tex, light_uv2 ? UV2 : UV).rgb;
+		g *= texture(light_tex, light_uv2 ? UV2 : UV).rgb;
 	}
-	ALBEDO = alb;
+	if (has_env) {
+		vec3 nm = (mpos - bb_min) * bb_inv;
+		vec2 suv = nm.xy;
+		if (axis == 0) {
+			suv = nm.zy;
+		} else if (axis == 1) {
+			suv = nm.xz;
+		}
+		// D3DTOP_MODULATE2X saturates in bytes
+		g = min(g * texture(env_tex, suv).rgb * 2.0, vec3(1.0));
+	}
+	ALBEDO = mix(g / 12.92, pow((g + vec3(0.055)) / 1.055, vec3(2.4)),
+		step(vec3(0.04045), g));
 	if (has_emis) {
-		EMISSION = texture(emis_tex, emis_uv2 ? UV2 : UV).rgb * emis_energy;
+		vec2 euv = emis_uv == 2 ? cuv : (emis_uv == 1 ? UV2 : UV);
+		EMISSION = texture(emis_tex, euv).rgb * emis_energy;
 	}
 	METALLIC = metal;
 	ROUGHNESS = rough;
@@ -467,7 +488,7 @@ static func _surface_axis(mi: MeshInstance3D, idx: int) -> int:
 	return 2
 
 func _envmap_material(src: StandardMaterial3D, env: Texture2D,
-		lmap: Texture2D, uv2: bool, emis_uv2: bool, aabb: AABB,
+		lmap: Texture2D, uv2: bool, emis_uv: int, aabb: AABB,
 		axis: int) -> ShaderMaterial:
 	if _env_shader == null:
 		_env_shader = Shader.new()
@@ -478,13 +499,15 @@ func _envmap_material(src: StandardMaterial3D, env: Texture2D,
 		mat.set_shader_parameter("base_tex", src.albedo_texture)
 		mat.set_shader_parameter("has_base", true)
 	mat.set_shader_parameter("base_color", src.albedo_color)
-	mat.set_shader_parameter("env_tex", env)
+	if env != null:
+		mat.set_shader_parameter("env_tex", env)
+		mat.set_shader_parameter("has_env", true)
 	if src.emission_enabled and src.emission_texture != null:
-		# the slot-2 additive glow layer rides the envmapped base pass
-		# (both live on the same surface in the original's multipass)
+		# the slot-2 additive glow layer rides the same surface's base pass
+		# (a later SRCALPHA/ONE pass in the original's multipass)
 		mat.set_shader_parameter("emis_tex", src.emission_texture)
 		mat.set_shader_parameter("has_emis", true)
-		mat.set_shader_parameter("emis_uv2", emis_uv2)
+		mat.set_shader_parameter("emis_uv", emis_uv)
 		mat.set_shader_parameter("emis_energy",
 				src.emission_energy_multiplier)
 	if lmap != null:

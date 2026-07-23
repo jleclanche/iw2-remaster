@@ -176,6 +176,10 @@ class Assembler:
                             ent["uv2"] = bool(d.get("uv2"))
                     if d.get("envmap"):
                         ent["envmap"] = d["envmap"]
+                    if d.get("glow_uv"):
+                        # which UV set the emissive glow samples (2 = the
+                        # TEXCOORD_2 channel Godot imports as CUSTOM0)
+                        ent["glow_uv"] = d["glow_uv"]
                     if ent:
                         lay[str(i)] = ent
                 if lay:

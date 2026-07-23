@@ -1404,10 +1404,17 @@ channel (generated coords, see 0x1000ca20).
 Port consequence (the Lucrecia's-Base cyan bug): the export used to emit
 slot 1 as an emissive "mask" tinted by the discarded surface colour. Fixed:
 slot 1 is always the modulate lightmap, slot 2 is the emission (white
-factor), `tools/iw2/pso.py` parses the true three-slot layout. Divergence:
-Godot imports two UV sets, so when slot 1 and slot 2 both carry their own
-channel the lightmap is dropped in favour of the glow (recorded by the
-exporter in `dropped_lightmaps`).
+factor), `tools/iw2/pso.py` parses the true three-slot layout. All three
+UV channels reach the runtime: the export writes the glow channel as
+`TEXCOORD_2` when the lightmap owns `TEXCOORD_1`, which Godot's glTF
+import stores as the `CUSTOM0` RG-float attribute (verified on 4.7); the
+hull shader in ship_effects samples it (`extras glow_uv = 2`). Surfaces on
+the hull shader multiply their layers in gamma space like the original's
+byte pipeline (no sRGB decode in D3D7's texture stages). Residual
+divergences: lightmap-only surfaces use Godot's MUL detail layer, which
+multiplies in LINEAR (midtones slightly bright); and layer multiplies
+apply to albedo before Godot's linear lighting, where the original
+multiplied the lit gamma framebuffer.
 
 ---
 

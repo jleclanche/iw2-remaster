@@ -63,9 +63,6 @@ class GltfBuilder:
         # do not survive Godot's import; the caller folds these into the
         # instancing node's extras like the glow channels.
         self.surface_layers: dict[str, dict[int, dict]] = {}
-        # "mesh:surface" entries whose slot-1 lightmap lost the TEXCOORD_1
-        # contest to the slot-2 glow layer (Godot imports only two UV sets)
-        self.dropped_lightmaps: list[str] = []
 
     def _view(self, raw: bytes, target: int) -> int:
         while len(self.blob) % 4:
@@ -118,7 +115,7 @@ class GltfBuilder:
             mat["emissiveFactor"] = [1, 1, 1]
             mat["emissiveTexture"] = {
                 "index": self.image(glow_uri),
-                "texCoord": 1 if surface.uvs3 else 0}
+                "texCoord": (2 if surface.uvs2 else 1) if surface.uvs3 else 0}
         elif "<glow" in surface.name:
             # glow-channel surface whose slot-2 texture is absent or didn't
             # resolve: textured -> reuse the base texture, white; untextured
@@ -160,14 +157,22 @@ class GltfBuilder:
             if s.uvs:
                 attrs["TEXCOORD_0"] = self._accessor(
                     self._view(struct.pack(f"<{len(s.uvs)}f", *s.uvs), 34962), 5126, nv, "VEC2")
-            # only two UV sets survive the Godot import; when both the slot-1
-            # lightmap and the slot-2 glow have their own channel, the glow
-            # wins TEXCOORD_1 (it is the visible, channel-driven layer) and
-            # the lightmap is dropped (recorded in dropped_lightmaps)
-            uv1 = s.uvs3 if (s.texture3 and s.uvs3) else s.uvs2
-            if uv1:
+            # TEXCOORD_1 = the slot-1 lightmap channel (or the glow's when
+            # there is no lightmap); TEXCOORD_2 = the glow channel when both
+            # exist -- Godot imports it as the CUSTOM0 RG_FLOAT attribute
+            # (verified on 4.7), which the runtime hull shader samples
+            if s.uvs2:
                 attrs["TEXCOORD_1"] = self._accessor(
-                    self._view(struct.pack(f"<{len(uv1)}f", *uv1), 34962), 5126, nv, "VEC2")
+                    self._view(struct.pack(f"<{len(s.uvs2)}f", *s.uvs2), 34962),
+                    5126, nv, "VEC2")
+                if s.texture3 and s.uvs3:
+                    attrs["TEXCOORD_2"] = self._accessor(
+                        self._view(struct.pack(f"<{len(s.uvs3)}f", *s.uvs3), 34962),
+                        5126, nv, "VEC2")
+            elif s.uvs3:
+                attrs["TEXCOORD_1"] = self._accessor(
+                    self._view(struct.pack(f"<{len(s.uvs3)}f", *s.uvs3), 34962),
+                    5126, nv, "VEC2")
             ia = self._accessor(self._view(struct.pack(f"<{len(idx)}H", *idx), 34963),
                                 5123, len(idx), "SCALAR")
             # SHDR slot 2 is the engine's additive glow layer (see pso.py)
@@ -179,17 +184,15 @@ class GltfBuilder:
             layer: dict = {}
             if s.texture2:
                 # SHDR slot 1: the MODULATE lightmap layer glTF drops (#16)
-                if s.uvs2 and s.texture3 and s.uvs3:
-                    self.dropped_lightmaps.append(f"{key}:{s.name}")
-                else:
-                    layer["lightmap"] = s.texture2
-                    layer["uv2"] = bool(s.uvs2)
+                layer["lightmap"] = s.texture2
+                layer["uv2"] = bool(s.uvs2)
             if s.envmap:
                 layer["envmap"] = s.envmap
-            if s.texture3 and s.uvs3:
-                # the emissive glow samples TEXCOORD_1; the runtime must set
-                # emission_on_uv2 (GLTFDocument ignores emissive texCoord)
-                layer["glow_uv2"] = True
+            if uri2 and s.uvs3:
+                # which UV set the emissive glow samples (GLTFDocument
+                # ignores emissive texCoord): 1 = UV2, 2 = the TEXCOORD_2
+                # channel the import lands in CUSTOM0
+                layer["glow_uv"] = 2 if s.uvs2 else 1
             if layer:
                 self.surface_layers.setdefault(key, {})[len(prims)] = layer
             prims.append({"attributes": attrs, "indices": ia,
