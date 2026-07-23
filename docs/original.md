@@ -1644,10 +1644,14 @@ the sun-hue source are solid.
 
 ## 7z-1. `icSunAvatar::Render` recovered (the disc + a rotating corona)
 
-Recovered 2026-07-24 by raw-disassembly -- Ghidra dropped the body. The avatar's
-vtable is `PTR_LAB_1011d1fc`; slot 16 (the same `Render`/draw slot as
-`icPlanetAvatar`'s `0x100ccc80`) is `0x100d2bc0`. Disassembled with
-`tools.ghidra.disasm`, it draws THREE things, in this order:
+Recovered 2026-07-24, first by raw-disassembly, then **confirmed as clean C** once
+the knowledge layer (`functions.tsv`) force-recovered the dropped body on the next
+Ghidra pass -- it now decompiles as `icSunAvatar_Draw @ 0x100d2b80` (664 bytes).
+The avatar's vtable is `PTR_LAB_1011d1fc`; slot 16 (the same draw slot as
+`icPlanetAvatar`'s `0x100ccc80`) is the single function at **`0x100d2b80`**; the
+`0x100d2bc0` cited earlier is an INTERIOR address, just past its prologue (the
+misaligned bytes Ghidra choked on), not a second function. It draws THREE things,
+in this order:
 
 1. **Two `FcBillBoard::Draw4x4` corona billboards** (the quadrant fan, the same
    primitive `star_fx.gd:quadrant_fan_mesh` reproduces). One in colour
@@ -1668,11 +1672,24 @@ components into an angle, then `fchs` (negates) it (`0x100d2cef`). A sun's
 orientation is fixed, so the angle is the sun axis's roll ON SCREEN -- it turns
 as the CAMERA rolls/orbits, spinning the corona. That is the moving halo.
 
-Sizes: the disc/corona size is `radius x 1.4` (`_DAT_1011a440`, set on the node
-via `FUN_100d2910:167911`); the fan's corners reach ~sqrt2 of that, so the
-flames extend ~40% past the disc. NOT fully resolved: the exact corona texture
-bind (`gfx+0x1768`, set from `[eax+0x14]` in the misaligned prologue) -- `sun_red`
-is the reasoned choice (the sun's own surface), tinted by the two PickColours.
+Sizes: the disc/corona size is `radius x 1.4` (`_DAT_1011d250`, `node+0x5c` x
+const); the fan's corners reach ~sqrt2 of that, so the flames extend ~40% past
+the disc. The clean C settles the two items the disasm left open:
+
+- **Corona texture bind (RESOLVED).** `FUN_1009d630(gfx+0x1768,
+  *(icPlanetProperties::m_p_instance + 0x14))` -- the corona samples the SHARED
+  `icPlanetProperties` instance texture (offset `+0x14`), not a per-sun surface.
+  `sun_red` was the reasoned stand-in; the real bind is the properties-singleton
+  texture, tinted by the two `PickColour`s at `node+0xc0` / `node+0xcc`.
+- **The two fans differ by 1.05x (RESOLVED).** The first `Draw4x4` uses size
+  `node+0x5c x const` at angle `-atan + qword[node+0xe0]`; the second is scaled
+  `x1.05` (`FUN_10035e50(size, 1.05)`) at angle `-atan - qword[node+0xe0]`. With
+  `node+0xe0 = 0` both share the angle, so it reads as one slightly-larger
+  second fan offset in colour -- a soft double rim.
+- The disc model is LOD-selected: `FUN_100ce2d0` returns an apparent-size index
+  (`0xffffffff` = cull), which indexes the model array
+  `*(m_p_instance+0x30) + idx*4`; `m_p_global_shader = node+0xd8`, then
+  `FcModel::Render`.
 
 `StarFx` builds the disc (sphere) and both corona fans; the angle is reproduced
 as the sun pole's screen-space roll under the live camera.
