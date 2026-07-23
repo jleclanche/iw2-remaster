@@ -336,25 +336,32 @@ func _update_grid() -> void:
 	_update_contrails()
 
 # @element icHUDContrails
-## The trail feed: the player's own ship always takes the first of the eight
-## slots (icHUD+0x104), then the contacts. `width` is icShip::width (+0x208), the
-## ship INI's `width` -- it is the wingspan the player's ladder is drawn to.
+## The trail feed. The eight slots go to the icHUD's SENSED CONTACTS; the
+## currently selected target takes the first slot (icHUD+0x104, populated from
+## icPlayerContactList::Target() in the HUD refresh FUN_100e09e0 @ 0x100e09e0:
+## 176075/176351). The player's OWN ship is never in its own contact list, so it
+## leaves no trail. `width` is each ship's icShip::width (+0x208): the wingspan
+## the TARGET's ladder is drawn to (FUN_100e5b70 @ 0x100e5b70). Only the target
+## gets the ladder; every other contact gets a plain centre line.
 func _update_contrails() -> void:
+	var tgt: AiShip = target_ai if target_ai != null \
+			and is_instance_valid(target_ai) else null
 	var ships: Array = []
-	if ship != null:
-		ships.append({"node": ship, "vel": ship.velocity, "player": true,
-			"width": float(ship_stats.get("width", 80)),
-			"lds": lds_state == 2, "col": Hud.AMBER})
 	for a in ai_ships:
 		if not is_instance_valid(a):
 			continue
 		# per-contact IFF colour (the point's [7..9] floats read the colour
 		# FUN_100e8530 wrote at ship +0x1c) -- the same table as the brackets
-		ships.append({"node": a, "vel": a.velocity, "player": false,
-			"width": 0.0, "lds": false,
+		var entry := {"node": a, "vel": a.velocity,
+			"width": a.half_dims.x * 2.0, "lds": false,
 			"col": hud._contact_color(_is_hostile(a), "traffic",
-					str(a.faction))})
-	space_fx.update_contrails(get_physics_process_delta_time(), ships,
+					str(a.faction))}
+		# the target claims the first slot (icHUD+0x104); the rest follow
+		if a == tgt:
+			ships.push_front(entry)
+		else:
+			ships.append(entry)
+	space_fx.update_contrails(get_physics_process_delta_time(), ships, tgt,
 		docked_at != "" or jump_state >= 3)
 
 # icStarfieldAvatar (iwar2 @ 0xd1000 Render, 0xd0d80 OnPropertiesChanged):

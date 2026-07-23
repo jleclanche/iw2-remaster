@@ -411,7 +411,9 @@ func _render_grid() -> void:
 #   WHO GETS ONE (FUN_100e5390): a contact that is a ship, is moving faster than
 #   50 m/s (_DAT_1011da98), and is within 50 km (_DAT_1011daa0) -- raised to
 #   150 km (_DAT_1011da9c) while that ship's own LDS drive is engaged. Eight at
-#   most; the player's own ship always gets the first slot.
+#   most; the currently selected TARGET always takes the first slot (icHUD+0x104,
+#   set from icPlayerContactList::Target() in the HUD refresh FUN_100e09e0). The
+#   player's OWN ship is never in its own contact list, so it never gets a trail.
 #
 #   EMISSION (FUN_100e5440): one global countdown, reloaded to 0.4 s
 #   (_DAT_1011da8c). It is NOT distance-based -- every trail drops a point at the
@@ -424,14 +426,17 @@ func _render_grid() -> void:
 #   the line width. When a trail stops qualifying it gets a 2 s grace fade
 #   (_DAT_1011da94) before its slot is freed.
 #
-#   THE PLAYER'S IS A LADDER (FUN_100e5520): two rails offset +/- halfspan along
-#   the sim's local X axis AT THE MOMENT EACH POINT WAS EMITTED, plus a rung
-#   across every point. halfspan = icShip::width (+0x208, the ship INI's `width`)
-#   * 0.5, scaled in over a 0.35 s splay ramp (_DAT_1011da90) each time the
-#   element is shown -- so the trail opens out from the centreline. The rails are
-#   SKIPPED on points whose LDS flag is set (the flag is head & 1 while the drive
-#   is engaged), which makes them come out dashed under LDS; the rungs always
-#   draw. Everyone ELSE gets a single centre line (FUN_100e59d0).
+#   THE TARGET'S IS A LADDER (FUN_100e5520): the Draw (FUN_100e4e60 @ 0x100e4f34)
+#   gives the ladder to the ONE trail whose contact sim == icHUD+0x108 (the
+#   selected target) and a plain centre line to every OTHER trail -- decided per
+#   FRAME, not baked at emit, so re-targeting reshapes the trails at once. The
+#   ladder is two rails offset +/- halfspan along the sim's local X axis AT THE
+#   MOMENT EACH POINT WAS EMITTED, plus a rung across every point. halfspan =
+#   icShip::width (+0x208, the TARGET's INI `width`) * 0.5 (FUN_100e5b70), scaled
+#   in over a 0.35 s splay ramp (_DAT_1011da90) each time the element is shown --
+#   so the trail opens out from the centreline. The rails are SKIPPED on points
+#   whose LDS flag is set (the flag is head & 1 while the drive is engaged), which
+#   makes them come out dashed under LDS; the rungs always draw.
 #
 #   DEPTH: the shared line batch is set up with z0=0, z1=50000, alpha and width
 #   both = 1 - depth/50000 -- a linear fade to nothing at the eligibility range.
@@ -449,13 +454,14 @@ const CT_RANGE_LDS := 150000.0  # _DAT_1011da9c
 var _ct_mi: MeshInstance3D
 var _ct_mesh: ArrayMesh
 var _ct_trails: Dictionary = {}   # ship -> {points: Array, grace: float}
+var _ct_target: Node3D = null     # the trail drawn as a ladder (icHUD+0x108)
 var _ct_emit := 0.0
 var _ct_ramp := 0.0
 
 # The age/decay pass (FUN_100e5280) also SUBTRACTS THE WORLD DELTA from every
 # stored point each frame -- the original's camera-relative world moves the
 # same way main._fold_motion recentres ours. Without this the stored points
-# ride the fold: the player's ladder glues itself to the ship and swims with
+# ride the fold: the target's ladder glues itself to that ship and swims with
 # every burn, and other ships' lines end up hundreds of metres from the ship
 # that emitted them. (This was the "buggy rails".)
 func shift_world(offset: Vector3) -> void:
@@ -473,9 +479,12 @@ func _ensure_contrails() -> void:
 	_ct_mi.custom_aabb = AABB(Vector3.ONE * -1.0e9, Vector3.ONE * 2.0e9)
 	add_child(_ct_mi)
 
-## `ships` is [{node, width, lds}], nearest first; `hidden` blanks the element.
-func update_contrails(delta: float, ships: Array, hidden: bool) -> void:
+## `ships` is [{node, vel, width, lds, col}], target first; `target` is the
+## contact drawn as a ladder (null -> all centre lines); `hidden` blanks it.
+func update_contrails(delta: float, ships: Array, target: Node3D,
+		hidden: bool) -> void:
 	_ensure_contrails()
+	_ct_target = target
 	if hidden:
 		_ct_mi.visible = false
 		_ct_ramp = 0.0
@@ -521,7 +530,6 @@ func update_contrails(delta: float, ships: Array, hidden: bool) -> void:
 					and (tr["points"] as Array).size() % 2 == 1,
 				"life": CT_LIFE,
 				"width": float(s.get("width", 0.0)),
-				"player": bool(s.get("player", false)),
 				"col": Color(s.get("col", Color(0.6, 0.9, 0.6))),
 			})
 			while (tr["points"] as Array).size() > CT_POINTS:
@@ -548,6 +556,9 @@ func _render_contrails() -> void:
 		var pts: Array = tr["points"]
 		if pts.size() < 2:
 			continue
+		# the ladder goes to the ONE trail that is the current target; every
+		# other trail is a centre line (FUN_100e4e60 @ 0x100e4f34, per frame)
+		var ladder: bool = _ct_target != null and node == _ct_target
 		# the grace fade multiplies every alpha in the trail
 		var tail: float = 1.0 - float(tr["grace"]) / CT_GRACE
 		for i in range(pts.size() - 1):
@@ -559,12 +570,12 @@ func _render_contrails() -> void:
 				continue
 			var cp := Color(p["col"], ap)
 			var cq := Color(q["col"], aq)
-			if not bool(p["player"]):
-				# everyone else: one centre line (FUN_100e59d0)
+			if not ladder:
+				# every other contact: one centre line (FUN_100e59d0)
 				v.append(p["pos"]); col.append(cp)
 				v.append(q["pos"]); col.append(cq)
 				continue
-			# the player: a ladder (FUN_100e5520)
+			# the target: a ladder (FUN_100e5520)
 			var hs: float = float(p["width"]) * 0.5 * (_ct_ramp / CT_SPLAY)
 			var op: Vector3 = (p["right"] as Vector3) * hs
 			var oq: Vector3 = (q["right"] as Vector3) * hs

@@ -654,8 +654,14 @@ header (`0x28 + 8 * 0x2dc = 0x1708`).
 * **Who gets one** (`FUN_100e5390`): a contact that is a ship, is moving faster
   than **50 m/s** (`_DAT_1011da98`), and is within **50 km** (`_DAT_1011daa0`) --
   raised to **150 km** (`_DAT_1011da9c`) while that ship's own LDS drive is
-  engaged. Eight at most. The player's own ship always takes the first slot
-  (`icHUD+0x104`).
+  engaged. Eight at most. The trails are the icHUD's **sensed contacts**, and the
+  currently **selected target** takes the first slot (`icHUD+0x104`, filled from
+  `icPlayerContactList::Target()` in the HUD refresh `FUN_100e09e0` @ `0x100e09e0`:
+  `Target()` @ `176075`, matched into the sensed array and copied to
+  `icHUD+0x104/+0x108` @ `176325`/`176351`; `+0x108 = 0` when there is no target,
+  `176343`). **The player's own ship is never in its own contact list, so it
+  leaves no trail at all.** (The earlier note that "the player takes the first
+  slot" misread `icHUD+0x104` as the player -- it is the target.)
 * **Emission** (`FUN_100e5440`): ONE global countdown, reloaded to **0.4 s**
   (`_DAT_1011da8c`). It is **not** distance-based -- every trail drops a point at
   the same instant, 2.5 times a second. The 16-point ring therefore spans exactly
@@ -667,21 +673,27 @@ header (`0x28 + 8 * 0x2dc = 0x1708`).
 * **Disappearance**: when a trail stops qualifying it gets a **2 s** grace fade
   (`_DAT_1011da94`) -- every alpha scaled by `1 - timer/2` -- before its slot is
   freed. If it re-qualifies the fade cancels.
-* **The player's trail is a LADDER** (`FUN_100e5520`): two rails offset by
-  `+/- halfspan` along the **sim's local X axis at the moment each point was
-  emitted**, plus a **rung** across every point. `halfspan = icShip::width
-  (+0x208, the ship INI's `width`) * 0.5`, scaled in over a **0.35 s** splay ramp
-  (`_DAT_1011da90`) each time the element is shown -- so the trail opens out from
-  the centreline. The **rails are skipped** on points whose LDS flag is set (the
-  flag is `head & 1` while the drive is engaged), which makes them come out
-  **dashed** under LDS; the rungs always draw.
-* **Everyone else gets a single centre line** (`FUN_100e59d0`).
+* **The target's trail is a LADDER** (`FUN_100e5520`): the Draw (`FUN_100e4e60`)
+  picks the ladder **per frame** for the one trail whose contact sim ==
+  `icHUD+0x108` (the selected target) @ `0x100e4f34`; every other trail draws a
+  centre line. The ladder is two rails offset by `+/- halfspan` along the **sim's
+  local X axis at the moment each point was emitted**, plus a **rung** across
+  every point. `halfspan = icShip::width (+0x208, the TARGET's INI `width`) * 0.5`
+  (captured at assign, `FUN_100e5b70` @ `0x100e5b70`:`178899`), scaled in over a
+  **0.35 s** splay ramp (`_DAT_1011da90`) each time the element is shown -- so the
+  trail opens out from the centreline. The **rails are skipped** on points whose
+  LDS flag is set (the flag is `head & 1` while the drive is engaged), which makes
+  them come out **dashed** under LDS; the rungs always draw.
+* **Every other contact gets a single centre line** (`FUN_100e59d0`).
 * **Depth**: the shared line batch is set up with `z0=0, z1=50000` and both alpha
   and width `= 1 - depth/50000` -- a linear fade to nothing exactly at the
   eligibility range.
-* The element also draws a small **2D wingtip marker** (sprite 5) at each trailed
-  contact's projected screen position, and at both of the player's projected
-  wingtips.
+* A post-loop block (`FUN_100e4e60` @ `0x100e4f6b`, keyed on `icHUD+0x104`) draws
+  a **live leading segment** from the newest stored point out to the target's
+  current position and wingtips, so the ladder stays attached to the moving
+  target. (Not ported yet; the earlier "2D wingtip marker at the player's
+  wingtips" note predates the `+0x104 = target` correction and needs
+  re-verification.)
 
 Neither class has any INI properties: both `RegisterClass` calls pass the base
 `iiHUDElement` property map, and there is no `[icHUDShields]` or

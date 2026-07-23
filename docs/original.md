@@ -850,8 +850,13 @@ the **viewpoint** teleporting, not the particles.
   `Cargo_Autopilots`' INI does not exist.
 - **`DAT_10167e5c` -- the long-open HUD question -- is `icPlayerLDA`.**
   `icHUDShields` draws the LDA state, capped at 2 rows. `icHUDContrails` is 8
-  trails x 16 points, 0.4 s emission: the player gets a *ladder* (wingtip rails
-  plus rungs, dashed under LDS), everyone else a centre line.
+  trails x 16 points, 0.4 s emission of the icHUD's sensed contacts: the
+  currently **selected target** gets a *ladder* (wingtip rails plus rungs, dashed
+  under LDS), every other contact a centre line. The player's own ship is not in
+  its contact list, so it leaves no trail. (The special first slot `icHUD+0x104`
+  is `icPlayerContactList::Target()` set in `FUN_100e09e0`, and the Draw keys the
+  ladder on `trail.sim == icHUD+0x108` @ `0x100e4f34` -- an earlier note that had
+  this as "the player" was a misread.)
 - **Two corrections to earlier notes.** `icShip::ThrusterRatio` is a **stub
   returning 0.0**, so the "lerped up by ThrusterRatio" term in
   `icShip::Brightness` is dead code; and the reactor's "stored charge" stores

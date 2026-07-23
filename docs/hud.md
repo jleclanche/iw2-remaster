@@ -1080,11 +1080,15 @@ table itself is BSS at 0x101741b0, so tools/iw2/hud_sprites.py recovers all
   past the end clears. The HUD redirects the whole target readout to the
   component (reticle master @ 188183) and FUN_100f8360 marks it in-world
   with sprite 3 at the component's projected position.
-- The "virtual rail" (icHUDContrails) was already fully ported in
-  space_fx.gd -- today's independent re-extraction of FUN_100e5280/5390/
-  5440/5520 agrees with every constant there (50 m/s, 50/150 km, 0.4 s
-  cadence, 0.7 alpha, 16-point ring, ladder for the player, centre line for
-  others, LDS dashing).
+- The "virtual rail" (icHUDContrails) is ported in space_fx.gd -- the
+  re-extraction of FUN_100e5280/5390/5440/5520 agrees with every constant
+  there (50 m/s, 50/150 km, 0.4 s cadence, 0.7 alpha, 16-point ring, LDS
+  dashing). NOTE: the ladder goes to the selected TARGET, not the player
+  (icHUD+0x104 is `icPlayerContactList::Target()`, FUN_100e09e0; the Draw
+  compares each trail's sim to icHUD+0x108 @ 0x100e4f34). The player's own
+  ship is never in its contact list, so it gets no trail; every non-target
+  contact gets a centre line. The earlier "ladder for the player" was a
+  misread and is corrected in the port.
 
 ### Aim triangles, corrected (second pass)
 
