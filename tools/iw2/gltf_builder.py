@@ -53,16 +53,11 @@ class GltfBuilder:
         # <glow channel=EXPR> (issue #17): the layer's intensity is CHANNEL
         # DRIVEN in the engine (AddSurfaceChannel, flux.dll.c:99855), not
         # constant. The caller folds this into the instancing node's extras so
-        # ship_effects can animate emission at runtime.
+        # ship_effects can animate emission at runtime. Everything else about
+        # the SHDR layer stack is baked offline (tools/iw2/bake.py): layered
+        # surfaces arrive here with an atlas UV set and a pre-multiplied
+        # albedo/emission atlas pair -- godot-native materials, no extras.
         self.glow_channels: dict[str, dict[int, str]] = {}
-        # mesh key -> {primitive index: {"lightmap": name, "uv2": bool,
-        # "envmap": name}} for the layers glTF cannot carry (issues #16/#15):
-        # WRAP-addressed slot-1 lightmaps render as a MODULATE layer
-        # (CreateRenderSurface cLayer(2), flux.dll.c:100107-100119) and the
-        # envmap as a camera-space sphere map at MODULATE2X. Material extras
-        # do not survive Godot's import; the caller folds these into the
-        # instancing node's extras like the glow channels.
-        self.surface_layers: dict[str, dict[int, dict]] = {}
 
     def _view(self, raw: bytes, target: int) -> int:
         while len(self.blob) % 4:
@@ -87,7 +82,10 @@ class GltfBuilder:
         return self._image_ids[uri]
 
     def material(self, surface, texture_uri: str | None,
-                 glow_uri: str | None = None) -> int:
+                 emissive_uri: str | None = None) -> int:
+        """One godot-native material: an albedo texture (the base texture,
+        or the baked layer-product atlas) and optionally an emission texture
+        (the baked glow atlas), both on TEXCOORD_0."""
         mat = {
             "name": surface.name,
             "pbrMetallicRoughness": {
@@ -102,25 +100,18 @@ class GltfBuilder:
             tex = self.image(texture_uri)
             mat["pbrMetallicRoughness"]["baseColorTexture"] = {"index": tex, "texCoord": 0}
             mat["pbrMetallicRoughness"]["baseColorFactor"] = [1, 1, 1, 1]
-        if surface.texture2:
-            mat["extras"]["lightmap"] = surface.texture2
-        if surface.envmap:
-            mat["extras"]["envmap"] = surface.envmap
-        if glow_uri:
-            # SHDR slot 2: the engine's ADDITIVE glow layer -- unlit, drawn
-            # SRCALPHA/ONE as a later pass (dx7graph 'At' @ 0x1000b442) with
-            # a WHITE tint (textured layers keep the cLayer ctor tint,
-            # 0x10067f10; the authored surface colour is never applied).
-            # Emission with a white factor is the same math.
+        if emissive_uri:
+            # the baked SHDR slot-2 glow: unlit additive in the original
+            # (SRCALPHA/ONE 'At' @ 0x1000b442), white tint -- emission with
+            # a white factor is the same math; the <glow channel=EXPR>
+            # energy stays runtime-driven via the node extras
             mat["emissiveFactor"] = [1, 1, 1]
             mat["emissiveTexture"] = {
-                "index": self.image(glow_uri),
-                "texCoord": (2 if surface.uvs2 else 1) if surface.uvs3 else 0}
+                "index": self.image(emissive_uri), "texCoord": 0}
         elif "<glow" in surface.name:
-            # glow-channel surface whose slot-2 texture is absent or didn't
-            # resolve: textured -> reuse the base texture, white; untextured
-            # -> tint = authored colour (the untextured-layer path in
-            # CreateRenderSurface @ 0x10066600 keeps the colour)
+            # glow-channel surface with no baked emission: textured -> reuse
+            # the albedo texture, white; untextured -> tint = authored
+            # colour (the untextured-layer path @ 0x10066600 keeps it)
             if texture_uri:
                 mat["emissiveFactor"] = [1, 1, 1]
                 mat["emissiveTexture"] = {"index": self._image_ids[texture_uri], "texCoord": 0}
@@ -131,20 +122,39 @@ class GltfBuilder:
         return len(self.doc["materials"]) - 1
 
     def mesh_from_pso(self, key: str, pso, resolve_texture,
-                      resolve_texture2=None) -> int | None:
-        """Add a mesh (once per key); resolve_texture(surface) -> uri or None."""
+                      bake=None, bake_uris=None) -> int | None:
+        """Add a mesh (once per key); resolve_texture(surface) -> uri or None.
+
+        bake is a tools.iw2.bake.Bake for this pso (layered surfaces baked
+        to an atlas pair) and bake_uris the glTF-relative (albedo, emission)
+        atlas URIs; surfaces present in bake.surfaces use the remapped
+        geometry + atlas UV instead of their authored channels.
+        """
         if key in self._mesh_ids:
             return self._mesh_ids[key]
         prims = []
-        for s in pso.surfaces:
+        for si, s in enumerate(pso.surfaces):
             nv = len(s.positions) // 3
             if nv == 0 or not s.indices:
                 continue
-            pos = list(s.positions)
-            nrm = list(s.normals)
+            sb = bake.surfaces.get(si) if bake is not None else None
+            if sb is not None:
+                vm = sb.vmapping
+                pos = []
+                nrm = []
+                for v in vm:
+                    pos += s.positions[3 * v:3 * v + 3]
+                    nrm += s.normals[3 * v:3 * v + 3]
+                idx = [int(i) for i in sb.indices.reshape(-1)]
+                uvs = [float(u) for u in sb.uvs.reshape(-1)]
+                nv = len(vm)
+            else:
+                pos = list(s.positions)
+                nrm = list(s.normals)
+                idx = list(s.indices)
+                uvs = list(s.uvs)
             pos[2::3] = [-z for z in pos[2::3]]
             nrm[2::3] = [-z for z in nrm[2::3]]
-            idx = list(s.indices)
             idx[1::3], idx[2::3] = idx[2::3], idx[1::3]
             xs, ys, zs = pos[0::3], pos[1::3], pos[2::3]
             attrs = {
@@ -154,49 +164,23 @@ class GltfBuilder:
                 "NORMAL": self._accessor(
                     self._view(struct.pack(f"<{len(nrm)}f", *nrm), 34962), 5126, nv, "VEC3"),
             }
-            if s.uvs:
+            if uvs:
                 attrs["TEXCOORD_0"] = self._accessor(
-                    self._view(struct.pack(f"<{len(s.uvs)}f", *s.uvs), 34962), 5126, nv, "VEC2")
-            # TEXCOORD_1 = the slot-1 lightmap channel (or the glow's when
-            # there is no lightmap); TEXCOORD_2 = the glow channel when both
-            # exist -- Godot imports it as the CUSTOM0 RG_FLOAT attribute
-            # (verified on 4.7), which the runtime hull shader samples
-            if s.uvs2:
-                attrs["TEXCOORD_1"] = self._accessor(
-                    self._view(struct.pack(f"<{len(s.uvs2)}f", *s.uvs2), 34962),
-                    5126, nv, "VEC2")
-                if s.texture3 and s.uvs3:
-                    attrs["TEXCOORD_2"] = self._accessor(
-                        self._view(struct.pack(f"<{len(s.uvs3)}f", *s.uvs3), 34962),
-                        5126, nv, "VEC2")
-            elif s.uvs3:
-                attrs["TEXCOORD_1"] = self._accessor(
-                    self._view(struct.pack(f"<{len(s.uvs3)}f", *s.uvs3), 34962),
-                    5126, nv, "VEC2")
+                    self._view(struct.pack(f"<{len(uvs)}f", *uvs), 34962), 5126, nv, "VEC2")
             ia = self._accessor(self._view(struct.pack(f"<{len(idx)}H", *idx), 34963),
                                 5123, len(idx), "SCALAR")
-            # SHDR slot 2 is the engine's additive glow layer (see pso.py)
-            uri2 = resolve_texture2(s) if resolve_texture2 and s.texture3 else None
             m = re.search(r"<glow\s+channel=([^>]+)>", s.name)
             if m:
                 self.glow_channels.setdefault(key, {})[len(prims)] = \
                     m.group(1).strip()
-            layer: dict = {}
-            if s.texture2:
-                # SHDR slot 1: the MODULATE lightmap layer glTF drops (#16)
-                layer["lightmap"] = s.texture2
-                layer["uv2"] = bool(s.uvs2)
-            if s.envmap:
-                layer["envmap"] = s.envmap
-            if uri2 and s.uvs3:
-                # which UV set the emissive glow samples (GLTFDocument
-                # ignores emissive texCoord): 1 = UV2, 2 = the TEXCOORD_2
-                # channel the import lands in CUSTOM0
-                layer["glow_uv"] = 2 if s.uvs2 else 1
-            if layer:
-                self.surface_layers.setdefault(key, {})[len(prims)] = layer
+            if sb is not None:
+                tex_uri = bake_uris[0]
+                em_uri = bake_uris[1] if sb.has_emission else None
+            else:
+                tex_uri = resolve_texture(s)
+                em_uri = None
             prims.append({"attributes": attrs, "indices": ia,
-                          "material": self.material(s, resolve_texture(s), uri2)})
+                          "material": self.material(s, tex_uri, em_uri)})
         if not prims:
             return None
         self.doc["meshes"].append({"primitives": prims, "name": key})

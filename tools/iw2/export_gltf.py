@@ -9,9 +9,11 @@ right-handed (-Z forward). We negate Z on positions/normals and flip
 triangle winding. UVs pass through unchanged (DX top-left origin matches
 glTF).
 
-Extra (non-standard but allowed) data preserved per material in "extras":
-original surface name (contains #tags and <glow> channels), lightmap
-texture (UV1), envmap name, the two shading coefficients.
+Layered surfaces (SHDR lightmap/envmap/glow slots) reference the baked
+atlas pair produced by tools.iw2.bake with a fresh xatlas unwrap on
+TEXCOORD_0; base-only surfaces keep their authored texture and UVs. The
+material extras carry the original surface name (#tags and <glow>
+channels) and the two shading coefficients.
 
 Usage:  python -m tools.iw2.export_gltf [out_dir] [textures_dir]
 """
@@ -23,6 +25,7 @@ import struct
 import sys
 from pathlib import Path, PurePosixPath
 
+from .bake import bake_for
 from .pso import parse_pso
 from .resources import ResourceFS
 
@@ -47,8 +50,17 @@ def resolve_texture(index: dict, name: str | None, pso_dir: str) -> Path | None:
     return candidates[0]
 
 
-def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> dict:
+def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str,
+               pso_path: str = "") -> dict:
     mesh = parse_pso(data)
+    bake = None
+    if pso_path:
+        try:
+            # layered surfaces (lightmap/envmap/glow) ship as a baked atlas
+            # pair with a fresh unwrap (tools/iw2/bake.py, cached)
+            bake = bake_for(pso_path, mesh)
+        except Exception as exc:
+            print(f"  bake failed {pso_path}: {exc}")
     blob = bytearray()
     accessors, buffer_views, primitives = [], [], []
     materials, images, textures_json, samplers = [], [], [], [{"wrapS": 10497, "wrapT": 10497}]
@@ -96,12 +108,26 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
         nv = len(s.positions) // 3
         if nv == 0 or not s.indices:
             continue
+        sb = bake.surfaces.get(file_idx) if bake is not None else None
+        vmap = None
+        if sb is not None:
+            vmap = [int(v) for v in sb.vmapping]
+            pos = []
+            nrm = []
+            for v in vmap:
+                pos += s.positions[3 * v:3 * v + 3]
+                nrm += s.normals[3 * v:3 * v + 3]
+            idx = [int(i) for i in sb.indices.reshape(-1)]
+            uvs = [float(u) for u in sb.uvs.reshape(-1)]
+            nv = len(vmap)
+        else:
+            pos = list(s.positions)
+            nrm = list(s.normals)
+            idx = list(s.indices)
+            uvs = list(s.uvs)
         # flip Z for handedness
-        pos = list(s.positions)
-        nrm = list(s.normals)
         pos[2::3] = [-z for z in pos[2::3]]
         nrm[2::3] = [-z for z in nrm[2::3]]
-        idx = list(s.indices)
         idx[1::3], idx[2::3] = idx[2::3], idx[1::3]  # flip winding
 
         pv = add_view(struct.pack(f"<{len(pos)}f", *pos), 34962)
@@ -111,21 +137,9 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
         nvw = add_view(struct.pack(f"<{len(nrm)}f", *nrm), 34962)
         na = add_accessor(nvw, 5126, nv, "VEC3")
         attrs = {"POSITION": pa, "NORMAL": na}
-        if s.uvs:
-            uv_v = add_view(struct.pack(f"<{len(s.uvs)}f", *s.uvs), 34962)
+        if uvs:
+            uv_v = add_view(struct.pack(f"<{len(uvs)}f", *uvs), 34962)
             attrs["TEXCOORD_0"] = add_accessor(uv_v, 5126, nv, "VEC2")
-        # TEXCOORD_1 = lightmap channel (or the glow's when no lightmap);
-        # TEXCOORD_2 = glow channel when both exist (imports as CUSTOM0;
-        # same layout as gltf_builder)
-        if s.uvs2:
-            uv2_v = add_view(struct.pack(f"<{len(s.uvs2)}f", *s.uvs2), 34962)
-            attrs["TEXCOORD_1"] = add_accessor(uv2_v, 5126, nv, "VEC2")
-            if s.texture3 and s.uvs3:
-                uv3_v = add_view(struct.pack(f"<{len(s.uvs3)}f", *s.uvs3), 34962)
-                attrs["TEXCOORD_2"] = add_accessor(uv3_v, 5126, nv, "VEC2")
-        elif s.uvs3:
-            uv3_v = add_view(struct.pack(f"<{len(s.uvs3)}f", *s.uvs3), 34962)
-            attrs["TEXCOORD_1"] = add_accessor(uv3_v, 5126, nv, "VEC2")
         iv = add_view(struct.pack(f"<{len(idx)}H", *idx), 34963)
         ia = add_accessor(iv, 5123, len(idx), "SCALAR")
 
@@ -138,23 +152,20 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
             },
             "extras": {"coeffs": list(s.coeffs)},
         }
-        png = resolve_texture(tex_index, s.texture, pso_dir)
+        if sb is not None:
+            png = bake.albedo_png
+        else:
+            png = resolve_texture(tex_index, s.texture, pso_dir)
         if png is not None:
             mat["pbrMetallicRoughness"]["baseColorTexture"] = {"index": add_image(png), "texCoord": 0}
             mat["pbrMetallicRoughness"]["baseColorFactor"] = [1.0, 1.0, 1.0, 1.0]
-        if s.texture2:
-            mat["extras"]["lightmap"] = s.texture2
-        if s.envmap:
-            mat["extras"]["envmap"] = s.envmap
-        # SHDR slot 2 = the additive glow layer, unlit WHITE tint (see
-        # pso.py; ReadPSOGeometry discards the authored colour on textured
-        # surfaces, flux.dll.c:99181)
-        glow_png = resolve_texture(tex_index, s.texture3, pso_dir)
-        if glow_png is not None:
+        if sb is not None and sb.has_emission:
+            # the baked slot-2 glow: unlit additive in the original, WHITE
+            # tint (ReadPSOGeometry discards the authored colour on textured
+            # surfaces, flux.dll.c:99181)
             mat["emissiveFactor"] = [1.0, 1.0, 1.0]
-            mat["emissiveTexture"] = {
-                "index": add_image(glow_png),
-                "texCoord": (2 if s.uvs2 else 1) if s.uvs3 else 0}
+            mat["emissiveTexture"] = {"index": add_image(bake.emission_png),
+                                      "texCoord": 0}
         elif "<glow" in s.name:
             if png is not None:
                 mat["emissiveFactor"] = [1.0, 1.0, 1.0]
@@ -165,14 +176,17 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str) -> di
         prim = {"attributes": attrs, "indices": ia, "material": len(materials) - 1}
         if n_targets:
             # every primitive must carry the same target count (glTF spec);
-            # surfaces without their own DELTs get zero deltas
+            # surfaces without their own DELTs get zero deltas (baked
+            # surfaces remap the per-vertex deltas through the unwrap)
             targets = []
             surf_morphs = morphs_by_surface.get(file_idx, [])
+            src_nv = len(s.positions) // 3
             for t in range(n_targets):
-                if t < len(surf_morphs) and len(surf_morphs[t]["deltas"]) == nv * 6:
+                if t < len(surf_morphs) \
+                        and len(surf_morphs[t]["deltas"]) == src_nv * 6:
                     vals = surf_morphs[t]["deltas"]
                     dpos, dnrm = [], []
-                    for vi in range(nv):
+                    for vi in (vmap if vmap is not None else range(nv)):
                         vp = vals[vi * 6:vi * 6 + 3]
                         vn = vals[vi * 6 + 3:vi * 6 + 6]
                         dpos += [vp[0], vp[1], -vp[2]]
@@ -227,7 +241,8 @@ def main(out_dir: str = "data/gltf", textures_dir: str = "data/textures") -> Non
     for p in fs.list("", ".pso"):
         rel = Path(p).with_suffix(".gltf")
         try:
-            export_pso(fs.read_bytes(p), out / rel, tex_index, str(Path(p).parent.as_posix()))
+            export_pso(fs.read_bytes(p), out / rel, tex_index,
+                       str(Path(p).parent.as_posix()), p)
             ok += 1
         except Exception as exc:
             failed.append((p, str(exc)))

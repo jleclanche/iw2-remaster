@@ -12,9 +12,11 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path, PurePosixPath
 
+from .bake import bake_for
 from .gltf_builder import GltfBuilder, hpb_to_quat
 from .lws import parse_scene
 from .pso import parse_pso
@@ -150,10 +152,25 @@ class Assembler:
                         pso_path = hits[0]
                 if self.fs.exists(pso_path):
                     pso = parse_pso(self.fs.read_bytes(pso_path))
+                    bake = None
+                    uris = None
+                    try:
+                        # layered surfaces (lightmap/envmap/glow) arrive as
+                        # a baked atlas pair (tools/iw2/bake.py, cached)
+                        bake = bake_for(pso_path, pso, self.textures_root)
+                    except Exception as exc:  # bake loss > assemble loss
+                        print(f"  bake failed {pso_path}: {exc}")
+                    if bake is not None:
+                        alb = Path(os.path.relpath(
+                            bake.albedo_png, self.out_path.parent)).as_posix()
+                        em = Path(os.path.relpath(
+                            bake.emission_png, self.out_path.parent)).as_posix() \
+                            if bake.emission_png else None
+                        uris = (alb, em)
                     mesh = self.b.mesh_from_pso(
                         pso_path, pso,
                         lambda s: self.texture_uri(scene_dir, s.texture),
-                        lambda s: self.texture_uri(scene_dir, s.texture3))
+                        bake=bake, bake_uris=uris)
                 else:
                     self.missing_psos.append(pso_path)
             extras = None
@@ -163,28 +180,6 @@ class Assembler:
                 extras = {"iw2_glow_channels": {
                     str(i): expr
                     for i, expr in self.b.glow_channels[pso_path].items()}}
-            if mesh is not None and pso_path in self.b.surface_layers:
-                # wrap-addressed lightmaps + envmap names (#16/#15): resolved
-                # to data/textures-relative paths for the runtime material pass
-                lay: dict = {}
-                for i, d in self.b.surface_layers[pso_path].items():
-                    ent: dict = {}
-                    if d.get("lightmap"):
-                        rel = self.texture_rel(scene_dir, d["lightmap"])
-                        if rel:
-                            ent["lightmap"] = rel
-                            ent["uv2"] = bool(d.get("uv2"))
-                    if d.get("envmap"):
-                        ent["envmap"] = d["envmap"]
-                    if d.get("glow_uv"):
-                        # which UV set the emissive glow samples (2 = the
-                        # TEXCOORD_2 channel Godot imports as CUSTOM0)
-                        ent["glow_uv"] = d["glow_uv"]
-                    if ent:
-                        lay[str(i)] = ent
-                if lay:
-                    extras = (extras or {})
-                    extras["iw2_surface_layers"] = lay
             if n["kind"] not in ("object", "null"):
                 extras = {"iw2_kind": n["kind"]}
                 for attr in ("channel", "class", "template", "tint", "splay",

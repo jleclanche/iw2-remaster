@@ -150,19 +150,12 @@ func _scan(model: Node3D) -> void:
 				if not (src is StandardMaterial3D):
 					continue
 				var mat: StandardMaterial3D = src.duplicate()
-				var lay: Dictionary = ex.get("iw2_surface_layers", {})
-				if lay.has(str(idx)) \
-						and int(lay[str(idx)].get("glow_uv", 0)) == 1:
-					mat.emission_on_uv2 = true
 				mi.set_surface_override_material(int(str(idx)), mat)
 				var gch := str(chans[idx])
 				glow_mats.append({"mat": mat, "channel": gch})
 				if not exprs.has(gch) \
 						and not gch in ["flame", "core", "boom", "flap"]:
 					exprs[gch] = {"terms": _parse_expr(gch), "value": 0.0}
-		if ex.has("iw2_surface_layers") and n is MeshInstance3D:
-			_apply_surface_layers(n as MeshInstance3D,
-					ex["iw2_surface_layers"])
 		if str(ex.get("iw2_class", "")) == "icFlameConeAvatar":
 			_add_flame_cone(n as Node3D, ex)
 		if str(ex.get("iw2_class", "")) == "icBeamAvatar":
@@ -329,200 +322,12 @@ func _add_jet_beam(node: Node3D, ex: Dictionary) -> void:
 	add_child(mi)
 	_jet_beams.append({"node": node, "mi": mi})
 
-# The SHDR slot-1 lightmap layer (#16): a MODULATE layer over the lit base
-# (CreateRenderSurface cLayer(2) @ 0x10066600; multipass fallback multiplies
-# ZERO/SRCCOLOR, dx7graph 'Mt' @ 0x1000b6b8). The slot-2 additive glow
-# ships as the material's emission (white factor) on its own UV channel:
-# extras glow_uv 1 = TEXCOORD_1 (emission_on_uv2), 2 = TEXCOORD_2, which
-# the import lands in CUSTOM0 and only the hull shader can sample (#59).
-# Surfaces routed to the hull shader multiply their layers in GAMMA space
-# like the original's byte pipeline; the lightmap-only route stays on the
-# MUL detail layer, which multiplies in linear -- that residual divergence
-# (midtones slightly bright) is documented in original.md 7x.
-func _apply_surface_layers(mi: MeshInstance3D, lay: Dictionary) -> void:
-	var base := ProjectSettings.globalize_path("res://").path_join("..")
-	for idx in lay:
-		var d: Dictionary = lay[idx]
-		var src := mi.get_active_material(int(str(idx)))
-		if not (src is StandardMaterial3D):
-			continue
-		var glow_uv := int(d.get("glow_uv", 0))
-		if glow_uv == 1 \
-				and not (src as StandardMaterial3D).emission_on_uv2:
-			# the slot-2 glow samples TEXCOORD_1 when it is the only extra
-			# channel; GLTFDocument ignores the emissive texCoord
-			var fixed: StandardMaterial3D = src.duplicate()
-			fixed.emission_on_uv2 = true
-			mi.set_surface_override_material(int(str(idx)), fixed)
-			for gm in glow_mats:
-				if gm["mat"] == src:
-					gm["mat"] = fixed
-			src = fixed
-		var ltex: Texture2D = null
-		if d.has("lightmap"):
-			ltex = ParticleFx.texture(base, str(d["lightmap"]))
-		var etex: Texture2D = null
-		if d.has("envmap"):
-			var stem := str(d["envmap"]).get_basename().to_lower()
-			etex = ParticleFx.texture(base, "images/envmaps/" + stem)
-		if etex != null or glow_uv == 2:
-			# the hull shader: envmapped surfaces, and any surface whose
-			# glow sits on TEXCOORD_2 (imported as CUSTOM0 -- out of reach
-			# of StandardMaterial3D)
-			var env_mat := _envmap_material(src as StandardMaterial3D, etex,
-					ltex, bool(d.get("uv2", false)), glow_uv,
-					mi.mesh.get_aabb(), _surface_axis(mi, int(str(idx))))
-			mi.set_surface_override_material(int(str(idx)), env_mat)
-			# a <glow channel> duplicate for this surface is now replaced by
-			# the shader -- repoint its driver at the shader's emis_energy
-			for gm in glow_mats:
-				if gm["mat"] == src:
-					gm["mat"] = env_mat
-		elif ltex != null:
-			var mat: StandardMaterial3D = src.duplicate()
-			mat.detail_enabled = true
-			mat.detail_blend_mode = BaseMaterial3D.BLEND_MODE_MUL
-			mat.detail_uv_layer = BaseMaterial3D.DETAIL_UV_2 \
-					if bool(d.get("uv2", false)) \
-					else BaseMaterial3D.DETAIL_UV_1
-			mat.detail_albedo = ltex
-			mi.set_surface_override_material(int(str(idx)), mat)
-			for gm in glow_mats:
-				if gm["mat"] == src:
-					gm["mat"] = mat
-
-# The ENVMAP layer (#15): nearly every hull surface names one
-# (CastIron/Aluminium/SteelShiny/Chrome/...). FcModel's cLayer(3) is built
-# from sSurface+0x38 (CreateRenderSurface, flux.dll.c:100084-100097) and
-# rendered at D3DTOP_MODULATE2X ("Using D3DTOP_MODULATE2X for spec", dx7
-# init 6513-6519): lit_base * env * 2. The texcoords are NOT a sphere map:
-# dx7's texgen (FUN_1000ca20 @ 0x1000ca20) normalises by the MODEL'S OWN
-# BOUNDS (FcBounds floored to [-1,1]^3, rows 1/(max-min), translate -min)
-# and picks a projection plane by an axis's dominant component. The axis
-# is SETTLED (the concrete surface is fcSurfaceD3D, vtable 0x1001553c
-# installed at ctor tail 0x1000ddb0; slot 15 = FUN_1000e600, raw-disasm):
-# it sums the surface's VERTEX NORMALS (+0xc into each vertex, stride
-# +0x1c words) and returns the per-component |mean| -- the plane is the
-# SURFACE'S dominant facing, static per surface, not the camera. The
-# sheen is glued to the hull; only lighting moves over it.
-const ENV_SHADER := """
-shader_type spatial;
-uniform sampler2D base_tex : source_color, filter_linear_mipmap, repeat_enable;
-// env/light are sampled RAW (gamma bytes): the original's MODULATE(2X)
-// stages multiply the STORED 8-bit values (D3D7 has no sRGB decode), so
-// the layer products are formed in gamma space and decoded once at the end
-// -- the same after-the-filter pattern as main_world's sky shaders
-uniform sampler2D env_tex : filter_linear_mipmap, repeat_enable;
-uniform sampler2D light_tex : filter_linear_mipmap, repeat_enable;
-uniform bool has_base = false;
-uniform bool has_env = false;
-uniform bool has_light = false;
-uniform bool light_uv2 = false;
-uniform sampler2D emis_tex : source_color, filter_linear_mipmap, repeat_enable;
-uniform bool has_emis = false;
-uniform int emis_uv = 0; // 0=UV, 1=UV2, 2=CUSTOM0.xy (the TEXCOORD_2 import)
-uniform float emis_energy = 1.0;
-uniform vec4 base_color = vec4(1.0);
-uniform float metal = 0.1;
-uniform float rough = 0.85;
-uniform vec3 bb_min = vec3(-1.0);
-uniform vec3 bb_inv = vec3(0.5);
-uniform int axis = 2;
-varying vec3 mpos;
-varying vec2 cuv;
-void vertex() {
-	mpos = VERTEX;
-	cuv = CUSTOM0.xy;
-}
-void fragment() {
-	vec4 b = base_color;
-	if (has_base) {
-		b *= texture(base_tex, UV);
-	}
-	// encode the (linear) base back to sRGB, multiply the layers in gamma
-	// like the original's byte pipeline, decode once for the lit path
-	vec3 g = mix(b.rgb * 12.92, 1.055 * pow(b.rgb, vec3(1.0 / 2.4)) - 0.055,
-		step(vec3(0.0031308), b.rgb));
-	if (has_light) {
-		g *= texture(light_tex, light_uv2 ? UV2 : UV).rgb;
-	}
-	if (has_env) {
-		vec3 nm = (mpos - bb_min) * bb_inv;
-		vec2 suv = nm.xy;
-		if (axis == 0) {
-			suv = nm.zy;
-		} else if (axis == 1) {
-			suv = nm.xz;
-		}
-		// D3DTOP_MODULATE2X saturates in bytes
-		g = min(g * texture(env_tex, suv).rgb * 2.0, vec3(1.0));
-	}
-	ALBEDO = mix(g / 12.92, pow((g + vec3(0.055)) / 1.055, vec3(2.4)),
-		step(vec3(0.04045), g));
-	if (has_emis) {
-		vec2 euv = emis_uv == 2 ? cuv : (emis_uv == 1 ? UV2 : UV);
-		EMISSION = texture(emis_tex, euv).rgb * emis_energy;
-	}
-	METALLIC = metal;
-	ROUGHNESS = rough;
-}
-"""
-static var _env_shader: Shader = null
-
-## The projection axis: the dominant component of the surface's MEAN
-## VERTEX NORMAL (fcSurfaceD3D slot 15 @ 0x1000e600 sums the normals and
-## takes per-component absolutes). Returns 0/1/2 for the axis to drop.
-static func _surface_axis(mi: MeshInstance3D, idx: int) -> int:
-	if mi.mesh == null or idx >= mi.mesh.get_surface_count():
-		return 2
-	var arrays: Array = mi.mesh.surface_get_arrays(idx)
-	var norms: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
-	var acc := Vector3.ZERO
-	for n in norms:
-		acc += n
-	acc = acc.abs()
-	if acc.x >= acc.y and acc.x >= acc.z:
-		return 0
-	if acc.y >= acc.z:
-		return 1
-	return 2
-
-func _envmap_material(src: StandardMaterial3D, env: Texture2D,
-		lmap: Texture2D, uv2: bool, emis_uv: int, aabb: AABB,
-		axis: int) -> ShaderMaterial:
-	if _env_shader == null:
-		_env_shader = Shader.new()
-		_env_shader.code = ENV_SHADER
-	var mat := ShaderMaterial.new()
-	mat.shader = _env_shader
-	if src.albedo_texture != null:
-		mat.set_shader_parameter("base_tex", src.albedo_texture)
-		mat.set_shader_parameter("has_base", true)
-	mat.set_shader_parameter("base_color", src.albedo_color)
-	if env != null:
-		mat.set_shader_parameter("env_tex", env)
-		mat.set_shader_parameter("has_env", true)
-	if src.emission_enabled and src.emission_texture != null:
-		# the slot-2 additive glow layer rides the same surface's base pass
-		# (a later SRCALPHA/ONE pass in the original's multipass)
-		mat.set_shader_parameter("emis_tex", src.emission_texture)
-		mat.set_shader_parameter("has_emis", true)
-		mat.set_shader_parameter("emis_uv", emis_uv)
-		mat.set_shader_parameter("emis_energy",
-				src.emission_energy_multiplier)
-	if lmap != null:
-		mat.set_shader_parameter("light_tex", lmap)
-		mat.set_shader_parameter("has_light", true)
-		mat.set_shader_parameter("light_uv2", uv2)
-	mat.set_shader_parameter("metal", src.metallic)
-	mat.set_shader_parameter("rough", src.roughness)
-	# FcBounds floored to at least [-1,1]^3 (FUN_1000ca20's AddPoint pair)
-	var mn := aabb.position.min(Vector3.ONE * -1.0)
-	var mx := aabb.end.max(Vector3.ONE)
-	mat.set_shader_parameter("bb_min", mn)
-	mat.set_shader_parameter("bb_inv", Vector3.ONE / (mx - mn))
-	mat.set_shader_parameter("axis", axis)
-	return mat
+# The SHDR layer stack (lightmap #16, envmap #15, glow #59) is BAKED at
+# export time (tools/iw2/bake.py): layered surfaces arrive as plain
+# StandardMaterial3D with a pre-multiplied albedo atlas and, for glow
+# surfaces, an emission atlas -- nothing to fix up here. Only the
+# <glow channel=EXPR> emission ENERGY stays runtime-driven (glow_mats).
+# Evidence for the stack itself: docs/original.md 7x.
 
 # @element icSignAvatar
 # Station signage (registry FUN_100cfeb0 @ 0x100cfeb0, vtable 0x1011d190;
@@ -843,12 +648,8 @@ func _physics_process(delta: float) -> void:
 			gv = exprs[gch]["value"]
 		else:
 			gv = 0.0
-		if gm["mat"] is ShaderMaterial:
-			(gm["mat"] as ShaderMaterial).set_shader_parameter(
-					"emis_energy", clampf(gv, 0.0, 1.0))
-		else:
-			(gm["mat"] as StandardMaterial3D).emission_energy_multiplier = \
-					clampf(gv, 0.0, 1.0)
+		(gm["mat"] as StandardMaterial3D).emission_energy_multiplier = \
+				clampf(gv, 0.0, 1.0)
 	if _flameshot:
 		_flameshot_tick(delta)
 	for entry in anim_nodes:

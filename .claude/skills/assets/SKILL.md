@@ -26,11 +26,18 @@ commit). Python tools run from repo root:
 
 ```
 resource.zip ── textures.py ──► data/textures/**/*.png
+             ── bake.py ───────► data/textures/baked/**/*_alb.png/_em.png
+                                 (SHDR lightmap/envmap/glow layers baked
+                                  to xatlas atlases + .npz remaps; cached,
+                                  --force to re-bake; exporters call it
+                                  lazily)
              ── export_gltf.py ► data/gltf/models/*.gltf (+ .bin)
                                  (textures resolved BY STEM from
                                   data/textures — re-running textures.py
                                   with different .ftc/.ftu preference
-                                  silently changes what GLTFs show)
+                                  silently changes what GLTFs show;
+                                  layered surfaces reference the baked
+                                  atlases on a single UV set)
 geog/*.lws ──► data/json/scenes/geog/<cluster>/<stem>.json
                (nodes: icNebulaAvatar url=model||models|<stem>,
                 icStarfieldAvatar counts/tint, <star>/<fill> DISTANT

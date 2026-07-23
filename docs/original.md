@@ -1401,20 +1401,28 @@ channel (generated coords, see 0x1000ca20).
 - `D3DRS_TEXTUREFACTOR` is set exactly once, to white (dx7graph.dll.c:10485)
   — no colour ever arrives via TFACTOR.
 
-Port consequence (the Lucrecia's-Base cyan bug): the export used to emit
-slot 1 as an emissive "mask" tinted by the discarded surface colour. Fixed:
-slot 1 is always the modulate lightmap, slot 2 is the emission (white
-factor), `tools/iw2/pso.py` parses the true three-slot layout. All three
-UV channels reach the runtime: the export writes the glow channel as
-`TEXCOORD_2` when the lightmap owns `TEXCOORD_1`, which Godot's glTF
-import stores as the `CUSTOM0` RG-float attribute (verified on 4.7); the
-hull shader in ship_effects samples it (`extras glow_uv = 2`). Surfaces on
-the hull shader multiply their layers in gamma space like the original's
-byte pipeline (no sRGB decode in D3D7's texture stages). Residual
-divergences: lightmap-only surfaces use Godot's MUL detail layer, which
-multiplies in LINEAR (midtones slightly bright); and layer multiplies
-apply to albedo before Godot's linear lighting, where the original
-multiplied the lit gamma framebuffer.
+The envmap layer's texgen is static, which is what makes the stack
+bakeable: dx7's texgen (`FUN_1000ca20 @ 0x1000ca20`) normalises by the
+MODEL'S OWN BOUNDS (FcBounds floored to `[-1,1]^3`) and drops the axis of
+the surface's dominant MEAN VERTEX NORMAL (fcSurfaceD3D vtable slot 15 =
+`FUN_1000e600`, raw-disasm) -- the sheen is glued to the hull; only
+lighting moves over it.
+
+Port consequence (the Lucrecia's-Base cyan bug, then #59): the export used
+to emit slot 1 as an emissive "mask" tinted by the discarded surface
+colour; the engine has neither. Since the whole layer product is static,
+the port now BAKES it offline (`tools/iw2/bake.py`): layered surfaces are
+unwrapped with xatlas into a per-model atlas pair -- albedo =
+`base x lightmap / 255`, then `min(x envmap x 2 / 255, 255)` formed on the
+STORED 8-bit values exactly like the original's texture stages (no sRGB
+decode in D3D7), emission = the slot-2 glow texture (white tint) -- and
+the glTFs are plain single-UV `StandardMaterial3D`s. Only the
+`<glow channel=EXPR>` emission ENERGY stays runtime-driven. Divergences:
+atlas resolution follows the median source texel density (capped 2048, so
+heavily tiled wrap surfaces lose repeat sharpness); the bake resamples
+bilinearly once; and Godot lights/filters the baked bytes in linear like
+any native texture, where the original also blended the lit result in
+gamma.
 
 ---
 

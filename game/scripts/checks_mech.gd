@@ -1452,9 +1452,11 @@ func _ms_star_streaks(_delta: float) -> void:
 	_mech_next()
 
 func _ms_lightmap_layer(_delta: float) -> void:
-	# the SHDR slot-1 WRAP lightmap (#16): am_remote's hull authors one on
-	# every primitive; attaching effects must give those surfaces a MUL
-	# detail layer on UV2 (the export's TEXCOORD_1)
+	# the SHDR layer stack is baked at export (tools/iw2/bake.py, #16/#15/
+	# #59): am_remote authors a wrap lightmap + Aluminium envmap on every
+	# primitive, so every surface must import as a StandardMaterial3D whose
+	# albedo texture is the baked atlas -- a missing/stale bake leaves
+	# albedo_texture null and fails here. No shader overrides remain.
 	var model: Node3D = m._load_gltf("data/avatars/avatars/am_remote/setup.gltf")
 	if model == null:
 		_mech("lightmap-layer", false, "am_remote avatar failed to load")
@@ -1464,25 +1466,23 @@ func _ms_lightmap_layer(_delta: float) -> void:
 			m.ship.global_position + Vector3(0, -80000, 0))
 	host.add_child(model)
 	ShipEffects.attach(host, model)
-	# am_remote authors BOTH layers on every primitive (wrap lightmap +
-	# Aluminium envmap), so each surface must come back as the envmap
-	# shader with a lightmap folded in (has_light); lightmap-only surfaces
-	# elsewhere take the MUL-detail route instead
-	var envs := 0
-	var lit := 0
+	var surfs := 0
+	var baked := 0
+	var shader_overrides := 0
 	for n in host.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
-		for si in mi.get_surface_override_material_count():
-			var mat := mi.get_surface_override_material(si)
-			if mat is ShaderMaterial \
-					and (mat as ShaderMaterial).get_shader_parameter(
-						"env_tex") != null:
-				envs += 1
-				if bool((mat as ShaderMaterial).get_shader_parameter(
-						"has_light")):
-					lit += 1
-	_mech("lightmap-layer", envs >= 1 and lit == envs,
-			"%d envmap shaders, %d with the lightmap folded in" % [envs, lit])
+		for si in mi.mesh.get_surface_count():
+			surfs += 1
+			var mat := mi.get_active_material(si)
+			if mat is ShaderMaterial:
+				shader_overrides += 1
+			elif mat is StandardMaterial3D \
+					and (mat as StandardMaterial3D).albedo_texture != null:
+				baked += 1
+	_mech("lightmap-layer",
+			surfs >= 1 and baked == surfs and shader_overrides == 0,
+			"%d/%d surfaces carry the baked atlas (%d shader overrides)"
+			% [baked, surfs, shader_overrides])
 	_mech_reap(host)
 	_mech_next()
 

@@ -66,6 +66,7 @@ class Surface:
     # slot mode words: SAMPLER ADDRESSING bitfields (SetTextureMode @
     # flux.dll.c:98806 -- low nibble 3/4 = CLAMP, else WRAP; bit 0x20 =
     # filter flag). NOT blend modes; the layer op is fixed by the slot.
+    tex_mode: int = 0
     tex2_mode: int = 0
     texture3: str | None = None  # slot 2: ADDITIVE glow layer (unlit, white)
     tex3_mode: int = 0
@@ -108,7 +109,7 @@ def _parse_shdr(body: bytes, textures: list[str]) -> Surface:
         envmap = None
     s = Surface(name, tuple(color), (opacity, bri0),
                 slots[0][0], slots[1][0], envmap,
-                tex2_mode=slots[1][1],
+                tex_mode=slots[0][1], tex2_mode=slots[1][1],
                 texture3=slots[2][0], tex3_mode=slots[2][1])
     nv, nuv = struct.unpack_from(">2I", body, len(body) - 8)
     s._nv, s._nuv = nv, nuv  # type: ignore[attr-defined]
