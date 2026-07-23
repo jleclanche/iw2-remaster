@@ -92,15 +92,19 @@ func _chase_camera(delta: float) -> void:
 	match cam_name():
 		"cockpit", "no_cockpit":  # the pilot's eye (the crew null) on the neck
 			cam.global_transform = _ffb_look(target.translated_local(eye))
-		"arcade":  # icArcadeCamera::Update (0x100d3a00): trails the hull, easing
-			# BOTH the eye offset and the up/roll quat toward the ship pose at a
-			# hard-coded k = clamp(2.5*dt) (rate @ 0x101620f0) -- the same pose
-			# ease as the chase camera (its speed*max_range/range is 2.5 at the
-			# default range), framed from 4x size behind. That trailing is the
-			# arcade force-feedback: the hull rotates/slides in-frame, then the
-			# camera catches up. Distance 4.0*size @ 0x101620f4, look at the hull.
-			var want_off := target.basis * (Vector3(0, 0.21, 0.98) * 4.0 * r)
-			_chase_follow(target, want_off, target.origin, delta)
+		"arcade":  # icArcadeCamera::Update (0x100d3a00): the eye trails 4x hull
+			# radius BEHIND (range @ 0x101620f4) and 1.2x ABOVE (@ 0x1011a1c4),
+			# easing the offset and the up/roll quat toward the pose at a hard-coded
+			# k = clamp(2.5*dt) (rate @ 0x101620f0) -- the same offset+quat ease as
+			# the chase camera (its speed*max_range/range is 2.5 at range 4), so it
+			# routes through _chase_follow. It does NOT look at the hull: it aims
+			# far along the CURRENT heading (forward*10000 @ 0x1011a18c, the commit
+			# 0x100d4620 takes look = arg2), which sits the ship low-frame and lets
+			# it slide sideways as the lagging eye catches up -- the arcade FFB.
+			# (basis.z is the hull's local +Z = astern in Godot; -basis.z ahead.)
+			var want_off := target.basis.z * (4.0 * r) + target.basis.y * (1.2 * r)
+			var focus := target.origin - target.basis.z * 10000.0
+			_chase_follow(target, want_off, focus, delta)
 		"tactical":  # icChaseCamera: initial_range 4
 			var want_off := target.basis * (Vector3(0, 0.24, 0.97) * 4.0 * r)
 			var focus := target.origin + target.basis * Vector3(0, 0.075 * r,
