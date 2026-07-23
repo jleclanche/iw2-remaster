@@ -376,48 +376,48 @@ So:
   (so it is stable), and its colour is `SurfaceTint(0)`'s hue with value
   `FcRandom::Float(0.2, 0.8)`.
 
-**SECOND SURFACE LAYER IS GATED, and OFF for Griffon.** The surface textures
-(`landwater4`, `landwater1`, ...) are **grayscale detail maps** -- a body's
-colour comes from its *tint*, not the texel. Griffon's tints are
+**SECOND SURFACE LAYER -- the gate is MAPPED (== no atmosphere).** The surface
+textures (`landwater4`, `landwater1`, ...) are **grayscale detail maps** -- a
+body's colour comes from its *tint*, not the texel. Griffon's tints are
 `SurfaceTint(0) = (99,46,40)` (warm brown) and `SurfaceTint(1) = (120,145,14)`
-(**green**). The original renders Griffon a uniform warm brown with **no green**,
-so its second (green) surface layer is **not drawn**. `FUN_100cdc50` confirms
-why: the second `cLayer` is appended only when a per-body flag is set (a signed
-byte on the sim, tested `!(sim[flag] >= 0)`), NOT whenever a second texture
-exists. Which bodies set it is **not yet mapped** (Open question below), so
-`_planet_material` renders **base-only** (`tex0 x SurfaceTint(0)`). Forcing the
-layer on -- the old `two_surf = tex1 && !atmosphere` heuristic -- injected the
-green tint: additively Griffon went olive, and under the engine's real op it
-went black.
+(green). `FUN_100cdc50` appends the second `cLayer` only when `sim[0x200] < 0`.
+Tracing that byte: `icPlanet::Load` (@ `0x100867eb`) sets
+`sim[0x200] = record[0x164]` **when** `record[0x165] == 0 && bodytype != 4`,
+else `0`. `record[0x164]` is the **atmosphere texture index**, which is `-1`
+(`0xFF`, negative) when the body has no atmosphere. So:
 
-**When the gate IS set, the two layers MODULATE (multiply)** -- device
-disassembly. A body's `FiShader` carries the two textured `cLayer`s (base
-Flags = 2, overlay Flags = 0); at draw the device matches the shader's texture
-count to a *pattern* in the dx7graph table @ `0x10015424`, and the only entry
-with `nTextures = 2` is `FUN_1000c170`. That pattern programs D3D7 stages:
+> second surface layer  <=>  two surface textures  AND  no atmosphere shell
 
-- `SetMaterial` (0x10012780): `material.diffuse = SurfaceTint(0) x SurfaceTint(1)`,
-  `material.diffuse.a = alpha0 x alpha1`, ambient/specular/emissive = 0.
-- stage 0: `COLOROP = D3DTOP_MODULATE`, `ARG1 = TEXTURE`, `ARG2 = DIFFUSE`
-  (`tex0 . diffuse`); same for the alpha channel.
-- stage 1: `COLOROP = DAT_1001b44c`, `ARG1 = TEXTURE`, `ARG2 = CURRENT`
-  (`tex1 . stage0`). `DAT_1001b44c = 4` (D3DTOP_MODULATE) on planet hardware;
-  it is 5 (MODULATE2X) only when the spec-capability bit `g_p_gd[0x28c] & 0x10`
-  is set (FUN_1000d1e0, "Using D3DTOP_MODULATE2X for spec").
-- stage 2: `COLOROP = ALPHAOP = DISABLE`.
+This is exactly the old `two_surf = tex1 && !atmosphere` heuristic, and it is
+correct. **Griffon has no atmosphere, so it IS two-layer** -- its green
+`SurfaceTint(1)` genuinely belongs (a landmass/vegetation layer). The green we
+chased out earlier was a *different* bug: the geog `<fill>` DISTANT light
+greening every body (fixed by lighting bodies from their primary), not this
+layer. `_planet_material` gates the layer on `tex1 && !atmosphere`.
 
-Net (when the layer is drawn): `FINAL = tex0 . tex1 . tint0 . tint1 . lighting`.
-`_planet_shader` carries this MODULATE path behind the `layer2` uniform, but
-`_planet_material` keeps it OFF (base-only) until the gate flag is mapped.
-Commit 014879d's additive reading, and the MODULATE reading in the commit that
-followed, are both superseded by "base-only": neither should composite
-`SurfaceTint(1)` for a body whose gate is clear.
+**COMBINE -- a reading, not bit-exact.** The device's per-surface layer render
+is Ghidra-dropped (only `FUN_1000c170`, the `nTextures=2` MODULATE pattern in
+the table @ `0x10015424`, survived, and even its table decode was unreliable).
+Two candidates:
 
-**Open question -- the second-surface gate.** `FUN_100cdc50` appends the second
-`cLayer` only when a signed byte on the sim is negative (high bit set). We have
-not mapped which parse path sets it, nor which INI/record property drives it, so
-we cannot yet tell a genuine two-surface body from a one-surface body that
-merely lists two textures. Until then every body renders base-only.
+- **additive** -- two passes blended `SRCALPHA/ONE` (the "later pass" blend
+  `FUN_1000c170` itself programs when `param_3 == 0`): `tex0.tint0 + tex1.tint1`.
+- **modulate** -- one pass, `FUN_1000c170`: `material.diffuse = tint0 x tint1`,
+  stage0 `MODULATE(tex0, DIFFUSE)`, stage1 `MODULATE(tex1, CURRENT)`, giving
+  `tex0 . tex1 . tint0 . tint1 . lighting`.
+
+**Modulate is excluded empirically:** `tint0 x tint1 = (0.18,0.10,0.009)` is
+near-black, so a modulated Griffon renders black -- not a visible planet.
+`_planet_shader` therefore **ADDS** (`base + second*layer2`). Commit 014879d
+(additive) was right about the op; the intervening MODULATE and base-only commits
+were both wrong turns. The exact combine (and the lit-side brightness, "too
+dark") is pinned only by pixel-matching an original screenshot.
+
+**Open question -- exact combine + brightness.** Additive-multipass vs a
+non-modulate single pass, and the day-side brightness (whether the engine's
+D3D light/ambient lifts the lit face above `tex x tint`), both live in the
+Ghidra-dropped device draw. Resolve by pixel-sampling an original-game Griffon
+screenshot (visualprobe) -- not by further device disassembly.
 
 **STILL NOT RECOVERED:** the ring's *width* and the atmosphere shell's exact
 blend -- the planet avatar's draw (`0x100ccbb0` / `0x100ccc60` / `0x100ccc80`)

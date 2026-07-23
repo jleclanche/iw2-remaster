@@ -784,28 +784,26 @@ func _planet_shader() -> Shader:
 	# sphere with the scene's `sun`/`fill` DISTANT lights, on top of its own
 	# primary term below -- and the green <fill> greened every planet. A body
 	# takes ONLY its primary's light (see _light_body_from_primary above).
-	# A body's FiShader (FUN_100cdc50 @ 0x100cdc50) is built as a base surface
-	# layer (tex0 x SurfaceTint(0), cLayer Flags=2) plus -- CONDITIONALLY -- a
-	# second surface layer (tex1 x SurfaceTint(1), Flags=0). The second layer is
-	# gated: FUN_100cdc50 only appends it when a per-body flag is set (a signed
-	# byte on the sim, read as `!(sim[flag] >= 0)`), NOT merely when a second
-	# texture exists. Most bodies -- Griffon included -- do NOT set it and render
-	# base-only.
+	# A body's FiShader (FUN_100cdc50 @ 0x100cdc50) is a base surface layer
+	# (tex0 x SurfaceTint(0), cLayer Flags=2) plus -- CONDITIONALLY -- a second
+	# surface layer (tex1 x SurfaceTint(1), Flags=0). The gate is MAPPED:
+	# icPlanet::Load (@ 0x100867eb) stores sim[0x200] = record[0x164] (the
+	# atmosphere index, -1 when the body has no atmosphere) and FUN_100cdc50
+	# appends the second cLayer when sim[0x200] < 0. So the rule is `two surface
+	# textures AND no atmosphere` -- Griffon (no atmosphere) IS two-layer, and its
+	# green SurfaceTint(1) genuinely belongs (it is a landmass/vegetation layer,
+	# not the earlier <fill>-light green bug). _planet_material gates on this.
 	#
 	# The surface textures are GRAYSCALE detail maps (landwater4/landwater1 mean
-	# ~0.7/0.6 neutral); the body's COLOUR is entirely the tint. Griffon's tints
-	# are SurfaceTint(0) = (99,46,40) warm brown and SurfaceTint(1) = (120,145,14)
-	# GREEN. The original renders Griffon a uniform warm brown with no green, so
-	# the green second layer is not drawn -- confirming the gate is off for it.
-	# Forcing the second layer on (our old `two_surf` heuristic) injected that
-	# green: additively it went olive, and as the engine's real op it went black.
+	# ~0.7/0.6 neutral); the body's COLOUR is the tint. Base tint0 is warm brown,
+	# tint1 green; added, Griffon reads olive-tan.
 	#
-	# When the gate IS set, the two layers MODULATE (device disasm: two textured
-	# layers route to dx7graph FUN_1000c170, the sole nTextures=2 pattern in the
-	# table @ 0x10015424; stage0 COLOROP=MODULATE ARG2=DIFFUSE, stage1 MODULATE
-	# ARG2=CURRENT, material.diffuse = tint0 x tint1 via SetMaterial 0x10012780).
-	# `layer2` drives that path in the shader, but nothing enables it until the
-	# gate flag is mapped (docs/geography.md, and the Open question there).
+	# COMBINE -- reading, not bit-exact. The device's per-surface layer render is
+	# Ghidra-dropped. Two candidates survive: (a) two additive passes (the "later
+	# pass" SRCALPHA/ONE blend that FUN_1000c170 sets), or (b) a single MODULATE
+	# pass. (b) is EXCLUDED empirically: FUN_1000c170's material.diffuse =
+	# tint0 x tint1 renders black for two dark tints. So we ADD (a). Pin it exact
+	# by pixel-matching an original screenshot (geography.md Open question).
 	planet_shader.code = """
 shader_type spatial;
 render_mode cull_back, depth_draw_never, fog_disabled, unshaded;
@@ -821,11 +819,14 @@ void fragment() {
 	vec3 n = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	float lam = max(dot(n, normalize(star_dir)), 0.0);
 	vec4 t = texture(albedo_tex, UV);
-	// FUN_1000c170: the two diffuse layers MODULATE (multiply), they do not add.
-	// layer2=0 -> mix picks vec3(1.0), leaving the base pass untouched.
+	// Two diffuse layers, ADDED. The exact device combine is Ghidra-dropped, but
+	// modulate is excluded: FUN_1000c170's material.diffuse = tint0 x tint1 goes
+	// black for two dark tints (Griffon (99,46,40) x (120,145,14)) and can't
+	// render a visible planet. Additive matches the plausible "later pass"
+	// SRCALPHA/ONE blend and the reference. layer2=0 drops the second layer.
 	vec3 base = t.rgb * tint.rgb;
 	vec3 second = texture(albedo_tex2, UV).rgb * tint2.rgb;
-	vec3 surf = base * mix(vec3(1.0), second, layer2);
+	vec3 surf = base + second * layer2;
 	ALBEDO = surf * (ambient + (1.0 - ambient) * lam);
 	ALPHA = t.a * alpha;
 }
@@ -872,15 +873,19 @@ func _planet_material(rec: Dictionary) -> ShaderMaterial:
 			if not textures.is_empty() else null
 	mat.set_shader_parameter("albedo_tex", tex0)
 	mat.set_shader_parameter("tint", _surface_tint(rec, 0))
-	# The second surface layer is GATED in FUN_100cdc50 (per-body flag), not
-	# implied by a second texture existing -- see _planet_shader's header. We do
-	# not yet know which bodies set the flag, and forcing it on wrongly injected
-	# SurfaceTint(1) (green on Griffon), so render base-only for now. The shader
-	# still carries the (correct, MODULATE) two-layer path behind layer2 for when
-	# the gate is mapped; feed it the base tex/tint so nothing greens through.
-	mat.set_shader_parameter("albedo_tex2", tex0)
-	mat.set_shader_parameter("tint2", _surface_tint(rec, 0))
-	mat.set_shader_parameter("layer2", 0.0)
+	# The second surface layer is GATED (icPlanet::Load @ 0x100867eb): the engine
+	# stores sim[0x200] = record[0x164] (atmosphere index, -1 when none) and
+	# FUN_100cdc50 appends the second cLayer only when sim[0x200] < 0 -- i.e. NO
+	# atmosphere. So the rule is `two surface textures AND no atmosphere shell`,
+	# which is exactly this gate. Bodies with an atmosphere show the cloud deck
+	# instead (mutually exclusive, geography.md s4).
+	var has_atmo := not str(rec.get("atmosphere_texture", "")).is_empty()
+	var tex1: Texture2D = _planet_texture(str(textures[1])) \
+			if textures.size() >= 2 else null
+	var two_surf := tex1 != null and not has_atmo
+	mat.set_shader_parameter("albedo_tex2", tex1 if two_surf else tex0)
+	mat.set_shader_parameter("tint2", _surface_tint(rec, 1))
+	mat.set_shader_parameter("layer2", 1.0 if two_surf else 0.0)
 	mat.set_shader_parameter("ambient", PLANET_AMBIENT)
 	mat.set_shader_parameter("alpha", 1.0)
 	# a sane default until _stream_objects stamps the real one
