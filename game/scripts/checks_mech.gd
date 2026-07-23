@@ -1452,11 +1452,11 @@ func _ms_star_streaks(_delta: float) -> void:
 	_mech_next()
 
 func _ms_lightmap_layer(_delta: float) -> void:
-	# the SHDR layer stack is baked at export (tools/iw2/bake.py, #16/#15/
-	# #59): am_remote authors a wrap lightmap + Aluminium envmap on every
-	# primitive, so every surface must import as a StandardMaterial3D whose
-	# albedo texture is the baked atlas -- a missing/stale bake leaves
-	# albedo_texture null and fails here. No shader overrides remain.
+	# the SHDR layer scheme (original.md 7x, incl. the open question: only
+	# base + glow observably render): every textured surface must import as
+	# a StandardMaterial3D with its albedo texture resolved (authored
+	# texture, or the baked glow atlas for slot-2 surfaces) and NO shader
+	# overrides -- a missing texture or a stale bake fails here.
 	var model: Node3D = m._load_gltf("data/avatars/avatars/am_remote/setup.gltf")
 	if model == null:
 		_mech("lightmap-layer", false, "am_remote avatar failed to load")

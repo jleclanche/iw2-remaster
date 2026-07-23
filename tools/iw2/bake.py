@@ -1,25 +1,23 @@
-"""Bake the SHDR layer stack into per-model texture atlases.
+"""Bake the SHDR glow layer into per-model texture atlases.
 
-The original renders each surface as fixed layers (docs/original.md 7x):
-a lit base pass, then -- only when slot 1 is enabled -- the envmap x
-lightmap pair as ONE extra pass, and an unlit additive glow. The pair's
-stage-1 op is MODULATE2X ("for spec", DAT_1001b44c) and the pass blends
-SRCALPHA/ONE over the base (FUN_1000c170's later-pass branch @ 0x1000c170)
--- an ADDITIVE SPECULAR, not a darkening multiply. A slot-1 lightmap
-without an envmap draws as the 'Mt' ZERO/SRCCOLOR multiply pass; an envmap
-without slot 1 is never rendered (the S/M layer pair is gated on the
-slot-1 enable, CreateRenderSurface @ 0x10066600). Everything except the
-glow's channel-driven *energy* is static, so the albedo result and the
-glow texture bake offline into a godot-native single-UV material:
+What the original OBSERVABLY renders per surface (docs/original.md 7x,
+incl. the open question there): the lit base pass and the unlit additive
+glow (slot 2, SRCALPHA/ONE 'At' @ 0x1000b442). The slot-1 lightmap /
+envmap pair (`StMt`) exists in CreateRenderSurface at shader_quality > 1
+and the GOG install runs quality 2, yet reference captures (Clay's comm
+head, the base underside) show the plain base with neither a modulate
+darkening nor an additive spec -- so the pair is NOT reproduced here;
+the discrepancy is logged in original.md's Open questions.
 
-    albedo = min(base + envmap x lightmap x 2 / 255, 255)   (envmap case)
-    albedo = base x lightmap / 255                          (no envmap)
-    emission = glow texture (white factor; energy stays runtime)
+The glow's texture rides its own UV channel, which Godot materials cannot
+address past two sets -- so glow surfaces are unwrapped with xatlas and
+both their base and glow are re-rendered into a per-model atlas pair on
+the ONE new UV set:
 
-formed on the STORED 8-bit values, exactly the original's byte pipeline
-(no sRGB decode in D3D7's texture stages; ops saturate in bytes). Both
-passes are modulated by the same lit vertex diffuse in the original, so
-adding them pre-lighting is exact.
+    albedo = base texture      emission = glow texture (white factor;
+                                          channel energy stays runtime)
+
+Sampling happens on the STORED 8-bit values (bilinear, one resample).
 
 Surfaces are unwrapped with xatlas into one atlas pair per .pso; base-only
 surfaces keep their original texture and UVs (baking them would only lose
@@ -130,13 +128,6 @@ def _sample(tex: np.ndarray, uv: np.ndarray, clamp: bool) -> np.ndarray:
             + at(x0, y0 + 1) * (1 - fx) * fy + at(x0 + 1, y0 + 1) * fx * fy)
 
 
-def _surface_axis(normals: np.ndarray) -> int:
-    """Dominant component of the mean vertex normal (fcSurfaceD3D slot 15
-    @ 0x1000e600): the axis the bounds projection drops."""
-    acc = np.abs(normals.sum(axis=0))
-    return int(np.argmax(acc))
-
-
 def _density(pos: np.ndarray, uvs: np.ndarray, idx: np.ndarray,
              tex_size: tuple[int, int]) -> float:
     """Median source-texture texels per world unit over the triangles."""
@@ -187,11 +178,11 @@ def bake_for(pso_path: str, pso, textures_root: Path = Path("data/textures"),
     npz = out_base.parent / (out_base.name + ".npz")
     pso_dir = str(PurePosixPath(pso_path).parent)
 
-    # an envmap ALONE never renders (the S/M pair is gated on the slot-1
-    # enable @ 0x10066600), so only lightmap/glow surfaces need the bake
+    # only glow surfaces need the bake (the slot-1/envmap pair is not
+    # reproduced -- see module docstring); everything else keeps its
+    # authored texture and UVs untouched
     baked_idx = [i for i, s in enumerate(pso.surfaces)
-                 if s.texture and len(s.indices) >= 3
-                 and (s.texture2 or s.texture3)]
+                 if s.texture and len(s.indices) >= 3 and s.texture3]
     if not baked_idx:
         return None
 
@@ -209,16 +200,6 @@ def bake_for(pso_path: str, pso, textures_root: Path = Path("data/textures"),
 
     tc = _texcache(textures_root)
     import xatlas
-
-    # model bounds in EXPORT space (z negated), floored to [-1,1]^3 --
-    # FcBounds' AddPoint pair (FUN_1000ca20); whole-model, all surfaces
-    allpos = np.concatenate([
-        np.asarray(s.positions, dtype=np.float32).reshape(-1, 3)
-        for s in pso.surfaces if s.positions]) * np.array([1, 1, -1],
-                                                          dtype=np.float32)
-    bb_min = np.minimum(allpos.min(axis=0), -1.0)
-    bb_max = np.maximum(allpos.max(axis=0), 1.0)
-    bb_inv = 1.0 / (bb_max - bb_min)
 
     atlas = xatlas.Atlas()
     dens = []
@@ -258,27 +239,15 @@ def bake_for(pso_path: str, pso, textures_root: Path = Path("data/textures"),
         vm = vm.astype(np.int64)
         base_path = tc.resolve(s.texture, pso_dir)
         base = tc.load(base_path) if base_path else None
-        light = glow = env = None
-        if s.texture2:
-            p = tc.resolve(s.texture2, pso_dir)
-            light = tc.load(p) if p else None
+        glow = None
         if s.texture3:
             p = tc.resolve(s.texture3, pso_dir)
             glow = tc.load(p) if p else None
-        if s.envmap:
-            stem = PurePosixPath(str(s.envmap).replace("\\", "/")).stem.lower()
-            p = tc.resolve(stem, "images/envmaps")
-            env = tc.load(p) if p else None
 
-        nrm = np.asarray(s.normals, dtype=np.float32).reshape(-1, 3)
-        axis = _surface_axis(nrm * np.array([1, 1, -1], dtype=np.float32))
         uv0 = np.asarray(s.uvs, dtype=np.float32).reshape(-1, 2) \
             if s.uvs else None
-        uv1 = np.asarray(s.uvs2, dtype=np.float32).reshape(-1, 2) \
-            if s.uvs2 else None
         uv2 = np.asarray(s.uvs3, dtype=np.float32).reshape(-1, 2) \
             if s.uvs3 else None
-        epos = pos * np.array([1, 1, -1], dtype=np.float32)
 
         apix = nuv * np.array([w, h], dtype=np.float32)
         for t in ni:
@@ -312,22 +281,6 @@ def bake_for(pso_path: str, pso, textures_root: Path = Path("data/textures"),
             out = np.full((li.shape[0], 3), 255.0, dtype=np.float32)
             if base is not None and uv0 is not None:
                 out = _sample(base, lerp(uv0), _clamp_mode(s.tex_mode))
-            if light is not None and uv1 is not None:
-                lm = _sample(light, lerp(uv1), _clamp_mode(s.tex2_mode))
-                if env is not None:
-                    # the envmap x lightmap MODULATE2X pair, ADDED over the
-                    # base (SRCALPHA/ONE, FUN_1000c170's later-pass branch)
-                    nm = (lerp(epos) - bb_min) * bb_inv
-                    keep = [c for c in (0, 1, 2) if c != axis]
-                    if axis == 0:
-                        keep = [2, 1]  # matches the texgen's nm.zy pick
-                    suv = nm[:, keep]
-                    out = np.minimum(
-                        out + _sample(env, suv, False) * lm * 2.0 / 255.0,
-                        255.0)
-                else:
-                    # no envmap: the lone 'Mt' pass multiplies (ZERO/SRCCOLOR)
-                    out = out * lm / 255.0
             yi, xi = np.where(inside)
             alb[yi + y0, xi + x0] = out
             mask[yi + y0, xi + x0] = True

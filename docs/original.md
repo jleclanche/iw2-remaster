@@ -1435,16 +1435,13 @@ channel (generated coords, see 0x1000ca20).
     off, 'At' @ 0x1000b3ce) or op0 `R` when opacity < 1;
   - **slot 1** -> the op3 `S` (envmap, texgen coords) + op2 `M` (the slot-1
     texture) pair, created together at `m_shader_quality > 1` and **gated
-    on the slot-1 enable** (+0x58) -- an envmap alone never renders. The
-    layer string "AtStMt" greedy-matches as pass 1 `At` (the base) + pass 2
-    `StMt` (`FUN_1000c170 @ 0x1000c170`): stage 1 op `DAT_1001b44c` =
-    MODULATE**2X** on capable hardware ("Using D3DTOP_MODULATE2X for
-    spec", init 6513-6519), and as a later pass it blends **SRCALPHA/ONE**
-    (:5801-5802) -- the envmap x lightmap product is an **ADDITIVE
-    SPECULAR** over the lit base, not a darkening multiply. Only when the
-    envmap is EMPTY does the untextured `S` fail to match and the lone
-    `Mt` pass multiply the framebuffer (SRCBLEND=ZERO / DESTBLEND=SRCCOLOR
-    @ 0x1000b6b8) -- the true darkening lightmap case.
+    on the slot-1 enable** (+0x58) -- an envmap alone never renders. In the
+    decomp the `StMt` pattern (`FUN_1000c170 @ 0x1000c170`) runs stage 1 at
+    `DAT_1001b44c` = MODULATE**2X** on capable hardware ("Using
+    D3DTOP_MODULATE2X for spec", init 6513-6519) and blends SRCALPHA/ONE
+    as a later pass (:5801-5802); the lone `Mt` pattern multiplies the
+    framebuffer (ZERO/SRCCOLOR @ 0x1000b6b8). **OBSERVED, however: the
+    pair does not visibly render** -- see the Open question below.
   - **slot 2** -> op1 `A` at `m_shader_quality > 0`, flags bit0 = UNLIT
     (pattern setups route unlit layers through `SetMaterial` with the tint
     in **emissive** — 0x100127d0 vs lit-diffuse 0x10012780; device vtable
@@ -1462,23 +1459,34 @@ the surface's dominant MEAN VERTEX NORMAL (fcSurfaceD3D vtable slot 15 =
 `FUN_1000e600`, raw-disasm) -- the sheen is glued to the hull; only
 lighting moves over it.
 
+**Open question -- the slot-1/envmap pair does not visibly render.** The
+GOG install runs `[FcModel] shader_quality = 2` (flux.ini:100 and
+defaults.ini:98; the static's built-in default is also 2, flux.dll export
+`?m_shader_quality@FcModel@@0HA` @ 0x101444b4), which per
+CreateRenderSurface should draw the S/M pair. Yet reference captures show
+neither the darkening multiply nor an additive spec: Clay's comm head
+(deep uniform red = his base texture; `ClayRT_Skin` authors a 6.6%-mean
+lightmap AND an Aluminium envmap that would visibly recolour it either
+way) and the Lucrecia's-Base underside (uniform, flat). Unverified links
+that could explain it: the per-device pattern VALIDATION flags
+(`DAT_1001d190`, set by test renders at init, dx7graph.dll.c:6420-6510)
+possibly failing for `StMt` on the D3D7 path, or an unread branch of the
+pattern matcher (`FUN_1000ab30`). Until settled the port renders what the
+game observably shows: base + glow only.
+
 Port consequence (the Lucrecia's-Base cyan bug, then #59): the export used
 to emit slot 1 as an emissive "mask" tinted by the discarded surface
-colour; the engine has neither. Since the whole layer result is static,
-the port BAKES it offline (`tools/iw2/bake.py`): layered surfaces are
-unwrapped with xatlas into a per-model atlas pair -- albedo =
-`min(base + envmap x lightmap x 2 / 255, 255)` when an envmap rides the
-slot-1 layer (the additive spec pass above), `base x lightmap / 255` when
-it does not -- formed on the STORED 8-bit values exactly like the
-original's texture stages (no sRGB decode in D3D7); emission = the slot-2
-glow texture (white tint). Both original passes are modulated by the same
-lit vertex diffuse, so summing them pre-lighting is exact. The glTFs are
-plain single-UV `StandardMaterial3D`s; only the `<glow channel=EXPR>`
-emission ENERGY stays runtime-driven. Divergences: atlas resolution
-follows the median source texel density (capped 2048, so heavily tiled
-wrap surfaces lose repeat sharpness); the bake resamples bilinearly once;
-and Godot lights/filters the baked bytes in linear like any native
-texture, where the original also blended the lit result in gamma.
+colour; the engine has neither. The port bakes offline
+(`tools/iw2/bake.py`): glow surfaces are unwrapped with xatlas into a
+per-model atlas pair -- albedo = the base texture, emission = the slot-2
+glow (white tint) -- because the glow's own UV channel exceeds Godot's
+two-set material limit. The glTFs are plain single-UV
+`StandardMaterial3D`s; only the `<glow channel=EXPR>` emission ENERGY
+stays runtime-driven. Specular is disabled to match the original
+(SPECULARENABLE off at init, dx7graph.dll.c:10446; SetMaterial zeroes all
+but diffuse/emissive). Divergences: atlas resolution follows the median
+source texel density (capped 2048); the bake resamples bilinearly once;
+Godot lights/filters in linear where the original blended gamma bytes.
 
 ---
 

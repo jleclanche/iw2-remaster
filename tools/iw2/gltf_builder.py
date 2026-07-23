@@ -92,7 +92,11 @@ class GltfBuilder:
                 # the authored colour renders ONLY when slot 0 is untextured
                 # (ReadPSOGeometry forces White() otherwise, flux.dll.c:99181)
                 "baseColorFactor": [*surface.color, 1.0],
-                "metallicFactor": 0.1, "roughnessFactor": 0.85,
+                # the original has NO specular lighting: SPECULARENABLE is
+                # forced off at device init (dx7graph.dll.c:10446) and
+                # SetMaterial zeroes everything but diffuse/emissive
+                # (0x10012780/0x100127d0); the sheen is the baked env layer
+                "metallicFactor": 0.0, "roughnessFactor": 1.0,
             },
             "extras": {"coeffs": list(surface.coeffs)},
         }

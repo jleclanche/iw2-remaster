@@ -147,8 +147,11 @@ def export_pso(data: bytes, out_gltf: Path, tex_index: dict, pso_dir: str,
             "name": s.name,
             "pbrMetallicRoughness": {
                 "baseColorFactor": [*s.color, 1.0],
-                "metallicFactor": 0.1,
-                "roughnessFactor": 0.85,
+                # no specular in the original: SPECULARENABLE off at device
+                # init (dx7graph.dll.c:10446), SetMaterial zeroes all but
+                # diffuse/emissive (0x10012780/0x100127d0)
+                "metallicFactor": 0.0,
+                "roughnessFactor": 1.0,
             },
             "extras": {"coeffs": list(s.coeffs)},
         }

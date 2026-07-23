@@ -592,15 +592,19 @@ func _draw_comm_panel() -> void:
 	var p: Control = main.comms.portrait
 	p.scale = (body.size - Vector2(2.0, 2.0)) / p.size
 	p.position = body.position + Vector2(1, 1)
-	# every portrait is now the live 3D head (comm portraits were never FMV --
-	# see comms.gd; the movies are the prison dossiers), so the interference
-	# always uses the 3D-feed mix and the caption keys off the head being live
+	# The static-strength branch (FUN_10102490, iwar2.dll.c:196006-196025)
+	# keys on whether the SPEAKER resolves to a live sim (icComms+0x54 ->
+	# FcRegistry::FindInstance): a shipboard speaker gets the strong
+	# 0.3..0.7 mix (or full 1.0 when the sim carries flag +0x128 & 0x200),
+	# while a speaker with NO live sim -- every story head calling from a
+	# base -- gets the weak 0.1..0.3 mix. Our speakers are all baseside, so
+	# the portrait always takes the weak mix until ship-speakers exist.
 	var has_feed: bool = main.comms.head_rect != null \
 			and main.comms.head_rect.visible
 	if _mfd_fx != null:
 		_mfd_fx.active = true
 		_mfd_fx.body = body
-		_mfd_fx.video = false
+		_mfd_fx.video = true
 		_mfd_fx.ea = _ea
 	var who := str(main.comms.speaker).to_upper()
 	_mfd_text(r, who, "RECEIVING VIDEO" if has_feed else "NO VIDEO FEED", 0.0)
