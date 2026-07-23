@@ -567,12 +567,13 @@ func _setup_act0_scene() -> void:
 				# iutilities.CreatePlayer (iprelude.gd:923 -> iutilities.gd:2209):
 				# sim.PlaceRelativeTo(player, gap, 7000, 10000, -19000) -- the
 				# offset in the GAP'S frame (identity in the map), 22.6 km out --
-				# then sim.PointAt(player, gap). The z sign is anchored to the
-				# reference screenshot: the star (authored heading 180) must
-				# light the near faces of the Gap from behind the player, which
-				# puts the player on the map's -z side, our -z as well.
+				# then sim.PointAt(player, gap). LW->Godot negates Z on the
+				# offset (the vec() convention the port/pog CreatePlayer uses),
+				# so the Godot z is +19000; with the corrected -Z star aim
+				# (_aim_distant_light) this lights the player-facing Gap faces
+				# warm, matching the reference screenshot and the port/pog paths.
 				var b := _record_basis(o)
-				var off: Vector3 = b * Vector3(7000.0, 10000.0, -19000.0)
+				var off: Vector3 = b * Vector3(7000.0, 10000.0, 19000.0)
 				px = o["x"] + off.x
 				py = o["y"] + off.y
 				pz = o["z"] + off.z

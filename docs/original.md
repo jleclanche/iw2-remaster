@@ -1047,6 +1047,28 @@ at rest it runs at `(1 - 0.15 @ 0x1011b354) * m_max_dim_star_intensity`
 with `m_max_dim_star_intensity = 0.65` (@ `0x1011d1e4`). The rotation
 streaks are not ported yet.
 
+### A geog scene's DISTANT lights emit along local -Z, not +Z
+
+The per-system geography LWS carries two DISTANT lights, `<star>` (warm key)
+and `<fill>` (a coloured bounce aimed opposite). We aim them from the scene's
+authored heading/pitch (`main_world.gd::_aim_distant_light`). The non-obvious
+law: a distant light's beam runs down its **local -Z**, so the world beam is
+`R_lw * (0,0,-1)`, then LW->Godot negates Z like every position/model
+(`gltf_builder`, `rec z = -pos[2]`, the `vec()` native).
+
+Anchored to the Hoffer's Wake new-game spawn (the one system whose `<star>`
+is authored at H=180, a pure ±Z axis; every other badlands scene uses H=±90,
+a ±X axis -- so this sign is only observable here). `iutilities.CreatePlayer`
+places the player at the Gap + (7000, 10000, -19000) in the map frame and
+points them at the Gap; under the faithful -z position convention that puts
+the player on the Gap's +z side in Godot, and the reference screenshot shows
+the warm `<star>` lighting the player-facing faces. That requires the star to
+travel **-Z** in Godot. Emitting +Z (our earlier reading) lit the FAR side
+and left the near faces to the green `<fill>` -- the "station is dark green,
+not brown" bug, visible under the `--port`/`--pog` runtimes (which place the
+player faithfully; the hand-authored `_setup_act0_scene` had masked it with a
+compensating -z offset that is now dropped).
+
 ### The geography: every render property of a body is in its `.map` record
 
 Full write-up, with the disassembly, in **`geography.md`**. The short version --

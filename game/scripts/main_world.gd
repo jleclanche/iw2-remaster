@@ -161,13 +161,19 @@ func _setup_sky(stem: String) -> void:
 								_add_sky_flare(p, n, col)
 
 func _aim_distant_light(light: DirectionalLight3D, n: Dictionary) -> void:
-	# LightWave: a light with H=P=0 shines along +Z; heading rotates about +Y,
-	# pitch about +X (positive pitch tips the beam down). LW +Z maps to our -Z.
+	# A LightWave DISTANT light EMITS along its local -Z; heading rotates about
+	# +Y, pitch about +X. R_lw * (0,0,-1) is the world-space beam direction,
+	# then LW->Godot negates Z like every position/model (gltf_builder,
+	# `rec z = -pos[2]`, the vec() native). Emit -Z (not +Z) is anchored to the
+	# Hoffer's Wake spawn: <star> (H=180) must light the player-facing faces of
+	# the Gap, and under the faithful -z placement the star has to travel -Z in
+	# Godot to do it -- emitting +Z lit the far side and greened the near faces
+	# under the port/pog runtimes (docs/original.md).
 	var hpb: Array = n.get("hpb", [0.0, 0.0, 0.0])
 	var h := deg_to_rad(float(hpb[0]))
 	var p := deg_to_rad(float(hpb[1]))
-	var dir_lw := Vector3(sin(h) * cos(p), -sin(p), cos(h) * cos(p))
-	var dir := Vector3(dir_lw.x, dir_lw.y, -dir_lw.z)
+	var emit_lw := Vector3(-sin(h) * cos(p), sin(p), -cos(h) * cos(p))
+	var dir := Vector3(emit_lw.x, emit_lw.y, -emit_lw.z)
 	# DirectionalLight3D shines along its local -Z
 	light.global_transform.basis = Basis.looking_at(dir,
 		Vector3.RIGHT if absf(dir.y) > 0.99 else Vector3.UP)
