@@ -114,8 +114,6 @@ const SYSTEMS := [
 
 var main: Node3D
 var _debug_ship := ""  # ship picked in the DEBUG START flow, awaiting a place
-var mode := "main"  # main | systems
-var sel := 0
 var launched := false
 # The front end's fancy buttons use GUI_title_font = square721 bdex bt_8pt
 # (igui.pog CreateFancyButton -> SetWindowFont, igui.pog:31/245); handelgothic
@@ -124,7 +122,6 @@ var launched := false
 var _font_small: Font  # Handel Gothic 8pt — dossier body
 var _font_title: Font  # Square721 BdEx 8pt — fancy buttons, titles, version
 var item_size := 13
-var _item_rects: Array = []
 var bust_movie: VideoStreamPlayer
 var _overlay: Control       # scanline/sweep/dossier layer, drawn OVER the movie
 var _top: Control           # buttons + version, normal blend, above everything
@@ -343,13 +340,12 @@ func _load_dossier(who: String) -> void:
 			dossier_lines.append({"text": cur, "bold": bold})
 
 func _unhandled_input(event: InputEvent) -> void:
-	# the menu owns its input: it must keep working while the tree is paused
 	if main.movie != null or main.demo:
 		return
-	# While one of the original GUI screens is overlaid (SAVE/LOAD GAME raise
-	# icSPPDASaveScreen/icSPPDALoadScreen), that screen owns the input --
-	# exactly as the original PDA menu sat inert under its overlays. Its own
-	# back button / Escape path pops it and control returns here.
+	# The raised POG PDA owns the input while the menu is up: base_screens feeds
+	# arrows/Enter/Escape to the ported screen (SAVE/LOAD overlays included), and
+	# the screen's own back/RESUME path pops it. We only catch Escape in flight to
+	# raise the menu in the first place.
 	if visible and _pog_screen_up():
 		return
 	# ...except during a cutscene, where Escape means "skip", not "pause". The
@@ -357,23 +353,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	# the key before main ever saw it.
 	if not visible and main.in_cutscene():
 		return
-	if visible:
-		handle(event)
-		# During a NEW GAME the scene reloads out from under us; a queued input
-		# event can still reach this node the frame it leaves the tree, when
-		# get_viewport() is null.
-		if is_inside_tree():
-			get_viewport().set_input_as_handled()
-	elif event is InputEventKey and event.pressed and not event.echo \
-			and event.physical_keycode == KEY_ESCAPE:
+	if not visible and event is InputEventKey and event.pressed \
+			and not event.echo and event.physical_keycode == KEY_ESCAPE:
 		open()  # Escape = PDA / pause
 
 func open() -> void:
 	visible = true
 	_bar_w = 0.0             # the drawer opens from nothing each time
 	_content_alpha = 0.0
-	mode = "main"
-	sel = 0
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_pick_character()
 	_build_pda()
@@ -402,18 +389,6 @@ func close() -> void:
 func _pog_screen_up() -> bool:
 	var rt: PogRuntime = main.pog_rt
 	return rt != null and rt.ui != null and rt.ui.visible_screen() != null
-
-## Raise one of the original GUI screens through the ported runtime -- the same
-## gui.OverlayScreen the POG menus themselves call. False when the runtime is
-## not up (the caller keeps its stand-in behaviour).
-func _pog_overlay(screen: String, push := false) -> bool:
-	if not _pog_boot():
-		return false
-	# Most of the front end's items overlay; CREDITS pushes
-	# (SPMainPDAScreen_OnCredits, ipdagui.pog:152-156).
-	main.pog_rt.native("gui.pushscreen" if push else "gui.overlayscreen",
-			[screen])
-	return true
 
 ## The front end's bootstrap, run once. The original does this inside
 ## SPMainPDAScreen's own prologue -- the gui text tables, igui.SetGUIGlobals and
@@ -527,17 +502,11 @@ func _add_debug_items() -> void:
 		w.h = last.h
 	rt.ui.dirty = true
 
-## The debug pickers ride the REAL screen stack now: PogUi.debug_screen
-## composes an overlay from the original igui grey-box blocks, so the PDA
-## stays up underneath and Escape/Back pop back to it like any original
-## overlay. The ad-hoc list modes below survive only as the fallback for a
-## front end running without the ported GUI.
+## The debug pickers ride the REAL screen stack: PogUi.debug_screen composes an
+## overlay from the original igui grey-box blocks, so the PDA stays up underneath
+## and Escape/Back pop back to it like any original overlay.
 func _enter_mode(m: String) -> void:
 	main.audio.play("audio/gui/expand.wav", -8.0)
-	if not _has_pog_gui() or not _pda_up:
-		mode = m
-		sel = 0
-		return
 	var rt: PogRuntime = main.pog_rt
 	# short titles: the fancy bordered static clips long ones
 	if m == "systems":
@@ -591,11 +560,6 @@ func _pick_debug_where(i: int) -> void:
 	main.debug_start(_debug_ship, str(where[0]),
 			str(where[2]) if where.size() > 2 else "")
 
-func _leave_mode() -> void:
-	mode = "main"
-	sel = 0
-	_build_pda()
-
 func _drop_pda() -> void:
 	if not _pda_up:
 		return
@@ -603,250 +567,6 @@ func _drop_pda() -> void:
 	var rt: PogRuntime = main.pog_rt
 	if rt != null and rt.ui != null:
 		rt.native("gui.popscreen", [])
-
-func _items() -> Array:
-	# [label, enabled]; labels are the original pda_* strings
-	if mode == "systems":
-		var out: Array = []
-		for s in SYSTEMS:
-			out.append([s[1].to_upper(), true])
-		out.append(["< BACK", true])
-		return out
-	if mode == "ships":
-		var out: Array = []
-		for s in SHIPS:
-			out.append([s[1].to_upper(), true])
-		out.append(["< BACK", true])
-		return out
-	if mode == "debug_where":
-		var out: Array = []
-		for s in SYSTEMS:
-			out.append([s[1].to_upper(), true])
-		out.append(["< BACK", true])
-		return out
-	if mode == "loads":
-		var out: Array = []
-		for s in main.save_slots():
-			out.append([str((s as Array)[1]).to_upper(), true])
-		out.append(["< BACK", true])
-		return out
-	if launched:
-		return [["RESUME", true], ["NEW GAME", true], ["SAVE GAME", true],
-			["LOAD GAME", not main.save_slots().is_empty()],
-			["SELECT SYSTEM", true], ["DEBUG START", true], ["QUIT", true]]
-	return [["START NEW GAME", true],
-		["LOAD GAME", not main.save_slots().is_empty()],
-		["INSTANT ACTION", true], ["EXTRAS", true],
-		["DEBUG START", true],
-		# OPTIONS and CREDITS are live now that they raise the screens the
-		# original's own handlers raise (SPMainPDAScreen_OnOptions /
-		# _OnCredits, ipdagui.pog:152-162) instead of nothing. MULTIPLAYER
-		# stays off: icMPMasterScreen has no ported builder.
-		["MULTIPLAYER", false], ["OPTIONS", _has_pog_gui()],
-		["MOVIES", true], ["CREDITS", _has_pog_gui()], ["QUIT", true]]
-
-## The ported GUI runtime is what makes the PDA-screen items reachable at all;
-## without it the front end falls back to its own stand-in lists.
-func _has_pog_gui() -> bool:
-	var rt: PogRuntime = main.pog_rt
-	return rt != null and rt.ui != null and rt.std != null
-
-func _activate() -> void:
-	var items := _items()
-	if not items[sel][1]:
-		main.audio.play("audio/hud/invalid_input.wav", -10.0)
-		return
-	if mode == "systems":
-		if sel == items.size() - 1:
-			main.audio.play("audio/gui/contract.wav", -8.0)
-			_leave_mode()
-			return
-		main.audio.play("audio/gui/confirm.wav", -6.0)
-		var pick: Array = SYSTEMS[sel]
-		main.start_in_system(str(pick[0]),
-			str(pick[2]) if pick.size() > 2 else "")
-		launched = true
-		close()
-		return
-	if mode == "ships":
-		if sel == items.size() - 1:
-			main.audio.play("audio/gui/contract.wav", -8.0)
-			_leave_mode()
-			return
-		main.audio.play("audio/gui/expand.wav", -8.0)
-		_debug_ship = str((SHIPS[sel] as Array)[0])
-		mode = "debug_where"
-		sel = 0
-		return
-	if mode == "debug_where":
-		if sel == items.size() - 1:
-			main.audio.play("audio/gui/contract.wav", -8.0)
-			mode = "ships"
-			sel = 0
-			return
-		main.audio.play("audio/gui/confirm.wav", -6.0)
-		var where: Array = SYSTEMS[sel]
-		# the scene reloads with the chosen hull at the chosen spot
-		main.debug_start(_debug_ship, str(where[0]),
-				str(where[2]) if where.size() > 2 else "")
-		return
-	if mode == "loads":
-		if sel == items.size() - 1:
-			main.audio.play("audio/gui/contract.wav", -8.0)
-			_leave_mode()
-			return
-		main.audio.play("audio/gui/confirm.wav", -6.0)
-		var slots: Array = main.save_slots()
-		if sel < slots.size() and main.load_game(int((slots[sel] as Array)[0])):
-			launched = true
-			close()
-		return
-	# both top menus dispatch by LABEL: inserting an item cannot silently
-	# renumber its neighbours (which bit us twice)
-	match str(items[sel][0]):
-		"RESUME":
-			main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
-			close()
-		"NEW GAME":  # restart the campaign from the top
-			main.audio.play("audio/gui/confirm.wav", -6.0)
-			close()
-			main.restart_campaign()
-		"START NEW GAME":
-			main.audio.play("audio/gui/confirm.wav", -6.0)
-			launched = true
-			close()
-			main.start_campaign()
-		"INSTANT ACTION":  # free flight in the commissioned tug
-			main.audio.play("audio/gui/mechanical_confirm.wav", -6.0)
-			launched = true
-			close()
-		"SAVE GAME":
-			# The original's SAVE GAME raises the slot screen:
-			# SPBasePDAScreen_OnSave -> gui.PlaySound(2) +
-			# gui.OverlayScreen("icSPPDASaveScreen") (ipdagui.pog:352-356;
-			# builder SPPDASaveScreen, ipdagui.pog:435). (The in-flight PDA of
-			# the original had no SAVE item at all -- SPFlightPDAScreen,
-			# ipdagui.pog:376-395, offers only LOAD -- saving went through the
-			# base PDA; our pause menu keeps its SAVE item and raises the same
-			# screen.)
-			if _pog_overlay("icSPPDASaveScreen"):
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-				return
-			# no ported GUI runtime: one-keystroke save into the next free
-			# slot (or slot 1 when full)
-			var slot := 1
-			var used := {}
-			for s in main.save_slots():
-				used[int((s as Array)[0])] = true
-			for i in range(1, PogGameApi.SAVE_SLOTS):
-				if not used.has(i):
-					slot = i
-					break
-			var label := "%s - %s" % [main.system_name,
-					Time.get_datetime_string_from_system(false, true)]
-			if main.save_game(slot, label):
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-				main.hud.log_msg("GAME SAVED: SLOT %d" % slot)
-				close()
-			else:
-				main.audio.play("audio/hud/invalid_input.wav", -10.0)
-		"LOAD GAME":
-			# Every original menu's LOAD GAME is the same overlay,
-			# gui.OverlayScreen("icSPPDALoadScreen"): the front end
-			# (SPMainPDAScreen_OnLoad, ipdagui.pog:124-128), the base PDA
-			# (SPBasePDAScreen_OnLoad, :358-362) and the flight PDA
-			# (SPFlightPDAScreen_OnLoad, :402-406). Builder SPPDALoadScreen,
-			# ipdagui.pog:553.
-			if _pog_overlay("icSPPDALoadScreen"):
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-				return
-			main.audio.play("audio/gui/expand.wav", -8.0)
-			mode = "loads"
-			sel = 0
-		"EXTRAS":
-			# SPMainPDAScreen_OnMod: gui.OverlayScreen("icModScreen")
-			# (ipdagui.pog:130-134; builder ModScreen, ipdagui.pog:1216). The
-			# system picker this used to open is our own debug affordance and
-			# stays on SELECT SYSTEM, where it belongs.
-			if _pog_overlay("icModScreen"):
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-				return
-			main.audio.play("audio/gui/expand.wav", -8.0)
-			mode = "systems"
-			sel = 0
-		"SELECT SYSTEM":
-			main.audio.play("audio/gui/expand.wav", -8.0)
-			mode = "systems"
-			sel = 0
-		"OPTIONS":
-			# SPMainPDAScreen_OnOptions: gui.PlaySound(2) +
-			# gui.OverlayScreen("icSPPDAOptionsScreen") (ipdagui.pog:158-162;
-			# builder SPPDAOptionsScreen, ipdagui.pog:632).
-			if _pog_overlay("icSPPDAOptionsScreen"):
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-			else:
-				main.audio.play("audio/hud/invalid_input.wav", -10.0)
-		"CREDITS":
-			# SPMainPDAScreen_OnCredits PUSHES rather than overlays
-			# (ipdagui.pog:152-156). icCreditScreen is C++-built and mirrored
-			# engine-side (ui.gd:468); it pops itself when the scroll runs out.
-			if _pog_overlay("icCreditScreen", true):
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-			else:
-				main.audio.play("audio/hud/invalid_input.wav", -10.0)
-		"DEBUG START":  # ship picker, then a start location
-			main.audio.play("audio/gui/expand.wav", -8.0)
-			mode = "ships"
-			sel = 0
-		"MOVIES":
-			# SPMainPDAScreen_OnMovies: gui.OverlayScreen("icMoviesScreen")
-			# (ipdagui.pog:146-150). The real screen offers all seven movies
-			# (MoviesScreen, ipdagui.pog:1135); jumping straight to the intro
-			# was our stand-in for it.
-			if _pog_overlay("icMoviesScreen"):
-				main.audio.play("audio/gui/confirm.wav", -6.0)
-				return
-			main.audio.play("audio/gui/confirm.wav", -6.0)
-			visible = false
-			main._play_movie("intro", func() -> void: pass)
-		"QUIT":
-			get_tree().quit()
-
-func handle(event: InputEvent) -> void:
-	# input is routed here by main while the menu is open
-	if event is InputEventKey and event.pressed and not event.echo:
-		var items := _items()
-		match event.physical_keycode:
-			KEY_UP:
-				sel = (sel - 1 + items.size()) % items.size()
-				main.audio.play("audio/gui/minor.wav", -12.0)
-			KEY_DOWN:
-				sel = (sel + 1) % items.size()
-				main.audio.play("audio/gui/minor.wav", -12.0)
-			KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
-				_activate()
-			KEY_ESCAPE:
-				# Escape backs out of a screen. It never quits the game: that
-				# is what the QUIT item is for, and losing a campaign to a
-				# stray keypress is not a feature.
-				if mode == "debug_where":
-					mode = "ships"
-					sel = 0
-				elif mode in ["systems", "ships", "loads"]:
-					_leave_mode()
-				elif launched:
-					close()
-	if event is InputEventMouseMotion:
-		for i in _item_rects.size():
-			if _item_rects[i].has_point(event.position) and sel != i:
-				sel = i
-				main.audio.play("audio/gui/minor.wav", -12.0)
-	if event is InputEventMouseButton and event.pressed \
-			and event.button_index == MOUSE_BUTTON_LEFT:
-		for i in _item_rects.size():
-			if _item_rects[i].has_point(event.position):
-				sel = i
-				_activate()
 
 func _process(delta: float) -> void:
 	if not visible:
@@ -910,7 +630,7 @@ func _layout_movie() -> void:
 			Vector2(side, side))
 	bust_movie.position = _panel.position
 	bust_movie.size = _panel.size
-	bust_movie.visible = mode != "systems"
+	bust_movie.visible = true
 	_bar.position = Vector2.ZERO
 	_bar.size = Vector2(_bar_w, s.y)          # eased width -- the drawer reveal
 	_bar_fx.position = Vector2.ZERO
@@ -950,31 +670,6 @@ func _grab(path: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	img.save_png(path)
 	print("BUSTSHOT wrote ", path, " ", img.get_size())
-
-func _stadium(r: Rect2, col: Color, width: float, glow: bool) -> void:
-	# the original's capsule button outline (drawn on the _top layer, above
-	# the bar and the page effects)
-	var rad := r.size.y / 2.0
-	var lc := Vector2(r.position.x + rad, r.position.y + rad)
-	var rc := Vector2(r.end.x - rad, r.position.y + rad)
-	_top.draw_rect(Rect2(r.position + Vector2(rad, 0),
-			Vector2(r.size.x - rad * 2, r.size.y)), Color(0.07, 0.05, 0.0, 0.85))
-	_top.draw_circle(lc, rad, Color(0.07, 0.05, 0.0, 0.85))
-	_top.draw_circle(rc, rad, Color(0.07, 0.05, 0.0, 0.85))
-	if glow:
-		_top.draw_arc(lc, rad + 2, PI / 2, PI * 1.5, 16,
-				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-		_top.draw_arc(rc, rad + 2, -PI / 2, PI / 2, 16,
-				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-		_top.draw_line(Vector2(lc.x, r.position.y - 2), Vector2(rc.x, r.position.y - 2),
-				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-		_top.draw_line(Vector2(lc.x, r.end.y + 2), Vector2(rc.x, r.end.y + 2),
-				Color(col.r, col.g, col.b, 0.35), width + 3.0, true)
-	_top.draw_arc(lc, rad, PI / 2, PI * 1.5, 16, col, width, true)
-	_top.draw_arc(rc, rad, -PI / 2, PI / 2, 16, col, width, true)
-	_top.draw_line(Vector2(lc.x, r.position.y), Vector2(rc.x, r.position.y),
-			col, width, true)
-	_top.draw_line(Vector2(lc.x, r.end.y), Vector2(rc.x, r.end.y), col, width, true)
 
 func _gui_tex(name: String) -> Texture2D:
 	var img := Image.load_from_file(main._base().path_join(
@@ -1039,7 +734,7 @@ func _draw_overlay() -> void:
 	# the layer ABOVE the movie: scanlines + sweep across the open area, and the
 	# scrolling dossier in the panel's lower-left (the original draws the HTML
 	# into the movie window's TextView; position measured from reference).
-	if not visible or mode == "systems":
+	if not visible:
 		return
 	var s := get_viewport_rect().size
 	# the page effects span the WHOLE screen, bar included (in the reference
@@ -1093,55 +788,12 @@ func _draw() -> void:
 func _draw_top() -> void:
 	if not visible:
 		return
+	# The PDA controls (RESUME / LOAD GAME / ... plus our debug items) are the
+	# real POG windows, drawn by BaseScreens in the original's own art. This layer
+	# carries only the build stamp now.
 	var s := get_viewport_rect().size
-	var strip_w := _strip_w()
-	# The GUI is fixed-pixel at the 1024x768 reference; the bar width already
-	# scales with height (_strip_w), so the button metrics and the FONT must
-	# scale by the same factor or small windows overflow the capsules.
 	var sc := s.y / REF_H
-	# item_size is the font's fixed_size (8) -- its NATIVE bitmap size, at
-	# which "START NEW GAME" is already 167 px wide. The old floor of 8 was
-	# therefore "never shrink", which is exactly the reported overflow; with
-	# fixed_size_scale_mode enabled (load_game_font) smaller sizes now render
-	# smaller, so the fit loop below can actually work.
 	var fs := maxi(roundi(item_size * sc), 3)
-	# capsule buttons
-	_item_rects.clear()
-	# ...but not while the ORIGINAL menu is up: SPMainPDAScreen built the real
-	# controls and BaseScreens is drawing them, in the original's own art. These
-	# capsules are this file's stand-in, kept only for the debug pickers below.
-	if _pda_up:
-		_draw_version(s, sc, fs)
-		return
-	var items := _items()
-	var bh := 24.0 * sc
-	var gap := clampf((s.y - 90.0 * sc) / items.size() - bh, 8.0 * sc, 34.0 * sc)
-	var y := 42.0 * sc
-	var bw := strip_w - 52.0 * sc
-	# one shared size fitted to the WIDEST label, so the column stays uniform
-	var max_w := bw - 32.0 * sc
-	var widest := 0.0
-	for it in items:
-		widest = maxf(widest, _font_title.get_string_size(str(it[0]),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x)
-	while fs > 3 and widest > max_w:
-		fs -= 1
-		widest = 0.0
-		for it in items:
-			widest = maxf(widest, _font_title.get_string_size(str(it[0]),
-					HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x)
-	for i in items.size():
-		var enabled: bool = items[i][1]
-		var col := AMBER_GLOW if i == sel else (AMBER if enabled else
-			Color(AMBER.r, AMBER.g, AMBER.b, 0.22))
-		var r := Rect2(Vector2(28.0 * sc, y), Vector2(bw, bh))
-		_stadium(r, col, 1.6 if i == sel else 1.2, i == sel)
-		var label: String = items[i][0]
-		_top.draw_string(_font_title, r.position + Vector2(16.0 * sc, bh - 7.0 * sc),
-				label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs,
-				col if enabled else Color(col.r, col.g, col.b, 0.35))
-		_item_rects.append(r.grow(4))
-		y += bh + gap
 	_draw_version(s, sc, fs)
 
 ## The build stamp, bottom right, like the original's "Edge of Chaos F14.6".
