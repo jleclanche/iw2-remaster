@@ -511,9 +511,6 @@ func start_campaign() -> void:
 	_fit_player("sims/ships/player/comsec.ini",
 		"data/avatars/avatars/command_section/setup.gltf")
 	_setup_act0_scene()
-	if use_port:
-		_port_boot()
-		return
 	if use_pog:
 		# Hand the campaign to the original bytecode, through the game's own
 		# boot sequence rather than jumping straight into a mission.
@@ -529,9 +526,9 @@ func start_campaign() -> void:
 			"istartsystem.FinalSetup", "iprelude.Main"]
 		_pog_boot_next()
 		return
-	# iact0mission10 bytecode: igame.PlayMovie("/movies/prelude")
-	_play_movie("prelude", func() -> void:
-		mission.start(Mission.act0()))
+	# Default: the ported GDScript runtime -- istartsystem's boot chain then
+	# iprelude (which owns the prelude cinematic and dispatches iact0mission10).
+	_port_boot()
 
 func _spawn_npc(dname: String, fac: String, typ: String, avatar: String,
 		pos: Vector3, wps: Array) -> AiShip:

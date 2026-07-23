@@ -21,7 +21,11 @@ func _ready() -> void:
 		if on:
 			demo = true
 	use_pog = "--pog" in args
-	use_port = "--port" in args
+	# The ported GDScript runtime is the DEFAULT campaign path; --pog runs the
+	# same campaign on the bytecode VM (the verification oracle). The legacy
+	# hand-authored driver is retired, so anything that is not --pog is --port.
+	# (--port is still accepted, now redundant.)
+	use_port = not use_pog
 	for arg in args:
 		# the menu's DEBUG START, reachable from the command line:
 		# --debugship=heavy_corvette_prefitted
