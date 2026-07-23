@@ -142,9 +142,9 @@ func _newgametest(_delta: float) -> void:
 			# menu has to notice its own screen went away and stand down --
 			# otherwise RESUME leaves the front-end chrome up with no controls
 			# on it, which is exactly what it did.
-			var closed: bool = not m.menu.visible and not get_tree().paused
+			var closed: bool = not m.menu.active and not get_tree().paused
 			print("NEWGAMETEST: %s — RESUME returns to flight (menu=%s paused=%s)"
-				% ["PASS" if closed else "FAIL", m.menu.visible,
+				% ["PASS" if closed else "FAIL", m.menu.active,
 					get_tree().paused])
 			_ngt_stage = 0
 			get_tree().quit(0 if closed else 1)
