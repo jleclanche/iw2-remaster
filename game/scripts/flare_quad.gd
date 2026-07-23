@@ -31,6 +31,8 @@ var core_level := 1.0
 const CORE_SIZE_RATIO := 0.3   # m_white_centre_size_ratio @ 0x100ee4a4
 const CORE_BIAS := 0.25        # _DAT_100ec418
 const CORE_GAIN := 1.3333      # _DAT_100ee564
+# draw slot: below the planet band, above the sky backdrop (see _flare_material)
+const RENDER_PRIORITY := -35
 var _core: MeshInstance3D
 # LensFlareFade bit1 -> Render's flag-8 branch (flux.dll.c:215202-215206):
 # the quad is a fixed WORLD size --
@@ -59,6 +61,11 @@ static func _flare_material(tex: Texture2D) -> StandardMaterial3D:
 	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 	mat.billboard_keep_scale = true
 	mat.albedo_texture = tex
+	# Draw BEFORE the planet band (main_world PRIORITY_PLANET_NEAR..FAR = -12..-30)
+	# but AFTER the sky backdrop (PRIORITY_SKY = -40): a star/sun is always farther
+	# than a nearby planet, so a lit planet must paint over a flare it sits in
+	# front of. A flare in open sky is untouched (nothing covers it). (#66)
+	mat.render_priority = RENDER_PRIORITY
 	return mat
 
 static func create(tex: Texture2D) -> FlareQuad:

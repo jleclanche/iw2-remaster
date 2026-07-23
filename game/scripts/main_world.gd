@@ -763,11 +763,19 @@ func _surface_tint(rec: Dictionary, layer: int) -> Color:
 ## the cyclorama and before the world. The FcLensFlareNodes that draw the
 ## neighbour-star flares DO depth-test (m_polygon_state eBlend 1 @ FUN_100e5cb0
 ## is "depth test on, depth write off"), so in the original they test against a
-## buffer the planets never wrote to and shine straight over a planet's disc.
+## buffer the planets never wrote to.
 ## Ours wrote depth from an opaque sphere, so an unlit body silently ate every
 ## flare behind it -- a 62-degree black hole in the sky that moved as you
 ## turned. Bodies still occlude correctly against ships and stations, which are
 ## drawn later and do write depth.
+##
+## (#66) But a star/sun IS physically behind a planet the camera sits in front
+## of, and now that a body is LIT (unshaded + primary above) it no longer reads
+## as a black hole -- it reads as a planet. So the flares draw in a slot BELOW
+## the planet band (flare_quad.gd RENDER_PRIORITY, between PRIORITY_SKY and
+## PRIORITY_PLANET_FAR): a lit planet paints over a flare it sits in front of,
+## a flare in open sky is untouched. This does NOT use depth, so it never
+## wrongly occludes the far ships/stations the note above protects.
 func _planet_shader() -> Shader:
 	if planet_shader != null:
 		return planet_shader
