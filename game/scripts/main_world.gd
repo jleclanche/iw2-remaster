@@ -813,6 +813,7 @@ uniform vec4 tint : source_color;
 uniform vec4 tint2 : source_color;
 uniform float layer2;    // 1 = composite the second surface, 0 = base only
 uniform vec3 star_dir;   // world space, body -> its primary
+uniform vec3 star_color; // the primary's diffuse light colour (sun_colours[0])
 uniform float ambient;   // the night side is dim, never pure black
 uniform float alpha;
 void fragment() {
@@ -827,7 +828,12 @@ void fragment() {
 	vec3 base = t.rgb * tint.rgb;
 	vec3 second = texture(albedo_tex2, UV).rgb * tint2.rgb;
 	vec3 surf = base + second * layer2;
-	ALBEDO = surf * (ambient + (1.0 - ambient) * lam);
+	// D3D diffuse lighting is material.diffuse x LIGHT.diffuse x N.L: the planet
+	// is tinted by the PRIMARY's colour, not white. Hoffer's Wake Alpha is a red
+	// sun (sun_colours[0] = (1,0.3,0.05)); without this a two-layer body reads
+	// olive instead of the true orange (measured disc ~ (120,45,10)). star_color
+	// defaults white, so single bodies / untinted suns are unchanged.
+	ALBEDO = surf * star_color * (ambient + (1.0 - ambient) * lam);
 	ALPHA = t.a * alpha;
 }
 """
@@ -888,8 +894,9 @@ func _planet_material(rec: Dictionary) -> ShaderMaterial:
 	mat.set_shader_parameter("layer2", 1.0 if two_surf else 0.0)
 	mat.set_shader_parameter("ambient", PLANET_AMBIENT)
 	mat.set_shader_parameter("alpha", 1.0)
-	# a sane default until _stream_objects stamps the real one
+	# sane defaults until _light_body_from_primary stamps the real ones
 	mat.set_shader_parameter("star_dir", Vector3.FORWARD)
+	mat.set_shader_parameter("star_color", Color.WHITE)
 	return mat
 
 func _atmosphere_material(rec: Dictionary) -> ShaderMaterial:
@@ -911,6 +918,7 @@ func _atmosphere_material(rec: Dictionary) -> ShaderMaterial:
 	mat.set_shader_parameter("ambient", PLANET_AMBIENT)
 	mat.set_shader_parameter("alpha", 0.55)
 	mat.set_shader_parameter("star_dir", Vector3.FORWARD)
+	mat.set_shader_parameter("star_color", Color.WHITE)
 	return mat
 
 func _spawn_impostor(rec: Dictionary) -> void:
@@ -1123,8 +1131,17 @@ func _light_body_from_primary(o: Dictionary) -> void:
 		return
 	var dir := Vector3(prim["x"] - o["x"], prim["y"] - o["y"],
 			prim["z"] - o["z"]).normalized()
+	# The primary's diffuse light colour (icSun sun_colours[0]) tints the body:
+	# a red sun paints its planets red. Falls back to white if the record has no
+	# colours. sun_colours are already 0..1 floats (icSun::ReadColour), not /255.
+	var scol := Color.WHITE
+	var cols: Array = prim.get("sun_colours", [])
+	if not cols.is_empty():
+		var c: Array = cols[0]
+		scol = Color(c[0], c[1], c[2])
 	for mat in mats:
 		(mat as ShaderMaterial).set_shader_parameter("star_dir", dir)
+		(mat as ShaderMaterial).set_shader_parameter("star_color", scol)
 
 func _stream_objects() -> void:
 	# a scripted object is often created before the table that names it loads
