@@ -271,11 +271,14 @@ func _ffb_step(basis: Basis, delta: float) -> void:
 ## about a focal point focal_length ahead (0x100dbb8e builds the offset quat,
 ## 0x100d4620 commits eye->look); the lean shifts the eye in the hull frame.
 func _ffb_look(mount: Transform3D) -> Transform3D:
-	# Negated: a spring-mounted eye LAGS the turn (looks where the nose just was),
-	# and the original builds its neck quat in LightWave's left-handed +Z-forward
-	# frame -- the opposite chirality to Godot -- so the extracted +neck flips to
-	# -neck here. Magnitude/direction is the one bit that wants an eyes-on confirm.
-	var neck := Basis.from_euler(-ffb_neck)
+	# The neck LEANS INTO the input (the original rotates the look by +neck, only
+	# roll negated -- already done in the target). It must not oppose the input:
+	# at motion onset the neck grows linearly while the hull's own rotation is
+	# still ramping from zero, so a -neck would swing the view the WRONG way for a
+	# frame (mouse up -> a beat of down) before the hull caught up. +neck kicks
+	# the view with the input, then relaxes back as the yoke centres -- the settle
+	# that reads as force feedback.
+	var neck := Basis.from_euler(ffb_neck)
 	var fwd := mount.basis * (neck * Vector3(0, 0, -1))
 	var up := mount.basis * (neck * Vector3(0, 1, 0))
 	# focal point stays on the rigid mount; the eye leans under G -- so the lean
