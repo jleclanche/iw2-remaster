@@ -1007,11 +1007,16 @@ func _std() -> PogStd:
 
 # 14, the engine's slot count: icSaveGame::LoadGame's name scan runs
 # `while (uVar4 < 0xe)` (iwar2 @ 0xb6c80, iwar2.dll.c:151466), and the retail
-# save screen shows exactly 14 slot rows. Slot 0 doubles as our autosave
-# (igame.SaveAutosave arrives here with no slot argument); the original kept
-# the autosave in a separate file (icSaveGame::LoadAutosave @ 0xb6d70) -- a
-# known divergence, not worth a second on-disk format.
+# save/load screens show exactly 14 slot rows (indices 0..13).
 const SAVE_SLOTS := 14
+
+# The autosave lives in its own reserved slot ABOVE the 14 the screens
+# enumerate -- the original kept it in a SEPARATE file (icSaveGame::
+# LoadAutosave @ 0xb6d70), and a dedicated slot index is that separate file in
+# one JSON format. Out of the 0..13 range, it never doubles as a numbered "Save
+# 0" row in the list (SPPDALoadScreen's slot walk stops at NumberOfSavedGameSlots)
+# and never collides with a manual save to row 0.
+const AUTO_SLOT := SAVE_SLOTS
 
 func _slot_path(n: int) -> String:
 	return "user://save_%d.json" % n
@@ -1019,7 +1024,11 @@ func _slot_path(n: int) -> String:
 # @native igame.SaveGame
 # @native igame.SaveAutosave
 func _g_save(_t, a: Array) -> Variant:
-	var slot := int(a[0]) if a.size() > 0 else 0
+	# igame.SaveAutosave arrives with NO arguments; igame.SaveGame always
+	# carries [slot, name]. So an empty arg list is the autosave, and it goes to
+	# the reserved slot -- never a numbered row, never a manual-save collision.
+	var is_auto := a.is_empty()
+	var slot := AUTO_SLOT if is_auto else int(a[0])
 	var std := _std()
 	if game == null or std == null:
 		return 0
@@ -1030,7 +1039,8 @@ func _g_save(_t, a: Array) -> Variant:
 	if f == null:
 		return 0
 	var payload := {
-		"name": PogStd._s(a[1]) if a.size() > 1 else "Save %d" % slot,
+		"name": _autosave_label() if is_auto \
+				else (PogStd._s(a[1]) if a.size() > 1 else "Save %d" % slot),
 		"system": game.system_stem,
 		"pos": [game.px, game.py, game.pz],
 		"hull": game.hull,
@@ -1048,7 +1058,6 @@ func _g_save(_t, a: Array) -> Variant:
 	payload.merge(game.save_extras())
 	f.store_string(JSON.stringify(payload))
 	f.close()
-	_saved = true
 	return 1
 
 # @native igame.LoadGame
@@ -1156,18 +1165,24 @@ func _g_load(_t, a: Array) -> Variant:
 		game.menu.close()
 	return 1
 
-## The name -> slot resolution of icSaveGame::LoadGame (iwar2 @ 0xb6c80): the
-## savegame_autosave label is the autosave (our slot 0), anything else is the
-## first slot whose stored name matches.
-func _slot_of_name(name: String) -> int:
-	var auto_label := ""
+## The localised savegame_autosave label ("AUTOSAVE"), read from whichever
+## runtime store carries it (the ported runtime first, as base_interior reads
+## it). Empty if no text table is up yet.
+func _autosave_label() -> String:
+	var lbl := ""
 	if "pog_rt" in game and game.pog_rt != null and game.pog_rt.std != null:
-		auto_label = game.pog_rt.std.field("savegame_autosave")
-	if (auto_label.is_empty() or auto_label == "savegame_autosave") \
-			and _std() != null:
-		auto_label = _std().field("savegame_autosave")
+		lbl = game.pog_rt.std.field("savegame_autosave")
+	if (lbl.is_empty() or lbl == "savegame_autosave") and _std() != null:
+		lbl = _std().field("savegame_autosave")
+	return lbl
+
+## The name -> slot resolution of icSaveGame::LoadGame (iwar2 @ 0xb6c80): the
+## savegame_autosave label is the autosave (our reserved slot), anything else is
+## the first slot whose stored name matches.
+func _slot_of_name(name: String) -> int:
+	var auto_label := _autosave_label()
 	if not auto_label.is_empty() and name == auto_label:
-		return 0
+		return AUTO_SLOT
 	for i in SAVE_SLOTS:
 		if PogStd._s(_g_slot_name(null, [i])) == name:
 			return i
@@ -1188,9 +1203,9 @@ func _g_slot_name(_t, a: Array) -> Variant:
 
 # @native igame.AutosaveSaved
 func _g_autosaved(_t, _a: Array) -> Variant:
-	return 1 if _saved else 0
-
-var _saved := false
+	# Disk-backed, not per-session: the AUTOSAVE row must appear on a fresh boot
+	# whenever an autosave exists, not only after this session wrote one.
+	return 1 if FileAccess.file_exists(_slot_path(AUTO_SLOT)) else 0
 
 # 0 IS the single-player campaign: istartsystem.FinalSetup gates its whole
 # single-player path on `if (0 == igame.GameType())`, and StartupSpace blacks the
