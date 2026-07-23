@@ -376,10 +376,16 @@ So:
   (so it is stable), and its colour is `SurfaceTint(0)`'s hue with value
   `FcRandom::Float(0.2, 0.8)`.
 
-**NOT RECOVERED:** the ring's *width*, and the atmosphere shell's exact blend --
-the planet avatar's draw (`0x100ccbb0` / `0x100ccc60` / `0x100ccc80`) is also
-left undisassembled. `atmosphere_height = 1.1` in `planets.ini` is the shell
-scale.
+**NOT RECOVERED:** the ring's *width*, the atmosphere shell's exact blend, and
+**the inter-layer blend of the two surface layers** -- the planet avatar's draw
+(`0x100ccbb0` / `0x100ccc60` / `0x100ccc80`) is left undisassembled.
+`atmosphere_height = 1.1` in `planets.ini` is the shell scale. What the setup
+(FUN_100cdc50) *does* give: the base surface layer carries `cLayer` Flags = 2,
+the second-surface / atmosphere overlay carries Flags = 0. `_planet_shader`
+composites the two surface layers **additively** (`surf = tex0*tint0 +
+tex1*tint1`) as a reading of "Flags 2 base + Flags 0 overlay"; the exact D3D
+layer op is what the undisassembled draw would pin. Rendering only layer 0 (the
+old behaviour) left every two-surface body dark and flat.
 
 ---
 

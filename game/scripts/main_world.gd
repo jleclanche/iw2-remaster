@@ -776,11 +776,24 @@ func _planet_shader() -> Shader:
 	# sphere with the scene's `sun`/`fill` DISTANT lights, on top of its own
 	# primary term below -- and the green <fill> greened every planet. A body
 	# takes ONLY its primary's light (see _light_body_from_primary above).
+	# A body composites up to two layers on one shader (FUN_100cdc50): a base
+	# surface (tex0 x SurfaceTint(0)) and, when the record carries a second
+	# surface AND no atmosphere, a second (tex1 x SurfaceTint(1)) -- these two
+	# are mutually exclusive with the atmosphere shell (geography.md s4). We were
+	# rendering ONLY the base and dropping the second surface, which left every
+	# two-surface body (Griffon, Alexander, ...) dark and flat. The base layer
+	# carries cLayer Flags=2 and the overlay Flags=0; the exact D3D layer op is
+	# in the avatar draw Ghidra dropped (0x100ccc80, not disassembled), so the
+	# ADDITIVE composite here is a reading, not a bit-exact extraction -- flagged
+	# with the ring width / atmosphere blend in geography.md's NOT RECOVERED.
 	planet_shader.code = """
 shader_type spatial;
 render_mode cull_back, depth_draw_never, fog_disabled, unshaded;
 uniform sampler2D albedo_tex : source_color;
+uniform sampler2D albedo_tex2 : source_color;
 uniform vec4 tint : source_color;
+uniform vec4 tint2 : source_color;
+uniform float layer2;    // 1 = composite the second surface, 0 = base only
 uniform vec3 star_dir;   // world space, body -> its primary
 uniform float ambient;   // the night side is dim, never pure black
 uniform float alpha;
@@ -788,7 +801,9 @@ void fragment() {
 	vec3 n = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
 	float lam = max(dot(n, normalize(star_dir)), 0.0);
 	vec4 t = texture(albedo_tex, UV);
-	ALBEDO = t.rgb * tint.rgb * (ambient + (1.0 - ambient) * lam);
+	vec3 surf = t.rgb * tint.rgb
+		+ texture(albedo_tex2, UV).rgb * tint2.rgb * layer2;
+	ALBEDO = surf * (ambient + (1.0 - ambient) * lam);
 	ALPHA = t.a * alpha;
 }
 """
@@ -812,9 +827,19 @@ func _planet_material(rec: Dictionary) -> ShaderMaterial:
 	mat.shader = _planet_shader()
 	mat.render_priority = PRIORITY_PLANET
 	var textures: Array = rec.get("surface_textures", [])
-	if not textures.is_empty():
-		mat.set_shader_parameter("albedo_tex", _planet_texture(str(textures[0])))
+	var tex0: Texture2D = _planet_texture(str(textures[0])) \
+			if not textures.is_empty() else null
+	mat.set_shader_parameter("albedo_tex", tex0)
 	mat.set_shader_parameter("tint", _surface_tint(rec, 0))
+	# FUN_100cdc50 `two_surfaces = tex0 && tex1 && !has_atmosphere`: the second
+	# surface layer is only built when the body has no atmosphere shell.
+	var has_atmo := not str(rec.get("atmosphere_texture", "")).is_empty()
+	var tex1: Texture2D = _planet_texture(str(textures[1])) \
+			if textures.size() >= 2 else null
+	var two_surf := tex1 != null and not has_atmo
+	mat.set_shader_parameter("albedo_tex2", tex1 if two_surf else tex0)
+	mat.set_shader_parameter("tint2", _surface_tint(rec, 1))
+	mat.set_shader_parameter("layer2", 1.0 if two_surf else 0.0)
 	mat.set_shader_parameter("ambient", PLANET_AMBIENT)
 	mat.set_shader_parameter("alpha", 1.0)
 	# a sane default until _stream_objects stamps the real one
@@ -828,11 +853,15 @@ func _atmosphere_material(rec: Dictionary) -> ShaderMaterial:
 	var mat := ShaderMaterial.new()
 	mat.shader = _planet_shader()
 	mat.render_priority = PRIORITY_PLANET
-	mat.set_shader_parameter("albedo_tex",
-		_planet_texture(str(rec["atmosphere_texture"])))
+	var atex: Texture2D = _planet_texture(str(rec["atmosphere_texture"]))
+	mat.set_shader_parameter("albedo_tex", atex)
 	var tint := _surface_tint(rec, 0).lerp(_surface_tint(rec, 1), 0.5) \
 		.lerp(Color.WHITE, 0.6)
 	mat.set_shader_parameter("tint", tint)
+	# the cloud deck is a single layer (the atmosphere IS layer2 in the engine)
+	mat.set_shader_parameter("albedo_tex2", atex)
+	mat.set_shader_parameter("tint2", Color.BLACK)
+	mat.set_shader_parameter("layer2", 0.0)
 	mat.set_shader_parameter("ambient", PLANET_AMBIENT)
 	mat.set_shader_parameter("alpha", 0.55)
 	mat.set_shader_parameter("star_dir", Vector3.FORWARD)
