@@ -143,6 +143,12 @@ var _glow_pts: Array = []   # ring of the last 10 mouse positions
 var _panel := Rect2()       # the square movie panel, laid out each frame
 var _movie_idx := -1        # -1 = "pick a random start", then cycle (FUN_10017850)
 var _bust_t := 0.0
+## Screen-open reveal, the same recipe as the raised screens (BaseScreens):
+## icShadyBar SetTargetWidth eases the bar 0 -> _strip_w() at 1500 px/s (native,
+## scaled to the live height so the ~0.16 s duration is resolution-independent),
+## then the buttons (the _top layer) fade in at 3.0/s. Reset by open().
+var _bar_w := 0.0
+var _content_alpha := 1.0
 var dossier_lines: Array = []  # {text, bold}
 var _scroll := 0.0
 var _char := ""
@@ -364,6 +370,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func open() -> void:
 	visible = true
+	_bar_w = 0.0             # the drawer opens from nothing each time
+	_content_alpha = 0.0
 	mode = "main"
 	sel = 0
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -850,6 +858,17 @@ func _process(delta: float) -> void:
 		_pda_up = false
 		close()
 		return
+	# The drawer opens and the buttons fade in -- the same reveal the raised
+	# screens play (base_screens.gd _anim_step). The ease rate is the extracted
+	# 1500 px/s at the fixed-pixel reference, scaled to the live height so the
+	# duration holds across resolutions.
+	var grow: float = BaseScreens.SHADY_GROW_PXPS \
+			* get_viewport_rect().size.y / REF_H
+	_bar_w = move_toward(_bar_w, _strip_w(), grow * delta)
+	if is_equal_approx(_bar_w, _strip_w()):
+		_content_alpha = minf(1.0,
+				_content_alpha + BaseScreens.CONTENT_FADE_PS * delta)
+	_top.modulate.a = _content_alpha
 	_bust_t += delta
 	# dossier scroll: 18 px/s at native res (DAT_10117d40, icMovie::Tick),
 	# scaled with the fixed-pixel page
@@ -891,9 +910,9 @@ func _layout_movie() -> void:
 	bust_movie.size = _panel.size
 	bust_movie.visible = mode != "systems"
 	_bar.position = Vector2.ZERO
-	_bar.size = Vector2(strip_w, s.y)
+	_bar.size = Vector2(_bar_w, s.y)          # eased width -- the drawer reveal
 	_bar_fx.position = Vector2.ZERO
-	_bar_fx.size = Vector2(strip_w, s.y)
+	_bar_fx.size = Vector2(_bar_w, s.y)
 
 func _bustshot_step(delta: float) -> void:
 	# for each character: settle, grab frame A, wait ~1/8 s, grab frame B (so the
