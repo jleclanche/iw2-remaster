@@ -823,6 +823,19 @@ const PRIORITY_PLANET := -20
 # all strictly between PRIORITY_SKY (-40) and the world (0).
 const PRIORITY_PLANET_NEAR := -12
 const PRIORITY_PLANET_FAR := -30
+# Planet self-rotation about the pole (Y). icPlanetAvatar's draw (0x100ccc80 @
+# 0x100cda5b) builds a Y-axis rotation (0x100ce630: m11=1, m00/m02 = cos/sin)
+# and concatenates it into the world transform. The angle is
+#   m_game_time * 0.001 * 2pi / ((radius/1.28e7 + 0.5) * 360)
+# -- from `(radius - 6.4e6) * 0.5 / 6.4e6 + 1` (0x10117738=0.5, 0x1011d06c=
+# 6.4e6 ~ Earth radius) times 86400 * 0.00416667 (= 360, 0x1011d070/0x1011d0d4)
+# under 2pi (0x10119f94). So the SPIN PERIOD is `(radius/1.28e7 + 0.5) * 360` s
+# -- bigger bodies spin slower (Griffon ~5 min, a gas giant ~40+). m_game_time
+# is taken as milliseconds (the same assumption as the shockwave spin;
+# docs/original.md Open questions).
+const PLANET_SPIN_RADIUS_DIV := 1.28e7  # (r - 6.4e6)*0.5/6.4e6 + 1 = r/1.28e7 + 0.5
+const PLANET_SPIN_BASE := 0.5
+const PLANET_SPIN_PERIOD_K := 360.0
 
 func _planet_material(rec: Dictionary) -> ShaderMaterial:
 	# icPlanetAvatar's shader (FUN_100cdc50 @ 0x100cdc50): layer 0 is
@@ -1164,6 +1177,12 @@ func _stream_objects() -> void:
 					continue
 				o["node"].position = Vector3(dx, dy, dz) * k
 				o["node"].scale = Vector3.ONE * maxf(draw_r, 1.0)
+				# spin about the pole (Y): period grows with the TRUE radius
+				# (not the pulled-in draw radius), so bigger bodies turn slower
+				var spin_period: float = (r / PLANET_SPIN_RADIUS_DIV \
+						+ PLANET_SPIN_BASE) * PLANET_SPIN_PERIOD_K
+				o["node"].rotation.y = TAU * fmod(
+						Time.get_ticks_msec() * 0.001, spin_period) / spin_period
 				_light_body_from_primary(o)
 				var fg: Node3D = o["node"].get_node_or_null("FarGlow")
 				if fg != null:
