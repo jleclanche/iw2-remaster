@@ -34,12 +34,12 @@ inverse` is "`=` speeds up, `-` slows down".
 
 |  | keyboard (`keyboard_only.ini`) | joystick (`default.ini`) |
 |---|---|---|
-| `icPlayerPilot.Yaw` | **NumPad4** / **NumPad6** | JoyXAxis |
-| `icPlayerPilot.Pitch` | **NumPad2** / **NumPad8** | JoyYAxis, `inverse` |
+| `icPlayerPilot.Yaw` | **Q** / **E** (also NumPad4 / NumPad6) | JoyXAxis |
+| `icPlayerPilot.Pitch` | **J** / **K** (J = nose up; also NumPad2 / NumPad8) | JoyYAxis, `inverse` |
 | `icPlayerPilot.Roll` | **Z** / **X** (also NumPad1 / NumPad3) | JoyRZAxis (twist) |
 | `icPlayerPilot.RollYawToggleHold` | -- (unbound) | JoyButton2 |
 | `icPlayerPilot.LateralX` | **A** / **D** | JoyXAxis + ALT |
-| `icPlayerPilot.LateralY` | -- (unbound) | JoyYAxis + ALT |
+| `icPlayerPilot.LateralY` | **U** / **I** (U = up; remaster) | JoyYAxis + ALT |
 | `icPlayerPilot.LateralZ` | **S** / **W** | JoyButton8 / JoyButton7 |
 | `icPlayerPilot.Throttle` | -- | JoyZAxis / JoyUAxis, `inverse` |
 | `icPlayerPilot.ThrottleDelta` | **-** / **=** (and NumPad) | -- |
@@ -191,16 +191,16 @@ per-camera recentre tunable -- the reset is code-driven.)
 | `ToggleWeaponLinkingMode` | F |
 | `ToggleAimAssist` | X |
 | `ToggleZoom` | **Shift+Z** (default.ini shipped plain Z; the remaster gives Z/X to roll) |
-| `LDSIQuickFire` | I |
+| `LDSIQuickFire` | **Shift+I** (default.ini shipped plain I; the remaster gives I to vertical strafe) |
 | `ToggleLDS` | L |
-| `Undock` | U |
+| `Undock` | **Shift+U** (default.ini shipped plain U; the remaster gives U to vertical strafe) |
 | `CycleContactUp` / `CycleContactDown` | `,` / `.` |
 | `CycleContactTop` / `CycleContactBottom` | Home / End |
 | `TargetNearestEnemy` | R |
 | `TargetNearestShipToDirection` | T |
-| `TargetLastAggressor` | Q |
+| `TargetLastAggressor` | **Shift+Q** (default.ini shipped plain Q; the remaster gives Q to yaw) |
 | `SubTarget` | Y |
-| `CycleEnemy` | E |
+| `CycleEnemy` | **Shift+E** (default.ini shipped plain E; the remaster gives E to yaw) |
 | `CycleCritical` | C |
 | `RemotePilot` | Shift+R |
 | `AutopilotOff` / `Approach` / `Formate` / `Dock` / `MatchVelocity` | **F5 / F6 / F7 / F8 / F9** |
@@ -226,9 +226,10 @@ RemotePilot**. Note it is *not* the F5..F9 order.
 | we do | the original did | why |
 |---|---|---|
 | The mouse is a yoke: X yaws, Y pitches, right button is `RollYawToggleHold`, and the zoom factor divides it | Bound **no** mouse axis to the pilot at all -- the mouse is the director's camera, and flight is stick or numpad | A 2001 game could assume a joystick. The mouse carries the real yoke's two behaviours (the zoom divisor and the roll/yaw swap) so it is the same control, on a different device. |
-| `LateralY` unbound on the keyboard | the same | Neither shipped config binds it. We will not invent a key. |
+| `LateralY` (vertical strafe) on **U / I** (U up) | unbound on the keyboard (joystick-only) | A 6DOF ship needs the sixth axis under the same hand as the rest; the shipped configs left it stick-only. `Undock` and `LDSIQuickFire` move to Shift+U / Shift+I. |
 | No `RollYawToggleHold` key | Joystick button 2 only | Same reason; it is on the right mouse button instead. |
 | Roll on **Z / X** (Z left, X right); `ToggleZoom` bumped to **Shift+Z** | Roll was NumPad1/3, `ToggleZoom` plain Z | A mouse+keyboard pilot flies with the left hand on WASD (thrusters) and wants roll under the same hand, not across on the numpad. NumPad1/3 still roll. Z/X are ignored while Shift is held so the Shift+Z zoom press does not also roll. |
+| Yaw on **Q / E** and pitch on **J / K** (J = nose up), alongside the NumPad aliases; `CycleEnemy`, `TargetLastAggressor` and the capsule-jump / cycle-route keys move to Shift+E / Shift+Q / Shift+J / Shift+K | Yaw/pitch were NumPad-only | Steering belongs near WASD for a keyboard pilot, not across on the numpad. NumPad2/4/6/8 still yaw and pitch. Every binding is a central keycode table in `main_state.gd` (`BIND_*`); the old `.ini` keybind files are not read. |
 
 ---
 

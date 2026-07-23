@@ -239,14 +239,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	# original IW2 bindings (configs/default.ini + keyboard_only.ini)
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
-			KEY_N:  # icPlayerPilot.FreeToggle
+			BIND_FREE_TOGGLE:  # icPlayerPilot.FreeToggle
 				free_toggle = not free_toggle
 				audio.play("audio/gui/mechanical_confirm.wav", -10.0)
 				hud.log_msg("FLIGHT ASSIST %s" % ("OFF" if free_toggle else "ON"))
-			KEY_L:  # ToggleLDS
+			BIND_TOGGLE_LDS:  # ToggleLDS
 				_toggle_lds()
-			KEY_U:  # Undock
-				_undock()
+			BIND_UNDOCK:  # Undock -- SHIFT+U (plain U is vertical strafe)
+				if event.shift_pressed:
+					_undock()
 			KEY_Z:  # ToggleZoom -- moved to Shift+Z now that plain Z/X roll.
 				# Still gated on hardware, see _enable_zoom.
 				if event.shift_pressed:
@@ -262,16 +263,18 @@ func _unhandled_input(event: InputEvent) -> void:
 				_target_contact_index(0)
 			KEY_END:
 				_target_contact_index(9999)
-			KEY_R:  # TargetNearestEnemy
+			BIND_TARGET_NEAREST:  # TargetNearestEnemy
 				_target_nearest_enemy()
-			KEY_T:  # TargetNearestShipToDirection
+			BIND_TARGET_DIRECTION:  # TargetNearestShipToDirection
 				_target_nearest_to_direction()
-			KEY_Y:  # icPlayerPilot.SubTarget (configs/default.ini: Keyboard, Y)
+			BIND_SUBTARGET:  # icPlayerPilot.SubTarget (configs/default.ini: Keyboard, Y)
 				_cycle_subtarget()
-			KEY_E:  # CycleEnemy
-				_cycle_enemy()
-			KEY_Q:  # TargetLastAggressor
-				if last_aggressor != null and is_instance_valid(last_aggressor):
+			BIND_CYCLE_ENEMY:  # CycleEnemy -- SHIFT+E (plain E is yaw-right)
+				if event.shift_pressed:
+					_cycle_enemy()
+			BIND_TARGET_AGGRESSOR:  # TargetLastAggressor -- SHIFT+Q (plain Q is yaw-left)
+				if event.shift_pressed \
+						and last_aggressor != null and is_instance_valid(last_aggressor):
 					target_ai = last_aggressor
 					target_idx = -1
 					audio.play("audio/hud/target_changed.wav", -10.0)
@@ -287,15 +290,16 @@ func _unhandled_input(event: InputEvent) -> void:
 				# secondaries.
 				if not _next_primary_weapon(false):
 					_cycle_secondary()
-			KEY_G:  # the aggressor shield. Its Fire (0x1002f6a0) just raises the
-				# active flag; it refuses unless the bank is FULL, then holds
-				# for `duration` seconds while it drains.
+			BIND_AGGRESSOR_SHIELD:  # the aggressor shield. Its Fire (0x1002f6a0)
+				# just raises the active flag; it refuses unless the bank is
+				# FULL, then holds for `duration` seconds while it drains.
 				_fire_aggressor()
-			KEY_I:  # icPlayerPilot.LDSIQuickFire: the LDSi magazine fires on
-				# its own trigger, bypassing weapon selection (the dedicated
-				# LDSI path in AttemptToActivateWeapon 0x1003ccb0 via
-				# pilot+0x82)
-				fire_ldsi()
+			BIND_LDSI_FIRE:  # icPlayerPilot.LDSIQuickFire -- SHIFT+I (plain I is
+				# vertical strafe). The LDSi magazine fires on its own trigger,
+				# bypassing weapon selection (the dedicated LDSI path in
+				# AttemptToActivateWeapon 0x1003ccb0 via pilot+0x82).
+				if event.shift_pressed:
+					fire_ldsi()
 			KEY_F5:  # AutopilotOff
 				_set_autopilot(0)
 			KEY_F6:  # AutopilotApproach
@@ -322,10 +326,12 @@ func _unhandled_input(event: InputEvent) -> void:
 				var img := get_viewport().get_texture().get_image()
 				img.save_png(_base().path_join("data/screenshots/screenshot_%d.png"
 					% (Time.get_ticks_msec() / 1000)))
-			KEY_J:  # capsule jump at an L-point (remaster binding)
-				_try_jump()
-			KEY_K:
-				_cycle_route()
+			BIND_JUMP:  # capsule jump at an L-point -- SHIFT+J (plain J is pitch-up)
+				if event.shift_pressed:
+					_try_jump()
+			BIND_CYCLE_ROUTE:  # SHIFT+K (plain K is pitch-down)
+				if event.shift_pressed:
+					_cycle_route()
 			KEY_H:  # dev: spawn hostile (demo/check builds only -- a stray H
 				# in the campaign summoned a marauder out of nowhere)
 				if demo:
@@ -551,8 +557,8 @@ func _player_control(delta: float) -> void:
 	# is three seconds, and the throttle is a fraction of max speed, not m/s.
 	var dv := sh.max_speed.z * delta / 3.0
 	sh.set_speed = clampf(sh.set_speed
-		+ (_key(KEY_EQUAL) + _key(KEY_KP_ADD)) * dv
-		- (_key(KEY_MINUS) + _key(KEY_KP_SUBTRACT)) * dv,
+		+ (_key(BIND_THROTTLE_UP) + _key(KEY_KP_ADD)) * dv
+		- (_key(BIND_THROTTLE_DOWN) + _key(KEY_KP_SUBTRACT)) * dv,
 		0.0, sh.max_speed.z)
 	# icPlayerPilot::Think (0x100ad8f0, at 0x100ae191) re-tests the zoom gate every
 	# frame and drops the zoom the moment the hardware that granted it goes away.
@@ -568,25 +574,30 @@ func _player_control(delta: float) -> void:
 		else FOV_EXTERNAL
 	cam.fov = base_fov / zoom_factor
 	if ap_mode == 0:
-		# THRUSTERS, not steering. LateralX = D / A, LateralZ = W / S. LateralY
-		# has no keyboard binding in either shipped config -- it is joystick-only
-		# (JoyYAxis with the ALT modifier), so vertical strafe is left unbound.
-		sh.input_thrust.z = _key(KEY_W) - _key(KEY_S)
-		sh.input_thrust.x = _key(KEY_D) - _key(KEY_A)
-		sh.input_thrust.y = 0.0
+		# THRUSTERS, not steering. Fore-aft (W/S) and lateral (A/D) are the
+		# shipped keyboard bindings; vertical strafe (U/I) is a remaster add --
+		# the original left LateralY joystick-only (JoyYAxis + ALT). See the
+		# keybind table in main_state for every key referenced here.
+		sh.input_thrust.z = _key(BIND_THRUST_FWD) - _key(BIND_THRUST_BACK)
+		sh.input_thrust.x = _key(BIND_THRUST_RIGHT) - _key(BIND_THRUST_LEFT)
+		sh.input_thrust.y = _key(BIND_STRAFE_UP) - _key(BIND_STRAFE_DOWN)
 		# keyboard_only.ini: NumPad6 = +Yaw, NumPad8 = +Pitch, NumPad3 = +Roll,
 		# and the `inverse` twins are the negative half of each axis. +Pitch is
 		# NOSE DOWN: the joystick binding is `JoyYAxis, inverse`, and an inverted
-		# DirectInput Y is positive when the stick is pushed forward.
-		var yaw := _key(KEY_KP_6) - _key(KEY_KP_4)
-		var pitch := _key(KEY_KP_8) - _key(KEY_KP_2)
+		# DirectInput Y is positive when the stick is pushed forward. Q/E (yaw)
+		# and J/K (pitch, J = nose up) are remaster primaries alongside the NumPad
+		# aliases; each letter groups with the NumPad key of matching sign.
+		var yaw := _key(KEY_KP_6) + _key(BIND_YAW_RIGHT) \
+			- _key(KEY_KP_4) - _key(BIND_YAW_LEFT)
+		var pitch := _key(KEY_KP_8) + _key(BIND_PITCH_DOWN) \
+			- _key(KEY_KP_2) - _key(BIND_PITCH_UP)
 		# Roll: keyboard_only.ini binds NumPad1 / NumPad3; the remaster adds
 		# Z / X as the primary roll keys for a mouse+keyboard pilot -- Z rolls
 		# left, X rolls right. Gated on SHIFT being up because ToggleZoom moved
 		# to Shift+Z (see the key handler), so a zoom press does not also roll.
 		var roll := _key(KEY_KP_3) - _key(KEY_KP_1)
 		if not Input.is_physical_key_pressed(KEY_SHIFT):
-			roll += _key(KEY_X) - _key(KEY_Z)
+			roll += _key(BIND_ROLL_RIGHT) - _key(BIND_ROLL_LEFT)
 		# RollYawToggleHold swaps the yaw and roll channels
 		if roll_yaw_swap:
 			var t := yaw

@@ -642,6 +642,48 @@ func _model_bounds_radius(model: Node3D) -> float:
 		first = false
 	return 0.0 if first else merged.size.length() * 0.5
 
+# --- Keybindings (the central table) ----------------------------------------
+# The rebindable flight axes and command keys live here, and ONLY here: the
+# flight axes are polled in main_flight (_physics_process), the command keys
+# matched in main.gd (_unhandled_input). Values are PHYSICAL keycodes, so a
+# binding follows the key's POSITION on the board (AZERTY/Dvorak land on the
+# same spots, not the same letters). The original game's .ini keybind files are
+# deliberately NOT read -- edit these constants to remap.
+#
+# Flight -- axes held every frame. Each letter/symbol key below is the primary;
+# the keyboard_only.ini NumPad aliases stay inline in main_flight as secondaries.
+const BIND_THROTTLE_UP := KEY_EQUAL      # + NumPad+
+const BIND_THROTTLE_DOWN := KEY_MINUS    # + NumPad-
+const BIND_THRUST_FWD := KEY_W
+const BIND_THRUST_BACK := KEY_S
+const BIND_THRUST_LEFT := KEY_A
+const BIND_THRUST_RIGHT := KEY_D
+const BIND_STRAFE_UP := KEY_U            # vertical thrust, up
+const BIND_STRAFE_DOWN := KEY_I          # vertical thrust, down
+const BIND_YAW_LEFT := KEY_Q             # + NumPad4
+const BIND_YAW_RIGHT := KEY_E            # + NumPad6
+const BIND_PITCH_UP := KEY_J             # nose up; + NumPad2
+const BIND_PITCH_DOWN := KEY_K           # nose down; + NumPad8
+const BIND_ROLL_LEFT := KEY_Z            # + NumPad1
+const BIND_ROLL_RIGHT := KEY_X           # + NumPad3
+#
+# Commands -- discrete, matched in main.gd. Six share a physical key with a
+# flight axis above, so they moved to SHIFT+key (noted); the rest are plain.
+# Structural keys (F1-F12 cameras/autopilot, arrows for power, Tab/Home/End
+# targeting, Enter/Backspace/] weapon cycling) are fixed and stay inline there.
+const BIND_FREE_TOGGLE := KEY_N
+const BIND_TOGGLE_LDS := KEY_L
+const BIND_TARGET_NEAREST := KEY_R
+const BIND_TARGET_DIRECTION := KEY_T
+const BIND_SUBTARGET := KEY_Y
+const BIND_AGGRESSOR_SHIELD := KEY_G
+const BIND_CYCLE_ENEMY := KEY_E          # SHIFT (plain E is yaw-right)
+const BIND_TARGET_AGGRESSOR := KEY_Q     # SHIFT (plain Q is yaw-left)
+const BIND_LDSI_FIRE := KEY_I            # SHIFT (plain I is strafe-down)
+const BIND_UNDOCK := KEY_U               # SHIFT (plain U is strafe-up)
+const BIND_JUMP := KEY_J                 # SHIFT (plain J is pitch-up)
+const BIND_CYCLE_ROUTE := KEY_K          # SHIFT (plain K is pitch-down)
+
 func _key(code: int) -> float:
 	return 1.0 if Input.is_physical_key_pressed(code) else 0.0
 
