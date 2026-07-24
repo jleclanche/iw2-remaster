@@ -57,6 +57,14 @@ func _port_boot() -> void:
 	if ss == null:
 		return
 	await ss.startup_new_game()
+	# scripts.ini [Session] enter[]=iCargoScript.Initialise (data/ini/scripts.ini)
+	# runs before StartupSession -- it builds the commodity table (the
+	# icargo.Create name/type definitions). A NEW game skipped it (only the
+	# load-reenter path ran it), so once ambient traffic came alive its
+	# freighters loaded undefined "0/0" cargo with no commodity name.
+	var cargo: PogScript = pog_rt.script("icargoscript")
+	if cargo != null:
+		await cargo.initialise()
 	await ss.startup_session()
 	await ss.startup_space()
 	# scripts.ini [Space] enter[]=iMusic.Initialise (data/ini/scripts.ini:47)
