@@ -681,15 +681,22 @@ func _hab_filter_orbiting(_t, a: Array) -> Variant:
 
 # @native ihabitat.Allegiance
 func _hab_allegiance(_t, a: Array) -> Variant:
+	# `IeAllegiance Ihabitat.Allegiance(habitat)`: returns the allegiance ENUM
+	# ordinal, not a faction handle. Every caller uses it as an int -- compared
+	# to numbers (== 53, == 14), indexed into faction lists, from_int'd, and fed
+	# to iShipCreation.GetShip / from_allegiance_enum as the faction ordinal.
+	# Returning the handle made GetShip reject it ("Illegal faction") and the
+	# traffic system spawned undefined ships/cargo.
 	var s = _sim(a[0])
 	if s == null or world.factions == null:
-		return null
+		return 0
 	var fac: String = s.faction
 	if fac.is_empty() and game != null and not s.rec.is_empty():
 		# The station records carry no faction; main.gd derives one from the
 		# name ("Coyote Police Station" -> LAW) for the contact list.
 		fac = game._station_faction(s.name)
-	return world.factions._f_find(null, [fac])
+	var f = world.factions._f_find(null, [fac])
+	return f.allegiance if f != null else 0
 
 # @native ihabitat.HasSpewer
 func _hab_has_spewer(_t, a: Array) -> Variant:
@@ -772,18 +779,16 @@ func _hab_filter_type(_t, a: Array) -> Variant:
 
 # @native ihabitat.FilterOnAllegiance
 func _hab_filter_allegiance(_t, a: Array) -> Variant:
-	# The allegiance is the station's faction, which _hab_allegiance already
-	# resolves; the argument is the faction to keep.
-	var want = a[1] if a.size() > 1 else null
-	var name: String = want.name if want is PogFactions.PogFaction \
-			else PogStd._s(want)
+	# FilterOnAllegiance(habitats, alleg): keep the habitats whose IeAllegiance
+	# matches `alleg` -- an enum ordinal (callers pass 14/17/19), the same enum
+	# _hab_allegiance now returns.
+	var want := int(a[1]) if a.size() > 1 else 0
 	var out: Array = []
 	for h in (a[0] if a[0] is Array else []):
 		var s = _sim(h)
 		if s == null:
 			continue
-		var f = _hab_allegiance(_t, [s])
-		if f is PogFactions.PogFaction and f.name == name:
+		if int(_hab_allegiance(_t, [s])) == want:
 			out.append(s)
 	return out
 
