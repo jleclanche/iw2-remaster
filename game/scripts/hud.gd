@@ -980,8 +980,10 @@ func _draw_reticle(c: Vector2) -> void:
 		# the flight readouts follow the PILOT, not the hull: a remote link
 		# shows the linked vessel's speed (main.piloted(), issue #1)
 		var vel: float = main.piloted().forward_speed()
+		# round, not truncate: cruising at a commanded 500 the nose-projected
+		# speed reads 499.9 while the autopilot steers, and int() would show 499
 		var vel_text: String = ("%s/s" % _fmt_range(absf(vel))) if in_lds \
-			else "%s%dm/s" % ["-" if vel < 0 else "+", absi(int(absf(vel)))]
+			else "%s%dm/s" % ["-" if vel < 0 else "+", roundi(absf(vel))]
 		_hud_text(0, 2, c + Vector2(-SPEED_X, 0), vel_text, 1, 2, ring)
 	_draw_target_block(c)
 	# velocity vector marker
