@@ -767,21 +767,27 @@ func _set_from_list(_t, a: Array) -> Variant:
 	return out
 
 # @native set.Union
+## `void Set.Union(set a, set b)`: a becomes a ∪ b, IN PLACE (the prototype is
+## void and every caller uses it as a statement, then keeps reading the first
+## set -- exactly like Set.Add/Remove). Returning a fresh set instead made every
+## Union a silent no-op, so e.g. create_filtered_habitat_set never folded the
+## L-points into the traffic set.
 func _set_union(_t, a: Array) -> Variant:
-	var out: Array = (a[0] as Array).duplicate() if a[0] is Array else []
-	if a[1] is Array:
+	if a[0] is Array and a[1] is Array:
 		for v in a[1]:
-			if not out.has(v):
-				out.append(v)
-	return out
+			if not (a[0] as Array).has(v):
+				(a[0] as Array).append(v)
+	return 0
 
 # @native set.Difference
+## `void Set.Difference(set a, set b)`: a becomes a − b, IN PLACE (see Union).
+## As a no-op it left the traffic-exception habitats (jump gates, named bases,
+## type-1 stations) in the filtered set.
 func _set_difference(_t, a: Array) -> Variant:
-	var out: Array = (a[0] as Array).duplicate() if a[0] is Array else []
-	if a[1] is Array:
+	if a[0] is Array and a[1] is Array:
 		for v in a[1]:
-			out.erase(v)
-	return out
+			(a[0] as Array).erase(v)
+	return 0
 
 # @native list.FromSet
 func _list_from_set(_t, a: Array) -> Variant:
@@ -842,7 +848,7 @@ const _BINDINGS := {
 	"global.setbool": "_glob_set", "global.setint": "_glob_set",
 	"global.setfloat": "_glob_set", "global.setstring": "_glob_set",
 	"global.sethandle": "_glob_set", "global.setlist": "_glob_set",
-	"global.setset": "_glob_set", "global.set": "_glob_set",
+	"global.setset": "_glob_set", "global.set": "_glob_get",
 	"global.exists": "_exists", "global.destroy": "_destroy",
 
 	"debug.printstring": "_print", "debug.printint": "_print",

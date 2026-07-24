@@ -1287,15 +1287,34 @@ func _i_sims_in_radius(_t, a: Array) -> Variant:
 
 # @native isim.SimsInRadiusFromSet
 func _i_sims_in_radius_from_set(_t, a: Array) -> Variant:
-	# Same query, but filtered to a candidate set the script already holds.
-	var found: Array = _i_sims_in_radius(_t, a)
-	var pool = a[3] if a.size() > 3 else null
+	# SimsInRadiusFromSet(set_of_sims, sim, radius, type): filter a candidate
+	# set the script already holds to those within `radius` of `sim`. The set
+	# members are the authored world sims (stations/L-points wrapped by
+	# _wrap_record) -- NOT ai_ships -- so we iterate the set itself rather than
+	# _i_sims_in_radius (which only sees ships). The set was the FIRST arg, the
+	# centre the SECOND; the old code read them the other way round and always
+	# returned nothing, which is why itrafficcreation.MonitorTraffic never
+	# pinged and no ambient traffic spawned.
+	var pool = a[0] if a.size() > 0 else null
 	if not (pool is Array):
-		return found
+		return []
+	var centre := _as_sim(a[1] if a.size() > 1 else null)
+	if centre == null:
+		return []
+	var r := float(a[2]) if a.size() > 2 else 0.0
+	var mask := 0
+	if a.size() > 3 and (a[3] is int or a[3] is float):
+		mask = int(a[3])
 	var out: Array = []
-	for s in found:
-		if (pool as Array).has(s):
-			out.append(s)
+	for e in pool as Array:
+		var s := _as_sim(e)
+		if s == null:
+			continue
+		if centre.dist_to(s) > r:
+			continue
+		if mask != 0 and (sim_type_of(s) & mask) == 0:
+			continue
+		out.append(s)
 	return out
 
 # @native isim.SimsInRadiusOfFaction
@@ -1408,6 +1427,19 @@ const SIM_TYPE := {
 	"T_PowerUp": 1 << 30,
 }
 
+## objects[] record category -> IeSimType bit. The authored world (stations,
+## bodies, L-points) carries a "category" string, not a ctype node, so this is
+## how a wrapped record answers isim.Type / the SimsInRadius type masks.
+const CATEGORY_SIM_TYPE := {
+	"star": 1 << 0,          # T_Star
+	"body": 1 << 1,          # T_Planet
+	"nebula": 1 << 2,        # T_Nebula
+	"waypoint": 1 << 3,      # T_Waypoint
+	"lpoint": 1 << 4,        # T_LagrangePoint
+	"station": 1 << 13,      # T_Station
+	"gunstar": 1 << 12,      # T_Gunstar
+}
+
 func sim_type_of(s: PogSim) -> int:
 	if s == null:
 		return 0
@@ -1420,6 +1452,15 @@ func sim_type_of(s: PogSim) -> int:
 		var rec: Dictionary = ship_db.get(PogWorld.ini_key(s.ini), {})
 		return int(SIM_TYPE.get(str((rec.get("properties", {}) as Dictionary)
 				.get("type", "")), 0))
+	# an authored world record (station/planet/L-point): the IeSimType the
+	# scripts filter on (isim.SimsInRadius* type masks) comes from its category.
+	# Read it off the RECORD, not s.category() -- a station within streaming
+	# range grows a live node, after which s.category() reports "ship" and the
+	# type would collapse to 0. Without this the traffic monitor's stations +
+	# L-points query (mask T_Station | T_LagrangePoint = 8208) dropped exactly
+	# the near habitats it needs, and no ambient traffic ever spawned.
+	if not s.rec.is_empty():
+		return int(CATEGORY_SIM_TYPE.get(String(s.rec.get("category", "")), 0))
 	return 0
 
 # @native isim.Type
