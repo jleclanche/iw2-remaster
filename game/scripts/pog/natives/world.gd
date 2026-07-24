@@ -630,6 +630,14 @@ func _create_object(ini: String, name: String) -> PogSim:
 		rec["category"] = "waypoint"
 		rec["radius"] = 0.0
 		rec["prop_collide"] = false
+		# iiSim::VisibleToSensor defaults FALSE for a fresh waypoint: the engine
+		# creates them hidden and a script reveals the ones the player should
+		# see with iUtilities.MakeWaypointVisible (-> isim.SetSensorVisibility 1,
+		# which clears sensor_hidden and sets sensor_forced + the localised
+		# name). Traffic's per-habitat "Load/Unload Slot" parking waypoints
+		# (itrafficcreation, 9 each) are never revealed, so defaulting to
+		# visible spammed the contact list with them.
+		rec["sensor_hidden"] = true
 	elif String(db.get("class", "")) == "icStation" or _has_dockport(db):
 		# a scripted station: class icStation, or any sim carrying a dockport
 		# subsim -- the act-0 reactor is icInertSim + universal_port at null
